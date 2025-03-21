@@ -21,7 +21,6 @@ public static class DataTableManager
         {
             var table = new StringTable();
             table.Load(id);
-
             tables.Add(id, table);
         }
 #else
@@ -30,6 +29,22 @@ public static class DataTableManager
         table.Load(stringTableId);
         tables.Add(stringTableId, table);
 #endif
+
+        {
+            var table = new CorpsTable();
+            table.Load(DataTableIds.corpsTable);
+            tables.Add(DataTableIds.corpsTable, table);
+        }
+        {
+            var table = new StageTable();
+            table.Load(DataTableIds.stageTable);
+            tables.Add(DataTableIds.stageTable, table);
+        }
+        {
+            var table = new WaveTable();
+            table.Load(DataTableIds.waveTable);
+            tables.Add(DataTableIds.waveTable, table);
+        }
     }
 
 
@@ -43,6 +58,7 @@ public static class DataTableManager
         }
         return tables[tableId] as T;
     }
+
     public static StringTable StringTable
     {
         get
@@ -51,5 +67,27 @@ public static class DataTableManager
         }
     }
 
+    public static CorpsTable CorpsTable
+    {
+        get
+        {
+            return GetTable<CorpsTable>(DataTableIds.corpsTable);
+        }
+    }
 
+    public static StageTable StageTable
+    {
+        get
+        {
+            return GetTable<StageTable>(DataTableIds.stageTable);
+        }
+    }
+
+    public static WaveTable WaveTable
+    {
+        get
+        {
+            return GetTable<WaveTable>(DataTableIds.waveTable);
+        }
+    }
 }

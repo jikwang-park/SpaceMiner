@@ -13,4 +13,8 @@ public class DataTableIds
         //"StringTableEn",
         //"StringTableJp",
     };
+
+    public const string corpsTable = "CorpsTable";
+    public const string stageTable = "StageTable";
+    public const string waveTable = "WaveTable";
 }

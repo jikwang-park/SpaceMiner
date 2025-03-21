@@ -5,7 +5,6 @@ using UnityEngine;
 using CsvHelper;
 using System.Globalization;
 using System.Linq;
-using System.Threading.Tasks;
 
 public abstract class DataTable
 {

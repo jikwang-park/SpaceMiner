@@ -27,6 +27,7 @@ public class WaveTable : DataTable
         {
             if (!dict.ContainsKey(item.ID))
             {
+                item.WaveCorpsIDs = item.WaveCorpsID.Split('_');
                 dict.Add(item.ID, item);
             }
             else
@@ -38,7 +39,7 @@ public class WaveTable : DataTable
         Addressables.Release(loadHandle);
     }
 
-    public Data Get(string key)
+    public Data GetData(string key)
     {
         if (!dict.ContainsKey(key))
         {

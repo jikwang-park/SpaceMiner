@@ -38,7 +38,7 @@ public class StringTable : DataTable
         Addressables.Release(loadHandle);
     }
 
-    public string Get(string key)
+    public string GetData(string key)
     {
         if (!dict.ContainsKey(key))
         {

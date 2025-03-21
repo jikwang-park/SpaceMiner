@@ -45,7 +45,7 @@ public class CorpsTable : DataTable
         Addressables.Release(loadHandle);
     }
 
-    public Data Get(string key)
+    public Data GetData(string key)
     {
         if (!dict.ContainsKey(key))
         {

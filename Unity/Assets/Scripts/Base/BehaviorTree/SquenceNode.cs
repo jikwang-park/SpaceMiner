@@ -22,12 +22,12 @@ public class SquenceNode<T> : CompositeNode<T> where T : MonoBehaviour
     }
     protected override NodeStatus OnUpdate()
     {
-        if(currentChild == 0)
+        if(childrens.Count == 0)
         {
             return NodeStatus.Success;
         }
         
-        while(currentChild <= childrens.Count)
+        while(currentChild < childrens.Count)
         {
             NodeStatus status = childrens[currentChild].Execute();
             if (status != NodeStatus.Success)

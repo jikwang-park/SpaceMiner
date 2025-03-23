@@ -3,9 +3,14 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+[Serializable]
 public class BigNumber
 {
+    [SerializeField]
+    private string currentValue;
+    [SerializeField]
     private List<int> parts;
+    [SerializeField]
     private int sign = 1;
     private string[] units = {"", "A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", 
                                 "N", "O", "P", "Q", "R", "S", "T", "U", "V",  "W", "X", "Y", "Z"};
@@ -58,10 +63,39 @@ public class BigNumber
                 parts.Add(int.Parse(partStr));
             }
         }
+        currentValue = ToString();
+    }
+    public BigNumber(int input)
+    {
+        parts = new List<int>();
+        if (input < 0)
+        {
+            sign = -1;
+        }
+        if(input == 0)
+        {
+            parts.Add(0);
+            return;
+        }
+        while(input > 0)
+        {
+            parts.Add(input % 1000);
+            input /= 1000;
+        }
+        currentValue = ToString();
     }
     private BigNumber(List<int> parts)
     {
         this.parts = parts;
+        Normalize();
+    }
+    public static implicit operator BigNumber(int value)
+    {
+        return new BigNumber(value);
+    }
+    public static implicit operator BigNumber(string value)
+    {
+        return new BigNumber(value);
     }
     public static BigNumber operator -(BigNumber a)
     {

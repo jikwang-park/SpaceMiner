@@ -5,5 +5,5 @@ using UnityEngine;
 public struct Attack
 {
     public BigNumber damage;
-    public bool critical;
+    public bool isCritical;
 }

@@ -41,7 +41,7 @@ public class MonsterController : MonoBehaviour
 
     public float LastAttackTime { get; private set; }
 
-    private bool drawRegion;
+    private bool isDrawRegion;
 
     public bool CanAttack
     {
@@ -69,7 +69,7 @@ public class MonsterController : MonoBehaviour
 
     private void Start()
     {
-        drawRegion = true;
+        isDrawRegion = true;
         MonsterLaneManager = GameObject.FindGameObjectWithTag("GameController").GetComponent<MonsterLaneManager>();
     }
 
@@ -148,7 +148,7 @@ public class MonsterController : MonoBehaviour
     void OnDrawGizmos()
     {
         Gizmos.color = Color.red;
-        if (drawRegion)
+        if (isDrawRegion)
         {
             Gizmos.DrawWireCube(transform.position + transform.forward * 0.5f, new Vector3(1f, 1f, 1f));
         }

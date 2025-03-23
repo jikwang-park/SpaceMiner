@@ -11,17 +11,18 @@ public class Unit : MonoBehaviour
 
 
 
-    private CharacterStats currentStats;
 
+    public BigNumber currentHp;
+    public BigNumber unitMaxHp;
+    public BigNumber unitDamage;
+    public int unitArmor;
 
     private int maxHp = 20;
-    private int currentHp = 20;
 
-    private float attackArrange = 10f;
+
     public GameObject enermyPrefab;
     //ÅÊÄ¿ ½ºÅ³ ÄðÅ¸ÀÓ
     public float skillCoolTime = 10f;
-    public float attackCoolTime = 2f;
 
     public UnitTypes currentUnitType;
     private BehaviorTree<Unit> behaviorTree;
@@ -30,31 +31,41 @@ public class Unit : MonoBehaviour
     public float attackUsingTime = 0.4f;
 
     public float speed = 20f;
-    public int aliveCount =0;
+    public int aliveCount = 0;
 
     public UnitPartyManager unitPartyManager;
 
 
+    public AttackDefinition unitWeapon;
+
     private void SetStatus(BigNumber unitMaxHp, BigNumber unitdamage, int unitArmor)
     {
-        currentStats.maxHp = unitMaxHp;
-        currentStats.damage = unitdamage;
-        currentStats.armor = unitArmor;
+        this.unitMaxHp = unitMaxHp;
+        this.unitDamage = unitdamage;
+        this.unitArmor = unitArmor;
     }
 
 
     private void Init()
     {
-        
         switch (currentUnitType)
         {
             case UnitTypes.Tanker:
-                behaviorTree = UnitBTManager.GetBehaviorTree(this, UnitTypes.Tanker);
+                SetTankerStats();
                 break;
             case UnitTypes.Dealer:
                 behaviorTree = UnitBTManager.GetBehaviorTree(this, UnitTypes.Dealer);
+                SetStatus(70, 25, 3);
                 break;
         }
+    }
+
+
+
+    private void SetTankerStats()
+    {
+        behaviorTree = UnitBTManager.GetBehaviorTree(this, UnitTypes.Tanker);
+        SetStatus(100, 15, 10);
     }
     private void Awake()
     {
@@ -71,7 +82,6 @@ public class Unit : MonoBehaviour
         {
             if (currentHp <= 0)
             {
-                unitPartyManager.GetFirstLineUnit();
                 return true;
 
             }
@@ -83,7 +93,7 @@ public class Unit : MonoBehaviour
     {
         get
         { 
-            if (Vector3.Distance(transform.position,enermyPrefab.transform.position) <=  attackArrange)
+            if (Vector3.Distance(transform.position,enermyPrefab.transform.position) <= unitWeapon.range)
             {
                 return true;
             }
@@ -111,7 +121,7 @@ public class Unit : MonoBehaviour
     {
         get
         {
-            if(Time.time > lastAttackTime + attackCoolTime)
+            if(Time.time > lastAttackTime + unitWeapon.coolDown)
                 return true;
 
             return false;
@@ -148,7 +158,11 @@ public class Unit : MonoBehaviour
 
     public IEnumerator NormalAttackCor()
     {
-        yield return new WaitForSeconds(attackCoolTime);
+        if (enermyPrefab != null)
+        {
+            unitWeapon.Execute(gameObject, enermyPrefab.gameObject);
+        }
+        yield return new WaitForSeconds(unitWeapon.coolDown);
         IsNormalAttack = false;
     }
 

@@ -10,7 +10,9 @@ public class IsUnitOnRangeCondition : ConditionNode<Unit>
 
     protected override NodeStatus OnUpdate()
     {
-        if(!context.IsUnitCanAttack)
+        Debug.Log("onrange");
+
+        if (!context.IsUnitCanAttack)
         {
             return NodeStatus.Failure;
         }

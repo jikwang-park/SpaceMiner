@@ -10,6 +10,7 @@ public class IsUnitCanAttackCondition : ConditionNode<Unit>
 
     protected override NodeStatus OnUpdate()
     {
+        Debug.Log("canattack");
         if (context.IsAttackCoolTimeOn)
             return NodeStatus.Success;
 

@@ -80,7 +80,7 @@ public class Unit : MonoBehaviour
     {
         get
         {
-            if (currentHp <= 0)
+            if (maxHp <= 0)
             {
                 return true;
 

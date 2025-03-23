@@ -7,7 +7,7 @@ public class UnitPartyManager : MonoBehaviour
 {
     public List<Unit> unitprefabs = new List<Unit>();
 
-    private Unit[] units;
+    private Unit[] units = new Unit[4];
 
     public int AliveCount
     {
@@ -50,7 +50,7 @@ public class UnitPartyManager : MonoBehaviour
         for(int i =0; i< unitprefabs.Count; ++i)
         {
             units[i] = Instantiate(unitprefabs[i]); // 나중에 비동기로드로 바꿈
-            unitprefabs[i].transform.position += new Vector3(20, 20, 0);
+            units[i].transform.position += new Vector3(20, 20, 0);
         }
 
     }

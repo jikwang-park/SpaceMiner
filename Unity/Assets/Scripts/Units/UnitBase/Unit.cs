@@ -40,9 +40,14 @@ public class Unit : MonoBehaviour
 
     private void SetStatus(BigNumber unitMaxHp, BigNumber unitdamage, int unitArmor)
     {
+        unitdamage = unitWeapon.damage;
+
+
         this.unitMaxHp = unitMaxHp;
         this.unitDamage = unitdamage;
         this.unitArmor = unitArmor;
+
+
     }
 
 
@@ -52,10 +57,12 @@ public class Unit : MonoBehaviour
         {
             case UnitTypes.Tanker:
                 SetTankerStats();
+                currentHp = 50;
                 break;
             case UnitTypes.Dealer:
                 behaviorTree = UnitBTManager.GetBehaviorTree(this, UnitTypes.Dealer);
                 SetStatus(70, 25, 3);
+                currentHp = 40;
                 break;
         }
     }
@@ -80,7 +87,7 @@ public class Unit : MonoBehaviour
     {
         get
         {
-            if (maxHp <= 0)
+            if (currentHp <= 0)
             {
                 return true;
 

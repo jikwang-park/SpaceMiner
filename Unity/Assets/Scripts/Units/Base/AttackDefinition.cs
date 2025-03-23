@@ -9,7 +9,7 @@ public class AttackDefinition : ScriptableObject
     public AssetReferenceGameObject weaponPrefab;
     public float coolDown;
     public float range;
-    public BigNumber damage;
+    public BigNumber damage = new BigNumber("0");
     public float criticalChance;
     public float CriticalMultiplier;
 

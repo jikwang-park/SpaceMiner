@@ -11,16 +11,9 @@ public class MonsterWeapon : AttackDefinition
         {
             return;
         }
-        var distance = Vector3.Distance(attacker.transform.position, defender.transform.position);
+        var distance = Vector3.Dot((attacker.transform.position - defender.transform.position), Vector3.forward);
 
         if (distance > range)
-        {
-            return;
-        }
-
-        Vector3 toTarget = (defender.transform.position - attacker.transform.position).normalized;
-        float dot = Vector3.Dot(attacker.transform.forward, toTarget);
-        if (dot < 0.5f)
         {
             return;
         }

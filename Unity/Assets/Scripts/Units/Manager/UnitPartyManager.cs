@@ -8,19 +8,30 @@ public class UnitPartyManager : MonoBehaviour
     public List<Unit> unitprefabs = new List<Unit>();
 
 
+    public int AliveCount
+    {
+        get
+        {
+            foreach (var unit in unitprefabs)
+            {
+                if (!unit.IsDead)
+                {
+                    unit.aliveCount++;
+                }
+                return unit.aliveCount;
+            }
+            return 0;
+        }
+    }
+
 
     private void Awake()
     {
         UnitSpwan();
     }
-    private void Start()
-    {
-    }
-    private void Init()
-    {
-    }
+  
 
-    private void UnitSpwan()
+    public void UnitSpwan()
     {
         if(unitprefabs.Count <= 0)
         {

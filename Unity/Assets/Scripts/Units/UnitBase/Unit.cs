@@ -103,7 +103,7 @@ public class Unit : MonoBehaviour
     //스킬사용중이니?
     public bool IsSkillUsing;
     //일반 공격중이니?
-    public bool IsNormalAttack;
+    public bool IsNormalAttacking;
     //1대 맞았니?
     public bool IsUnitHit;
     //스킬쿨타임 돌았니?
@@ -162,8 +162,8 @@ public class Unit : MonoBehaviour
         {
             unitWeapon.Execute(gameObject, enermyPrefab.gameObject);
         }
-        yield return new WaitForSeconds(unitWeapon.coolDown);
-        IsNormalAttack = false;
+        yield return new WaitForSeconds(attackUsingTime);
+        IsNormalAttacking = false;
     }
 
 }

@@ -10,10 +10,11 @@ public class IsUnitCanAttackCondition : ConditionNode<Unit>
 
     protected override NodeStatus OnUpdate()
     {
-        if(!context.IsUnitCanAttack)
-        {
-            return NodeStatus.Failure;
-        }
-        return NodeStatus.Success;
+        if (context.IsAttackCoolTimeOn)
+            return NodeStatus.Success;
+
+        return NodeStatus.Failure;
     }
+
+
 }

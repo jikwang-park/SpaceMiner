@@ -2,19 +2,18 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class IsUnitUsingAttackCondition : ConditionNode<Unit>
+public class IsUnitNotOnRangeCondition : ConditionNode<Unit>
 {
-    public IsUnitUsingAttackCondition(Unit context) : base(context)
+    public IsUnitNotOnRangeCondition(Unit context) : base(context)
     {
     }
 
     protected override NodeStatus OnUpdate()
     {
-        if (context.IsAttackCoolTimeOn)
+        if (!context.IsUnitCanAttack)
+        {
             return NodeStatus.Success;
-
+        }
         return NodeStatus.Failure;
     }
-
-
 }

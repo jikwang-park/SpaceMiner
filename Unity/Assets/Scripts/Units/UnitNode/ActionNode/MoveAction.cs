@@ -11,14 +11,17 @@ public class MoveAction : ActionNode<Unit>
     protected override void OnStart()
     {
         base.OnStart();
+        Debug.Log("이동시작");
     }
 
     protected override NodeStatus OnUpdate()
     {
         if(context.IsUnitCanAttack)
         {
+            Debug.Log("이동종료");
             return NodeStatus.Failure;
         }
+        Debug.Log("이동중");
         context.Move();
         return NodeStatus.Running;
     }

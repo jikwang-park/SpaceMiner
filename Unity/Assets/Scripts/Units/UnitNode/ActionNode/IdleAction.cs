@@ -19,9 +19,7 @@ public class IdleAction : ActionNode<Unit>
         {
             return NodeStatus.Failure;
         }
-        else
-        {
-            return NodeStatus.Running;
-        }
+
+        return NodeStatus.Running;
     }
 }

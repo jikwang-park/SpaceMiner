@@ -1,12 +1,19 @@
 using System.Collections;
 using System.Collections.Generic;
 using TMPro;
+using UnityEditor;
 using UnityEngine;
 
 
 
 public class Unit : MonoBehaviour
 {
+
+
+
+    private CharacterStats currentStats;
+
+
     private int maxHp = 20;
     private int currentHp = 20;
 
@@ -14,7 +21,7 @@ public class Unit : MonoBehaviour
     public GameObject enermyPrefab;
     //ÅÊÄ¿ ½ºÅ³ ÄðÅ¸ÀÓ
     public float skillCoolTime = 10f;
-    public float AttackCoolTime = 2f;
+    public float attackCoolTime = 2f;
 
     public UnitTypes currentUnitType;
     private BehaviorTree<Unit> behaviorTree;
@@ -26,6 +33,15 @@ public class Unit : MonoBehaviour
     public int aliveCount =0;
 
     public UnitPartyManager unitPartyManager;
+
+
+    private void SetStatus(BigNumber unitMaxHp, BigNumber unitdamage, int unitArmor)
+    {
+        currentStats.maxHp = unitMaxHp;
+        currentStats.damage = unitdamage;
+        currentStats.armor = unitArmor;
+    }
+
 
     private void Init()
     {
@@ -95,7 +111,7 @@ public class Unit : MonoBehaviour
     {
         get
         {
-            if(Time.time > lastAttackTime + AttackCoolTime)
+            if(Time.time > lastAttackTime + attackCoolTime)
                 return true;
 
             return false;
@@ -132,7 +148,7 @@ public class Unit : MonoBehaviour
 
     public IEnumerator NormalAttackCor()
     {
-        yield return new WaitForSeconds(AttackCoolTime);
+        yield return new WaitForSeconds(attackCoolTime);
         IsNormalAttack = false;
     }
 

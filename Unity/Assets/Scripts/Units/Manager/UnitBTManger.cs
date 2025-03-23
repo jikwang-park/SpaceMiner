@@ -5,9 +5,9 @@ using UnityEngine.UI;
 using UnityEngine.UIElements;
 public enum UnitTypes
 {
-    Tanker,
-    //Dealer,
-    //Healer,
+    Tanker = 1,
+    Dealer,
+    Healer,
 }
 
 public static class UnitBTManager

@@ -5,4 +5,6 @@ using UnityEngine;
 public class Variables
 {
     public static Languages currentLanguage = Languages.Korean;
+    public static int stageNumber = 1;
+    public static int stageSubNumber = 1;
 }

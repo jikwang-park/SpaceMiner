@@ -13,7 +13,7 @@ public class RushAction : ActionNode<MonsterController>
         // TODO: 수정필요
         if (context.TargetDistance > context.weapon.range)
         {
-            context.transform.Translate(Vector3.forward * Time.deltaTime);
+            context.transform.Translate(Vector3.forward * context.Speed * Time.deltaTime);
         }
 
         return NodeStatus.Success;

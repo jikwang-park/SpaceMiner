@@ -10,7 +10,7 @@ public class IsUnitUsingSkillCondition : ConditionNode<Unit>
 
     protected override NodeStatus OnUpdate()
     {
-        if(context.IsSkillUsing|| context.IsNormalAttack)
+        if(context.IsSkillUsing|| context.IsNormalAttacking)
         {
             return NodeStatus.Failure;
         }

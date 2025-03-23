@@ -6,7 +6,7 @@ public class AttackedDebug : MonoBehaviour, IAttackable
 {
     public void OnAttack(GameObject attacker, Attack attack)
     {
-        if (attack.critical)
+        if (attack.isCritical)
         {
             Debug.Log("크리티컬!");
         }

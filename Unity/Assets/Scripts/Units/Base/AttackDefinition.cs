@@ -22,8 +22,8 @@ public class AttackDefinition : ScriptableObject
         BigNumber damage = attackerStats.damage;
 
         damage += this.damage;
-        attack.critical = criticalChance >= Random.value;
-        if (attack.critical)
+        attack.isCritical = criticalChance >= Random.value;
+        if (attack.isCritical)
         {
             damage *= CriticalMultiplier;
         }

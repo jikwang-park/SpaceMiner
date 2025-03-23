@@ -8,9 +8,7 @@ using UnityEngine;
 
 public class Unit : MonoBehaviour
 {
-
-
-
+    public StageManager stageManger;
 
     public BigNumber currentHp;
     public BigNumber unitMaxHp;
@@ -38,15 +36,15 @@ public class Unit : MonoBehaviour
 
     public AttackDefinition unitWeapon;
 
+    private Transform targetPos;
+
     private void SetStatus(BigNumber unitMaxHp, BigNumber unitdamage, int unitArmor)
     {
         unitdamage = unitWeapon.damage;
 
-
         this.unitMaxHp = unitMaxHp;
         this.unitDamage = unitdamage;
         this.unitArmor = unitArmor;
-
 
     }
 
@@ -76,9 +74,10 @@ public class Unit : MonoBehaviour
     }
     private void Awake()
     {
-        var testPos = new Vector3(40, 0, 0);
-        Instantiate(enermyPrefab);
-        enermyPrefab.transform.position = testPos;
+        targetPos = stageManger.MonsterLaneManager.GetFirstMonster(0);
+        //var testPos = new Vector3(40, 0, 0);
+        //Instantiate(enermyPrefab);
+        //enermyPrefab.transform.position = testPos;
 
         Init();
     }
@@ -90,7 +89,6 @@ public class Unit : MonoBehaviour
             if (currentHp <= 0)
             {
                 return true;
-
             }
             return false;
         }
@@ -100,7 +98,7 @@ public class Unit : MonoBehaviour
     {
         get
         { 
-            if (Vector3.Distance(transform.position,enermyPrefab.transform.position) <= unitWeapon.range)
+            if (Vector3.Distance(transform.position, targetPos.position) <= unitWeapon.range)
             {
                 return true;
             }
@@ -154,8 +152,7 @@ public class Unit : MonoBehaviour
 
     public void Move()
     {
-        var dir = (enermyPrefab.transform.position - transform.position).normalized;
-        transform.position += dir * speed * Time.deltaTime;
+        transform.position += Vector3.forward * Time.deltaTime * speed;
     }
 
     public void AttackCorutine()
@@ -167,7 +164,7 @@ public class Unit : MonoBehaviour
     {
         if (enermyPrefab != null)
         {
-            unitWeapon.Execute(gameObject, enermyPrefab.gameObject);
+            unitWeapon.Execute(gameObject, targetPos.gameObject);
         }
         yield return new WaitForSeconds(attackUsingTime);
         IsNormalAttacking = false;

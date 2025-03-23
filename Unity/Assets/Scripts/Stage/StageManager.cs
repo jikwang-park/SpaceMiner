@@ -18,8 +18,9 @@ public class StageManager : MonoBehaviour
     [field: SerializeField]
     public int CurrentWave { get; private set; }
 
-    [field: SerializeField]
     public MonsterLaneManager MonsterLaneManager { get; private set; }
+    public UnitPartyManager UnitPartyManager { get; private set; }
+
 
     [SerializeField]
     private TextMeshProUGUI stageText;
@@ -40,6 +41,7 @@ public class StageManager : MonoBehaviour
     {
         waveSpawner = GetComponent<WaveSpawner>();
         this.MonsterLaneManager = GetComponent<MonsterLaneManager>();
+        this.UnitPartyManager = GetComponent<UnitPartyManager>();
         monsters = new HashSet<MonsterController>();
         CurrentStage = Variables.stageNumber;
         CurrentSubStage = Variables.stageSubNumber;
@@ -107,7 +109,12 @@ public class StageManager : MonoBehaviour
         var corpsData = DataTableManager.CorpsTable.GetData(waveData.WaveCorpsIDs[CurrentWave]);
         ++CurrentWave;
 
-        waveSpawner.Spawn(transform.position, corpsData);
+        Transform unit = UnitPartyManager.GetFirstLineUnit();
+        if (unit != null)
+            waveSpawner.Spawn(unit.position + Vector3.forward * 5f, corpsData);
+        else
+            waveSpawner.Spawn(transform.position, corpsData);
+
         stageText.text = string.Format(stageTextFormat, CurrentStage, CurrentSubStage, CurrentWave);
     }
 }

@@ -29,7 +29,7 @@ Transform:
   m_GameObject: {fileID: 4954487364961763059}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -2.335809, y: 32.198677, z: 0.7967344}
+  m_LocalPosition: {x: 137.66418, y: 172.19867, z: 0.7967344}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -120,15 +120,28 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2acae83752c74ec40a8d4711671c70d2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  enermyPrefab: {fileID: 7075267387835477940, guid: 743ad8e72c29056478e70b094f84a58a, type: 3}
+  currentHp:
+    currentValue: 
+    parts: 
+    sign: 0
+  unitMaxHp:
+    currentValue: 
+    parts: 
+    sign: 0
+  unitDamage:
+    currentValue: 
+    parts: 
+    sign: 0
+  unitArmor: 0
+  enermyPrefab: {fileID: 9151133835082727212, guid: f7faec46db737b5428359aef738f43e4, type: 3}
   skillCoolTime: 10
-  AttackCoolTime: 2
   currentUnitType: 0
   skillUsingTime: 2
   attackUsingTime: 0.4
   speed: 20
   aliveCount: 0
   unitPartyManager: {fileID: 0}
+  unitWeapon: {fileID: 11400000, guid: 31a84c64ad7038c479f3fed75d310593, type: 2}
   IsSkillUsing: 0
   IsNormalAttack: 0
   IsUnitHit: 0

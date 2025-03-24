@@ -16,6 +16,4 @@ public class IsUnitCanAttackCondition : ConditionNode<Unit>
 
         return NodeStatus.Failure;
     }
-
-
 }

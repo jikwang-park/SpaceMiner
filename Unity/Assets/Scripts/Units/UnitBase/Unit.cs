@@ -8,9 +8,7 @@ using UnityEngine;
 
 public class Unit : MonoBehaviour
 {
-
-
-
+    public StageManager stageManger;
 
     public BigNumber currentHp;
     public BigNumber unitMaxHp;
@@ -38,15 +36,15 @@ public class Unit : MonoBehaviour
 
     public AttackDefinition unitWeapon;
 
+    private Transform targetPos;
+
     private void SetStatus(BigNumber unitMaxHp, BigNumber unitdamage, int unitArmor)
     {
         unitdamage = unitWeapon.damage;
 
-
         this.unitMaxHp = unitMaxHp;
         this.unitDamage = unitdamage;
         this.unitArmor = unitArmor;
-
 
     }
 
@@ -57,28 +55,32 @@ public class Unit : MonoBehaviour
         {
             case UnitTypes.Tanker:
                 SetTankerStats();
-                currentHp = 50;
                 break;
             case UnitTypes.Dealer:
-                behaviorTree = UnitBTManager.GetBehaviorTree(this, UnitTypes.Dealer);
-                SetStatus(70, 25, 3);
-                currentHp = 40;
+                SetDealerStats();
                 break;
         }
     }
-
+    private void SetDealerStats()
+    {
+        behaviorTree = UnitBTManager.GetBehaviorTree(this, UnitTypes.Dealer);
+        SetStatus(70, 25, 3);
+        currentHp = 40;
+    }
 
 
     private void SetTankerStats()
     {
         behaviorTree = UnitBTManager.GetBehaviorTree(this, UnitTypes.Tanker);
         SetStatus(100, 15, 10);
+        currentHp = 50;
     }
     private void Awake()
     {
-        var testPos = new Vector3(40, 0, 0);
-        Instantiate(enermyPrefab);
-        enermyPrefab.transform.position = testPos;
+        targetPos = stageManger.MonsterLaneManager.GetFirstMonster(0);
+        //var testPos = new Vector3(40, 0, 0);
+        //Instantiate(enermyPrefab);
+        //enermyPrefab.transform.position = testPos;
 
         Init();
     }
@@ -90,7 +92,6 @@ public class Unit : MonoBehaviour
             if (currentHp <= 0)
             {
                 return true;
-
             }
             return false;
         }
@@ -100,7 +101,7 @@ public class Unit : MonoBehaviour
     {
         get
         { 
-            if (Vector3.Distance(transform.position,enermyPrefab.transform.position) <= unitWeapon.range)
+            if (Vector3.Distance(transform.position, targetPos.position) <= unitWeapon.range)
             {
                 return true;
             }
@@ -154,8 +155,7 @@ public class Unit : MonoBehaviour
 
     public void Move()
     {
-        var dir = (enermyPrefab.transform.position - transform.position).normalized;
-        transform.position += dir * speed * Time.deltaTime;
+        transform.position += Vector3.forward * Time.deltaTime * speed;
     }
 
     public void AttackCorutine()
@@ -167,7 +167,7 @@ public class Unit : MonoBehaviour
     {
         if (enermyPrefab != null)
         {
-            unitWeapon.Execute(gameObject, enermyPrefab.gameObject);
+            unitWeapon.Execute(gameObject, targetPos.gameObject);
         }
         yield return new WaitForSeconds(attackUsingTime);
         IsNormalAttacking = false;

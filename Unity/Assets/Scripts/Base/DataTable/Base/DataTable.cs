@@ -13,7 +13,7 @@ public abstract class DataTable
 {
     public static readonly string FormatPath = "DataTables/{0}";
 
-    public Dictionary<string, DataTableData> TableData { get; private set; } = new Dictionary<string, DataTableData>();
+    public Dictionary<string, DataTableData> TableData { get; protected set; } = new Dictionary<string, DataTableData>();
 
     protected static List<T> LoadCsv<T>(string csv)
     {

@@ -60,12 +60,15 @@ public class StageTable : DataTable
     public override void Set(List<string[]> data)
     {
         var dictionary = new Dictionary<string, Data>();
+        var tableData = new Dictionary<string, DataTableData>();
         foreach (var item in data)
         {
             var datum = CreateData<Data>(item);
             dictionary.Add(datum.ID, datum);
+            tableData.Add(datum.ID, datum);
         }
         dict = dictionary;
+        TableData = tableData;
     }
 
     public override string GetCsvData()

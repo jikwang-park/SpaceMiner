@@ -21,21 +21,22 @@ public class StageManager : MonoBehaviour
     public MonsterLaneManager MonsterLaneManager { get; private set; }
     public UnitPartyManager UnitPartyManager { get; private set; }
 
-
     [SerializeField]
     private TextMeshProUGUI stageText;
-
+    [SerializeField]
+    private TextMeshProUGUI timerText;
 
     [SerializeField]
     private AssetReferenceGameObject stage;
 
     private WaveSpawner waveSpawner;
 
-
     private HashSet<MonsterController> monsters;
 
     private StageTable.Data stageData;
     private WaveTable.Data waveData;
+
+    private float stageStartTime;
 
     private void Awake()
     {
@@ -46,12 +47,18 @@ public class StageManager : MonoBehaviour
         CurrentStage = Variables.stageNumber;
         CurrentSubStage = Variables.stageSubNumber;
         CurrentWave = 0;
+        stageStartTime = Time.time;
 
         stageData = DataTableManager.StageTable.GetData(string.Format(stageIDFormat, CurrentStage, CurrentSubStage));
         waveData = DataTableManager.WaveTable.GetData(stageData.CorpsID);
         stageText.text = string.Format(stageTextFormat, CurrentStage, CurrentSubStage, CurrentWave);
 
         Invoke("SpawnNextWave", 2f);
+    }
+
+    private void Start()
+    {
+        Addressables.InstantiateAsync(stage, Vector3.back * 10f, Quaternion.identity);
     }
 
     private void Update()
@@ -64,11 +71,10 @@ public class StageManager : MonoBehaviour
 
         if (Input.GetKeyDown(KeyCode.Alpha2))
         {
-            var stageData = DataTableManager.StageTable.GetData(string.Format(stageIDFormat, CurrentStage, CurrentSubStage));
-
             var handle = Addressables.InstantiateAsync(stage);
             handle.WaitForCompletion();
         }
+
         if (Input.GetKeyDown(KeyCode.Alpha3))
         {
             SpawnNextWave();
@@ -81,6 +87,15 @@ public class StageManager : MonoBehaviour
                 Debug.Log(this.MonsterLaneManager.GetFirstMonster(i));
             }
         }
+
+        float remainTime = 30f + stageStartTime - Time.time;
+
+        if (remainTime <= 0f)
+        {
+            remainTime = 0f;
+            ResetStage(false);
+        }
+        timerText.text = remainTime.ToString("F2");
     }
 
     public void AddMonster(MonsterController monsterController)
@@ -88,20 +103,7 @@ public class StageManager : MonoBehaviour
         monsters.Add(monsterController);
 
         var destroyEvent = monsterController.GetComponent<DestructedDestroyEvent>();
-        destroyEvent.OnDestroyed += () =>
-        {
-            monsters.Remove(monsterController);
-            if (monsters.Count == 0)
-            {
-                if (CurrentWave >= waveData.WaveCorpsIDs.Length)
-                {
-                    Addressables.LoadSceneAsync("StageDevelopScene");
-                    return;
-                }
-
-                Invoke("SpawnNextWave", 2f);
-            }
-        };
+        destroyEvent.OnDestroyed += OnMonsterDestroy;
     }
 
     public void SpawnNextWave()
@@ -116,5 +118,26 @@ public class StageManager : MonoBehaviour
             waveSpawner.Spawn(transform.position, corpsData);
 
         stageText.text = string.Format(stageTextFormat, CurrentStage, CurrentSubStage, CurrentWave);
+    }
+
+    private void OnMonsterDestroy(DestructedDestroyEvent sender)
+    {
+        var monsterController = sender.GetComponent<MonsterController>();
+        monsters.Remove(monsterController);
+        if (monsters.Count == 0)
+        {
+            if (CurrentWave >= waveData.WaveCorpsIDs.Length)
+            {
+                ResetStage(true);
+                return;
+            }
+
+            Invoke("SpawnNextWave", 2f);
+        }
+    }
+
+    private void ResetStage(bool cleared)
+    {
+        Addressables.LoadSceneAsync("StageDevelopScene");
     }
 }

@@ -13,11 +13,15 @@ public class Unit : MonoBehaviour
     public CharacterStats unitStats;
 
 
-    public int unitArmor;
+
+    private BigNumber unitMaxHp;
+    private BigNumber unitDamage;
+    private int unitArmor;
+    private BigNumber currentHp;
 
 
 
-    public GameObject enermyPrefab;
+
     //탱커 스킬 쿨타임
     public float skillCoolTime = 10f;
 
@@ -37,16 +41,20 @@ public class Unit : MonoBehaviour
 
     private Transform targetPos;
 
-    private BigNumber currentHp;
+    private bool isTargetInArea = false;
+
+    private int lane = 0;
 
     private void SetStatus(BigNumber unitMaxHp, BigNumber unitdamage, int unitArmor)
     {
         unitdamage = unitWeapon.damage;
 
-        this.unitStats.maxHp = unitMaxHp;
-        this.unitStats.damage = unitdamage;
-        this.unitStats.armor = unitArmor;
-        this.unitStats.Hp = currentHp;
+        this.currentHp = unitMaxHp;
+
+        this.unitMaxHp = unitMaxHp;
+        this.unitDamage = unitdamage;
+        this.unitArmor = unitArmor;
+
     }
 
 
@@ -78,13 +86,14 @@ public class Unit : MonoBehaviour
     }
     private void Awake()
     {
-
+        stageManger = GameObject.FindGameObjectWithTag("GameController").GetComponent<StageManager>();
         Init();
     }
 
+
+
     private void Start()
     {
-        targetPos = stageManger.MonsterLaneManager.GetFirstMonster(0);
     }
     // 유닛 컨디션 bool값
     public bool IsDead // 플레이어가 죽었는지
@@ -103,10 +112,9 @@ public class Unit : MonoBehaviour
     {
         get
         {
-            if (targetPos.gameObject==null)
-            {
+            if (targetPos == null)
                 return false;
-            }
+
             if (Vector3.Distance(transform.position, targetPos.position) <= unitWeapon.range)
             {
                 return true;
@@ -125,7 +133,7 @@ public class Unit : MonoBehaviour
     {
         get
         {
-            if(Time.time > lastAttackTime+ skillCoolTime)
+            if (Time.time > lastAttackTime + skillCoolTime)
                 return true;
 
             return false;
@@ -135,7 +143,7 @@ public class Unit : MonoBehaviour
     {
         get
         {
-            if(Time.time > lastAttackTime + unitWeapon.coolDown)
+            if (Time.time > lastAttackTime + unitWeapon.coolDown)
                 return true;
 
             return false;
@@ -143,18 +151,26 @@ public class Unit : MonoBehaviour
     }
     public float lastAttackTime;
     public float lastSkillAttackTime;
-    
+
+    private bool isMonsterSpawn;
+
 
     private void Update()
     {
         behaviorTree.Update();
 
         IsUnitHit = false;
-        if(Input.GetKeyDown(KeyCode.M))
+        if (Input.GetKeyDown(KeyCode.M))
         {
             IsUnitHit = true;
         }
+       
     }
+
+    //private Transform GetTargetPosition()
+    //{
+        
+    //}
 
     public void Move()
     {
@@ -168,7 +184,7 @@ public class Unit : MonoBehaviour
 
     public IEnumerator NormalAttackCor()
     {
-        if (enermyPrefab != null)
+        if (targetPos.gameObject != null)
         {
             unitWeapon.Execute(gameObject, targetPos.gameObject);
         }

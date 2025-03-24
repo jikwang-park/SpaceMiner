@@ -7,7 +7,7 @@ public class UnitPartyManager : MonoBehaviour
 {
     public List<Unit> unitprefabs = new List<Unit>();
 
-    private Unit[] units = new Unit[4];
+    public List<Unit> generateInstance = new List<Unit>();
 
     public int AliveCount
     {
@@ -49,16 +49,14 @@ public class UnitPartyManager : MonoBehaviour
 
         for(int i =0; i< unitprefabs.Count; ++i)
         {
-            units[i] = Instantiate(unitprefabs[i]); // 나중에 비동기로드로 바꿈
-            units[i].transform.position += new Vector3(20, 20, 0);
+            var go = Instantiate(unitprefabs[i]); // 나중에 비동기로드로 바꿈
+            generateInstance.Add(go);
+            go.transform.position += new Vector3(20, 20, 0);
         }
 
     }
 
-    private void Update()
-    {
-        
-    }
+ 
 
     public int GetAliveUnitCount()
     {
@@ -75,20 +73,19 @@ public class UnitPartyManager : MonoBehaviour
 
     public Transform GetFirstLineUnit()
     {
-        if(units.Length == 0)
+        if(generateInstance.Count == 0)
         {
             Debug.Log("Unit is Empty");
             return null;
         }
 
-        for(int i =0; i< units.Length; i++)
+        for(int i =0; i< generateInstance.Count; i++)
         {
-            if (units[i].IsDead)
+            if (generateInstance[i].IsDead)
             {
                 continue;
             }
-
-            return units[i].transform;
+            return generateInstance[i].transform;
         }
         
 

@@ -55,22 +55,25 @@ public class Unit : MonoBehaviour
         {
             case UnitTypes.Tanker:
                 SetTankerStats();
-                currentHp = 50;
                 break;
             case UnitTypes.Dealer:
-                behaviorTree = UnitBTManager.GetBehaviorTree(this, UnitTypes.Dealer);
-                SetStatus(70, 25, 3);
-                currentHp = 40;
+                SetDealerStats();
                 break;
         }
     }
-
+    private void SetDealerStats()
+    {
+        behaviorTree = UnitBTManager.GetBehaviorTree(this, UnitTypes.Dealer);
+        SetStatus(70, 25, 3);
+        currentHp = 40;
+    }
 
 
     private void SetTankerStats()
     {
         behaviorTree = UnitBTManager.GetBehaviorTree(this, UnitTypes.Tanker);
         SetStatus(100, 15, 10);
+        currentHp = 50;
     }
     private void Awake()
     {

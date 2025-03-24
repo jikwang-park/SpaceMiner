@@ -15,18 +15,19 @@ public class ObjectPoolManager : MonoBehaviour
     [SerializeField]
     private GameObject[] prefabs;
 
-    public Dictionary<string, IObjectPool<GameObject>> gameObjectPool { get; private set; }
+    public Dictionary<string, IObjectPool<GameObject>> gameObjectPool { get; private set; } = new Dictionary<string, IObjectPool<GameObject>>();
 
     private void Awake()
     {
         for (int i = 0; i < addressableAssets.Length; ++i)
         {
-            if (!gameObjectPool.ContainsKey(addressableAssets[i].SubObjectName))
+            if (!gameObjectPool.ContainsKey(addressableAssets[i].editorAsset.name))
             {
                 ObjectPool<GameObject> pool = null;
                 AssetReferenceGameObject reference = addressableAssets[i];
                 pool = new ObjectPool<GameObject>
                     (() => CreatePooledItem(reference, pool), OnTakeFromPool, OnReturnedToPool, OnDestroyOnObject, true);
+                gameObjectPool.Add(addressableAssets[i].editorAsset.name, pool);
             }
         }
         for (int i = 0; i < prefabs.Length; ++i)
@@ -37,7 +38,7 @@ public class ObjectPoolManager : MonoBehaviour
                 GameObject prefab = prefabs[i];
                 pool = new ObjectPool<GameObject>
                     (() => CreatePooledItem(prefab, pool), OnTakeFromPool, OnReturnedToPool, OnDestroyOnObject, true);
-
+                gameObjectPool.Add(prefab.name, pool);
             }
         }
     }

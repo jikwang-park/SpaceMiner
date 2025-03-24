@@ -9,10 +9,8 @@ public class StageManager : MonoBehaviour
     private const string stageIDFormat = "{0:D2}Planet-{1}";
     private const string stageTextFormat = "{0}-{1}\n{2} Wave";
 
-
     [field: SerializeField]
     public int CurrentStage { get; private set; }
-
     [field: SerializeField]
     public int CurrentSubStage { get; private set; }
     [field: SerializeField]
@@ -44,16 +42,11 @@ public class StageManager : MonoBehaviour
         this.MonsterLaneManager = GetComponent<MonsterLaneManager>();
         this.UnitPartyManager = GetComponent<UnitPartyManager>();
         monsters = new HashSet<MonsterController>();
-        CurrentStage = Variables.stageNumber;
-        CurrentSubStage = Variables.stageSubNumber;
-        CurrentWave = 0;
-        stageStartTime = Time.time;
 
-        stageData = DataTableManager.StageTable.GetData(string.Format(stageIDFormat, CurrentStage, CurrentSubStage));
-        waveData = DataTableManager.WaveTable.GetData(stageData.CorpsID);
-        stageText.text = string.Format(stageTextFormat, CurrentStage, CurrentSubStage, CurrentWave);
 
-        Invoke("SpawnNextWave", 2f);
+        SetStageInfo();
+
+        SpawnNextWave();
     }
 
     private void Start()
@@ -106,10 +99,17 @@ public class StageManager : MonoBehaviour
         destroyEvent.OnDestroyed += OnMonsterDestroy;
     }
 
-    public void SpawnNextWave()
+    public void SpawnNextWave(float delay = 2f)
     {
-        var corpsData = DataTableManager.CorpsTable.GetData(waveData.WaveCorpsIDs[CurrentWave]);
-        ++CurrentWave;
+        stageText.text = string.Format(stageTextFormat, CurrentStage, CurrentSubStage, CurrentWave);
+        StartCoroutine(coSpawnNextWave(delay));
+    }
+
+    private IEnumerator coSpawnNextWave(float delay)
+    {
+        yield return new WaitForSeconds(delay);
+
+        var corpsData = DataTableManager.CorpsTable.GetData(waveData.WaveCorpsIDs[CurrentWave - 1]);
 
         Transform unit = UnitPartyManager.GetFirstLineUnit();
         if (unit != null)
@@ -118,6 +118,7 @@ public class StageManager : MonoBehaviour
             waveSpawner.Spawn(transform.position, corpsData);
 
         stageText.text = string.Format(stageTextFormat, CurrentStage, CurrentSubStage, CurrentWave);
+        ++CurrentWave;
     }
 
     private void OnMonsterDestroy(DestructedDestroyEvent sender)
@@ -132,12 +133,41 @@ public class StageManager : MonoBehaviour
                 return;
             }
 
-            Invoke("SpawnNextWave", 2f);
+            SpawnNextWave();
         }
+    }
+
+    private void SetStageInfo()
+    {
+        CurrentStage = Variables.stageNumber;
+        CurrentSubStage = Variables.stageSubNumber;
+        CurrentWave = 1;
+        stageStartTime = Time.time;
+
+        stageData = DataTableManager.StageTable.GetData(string.Format(stageIDFormat, CurrentStage, CurrentSubStage));
+        waveData = DataTableManager.WaveTable.GetData(stageData.CorpsID);
+        stageText.text = string.Format(stageTextFormat, CurrentStage, CurrentSubStage, CurrentWave);
     }
 
     private void ResetStage(bool cleared)
     {
-        Addressables.LoadSceneAsync("StageDevelopScene");
+        if (!cleared)
+        {
+            Addressables.LoadSceneAsync("StageDevelopScene");
+            return;
+        }
+
+        if (Variables.stageMode == StageMode.Ascend)
+        {
+            ++Variables.stageSubNumber;
+        }
+
+        if (!DataTableManager.StageTable.ContainsKey(string.Format(stageIDFormat, CurrentStage, CurrentSubStage)))
+        {
+            Variables.stageSubNumber = 1;
+        }
+
+        SetStageInfo();
+        SpawnNextWave();
     }
 }

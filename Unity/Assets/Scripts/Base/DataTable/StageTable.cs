@@ -40,6 +40,11 @@ public class StageTable : DataTable
         Addressables.Release(loadHandle);
     }
 
+    public bool ContainsKey(string key)
+    {
+        return dict.ContainsKey(key);
+    }
+
     public Data GetData(string key)
     {
         if (!dict.ContainsKey(key))

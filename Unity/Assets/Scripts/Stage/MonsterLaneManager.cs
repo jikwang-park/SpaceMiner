@@ -5,11 +5,15 @@ using UnityEngine;
 
 public class MonsterLaneManager : MonoBehaviour
 {
-    private List<MonsterController>[] lanes = new List<MonsterController>[3];
-    public event Action AllDead;
+    [SerializeField]
+    private int laneCount = 3;
+
+    private List<MonsterController>[] lanes;
+    public int LaneCount => laneCount;
 
     private void Awake()
     {
+        lanes = new List<MonsterController>[laneCount];
         for (int i = 0; i < lanes.Length; ++i)
         {
             lanes[i] = new List<MonsterController>();

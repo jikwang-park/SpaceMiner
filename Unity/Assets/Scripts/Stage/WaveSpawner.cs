@@ -9,18 +9,18 @@ public class WaveSpawner : MonoBehaviour
     [field: SerializeField]
     public Vector3[] SpawnPoints { get; private set; } = new Vector3[]
     {
-        new Vector3(3f, 0f, 2f),
-        new Vector3(0f, 0f, 2f),
         new Vector3(-3f, 0f, 2f),
-        new Vector3(3f, 0f, 6f),
-        new Vector3(0f, 0f, 6f),
+        new Vector3(0f, 0f, 2f),
+        new Vector3(3f, 0f, 2f),
         new Vector3(-3f, 0f, 6f),
-        new Vector3(3f, 0f, 10f),
-        new Vector3(0f, 0f, 10f),
+        new Vector3(0f, 0f, 6f),
+        new Vector3(3f, 0f, 6f),
         new Vector3(-3f, 0f, 10f),
-        new Vector3(3f, 0f, 14f),
-        new Vector3(0f, 0f, 14f),
+        new Vector3(0f, 0f, 10f),
+        new Vector3(3f, 0f, 10f),
         new Vector3(-3f, 0f, 14f),
+        new Vector3(0f, 0f, 14f),
+        new Vector3(3f, 0f, 14f),
     };
 
     public Vector3[] SpawnOffsets { get; private set; } = new Vector3[]

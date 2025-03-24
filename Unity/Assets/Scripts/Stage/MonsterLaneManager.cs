@@ -26,20 +26,13 @@ public class MonsterLaneManager : MonoBehaviour
         if (destructedEvent != null)
         {
             lanes[lane].Add(monster);
-            destructedEvent.OnDestroyed += () => RemoveMonster(lane, monster);
+            destructedEvent.OnDestroyed += (_) => RemoveMonster(lane, monster);
         }
     }
 
     public void RemoveMonster(int lane, MonsterController monster)
     {
         lanes[lane].Remove(monster);
-
-        int count = 0;
-        for (int i = 0; i < lanes.Length; ++i)
-        {
-            count += lanes[i].Count;
-        }
-     
     }
 
     public int GetMonsterCount(int lane)

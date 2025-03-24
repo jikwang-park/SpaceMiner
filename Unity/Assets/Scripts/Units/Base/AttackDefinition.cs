@@ -3,8 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AddressableAssets;
 
-[CreateAssetMenu(fileName = "Attack.asset", menuName = "Attack/BaseAttack")]
-public class AttackDefinition : ScriptableObject
+public abstract class AttackDefinition : ScriptableObject
 {
     public AssetReferenceGameObject weaponPrefab;
     public float coolDown;

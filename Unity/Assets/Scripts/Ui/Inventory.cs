@@ -13,15 +13,21 @@ public class Inventory : MonoBehaviour
     private Transform contentParent;
     [SerializeField]
     private List<Sprite> gradeSprites;
-
+    private UnitTypes type;
     private InventoryElement selectedElement;
-    public void Initialize(List<SoldierTable.Data> dataList)
+    private InventoryElement currentElement;
+    private void Start()
+    {
+        UpdateGridCellSize();
+    }
+    public void Initialize(List<SoldierTable.Data> dataList, UnitTypes type)
     {
         foreach (Transform child in contentParent)
         {
             Destroy(child.gameObject);
         }
 
+        this.type = type;
         inventoryElements.Clear();
         Dictionary<Grade, int> gradeCounters = new Dictionary<Grade, int>();
         int totalCount = dataList.Count;
@@ -72,8 +78,9 @@ public class Inventory : MonoBehaviour
 
                 if (instantiatedCount == totalCount && inventoryElements.Count > 0)
                 {
-                    OnElementSelected(inventoryElements[0]);
                     inventoryElements[0].UnlockElement();
+                    OnElementSelected(inventoryElements[0]);
+                    Equip();
                 }
             };
         }
@@ -86,5 +93,32 @@ public class Inventory : MonoBehaviour
         }
         selectedElement = element;
         selectedElement.Select();
+    }
+    public void UpdateGridCellSize()
+    {
+        GridLayoutGroup gridLayout = contentParent.GetComponent<GridLayoutGroup>();
+        if (gridLayout == null)
+        {
+            return;
+        }
+        RectTransform rectTransform = contentParent.GetComponent<RectTransform>();
+        float totalWidth = rectTransform.rect.width;
+        int columns = gridLayout.constraintCount;
+        int leftPadding = gridLayout.padding.left;
+        int rightPadding = gridLayout.padding.right;
+        float spacingX = gridLayout.spacing.x;
+
+        float availableWidth = totalWidth - leftPadding - rightPadding - spacingX * (columns - 1);
+        float cellSize = availableWidth / columns;
+        gridLayout.cellSize = new Vector2(cellSize, cellSize);
+    }
+    private void Equip()
+    {
+        UnEquip();
+        currentElement = selectedElement;
+    }
+    private void UnEquip()
+    {
+        currentElement = null;
     }
 }

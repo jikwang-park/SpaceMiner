@@ -18,6 +18,7 @@ public class InventoryPanelUI : MonoBehaviour
     private Button displayDealerInvenButton;
     [SerializeField]
     private Button displayHealerInvenButton;
+    private UnitTypes currentInventoryType;
     private void Start()
     {
         InitializeInventories();
@@ -29,11 +30,17 @@ public class InventoryPanelUI : MonoBehaviour
 
     public void DisplayInventory(UnitTypes type)
     {
+        if(currentInventoryType == type)
+        {
+            return;
+        }
+
+        currentInventoryType = type;
         tankerInventory.gameObject.SetActive(false);
         dealerInventory.gameObject.SetActive(false);
         healerInventory.gameObject.SetActive(false);
 
-        switch (type)
+        switch (currentInventoryType)
         {
             case UnitTypes.Tanker:
                 tankerInventory.gameObject.SetActive(true);
@@ -53,15 +60,15 @@ public class InventoryPanelUI : MonoBehaviour
 
         if (typeDict.ContainsKey(UnitTypes.Tanker))
         {
-            tankerInventory.Initialize(typeDict[UnitTypes.Tanker]);
+            tankerInventory.Initialize(typeDict[UnitTypes.Tanker], UnitTypes.Tanker);
         }
         if (typeDict.ContainsKey(UnitTypes.Dealer))
         {
-            dealerInventory.Initialize(typeDict[UnitTypes.Dealer]);
+            dealerInventory.Initialize(typeDict[UnitTypes.Dealer], UnitTypes.Dealer);
         }
         if (typeDict.ContainsKey(UnitTypes.Healer))
         {
-            healerInventory.Initialize(typeDict[UnitTypes.Healer]);
+            healerInventory.Initialize(typeDict[UnitTypes.Healer], UnitTypes.Healer);
         }
     }
 }

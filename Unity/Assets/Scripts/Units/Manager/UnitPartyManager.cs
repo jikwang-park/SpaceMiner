@@ -51,9 +51,8 @@ public class UnitPartyManager : MonoBehaviour
         {
             var go = Instantiate(unitprefabs[i]); // 나중에 비동기로드로 바꿈
             generateInstance.Add(go);
-            go.transform.position += new Vector3(20, 20, 0);
+            go.transform.position += new Vector3(0, 0, -5);
         }
-
     }
 
  

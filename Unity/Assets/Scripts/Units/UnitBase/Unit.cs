@@ -10,12 +10,11 @@ public class Unit : MonoBehaviour
 {
     public StageManager stageManger;
 
-    public BigNumber currentHp;
-    public BigNumber unitMaxHp;
-    public BigNumber unitDamage;
+    public CharacterStats unitStats;
+
+
     public int unitArmor;
 
-    private int maxHp = 20;
 
 
     public GameObject enermyPrefab;
@@ -38,14 +37,16 @@ public class Unit : MonoBehaviour
 
     private Transform targetPos;
 
+    private BigNumber currentHp;
+
     private void SetStatus(BigNumber unitMaxHp, BigNumber unitdamage, int unitArmor)
     {
         unitdamage = unitWeapon.damage;
 
-        this.unitMaxHp = unitMaxHp;
-        this.unitDamage = unitdamage;
-        this.unitArmor = unitArmor;
-
+        this.unitStats.maxHp = unitMaxHp;
+        this.unitStats.damage = unitdamage;
+        this.unitStats.armor = unitArmor;
+        this.unitStats.Hp = currentHp;
     }
 
 
@@ -77,12 +78,13 @@ public class Unit : MonoBehaviour
     }
     private void Awake()
     {
-        targetPos = stageManger.MonsterLaneManager.GetFirstMonster(0);
-        //var testPos = new Vector3(40, 0, 0);
-        //Instantiate(enermyPrefab);
-        //enermyPrefab.transform.position = testPos;
 
         Init();
+    }
+
+    private void Start()
+    {
+        targetPos = stageManger.MonsterLaneManager.GetFirstMonster(0);
     }
     // 유닛 컨디션 bool값
     public bool IsDead // 플레이어가 죽었는지
@@ -100,7 +102,11 @@ public class Unit : MonoBehaviour
     public bool IsUnitCanAttack // 사정거리 내에 있는지
     {
         get
-        { 
+        {
+            if (targetPos.gameObject==null)
+            {
+                return false;
+            }
             if (Vector3.Distance(transform.position, targetPos.position) <= unitWeapon.range)
             {
                 return true;
@@ -144,13 +150,10 @@ public class Unit : MonoBehaviour
         behaviorTree.Update();
 
         IsUnitHit = false;
-
         if(Input.GetKeyDown(KeyCode.M))
         {
             IsUnitHit = true;
         }
-
-
     }
 
     public void Move()

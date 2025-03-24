@@ -10,10 +10,10 @@ public class RushAction : ActionNode<MonsterController>
 
     protected override NodeStatus OnUpdate()
     {
-        // TODO: 수정필요
+        // TODO: 이후 이동방식 수정 혹은 검토 필요 - 250323 HKY
         if (context.TargetDistance > context.weapon.range)
         {
-            context.transform.Translate(Vector3.forward * Time.deltaTime);
+            context.transform.Translate(Vector3.forward * context.Speed * Time.deltaTime);
         }
 
         return NodeStatus.Success;

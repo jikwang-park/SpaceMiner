@@ -2,15 +2,14 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-[CreateAssetMenu(fileName = "MonsterWeapon.asset", menuName = "Attack/MonsterWeapon")]
-public class MonsterWeapon : AttackDefinition
+[CreateAssetMenu(fileName = "UnitWeapon.asset", menuName = "Attack/UnitWeapon")]
+public class UnitWeapon : AttackDefinition
 {
     public override void Execute(GameObject attacker, GameObject defender)
     {
         if (defender == null)
-        {
             return;
-        }
+
         var distance = Vector3.Dot((attacker.transform.position - defender.transform.position), Vector3.forward);
 
         if (distance > range)

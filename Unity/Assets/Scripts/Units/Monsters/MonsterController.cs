@@ -28,7 +28,7 @@ public class MonsterController : MonoBehaviour
     [SerializeField]
     private LayerMask mask;
 
-    public MonsterLaneManager MonsterLaneManager { get; private set; }
+    public StageManager stageManager { get; private set; }
 
     [field: SerializeField]
     public float Speed { get; private set; } = 4f;
@@ -41,7 +41,7 @@ public class MonsterController : MonoBehaviour
 
     public float LastAttackTime { get; private set; }
 
-    private bool drawRegion;
+    private bool isDrawRegion;
 
     public bool CanAttack
     {
@@ -55,12 +55,7 @@ public class MonsterController : MonoBehaviour
     {
         get
         {
-            for(int i = 0; i<colliders.Length;++i)
-            {
-                colliders[i] = null;
-            }
-
-            int frontMonsters = Physics.OverlapBoxNonAlloc(transform.position + transform.forward * 1.5f, new Vector3(0.5f, 0.5f, 1.5f), colliders, Quaternion.identity, mask.value);
+            int frontMonsters = Physics.OverlapBoxNonAlloc(transform.position + transform.forward * 0.5f, new Vector3(0.5f, 0.5f, 0.5f), colliders, Quaternion.identity, mask.value);
             return frontMonsters == 1;
         }
     }
@@ -74,30 +69,30 @@ public class MonsterController : MonoBehaviour
 
     private void Start()
     {
-        drawRegion = true;
-        MonsterLaneManager = GameObject.FindGameObjectWithTag("GameController").GetComponent<MonsterLaneManager>();
+        isDrawRegion = true;
+
+        stageManager = GameObject.FindGameObjectWithTag("GameController").GetComponent<StageManager>();
     }
 
     private void Update()
     {
         if (Target == null)
         {
-            var units = GameObject.FindGameObjectsWithTag("Player");
-            float distance = Mathf.Infinity;
-            foreach (var unit in units)
-            {
-                float unitDistance = Mathf.Abs(Vector3.Dot((unit.transform.position - transform.position), Vector3.forward));
-                if (unitDistance < distance)
-                {
-                    Target = unit.transform;
-                    distance = unitDistance;
-                    TargetDistance = distance;
-                }
-            }
+            Target = stageManager.UnitPartyManager.GetFirstLineUnit();
         }
-        else
+        if (Target != null)
         {
-            TargetDistance = Mathf.Abs(Vector3.Dot((Target.position - transform.position), Vector3.forward));
+            TargetDistance = Vector3.Dot((Target.position - transform.position), Vector3.back);
+        }
+
+        if (Input.GetKeyDown(KeyCode.Alpha8))
+        {
+            var destructables = GetComponents<IDestructable>();
+
+            foreach (var destructable in destructables)
+            {
+                destructable.OnDestruction(null);
+            }
         }
 
         behaviorTree.Update();
@@ -128,22 +123,24 @@ public class MonsterController : MonoBehaviour
     {
         status = Status.Attacking;
         LastAttackTime = Time.time;
-        animations.PlayQueued("Attack_01");
         StartCoroutine(AttackTimer());
     }
 
     private IEnumerator AttackTimer()
     {
-        yield return new WaitForSeconds(0.5f);
+        yield return new WaitForSeconds(0.25f);
+        if (Target != null)
+            weapon.Execute(gameObject, Target.gameObject);
+        yield return new WaitForSeconds(0.25f);
         status = Status.Wait;
     }
 
     void OnDrawGizmos()
     {
         Gizmos.color = Color.red;
-        //Check that it is being run in Play Mode, so it doesn't try to draw this in Editor mode
-        if (drawRegion)
-            //Draw a cube where the OverlapBox is (positioned where your GameObject is as well as a size)
-            Gizmos.DrawWireCube(transform.position + transform.forward * 1.5f, new Vector3(1f, 1f, 3f));
+        if (isDrawRegion)
+        {
+            Gizmos.DrawWireCube(transform.position + transform.forward * 0.5f, new Vector3(1f, 1f, 1f));
+        }
     }
 }

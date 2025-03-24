@@ -40,4 +40,29 @@ public class MonsterLaneManager : MonoBehaviour
             AllDead?.Invoke();
         }
     }
+
+    public int GetMonsterCount(int lane)
+    {
+        if (lane < 0 || lane >= lanes.Length)
+        {
+            return 0;
+        }
+
+        return lanes[lane].Count;
+    }
+
+    public Transform GetFirstMonster(int lane)
+    {
+        if (lane < 0 || lane >= lanes.Length)
+        {
+            return null;
+        }
+
+        if (lanes[lane].Count == 0)
+        {
+            return null;
+        }
+
+        return lanes[lane][0].transform;
+    }
 }

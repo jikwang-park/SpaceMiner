@@ -9,7 +9,7 @@ public class AttackDefinition : ScriptableObject
     public AssetReferenceGameObject weaponPrefab;
     public float coolDown;
     public float range;
-    public BigNumber damage;
+    public BigNumber damage = new BigNumber("0");
     public float criticalChance;
     public float CriticalMultiplier;
 
@@ -22,8 +22,8 @@ public class AttackDefinition : ScriptableObject
         BigNumber damage = attackerStats.damage;
 
         damage += this.damage;
-        attack.critical = criticalChance >= Random.value;
-        if (attack.critical)
+        attack.isCritical = criticalChance >= Random.value;
+        if (attack.isCritical)
         {
             damage *= CriticalMultiplier;
         }

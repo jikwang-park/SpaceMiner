@@ -2,15 +2,17 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class IsUnitUsingSkillCondition : ConditionNode<Unit>
+public class IsUnitOnRangeCondition : ConditionNode<Unit>
 {
-    public IsUnitUsingSkillCondition(Unit context) : base(context)
+    public IsUnitOnRangeCondition(Unit context) : base(context)
     {
     }
 
     protected override NodeStatus OnUpdate()
     {
-        if(context.IsSkillUsing|| context.IsNormalAttacking)
+        Debug.Log("onrange");
+
+        if (!context.IsUnitCanAttack)
         {
             return NodeStatus.Failure;
         }

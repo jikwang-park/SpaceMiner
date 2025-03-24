@@ -4,13 +4,11 @@ using System.Collections.Generic;
 using UnityEngine;
 
 [Serializable]
-public class BigNumber
+public class BigNumber : ISerializationCallbackReceiver
 {
     [SerializeField]
     private string currentValue;
-    [SerializeField]
     private List<int> parts;
-    [SerializeField]
     private int sign = 1;
     private string[] units = {"", "A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", 
                                 "N", "O", "P", "Q", "R", "S", "T", "U", "V",  "W", "X", "Y", "Z"};
@@ -87,7 +85,8 @@ public class BigNumber
     private BigNumber(List<int> parts)
     {
         this.parts = parts;
-        Normalize();
+        Normalize();    
+        currentValue = ToString();
     }
     public static implicit operator BigNumber(int value)
     {
@@ -388,6 +387,21 @@ public class BigNumber
         else
         {
             return $"{stringSign}{parts[parts.Count - 1]}";
+        }
+    }
+
+    public void OnBeforeSerialize()
+    {
+        currentValue = ToString();
+    }
+
+    public void OnAfterDeserialize()
+    {
+        if (!string.IsNullOrEmpty(currentValue))
+        {
+            BigNumber temp = new BigNumber(currentValue);
+            this.parts = temp.parts;
+            this.sign = temp.sign;
         }
     }
 }

@@ -1,5 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.AddressableAssets;
 using UnityEngine.ResourceManagement.AsyncOperations;
@@ -13,13 +15,23 @@ public class Inventory : MonoBehaviour
     private Transform contentParent;
     [SerializeField]
     private List<Sprite> gradeSprites;
+    [SerializeField]
+    private InfoMergePanelUI infoMergePanelUI;
+
+    private int requireMergeCount = 5;
     private UnitTypes type;
     private InventoryElement selectedElement;
     private InventoryElement currentElement;
+    private UnitPartyManager unitPartyManager;
+    private void Awake()
+    {
+        unitPartyManager = FindObjectOfType<UnitPartyManager>();
+    }
     private void Start()
     {
         UpdateGridCellSize();
     }
+
     public void Initialize(List<SoldierTable.Data> dataList, UnitTypes type)
     {
         foreach (Transform child in contentParent)
@@ -63,7 +75,6 @@ public class Inventory : MonoBehaviour
                         inventoryElement.SetGrade(currentSubIndex);
                         inventoryElement.UpdateCount(0);
                         inventoryElement.SetLevel(0);
-                        inventoryElement.Deselect();
                         buttonElement.image.sprite = gradeSprites[(int)soldierData.Rating - 1];
                         inventoryElements.Add(inventoryElement);
 
@@ -79,6 +90,7 @@ public class Inventory : MonoBehaviour
                 if (instantiatedCount == totalCount && inventoryElements.Count > 0)
                 {
                     inventoryElements[0].UnlockElement();
+                    inventoryElements[0].UpdateCount(9999);
                     OnElementSelected(inventoryElements[0]);
                     Equip();
                 }
@@ -87,11 +99,9 @@ public class Inventory : MonoBehaviour
     }
     public void OnElementSelected(InventoryElement element)
     {
-        if (selectedElement != null)
-        {
-            selectedElement.Deselect();
-        }
         selectedElement = element;
+        var currentIndex = inventoryElements.IndexOf(selectedElement);
+        infoMergePanelUI.Initialize(inventoryElements[currentIndex], inventoryElements[currentIndex + 1]);
         selectedElement.Select();
     }
     public void UpdateGridCellSize()
@@ -116,9 +126,65 @@ public class Inventory : MonoBehaviour
     {
         UnEquip();
         currentElement = selectedElement;
+        currentElement.SetEquip();
+        unitPartyManager.SetUnitData(DataTableManager.SoldierTable.GetData(currentElement.soldierId), type);
     }
     private void UnEquip()
     {
+        if(currentElement == null)
+        {
+            return;
+        }
+        currentElement.SetUnEquip();
         currentElement = null;
+    }
+    private void Merge(InventoryElement element)
+    {
+        if(element.IsLocked || element.Count < requireMergeCount)
+        {
+            Debug.Log("합성 조건에 충족하지 못합니다.");
+            return;
+        }
+
+        var currentIndex = inventoryElements.IndexOf(element);
+        if(currentIndex >= 0 && currentIndex < inventoryElements.Count - 1)
+        {
+            var newCount = element.Count - requireMergeCount;
+            element.UpdateCount(newCount);
+
+            var nextIndex = currentIndex + 1;
+            if (inventoryElements[nextIndex].IsLocked)
+            {
+                inventoryElements[nextIndex].UnlockElement();
+                inventoryElements[nextIndex].UpdateCount(1);
+            }
+            else
+            {
+                inventoryElements[nextIndex].UpdateCount(inventoryElements[nextIndex].Count + 1);
+            }
+        }
+    }
+    public void SelectedElementMerge()
+    {
+        Merge(selectedElement);
+    }
+    public void BatchMerge()
+    {
+        bool isMerged = true;
+
+        while (isMerged)
+        {
+            isMerged = false;
+
+            foreach (var element in inventoryElements.ToList())
+            {
+                while (!element.IsLocked && element.Count >= requireMergeCount)
+                {
+                    Merge(element);
+                    isMerged = true;
+                }
+            }
+        }
+        OnElementSelected(selectedElement);
     }
 }

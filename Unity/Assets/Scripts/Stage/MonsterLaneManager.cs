@@ -41,6 +41,16 @@ public class MonsterLaneManager : MonoBehaviour
         }
     }
 
+    public int GetMonsterCount(int lane)
+    {
+        if (lane < 0 || lane >= lanes.Length)
+        {
+            return 0;
+        }
+
+        return lanes[lane].Count;
+    }
+
     public Transform GetFirstMonster(int lane)
     {
         if (lane < 0 || lane >= lanes.Length)

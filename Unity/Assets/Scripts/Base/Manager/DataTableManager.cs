@@ -45,6 +45,11 @@ public static class DataTableManager
             table.Load(DataTableIds.waveTable);
             tables.Add(DataTableIds.waveTable, table);
         }
+        {
+            var table = new SoldierTable();
+            table.Load(DataTableIds.soldierTable);
+            tables.Add(DataTableIds.soldierTable, table);
+        }
     }
 
 
@@ -88,6 +93,13 @@ public static class DataTableManager
         get
         {
             return GetTable<WaveTable>(DataTableIds.waveTable);
+        }
+    }
+    public static SoldierTable SoldierTable
+    {
+        get
+        {
+            return GetTable<SoldierTable>(DataTableIds.soldierTable);
         }
     }
 }

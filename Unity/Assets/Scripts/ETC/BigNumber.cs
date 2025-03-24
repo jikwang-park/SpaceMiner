@@ -372,7 +372,11 @@ public class BigNumber
     private void Normalize()
     {
         int i = parts.Count - 1;
+<<<<<<< HEAD
         while (i>0 && parts[i] == 0) 
+=======
+        while (i > 0 && parts[i] == 0) 
+>>>>>>> origin/develop_SHG
         {
             parts.RemoveAt(i);
             i--;

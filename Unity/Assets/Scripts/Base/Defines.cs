@@ -17,6 +17,7 @@ public class DataTableIds
     public const string corpsTable = "CorpsTable";
     public const string stageTable = "StageTable";
     public const string waveTable = "WaveTable";
+    public const string soldierTable = "SoldierTable";
 }
 
 public enum StageMode

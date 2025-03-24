@@ -28,7 +28,7 @@ public class MonsterController : MonoBehaviour
     [SerializeField]
     private LayerMask mask;
 
-    public MonsterLaneManager MonsterLaneManager { get; private set; }
+    public StageManager stageManager { get; private set; }
 
     [field: SerializeField]
     public float Speed { get; private set; } = 4f;
@@ -70,27 +70,17 @@ public class MonsterController : MonoBehaviour
     private void Start()
     {
         isDrawRegion = true;
-        MonsterLaneManager = GameObject.FindGameObjectWithTag("GameController").GetComponent<MonsterLaneManager>();
+
+        stageManager = GameObject.FindGameObjectWithTag("GameController").GetComponent<StageManager>();
     }
 
     private void Update()
     {
         if (Target == null)
         {
-            var units = GameObject.FindGameObjectsWithTag("Player");
-            float distance = Mathf.Infinity;
-            foreach (var unit in units)
-            {
-                float unitDistance = Vector3.Dot((unit.transform.position - transform.position), Vector3.back);
-                if (unitDistance < distance)
-                {
-                    Target = unit.transform;
-                    distance = unitDistance;
-                    TargetDistance = distance;
-                }
-            }
+            Target = stageManager.UnitPartyManager.GetFirstLineUnit();
         }
-        else
+        if (Target != null)
         {
             TargetDistance = Vector3.Dot((Target.position - transform.position), Vector3.back);
         }

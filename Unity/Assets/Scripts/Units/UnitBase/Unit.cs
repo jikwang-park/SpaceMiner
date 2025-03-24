@@ -21,7 +21,7 @@ public class Unit : MonoBehaviour
     private BigNumber currentHp;
 
 
-    private float targetDistance;
+    public float targetDistance;
 
     //ÅÊÄ¿ ½ºÅ³ ÄðÅ¸ÀÓ
     public float skillCoolTime = 10f;
@@ -39,7 +39,7 @@ public class Unit : MonoBehaviour
 
     public UnitWeapon unitWeapon;
 
-    private Transform targetPos;
+    public Transform targetPos;
 
     private bool isTargetInArea = false;
 
@@ -87,8 +87,7 @@ public class Unit : MonoBehaviour
         Init();
     }
 
-
-
+ 
     private void Start()
     {
     }
@@ -112,7 +111,7 @@ public class Unit : MonoBehaviour
             if (targetPos == null)
                 return false;
 
-            if (targetDistance <= unitWeapon.range)
+            if (targetDistance <= unitWeapon.range && IsAttackCoolTimeOn)
             {
                 return true;
             }
@@ -152,6 +151,7 @@ public class Unit : MonoBehaviour
     private bool isMonsterSpawn;
 
 
+
     private void Update()
     {
         GetTargetPosition();
@@ -164,6 +164,24 @@ public class Unit : MonoBehaviour
         }
        
     }
+
+    public bool IsMonsterExist()
+    {
+        var lane = stageManger.MonsterLaneManager.LaneCount;
+
+        for (int i = 0; i < lane; ++i)
+        {
+            var target = stageManger.MonsterLaneManager.GetMonsterCount(i);
+
+            if (target > 0)
+            {
+                return true;
+                
+            }
+        }
+        return false;
+    }
+   
 
     private Transform GetTargetPosition()
     {
@@ -181,7 +199,6 @@ public class Unit : MonoBehaviour
                 if(targetDistance <= unitWeapon.range)
                 {
                     targetPos = targetPosition;
-                    Debug.Log(targetPos.position);
                     return targetPos;
                 }
             }
@@ -197,7 +214,6 @@ public class Unit : MonoBehaviour
     public void AttackCorutine()
     {
         StartCoroutine(NormalAttackCor());
-        lastAttackTime = Time.time;
 
     }
 

@@ -17,6 +17,7 @@ GameObject:
   - component: {fileID: 6204294303854758641}
   - component: {fileID: 7295865680077471732}
   - component: {fileID: -8728631428743180114}
+  - component: {fileID: 8888980379247016706}
   m_Layer: 0
   m_Name: Player(Tank)
   m_TagString: Untagged
@@ -124,27 +125,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2acae83752c74ec40a8d4711671c70d2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  currentHp:
-    currentValue: 
-    parts: 
-    sign: 0
-  unitMaxHp:
-    currentValue: 
-    parts: 
-    sign: 0
-  unitDamage:
-    currentValue: 
-    parts: 
-    sign: 0
-  unitArmor: 0
-  enermyPrefab: {fileID: 7075267387835477940, guid: 743ad8e72c29056478e70b094f84a58a, type: 3}
+  stageManger: {fileID: 0}
+  unitStats: {fileID: 0}
   skillCoolTime: 10
   currentUnitType: 0
   skillUsingTime: 2
   attackUsingTime: 0.4
   speed: 20
   aliveCount: 0
-  unitPartyManager: {fileID: 0}
   unitWeapon: {fileID: 11400000, guid: 31a84c64ad7038c479f3fed75d310593, type: 2}
   IsSkillUsing: 0
   IsNormalAttacking: 0
@@ -199,3 +187,24 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 60d98ccbb194c9c4db6bea50cb6a7920, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &8888980379247016706
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4954487364961763059}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: daaeb550509fd4449b1c8380128eaffe, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  maxHp:
+    currentValue: 
+    parts: 
+    sign: 0
+  damage:
+    currentValue: 
+    parts: 
+    sign: 0
+  armor: 1

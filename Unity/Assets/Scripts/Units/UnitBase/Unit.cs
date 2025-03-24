@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using TMPro;
 using UnityEditor;
 using UnityEngine;
+using static UnityEditor.Timeline.TimelinePlaybackControls;
 
 
 
@@ -20,7 +21,7 @@ public class Unit : MonoBehaviour
     private BigNumber currentHp;
 
 
-
+    private float targetDistance;
 
     //ÅÊÄ¿ ½ºÅ³ ÄðÅ¸ÀÓ
     public float skillCoolTime = 10f;
@@ -34,10 +35,9 @@ public class Unit : MonoBehaviour
     public float speed = 20f;
     public int aliveCount = 0;
 
-    public UnitPartyManager unitPartyManager;
 
 
-    public AttackDefinition unitWeapon;
+    public UnitWeapon unitWeapon;
 
     private Transform targetPos;
 
@@ -45,15 +45,11 @@ public class Unit : MonoBehaviour
 
     private int lane = 0;
 
-    private void SetStatus(BigNumber unitMaxHp, BigNumber unitdamage, int unitArmor)
+    private void SetStatus(BigNumber unitMaxHp, int unitArmor)
     {
-        unitdamage = unitWeapon.damage;
-
-        this.currentHp = unitMaxHp;
-
-        this.unitMaxHp = unitMaxHp;
-        this.unitDamage = unitdamage;
-        this.unitArmor = unitArmor;
+        unitStats.maxHp = unitMaxHp;
+        unitStats.Hp = currentHp;
+        unitStats.armor = unitArmor;
 
     }
 
@@ -73,7 +69,7 @@ public class Unit : MonoBehaviour
     private void SetDealerStats()
     {
         behaviorTree = UnitBTManager.GetBehaviorTree(this, UnitTypes.Dealer);
-        SetStatus(70, 25, 3);
+        SetStatus(70, 3);
         currentHp = 40;
     }
 
@@ -81,12 +77,13 @@ public class Unit : MonoBehaviour
     private void SetTankerStats()
     {
         behaviorTree = UnitBTManager.GetBehaviorTree(this, UnitTypes.Tanker);
-        SetStatus(100, 15, 10);
+        SetStatus(100, 10);
         currentHp = 50;
     }
     private void Awake()
     {
         stageManger = GameObject.FindGameObjectWithTag("GameController").GetComponent<StageManager>();
+        unitStats = GetComponent<CharacterStats>();
         Init();
     }
 
@@ -115,7 +112,7 @@ public class Unit : MonoBehaviour
             if (targetPos == null)
                 return false;
 
-            if (Vector3.Distance(transform.position, targetPos.position) <= unitWeapon.range)
+            if (targetDistance <= unitWeapon.range)
             {
                 return true;
             }
@@ -157,6 +154,7 @@ public class Unit : MonoBehaviour
 
     private void Update()
     {
+        GetTargetPosition();
         behaviorTree.Update();
 
         IsUnitHit = false;
@@ -167,10 +165,29 @@ public class Unit : MonoBehaviour
        
     }
 
-    //private Transform GetTargetPosition()
-    //{
-        
-    //}
+    private Transform GetTargetPosition()
+    {
+        var lane = stageManger.MonsterLaneManager.LaneCount;
+
+        for(int i = 0; i< lane; ++i)
+        {
+            var target = stageManger.MonsterLaneManager.GetMonsterCount(i);
+            var targetPosition = stageManger.MonsterLaneManager.GetFirstMonster(i);
+
+            if (target > 0)
+            {
+
+                targetDistance = Vector3.Distance(stageManger.UnitPartyManager.generateInstance[0].transform.position, targetPosition.position);
+                if(targetDistance <= unitWeapon.range)
+                {
+                    targetPos = targetPosition;
+                    Debug.Log(targetPos.position);
+                    return targetPos;
+                }
+            }
+        }
+        return null;
+    }
 
     public void Move()
     {
@@ -180,6 +197,8 @@ public class Unit : MonoBehaviour
     public void AttackCorutine()
     {
         StartCoroutine(NormalAttackCor());
+        lastAttackTime = Time.time;
+
     }
 
     public IEnumerator NormalAttackCor()

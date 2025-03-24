@@ -39,10 +39,7 @@ public class MonsterLaneManager : MonoBehaviour
         {
             count += lanes[i].Count;
         }
-        if (count == 0)
-        {
-            AllDead?.Invoke();
-        }
+     
     }
 
     public int GetMonsterCount(int lane)

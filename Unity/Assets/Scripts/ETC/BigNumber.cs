@@ -372,7 +372,7 @@ public class BigNumber
     private void Normalize()
     {
         int i = parts.Count - 1;
-        while (parts[i] == 0) 
+        while (i>0 && parts[i] == 0) 
         {
             parts.RemoveAt(i);
             i--;

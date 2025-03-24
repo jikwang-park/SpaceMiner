@@ -13,7 +13,6 @@ public class NormalAttackAction : ActionNode<Unit>
     {
         base.OnStart();
         context.IsNormalAttacking = true;
-        context.lastAttackTime = Time.time;
         context.AttackCorutine();
         Debug.Log("공격시작");
     }

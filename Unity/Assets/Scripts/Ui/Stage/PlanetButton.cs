@@ -2,22 +2,19 @@ using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
-using UnityEngine.AddressableAssets;
 using UnityEngine.Pool;
 using UnityEngine.UI;
 
-public class StageButton : MonoBehaviour, IObjectPoolGameObject
+public class PlanetButton : MonoBehaviour, IObjectPoolGameObject
 {
     public IObjectPool<GameObject> ObjectPool { get; set; }
 
     [SerializeField]
     private TextMeshProUGUI text;
 
-    private int planet;
-    private int stage;
-
     private Button button;
-    private StageManager stageManager;
+
+    private int planet;
 
     private void Awake()
     {
@@ -30,18 +27,9 @@ public class StageButton : MonoBehaviour, IObjectPoolGameObject
         ObjectPool.Release(gameObject);
     }
 
-    public void Set(int planet, int stage)
+    public void Set(int planet)
     {
         this.planet = planet;
-        this.stage = stage;
-        text.text = $"{planet}-{stage}";
-        button.onClick.AddListener(MoveStage);
-    }
-
-    private void MoveStage()
-    {
-        Variables.planetNumber = planet;
-        Variables.stageNumber = stage;
-        Addressables.LoadSceneAsync("StageDevelopScene");
+        text.text = $"{planet}";
     }
 }

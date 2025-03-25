@@ -31,6 +31,8 @@ public class StageManager : MonoBehaviour
 
     [SerializeField]
     private AssetReferenceGameObject stage;
+    [SerializeField]
+    private float spawnDistance = 10f;
 
     private WaveSpawner waveSpawner;
 
@@ -40,6 +42,7 @@ public class StageManager : MonoBehaviour
     private WaveTable.Data waveData;
 
     private float stageStartTime;
+    
 
     private void Awake()
     {
@@ -118,7 +121,7 @@ public class StageManager : MonoBehaviour
 
         Transform unit = UnitPartyManager.GetFirstLineUnit();
         if (unit != null)
-            waveSpawner.Spawn(unit.position + Vector3.forward * 5f, corpsData);
+            waveSpawner.Spawn(unit.position + Vector3.forward * 10f, corpsData);
         else
             waveSpawner.Spawn(transform.position, corpsData);
 
@@ -144,8 +147,8 @@ public class StageManager : MonoBehaviour
 
     private void SetStageInfo()
     {
-        CurrentStage = Variables.stageNumber;
-        CurrentSubStage = Variables.stageSubNumber;
+        CurrentStage = Variables.planetNumber;
+        CurrentSubStage = Variables.stageNumber;
         CurrentWave = 1;
         stageStartTime = Time.time;
 
@@ -156,9 +159,9 @@ public class StageManager : MonoBehaviour
 
     private IEnumerator StageLoad()
     {
-        if (Variables.stageSubNumber > 1)
+        if (Variables.stageNumber > 1)
         {
-            --Variables.stageSubNumber;
+            --Variables.stageNumber;
         }
 
         Variables.stageMode = StageMode.Repeat;
@@ -182,12 +185,12 @@ public class StageManager : MonoBehaviour
 
         if (Variables.stageMode == StageMode.Ascend)
         {
-            ++Variables.stageSubNumber;
+            ++Variables.stageNumber;
         }
 
         if (!DataTableManager.StageTable.ContainsKey(string.Format(stageIDFormat, CurrentStage, CurrentSubStage)))
         {
-            Variables.stageSubNumber = 1;
+            Variables.stageNumber = 1;
         }
 
         SetStageInfo();

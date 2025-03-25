@@ -18,7 +18,7 @@ public class StageSelectScroll : MonoBehaviour
         for (int i = 1; i <= 10; ++i)
         {
             var button = objectpoolManager.gameObjectPool[buttonReference].Get();
-            button.transform.parent = contents;
+            button.transform.SetParent(contents);
             button.transform.localScale = Vector3.one;
             button.GetComponent<StageButton>().Set(1, i);
         }

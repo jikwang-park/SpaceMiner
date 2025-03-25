@@ -7,7 +7,7 @@ public class MonsterWeapon : AttackDefinition
 {
     public override void Execute(GameObject attacker, GameObject defender)
     {
-        if (defender == null)
+        if (defender is null)
         {
             return;
         }

@@ -56,7 +56,7 @@ public class ObjectPoolManager : MonoBehaviour
 
     private GameObject CreatePooledItem(AssetReferenceGameObject reference, IObjectPool<GameObject> pool)
     {
-        if (reference.Asset == null)
+        if (reference.Asset is null)
         {
             var handle = reference.LoadAssetAsync<GameObject>();
             handle.WaitForCompletion();

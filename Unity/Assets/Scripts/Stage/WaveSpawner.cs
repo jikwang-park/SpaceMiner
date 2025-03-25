@@ -96,7 +96,7 @@ public class WaveSpawner : MonoBehaviour
             return;
         }
         var monsterController = handle.Result.GetComponent<MonsterController>();
-        if (monsterController == null)
+        if (monsterController is null)
         {
             return;
         }

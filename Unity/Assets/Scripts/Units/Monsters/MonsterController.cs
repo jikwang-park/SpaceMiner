@@ -22,10 +22,6 @@ public class MonsterController : MonoBehaviour
     private Animation animations;
     private BehaviorTree<MonsterController> behaviorTree;
 
-    private Collider[] colliders;
-    [SerializeField]
-    private LayerMask mask;
-
     public StageManager stageManager { get; private set; }
 
     [field: SerializeField]
@@ -57,9 +53,6 @@ public class MonsterController : MonoBehaviour
     {
         get
         {
-            //int frontMonsters = Physics.OverlapBoxNonAlloc(transform.position + transform.forward * 0.5f, new Vector3(0.5f, 0.5f, 0.5f), colliders, Quaternion.identity, mask.value);
-            //return frontMonsters == 1;
-
             return frontLine < 0 || Vector3.Dot(findFrontMonster(frontLine).position - transform.position, Vector3.back) > minDistanceInMonster;
         }
     }
@@ -68,7 +61,6 @@ public class MonsterController : MonoBehaviour
     {
         InitBehaviourTree();
         status = Status.Wait;
-        colliders = new Collider[3];
     }
 
     private void Start()
@@ -80,11 +72,8 @@ public class MonsterController : MonoBehaviour
 
     private void Update()
     {
-        if (Target == null)
-        {
-            Target = stageManager.UnitPartyManager.GetFirstLineUnit();
-        }
-        if (Target != null)
+        Target = stageManager.UnitPartyManager.GetFirstLineUnit();
+        if (Target is not null)
         {
             TargetDistance = Vector3.Dot(Target.position - transform.position, Vector3.back);
         }

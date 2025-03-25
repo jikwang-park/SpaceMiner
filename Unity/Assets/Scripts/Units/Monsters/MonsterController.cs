@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using UnityEngine;
 
@@ -28,12 +29,16 @@ public class MonsterController : MonoBehaviour
 
     [field: SerializeField]
     public float Speed { get; private set; } = 4f;
-    private float aggroRange;
+
+    [field: SerializeField]
+    public float minDistanceInMonster { get; private set; } = 2f;
     public float TargetDistance { get; private set; }
 
     public Transform Target { get; private set; }
 
-    public int currentLane;
+    public Func<int, Transform> findFrontMonster;
+
+    public int frontLine = -1;
 
     public float LastAttackTime { get; private set; }
 
@@ -51,8 +56,10 @@ public class MonsterController : MonoBehaviour
     {
         get
         {
-            int frontMonsters = Physics.OverlapBoxNonAlloc(transform.position + transform.forward * 0.5f, new Vector3(0.5f, 0.5f, 0.5f), colliders, Quaternion.identity, mask.value);
-            return frontMonsters == 1;
+            //int frontMonsters = Physics.OverlapBoxNonAlloc(transform.position + transform.forward * 0.5f, new Vector3(0.5f, 0.5f, 0.5f), colliders, Quaternion.identity, mask.value);
+            //return frontMonsters == 1;
+
+            return frontLine < 0 || Vector3.Dot(findFrontMonster(frontLine).position - transform.position, Vector3.back) > minDistanceInMonster;
         }
     }
 
@@ -78,7 +85,7 @@ public class MonsterController : MonoBehaviour
         }
         if (Target != null)
         {
-            TargetDistance = Vector3.Dot((Target.position - transform.position), Vector3.back);
+            TargetDistance = Vector3.Dot(Target.position - transform.position, Vector3.back);
         }
 
         if (Input.GetKeyDown(KeyCode.Alpha8))

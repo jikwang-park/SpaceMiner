@@ -60,9 +60,19 @@ public class StageTable : DataTable
         }
     }
 
-    public bool ContainsKey(string key)
+    public bool IsExistPlanet(string key)
     {
         return dict.ContainsKey(key);
+    }
+
+    public bool IsExistPlanet(int planet)
+    {
+        return planetDict.ContainsKey(planet);
+    }
+
+    public bool IsExistStage(int planet, int stage)
+    {
+        return IsExistPlanet(planet) && planetDict[planet].ContainsKey(stage);
     }
 
     public Data GetData(string key)

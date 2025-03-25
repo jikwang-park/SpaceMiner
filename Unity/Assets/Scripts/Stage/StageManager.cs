@@ -10,9 +10,9 @@ public class StageManager : MonoBehaviour
     private const string stageTextFormat = "{0}-{1}\n{2} Wave";
 
     [field: SerializeField]
-    public int CurrentStage { get; private set; }
+    public int CurrentPlanet { get; private set; }
     [field: SerializeField]
-    public int CurrentSubStage { get; private set; }
+    public int CurrentStage { get; private set; }
     [field: SerializeField]
     public int CurrentWave { get; private set; }
 
@@ -27,7 +27,7 @@ public class StageManager : MonoBehaviour
     private GameObject stageEndMessageWindow;
     [SerializeField]
     private TextMeshProUGUI stageEndMessageText;
-    
+
 
     [SerializeField]
     private AssetReferenceGameObject stage;
@@ -42,7 +42,9 @@ public class StageManager : MonoBehaviour
     private WaveTable.Data waveData;
 
     private float stageStartTime;
-    
+
+    private WaitForSeconds wait1 = new WaitForSeconds(1f);
+
 
     private void Awake()
     {
@@ -65,7 +67,7 @@ public class StageManager : MonoBehaviour
     {
         if (Input.GetKeyDown(KeyCode.Alpha1))
         {
-            var stageData = DataTableManager.StageTable.GetData(string.Format(stageIDFormat, CurrentStage, CurrentSubStage));
+            var stageData = DataTableManager.StageTable.GetData(string.Format(stageIDFormat, CurrentPlanet, CurrentStage));
             Debug.Log(stageData.CorpsID);
         }
 
@@ -108,14 +110,13 @@ public class StageManager : MonoBehaviour
 
     public void SpawnNextWave(float delay = 2f)
     {
-        stageText.text = string.Format(stageTextFormat, CurrentStage, CurrentSubStage, CurrentWave);
+        stageText.text = string.Format(stageTextFormat, CurrentPlanet, CurrentStage, CurrentWave);
         StartCoroutine(coSpawnNextWave(delay));
     }
 
     private IEnumerator coSpawnNextWave(float delay)
     {
         yield return new WaitForSeconds(delay);
-        stageEndMessageWindow.SetActive(false);
 
         var corpsData = DataTableManager.CorpsTable.GetData(waveData.WaveCorpsIDs[CurrentWave - 1]);
 
@@ -125,7 +126,7 @@ public class StageManager : MonoBehaviour
         else
             waveSpawner.Spawn(transform.position, corpsData);
 
-        stageText.text = string.Format(stageTextFormat, CurrentStage, CurrentSubStage, CurrentWave);
+        stageText.text = string.Format(stageTextFormat, CurrentPlanet, CurrentStage, CurrentWave);
         ++CurrentWave;
     }
 
@@ -147,17 +148,17 @@ public class StageManager : MonoBehaviour
 
     private void SetStageInfo()
     {
-        CurrentStage = Variables.planetNumber;
-        CurrentSubStage = Variables.stageNumber;
+        CurrentPlanet = Variables.planetNumber;
+        CurrentStage = Variables.stageNumber;
         CurrentWave = 1;
         stageStartTime = Time.time;
 
-        stageData = DataTableManager.StageTable.GetData(string.Format(stageIDFormat, CurrentStage, CurrentSubStage));
+        stageData = DataTableManager.StageTable.GetData(string.Format(stageIDFormat, CurrentPlanet, CurrentStage));
         waveData = DataTableManager.WaveTable.GetData(stageData.CorpsID);
-        stageText.text = string.Format(stageTextFormat, CurrentStage, CurrentSubStage, CurrentWave);
+        stageText.text = string.Format(stageTextFormat, CurrentPlanet, CurrentStage, CurrentWave);
     }
 
-    private IEnumerator StageLoad()
+    private IEnumerator coStageLoad()
     {
         if (Variables.stageNumber > 1)
         {
@@ -168,7 +169,7 @@ public class StageManager : MonoBehaviour
         stageEndMessageText.text = "Fail";
         stageEndMessageWindow.SetActive(true);
 
-        yield return new WaitForSeconds(1f);
+        yield return wait1;
         Addressables.LoadSceneAsync("StageDevelopScene");
     }
 
@@ -176,24 +177,36 @@ public class StageManager : MonoBehaviour
     {
         if (!cleared)
         {
-            StartCoroutine(StageLoad());
+            StartCoroutine(coStageLoad());
             return;
         }
 
+        StartCoroutine(coClearStage());
+    }
+
+    private IEnumerator coClearStage()
+    {
         stageEndMessageText.text = "Clear";
         stageEndMessageWindow.SetActive(true);
 
+        yield return wait1;
+
         if (Variables.stageMode == StageMode.Ascend)
         {
-            ++Variables.stageNumber;
-        }
-
-        if (!DataTableManager.StageTable.ContainsKey(string.Format(stageIDFormat, CurrentStage, CurrentSubStage)))
-        {
-            Variables.stageNumber = 1;
+            if (DataTableManager.StageTable.IsExistStage(CurrentPlanet, CurrentStage + 1))
+            {
+                ++Variables.stageNumber;
+            }
+            else if (DataTableManager.StageTable.IsExistPlanet(CurrentPlanet + 1))
+            {
+                ++Variables.planetNumber;
+                Variables.stageNumber = 1;
+            }
         }
 
         SetStageInfo();
         SpawnNextWave();
+
+        stageEndMessageWindow.SetActive(false);
     }
 }

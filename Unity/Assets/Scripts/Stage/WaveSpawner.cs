@@ -72,11 +72,6 @@ public class WaveSpawner : MonoBehaviour
                 Quaternion.LookRotation(Vector3.back, Vector3.up));
             handle.WaitForCompletion();
             SetMonsterLane(lane, handle);
-            var handle2 = Addressables.InstantiateAsync(string.Format(prefabFormat, monsterId),
-                frontPosition + SpawnPoints[i] + SpawnOffsets[1],
-                Quaternion.LookRotation(Vector3.back, Vector3.up));
-            handle2.WaitForCompletion();
-            SetMonsterLane(lane, handle2);
 
             ++createdCount[index];
         }
@@ -89,8 +84,8 @@ public class WaveSpawner : MonoBehaviour
                 frontPosition + SpawnPoints[j],
             Quaternion.LookRotation(Vector3.back, Vector3.up));
             int lane = i % 3;
-
-            handle.Completed += (eventHandle) => SetMonsterLane(lane, eventHandle);
+            handle.WaitForCompletion();
+            SetMonsterLane(lane, handle);
         }
     }
 
@@ -100,7 +95,6 @@ public class WaveSpawner : MonoBehaviour
         {
             return;
         }
-
         var monsterController = handle.Result.GetComponent<MonsterController>();
         if (monsterController == null)
         {

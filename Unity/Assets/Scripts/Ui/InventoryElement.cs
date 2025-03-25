@@ -17,8 +17,8 @@ public class InventoryElement : MonoBehaviour
 {
     public bool IsLocked { get; private set; } = true;
     public int Count { get; private set; } = 0;
-    public int level { get; private set; } = 0;
-    public int gradeIndex { get; private set; } = 0;
+    public int Level { get; private set; } = 0;
+    public int GradeIndex { get; private set; } = 0;
     public string soldierId;
 
     [SerializeField]
@@ -66,7 +66,7 @@ public class InventoryElement : MonoBehaviour
     }
     public void SetGrade(int grade)
     {
-        gradeIndex = grade;
+        GradeIndex = grade;
         if (gradeText != null)
         {
             gradeText.text = $"{grade} Grade";
@@ -75,7 +75,7 @@ public class InventoryElement : MonoBehaviour
 
     public void SetLevel(int level)
     {
-        this.level = level;
+        this.Level = level;
         if (levelText != null)
         {
             levelText.text = "Lv. " + level.ToString();

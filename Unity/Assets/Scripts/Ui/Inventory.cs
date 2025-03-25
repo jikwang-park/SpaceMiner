@@ -202,4 +202,27 @@ public class Inventory : MonoBehaviour
         }
         OnElementSelected(selectedElement);
     }
+    public InventorySaveData Save()
+    {
+        InventorySaveData saveData = new InventorySaveData();
+        saveData.inventoryType = this.type;
+        foreach (var element in inventoryElements)
+        {
+            InventoryElementSaveData ed = new InventoryElementSaveData();
+            ed.IsLocked = element.IsLocked;
+            ed.soldierId = element.soldierId;
+            ed.Count = element.Count;
+            ed.Level = element.Level;
+            saveData.elements.Add(ed);
+        }
+        if (currentElement != null)
+        {
+            saveData.currentElementID = currentElement.soldierId;
+        }
+        else
+        {
+            saveData.currentElementID = "";
+        }
+        return saveData;
+    }
 }

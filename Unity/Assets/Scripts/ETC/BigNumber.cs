@@ -307,6 +307,10 @@ public class BigNumber : ISerializationCallbackReceiver
     }
     public static bool operator ==(BigNumber a, BigNumber b)
     {
+        if(a == null || b == null)
+        {
+            return false;
+        }
         return a.CompareTo(b) == 0;
     }
     public static bool operator ==(BigNumber a, int b)
@@ -316,7 +320,7 @@ public class BigNumber : ISerializationCallbackReceiver
     }
     public static bool operator !=(BigNumber a, BigNumber b)
     {
-        return a.CompareTo(b) != 0;
+        return !(a == b);
     }
     public static bool operator !=(BigNumber a, int b)
     {

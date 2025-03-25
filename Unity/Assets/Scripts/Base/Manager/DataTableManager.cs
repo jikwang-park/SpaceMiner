@@ -9,6 +9,8 @@ public static class DataTableManager
 {
     private static readonly Dictionary<string, DataTable> tables = new Dictionary<string, DataTable>();
 
+    public static Dictionary<string, DataTable> Tables => tables;
+
     static DataTableManager()
     {
         LoadTables();

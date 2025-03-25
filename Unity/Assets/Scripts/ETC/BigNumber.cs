@@ -305,6 +305,24 @@ public class BigNumber : ISerializationCallbackReceiver
         BigNumber other = new BigNumber(b.ToString());
         return a >= other;
     }
+    public static bool operator ==(BigNumber a, BigNumber b)
+    {
+        return a.CompareTo(b) == 0;
+    }
+    public static bool operator ==(BigNumber a, int b)
+    {
+        BigNumber other = new BigNumber(b.ToString());
+        return a == other;
+    }
+    public static bool operator !=(BigNumber a, BigNumber b)
+    {
+        return a.CompareTo(b) != 0;
+    }
+    public static bool operator !=(BigNumber a, int b)
+    {
+        BigNumber other = new BigNumber(b.ToString());
+        return a != other;
+    }
     private static List<int> AddAbsolute(List<int> aParts, List<int> bParts)
     {
         List<int> result = new List<int>();

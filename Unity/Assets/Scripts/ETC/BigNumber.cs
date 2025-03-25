@@ -379,6 +379,11 @@ public class BigNumber : ISerializationCallbackReceiver
     }
     public override string ToString()
     {
+        if (parts == null || parts.Count == 0)
+        {
+            return "0";
+        }
+
         string stringSign = sign == 1 ? "" : "-";
         if(parts.Count > 1)
         {

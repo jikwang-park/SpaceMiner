@@ -90,4 +90,8 @@ public class UnitPartyManager : MonoBehaviour
 
         return null;
     }
+    public void SetUnitData(SoldierTable.Data data, UnitTypes type)
+    {
+
+    }
 }

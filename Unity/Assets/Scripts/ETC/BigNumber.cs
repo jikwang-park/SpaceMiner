@@ -4,13 +4,11 @@ using System.Collections.Generic;
 using UnityEngine;
 
 [Serializable]
-public class BigNumber
+public class BigNumber : ISerializationCallbackReceiver
 {
     [SerializeField]
     private string currentValue;
-    [SerializeField]
     private List<int> parts;
-    [SerializeField]
     private int sign = 1;
     private string[] units = {"", "A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", 
                                 "N", "O", "P", "Q", "R", "S", "T", "U", "V",  "W", "X", "Y", "Z"};
@@ -87,7 +85,8 @@ public class BigNumber
     private BigNumber(List<int> parts)
     {
         this.parts = parts;
-        Normalize();
+        Normalize();    
+        currentValue = ToString();
     }
     public static implicit operator BigNumber(int value)
     {
@@ -306,6 +305,24 @@ public class BigNumber
         BigNumber other = new BigNumber(b.ToString());
         return a >= other;
     }
+    public static bool operator ==(BigNumber a, BigNumber b)
+    {
+        return a.CompareTo(b) == 0;
+    }
+    public static bool operator ==(BigNumber a, int b)
+    {
+        BigNumber other = new BigNumber(b.ToString());
+        return a == other;
+    }
+    public static bool operator !=(BigNumber a, BigNumber b)
+    {
+        return a.CompareTo(b) != 0;
+    }
+    public static bool operator !=(BigNumber a, int b)
+    {
+        BigNumber other = new BigNumber(b.ToString());
+        return a != other;
+    }
     private static List<int> AddAbsolute(List<int> aParts, List<int> bParts)
     {
         List<int> result = new List<int>();
@@ -380,14 +397,34 @@ public class BigNumber
     }
     public override string ToString()
     {
+        if (parts == null || parts.Count == 0)
+        {
+            return "0";
+        }
+
         string stringSign = sign == 1 ? "" : "-";
         if(parts.Count > 1)
         {
             return $"{stringSign}{parts[parts.Count - 1]}.{parts[parts.Count - 2] / 100}{units[parts.Count - 1]}";
         }
-        else
+        else 
         {
-            return $"{stringSign}{parts[parts.Count - 1]}";
+            return $"{stringSign}";
+        }
+    }
+
+    public void OnBeforeSerialize()
+    {
+        currentValue = ToString();
+    }
+
+    public void OnAfterDeserialize()
+    {
+        if (!string.IsNullOrEmpty(currentValue))
+        {
+            BigNumber temp = new BigNumber(currentValue);
+            this.parts = temp.parts;
+            this.sign = temp.sign;
         }
     }
 }

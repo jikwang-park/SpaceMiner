@@ -1,20 +1,30 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
+[Serializable]
+public class InventoryElementSaveData
+{
+    public string soldierId;
+    public bool IsLocked;
+    public int Count;
+    public int Level;
+}
 public class InventoryElement : MonoBehaviour
 {
-    private bool isLocked = true;
-    private string soldierId;
-    private int count = 0;
-    private int level = 0;
+    public bool IsLocked { get; private set; } = true;
+    public int Count { get; private set; } = 0;
+    public int level { get; private set; } = 0;
+    public int gradeIndex { get; private set; } = 0;
+    public string soldierId;
 
     [SerializeField]
     private Image lockImage;
     [SerializeField]
-    private Image selectedImage;
+    private Image equipImage;
     [SerializeField]
     private TextMeshProUGUI gradeText;
     [SerializeField]
@@ -30,16 +40,17 @@ public class InventoryElement : MonoBehaviour
 
         if (button != null)
         {
-            button.interactable = !isLocked;
+            button.interactable = !IsLocked;
         }
     }
     private void Start()
     {
         button.onClick.AddListener(() => OnElementClicked());
+        SetUnEquip();
     }
     public void UnlockElement()
     {
-        isLocked = false;
+        IsLocked = false;
         if (lockImage != null)
         {
             lockImage.gameObject.SetActive(false);
@@ -55,9 +66,10 @@ public class InventoryElement : MonoBehaviour
     }
     public void SetGrade(int grade)
     {
+        gradeIndex = grade;
         if (gradeText != null)
         {
-            gradeText.text = $"{grade} µî±Þ";
+            gradeText.text = $"{grade} Grade";
         }
     }
 
@@ -66,16 +78,16 @@ public class InventoryElement : MonoBehaviour
         this.level = level;
         if (levelText != null)
         {
-            gradeText.text = "Lv. " + level.ToString();
+            levelText.text = "Lv. " + level.ToString();
         }
     }
 
     public void UpdateCount(int newCount)
     {
-        count = newCount;
+        Count = newCount;
         if (countText != null)
         {
-            countText.text = count.ToString();
+            countText.text = Count.ToString();
         }
     }
     public void OnElementClicked()
@@ -85,12 +97,16 @@ public class InventoryElement : MonoBehaviour
             parentInventory.OnElementSelected(this);
         }
     }
+    public void SetEquip()
+    {
+        equipImage.gameObject.SetActive(true);
+    }
+    public void SetUnEquip()
+    {
+        equipImage.gameObject.SetActive(false);
+    }
     public void Select()
     {
-        selectedImage.gameObject.SetActive(true);
-    }
-    public void Deselect()
-    {
-        selectedImage.gameObject.SetActive(false);
+        
     }
 }

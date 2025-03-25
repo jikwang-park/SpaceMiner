@@ -23,6 +23,11 @@ public class StageManager : MonoBehaviour
     private TextMeshProUGUI stageText;
     [SerializeField]
     private TextMeshProUGUI timerText;
+    [SerializeField]
+    private GameObject stageEndMessageWindow;
+    [SerializeField]
+    private TextMeshProUGUI stageEndMessageText;
+    
 
     [SerializeField]
     private AssetReferenceGameObject stage;
@@ -39,10 +44,9 @@ public class StageManager : MonoBehaviour
     private void Awake()
     {
         waveSpawner = GetComponent<WaveSpawner>();
-        this.MonsterLaneManager = GetComponent<MonsterLaneManager>();
-        this.UnitPartyManager = GetComponent<UnitPartyManager>();
+        MonsterLaneManager = GetComponent<MonsterLaneManager>();
+        UnitPartyManager = GetComponent<UnitPartyManager>();
         monsters = new HashSet<MonsterController>();
-
 
         SetStageInfo();
 
@@ -108,6 +112,7 @@ public class StageManager : MonoBehaviour
     private IEnumerator coSpawnNextWave(float delay)
     {
         yield return new WaitForSeconds(delay);
+        stageEndMessageWindow.SetActive(false);
 
         var corpsData = DataTableManager.CorpsTable.GetData(waveData.WaveCorpsIDs[CurrentWave - 1]);
 
@@ -149,13 +154,31 @@ public class StageManager : MonoBehaviour
         stageText.text = string.Format(stageTextFormat, CurrentStage, CurrentSubStage, CurrentWave);
     }
 
+    private IEnumerator StageLoad()
+    {
+        if (Variables.stageSubNumber > 1)
+        {
+            --Variables.stageSubNumber;
+        }
+
+        Variables.stageMode = StageMode.Repeat;
+        stageEndMessageText.text = "Fail";
+        stageEndMessageWindow.SetActive(true);
+
+        yield return new WaitForSeconds(1f);
+        Addressables.LoadSceneAsync("StageDevelopScene");
+    }
+
     private void ResetStage(bool cleared)
     {
         if (!cleared)
         {
-            Addressables.LoadSceneAsync("StageDevelopScene");
+            StartCoroutine(StageLoad());
             return;
         }
+
+        stageEndMessageText.text = "Clear";
+        stageEndMessageWindow.SetActive(true);
 
         if (Variables.stageMode == StageMode.Ascend)
         {

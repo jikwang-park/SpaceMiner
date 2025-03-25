@@ -2,8 +2,8 @@ using System;
 using JetBrains.Annotations;
 using UnityEditor;
 using UnityEditor.PackageManager;
-using UnityEngine;
 using PackageInfo = UnityEditor.PackageManager.PackageInfo;
+using UnityEngine;
 
 // ReSharper disable UnusedMember.Local
 // ReSharper disable MemberCanBePrivate.Global

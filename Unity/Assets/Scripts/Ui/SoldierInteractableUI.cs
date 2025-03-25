@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using TMPro;
@@ -24,21 +25,27 @@ public class SoldierInteractableUI : MonoBehaviour
     private Button minusButton;
     [SerializeField]
     private Button plusButton;
+    [SerializeField]
+    private Button mergeButton;
+    [SerializeField]
+    private Button equipButton;
 
     private static int requiredCount = 5;
     private int currentElementCount = 0;
     private int nextElementCount = 0;
     private int count = 0;
+
+    public Action<int> mergeAction;
+    public Action equipAction;
     private void Start()
     {
         minusButton.onClick.AddListener(() => OnClickMinusButton());
         plusButton.onClick.AddListener(() => OnClickPlusButton());
+        mergeButton.onClick.AddListener(() => OnClickMergeButton());
+        equipButton.onClick.AddListener(() => OnClickEquipButton());
     }
     public void Initialize(InventoryElement currentElement, InventoryElement nextElement)
     {
-        var currentElementData = DataTableManager.SoldierTable.GetData(currentElement.soldierId);
-        var nextElementData = DataTableManager.SoldierTable.GetData(nextElement.soldierId);
-
         var currentElementSprite = currentElement.GetComponent<Image>().sprite;
         var nextElementSprite = nextElement.GetComponent<Image>().sprite;
 
@@ -52,7 +59,7 @@ public class SoldierInteractableUI : MonoBehaviour
         nextCountText.text = nextElementCount.ToString();
 
         countText.text = count.ToString();
-        ButtonUpdate();
+        UpdateButton();
     }
 
     public void OnClickPlusButton()
@@ -64,18 +71,8 @@ public class SoldierInteractableUI : MonoBehaviour
 
         count++;
 
-        countText.text = count.ToString();
-        if(count == 0)
-        {
-            currentCountText.text = $"{currentElementCount}";
-            nextCountText.text = $"{nextElementCount}";
-        }
-        else
-        {
-            currentCountText.text = $"{currentElementCount}({-count * requiredCount})";
-            nextCountText.text = $"{nextElementCount}(+{count})";
-        }
-        ButtonUpdate();
+        UpdateCountText();
+        UpdateButton();
     }
 
     public void OnClickMinusButton()
@@ -87,21 +84,11 @@ public class SoldierInteractableUI : MonoBehaviour
 
         count--;
 
-        countText.text = count.ToString();
-        if (count == 0)
-        {
-            currentCountText.text = $"{currentElementCount}";
-            nextCountText.text = $"{nextElementCount}";
-        }
-        else
-        {
-            currentCountText.text = $"{currentElementCount}({-count * requiredCount})";
-            nextCountText.text = $"{nextElementCount}(+{count})";
-        }
-        ButtonUpdate();
+        UpdateCountText();
+        UpdateButton();
     }
 
-    public void ButtonUpdate()
+    public void UpdateButton()
     {
         if(currentElementCount > requiredCount)
         {
@@ -120,5 +107,34 @@ public class SoldierInteractableUI : MonoBehaviour
         {
             minusButton.interactable = true;
         }
+    }
+    private void UpdateCountText()
+    {
+        countText.text = count.ToString();
+        if (count == 0)
+        {
+            currentCountText.text = $"{currentElementCount}";
+            nextCountText.text = $"{nextElementCount}";
+        }
+        else
+        {
+            currentCountText.text = $"{currentElementCount}({-count * requiredCount})";
+            nextCountText.text = $"{nextElementCount}(+{count})";
+        }
+    }
+    public void OnClickMergeButton()
+    {
+        mergeAction?.Invoke(count);
+        currentElementCount -= count * requiredCount;
+        nextElementCount += count;
+        count = 0;
+
+        UpdateCountText();
+        UpdateButton();
+    }
+
+    public void OnClickEquipButton()
+    {
+        equipAction?.Invoke();
     }
 }

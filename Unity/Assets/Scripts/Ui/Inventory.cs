@@ -23,9 +23,13 @@ public class Inventory : MonoBehaviour
     private InventoryElement selectedElement;
     private InventoryElement currentElement;
     private UnitPartyManager unitPartyManager;
+    private SoldierInteractableUI soldierInteractableUI;
     private void Awake()
     {
         unitPartyManager = FindObjectOfType<UnitPartyManager>();
+        soldierInteractableUI = GetComponentInChildren<SoldierInteractableUI>();
+        soldierInteractableUI.mergeAction += DoMerge;
+        soldierInteractableUI.equipAction += Equip;
     }
     private void Start()
     {
@@ -164,9 +168,12 @@ public class Inventory : MonoBehaviour
             }
         }
     }
-    public void SelectedElementMerge()
+    public void DoMerge(int count)
     {
-        Merge(selectedElement);
+        for(int i = 0; i < count; i++)
+        {
+            Merge(selectedElement);
+        }
     }
     public void BatchMerge()
     {

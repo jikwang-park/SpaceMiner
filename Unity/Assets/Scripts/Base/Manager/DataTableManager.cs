@@ -24,31 +24,33 @@ public static class DataTableManager
             tables.Add(id, table);
         }
 #else
-        var table = new StringTable();
-        var stringTableId = DataTableIds.String[(int)Variables.currentLanguage];
-        table.Load(stringTableId);
-        tables.Add(stringTableId, table);
+        {
+         var table = new StringTable();
+         var stringTableId = DataTableIds.stringTables[(int)Variables.currentLanguage];
+         table.Load(stringTableId);
+         tables.Add(stringTableId, table);
+        }
 #endif
 
         {
-            var table = new CorpsTable();
-            table.Load(DataTableIds.corpsTable);
-            tables.Add(DataTableIds.corpsTable, table);
+            var corpsTable = new CorpsTable();
+            corpsTable.Load(DataTableIds.corpsTable);
+            tables.Add(DataTableIds.corpsTable, corpsTable);
         }
         {
-            var table = new StageTable();
-            table.Load(DataTableIds.stageTable);
-            tables.Add(DataTableIds.stageTable, table);
+            var stageTable = new StageTable();
+            stageTable.Load(DataTableIds.stageTable);
+            tables.Add(DataTableIds.stageTable, stageTable);
         }
         {
-            var table = new WaveTable();
-            table.Load(DataTableIds.waveTable);
-            tables.Add(DataTableIds.waveTable, table);
+            var waveTable = new WaveTable();
+            waveTable.Load(DataTableIds.waveTable);
+            tables.Add(DataTableIds.waveTable, waveTable);
         }
         {
-            var table = new SoldierTable();
-            table.Load(DataTableIds.soldierTable);
-            tables.Add(DataTableIds.soldierTable, table);
+            var soldierTable = new SoldierTable();
+            soldierTable.Load(DataTableIds.soldierTable);
+            tables.Add(DataTableIds.soldierTable, soldierTable);
         }
     }
 

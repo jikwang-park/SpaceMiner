@@ -384,9 +384,9 @@ public class BigNumber : ISerializationCallbackReceiver
         {
             return $"{stringSign}{parts[parts.Count - 1]}.{parts[parts.Count - 2] / 100}{units[parts.Count - 1]}";
         }
-        else
+        else 
         {
-            return $"{stringSign}{parts[parts.Count - 1]}";
+            return $"{stringSign}";
         }
     }
 

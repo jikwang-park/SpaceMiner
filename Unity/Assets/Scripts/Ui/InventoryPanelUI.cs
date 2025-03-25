@@ -19,8 +19,6 @@ public class InventoryPanelUI : MonoBehaviour
     [SerializeField]
     private Button displayHealerInvenButton;
     [SerializeField]
-    private Button MergeButton;
-    [SerializeField]
     private Button BatchMergeButton;
 
     private UnitTypes currentInventoryType;
@@ -75,22 +73,6 @@ public class InventoryPanelUI : MonoBehaviour
         if (typeDict.ContainsKey(UnitTypes.Healer))
         {
             healerInventory.Initialize(typeDict[UnitTypes.Healer], UnitTypes.Healer);
-        }
-    }
-
-    private void OnClickMergeButton()
-    {
-        switch (currentInventoryType)
-        {
-            case UnitTypes.Tanker:
-                tankerInventory.SelectedElementMerge();
-                break;
-            case UnitTypes.Dealer:
-                dealerInventory.SelectedElementMerge();
-                break;
-            case UnitTypes.Healer:
-                healerInventory.SelectedElementMerge();
-                break;
         }
     }
     private void OnClickBatchMergeButton()

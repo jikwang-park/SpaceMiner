@@ -24,10 +24,12 @@ public static class DataTableManager
             tables.Add(id, table);
         }
 #else
-        var table = new StringTable();
-        var stringTableId = DataTableIds.String[(int)Variables.currentLanguage];
-        table.Load(stringTableId);
-        tables.Add(stringTableId, table);
+        {
+            var table = new StringTable();
+            var stringTableId = DataTableIds.String[(int)Variables.currentLanguage];
+            table.Load(stringTableId);
+            tables.Add(stringTableId, table);
+        }
 #endif
 
         {

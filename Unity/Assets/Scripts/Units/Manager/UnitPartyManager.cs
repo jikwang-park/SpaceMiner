@@ -8,6 +8,7 @@ public class UnitPartyManager : MonoBehaviour
     public List<Unit> unitprefabs = new List<Unit>();
 
     public List<Unit> generateInstance = new List<Unit>();
+    public Dictionary<UnitTypes, Unit> units = new Dictionary<UnitTypes, Unit>();
 
     public int AliveCount
     {
@@ -92,6 +93,5 @@ public class UnitPartyManager : MonoBehaviour
     }
     public void SetUnitData(SoldierTable.Data data, UnitTypes type)
     {
-
     }
 }

@@ -4,15 +4,6 @@ using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
-
-[Serializable]
-public class InventoryElementSaveData
-{
-    public string soldierId;
-    public bool IsLocked;
-    public int Count;
-    public int Level;
-}
 public class InventoryElement : MonoBehaviour
 {
     public bool IsLocked { get; private set; } = true;

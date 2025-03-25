@@ -8,13 +8,6 @@ using UnityEngine.AddressableAssets;
 using UnityEngine.ResourceManagement.AsyncOperations;
 using UnityEngine.UI;
 
-[Serializable]
-public class InventorySaveData
-{
-    public List<InventoryElementSaveData> elements = new List<InventoryElementSaveData>();
-    public string currentElementID;
-    public UnitTypes inventoryType;
-}
 public class Inventory : MonoBehaviour
 {
     public List<InventoryElement> inventoryElements = new List<InventoryElement>();
@@ -201,6 +194,7 @@ public class Inventory : MonoBehaviour
             }
         }
         OnElementSelected(selectedElement);
+        SaveLoadManager.Instance.SaveGame();
     }
     public InventorySaveData Save()
     {
@@ -225,4 +219,5 @@ public class Inventory : MonoBehaviour
         }
         return saveData;
     }
+
 }

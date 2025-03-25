@@ -307,7 +307,7 @@ public class BigNumber : ISerializationCallbackReceiver
     }
     public static bool operator ==(BigNumber a, BigNumber b)
     {
-        if(a == null || b == null)
+        if(a is null || b is null)
         {
             return false;
         }

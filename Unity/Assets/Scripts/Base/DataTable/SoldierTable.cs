@@ -75,4 +75,6 @@ public class SoldierTable : DataTable
         }
         return dict[key];
     }
+
 }
+

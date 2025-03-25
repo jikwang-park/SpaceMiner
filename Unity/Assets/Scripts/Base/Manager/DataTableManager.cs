@@ -26,7 +26,7 @@ public static class DataTableManager
 #else
         {
             var table = new StringTable();
-            var stringTableId = DataTableIds.String[(int)Variables.currentLanguage];
+            var stringTableId = DataTableIds.stringTables[(int)Variables.currentLanguage];
             table.Load(stringTableId);
             tables.Add(stringTableId, table);
         }

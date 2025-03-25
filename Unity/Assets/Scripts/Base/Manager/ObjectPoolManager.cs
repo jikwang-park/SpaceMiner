@@ -47,7 +47,7 @@ public class ObjectPoolManager : MonoBehaviour
     {
         for (int i = 0; i < addressableAssets.Length; ++i)
         {
-            if (addressableAssets[i].Asset != null)
+            if (addressableAssets[i].Asset is not null)
             {
                 addressableAssets[i].ReleaseAsset();
             }
@@ -73,6 +73,7 @@ public class ObjectPoolManager : MonoBehaviour
     {
         GameObject created = Instantiate(prefab);
         created.GetComponent<IObjectPoolGameObject>().ObjectPool = pool;
+        created.transform.SetParent(transform);
         return created;
     }
 

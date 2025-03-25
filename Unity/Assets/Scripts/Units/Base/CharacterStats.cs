@@ -14,6 +14,10 @@ public class CharacterStats : MonoBehaviour
     {
         maxHp = new BigNumber("50");
         damage = new BigNumber("1");
+    }
+
+    private void OnEnable()
+    {
         Hp = maxHp;
     }
 }

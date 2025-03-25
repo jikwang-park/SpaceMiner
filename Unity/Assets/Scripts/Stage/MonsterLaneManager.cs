@@ -48,12 +48,17 @@ public class MonsterLaneManager : MonoBehaviour
             monster.findFrontMonster = GetLineMonster;
             ++laneMonsterCounts[lane];
             int createdLine = currentLastLine;
-            destructedEvent.OnDestroyed += (_) => RemoveMonster(createdLine, lane, monster);
+            destructedEvent.OnDestroyed += (sender) => RemoveMonster(sender, createdLine, lane, monster);
         }
     }
 
-    public void RemoveMonster(int createdLine, int lane, MonsterController monster)
+    public void RemoveMonster(DestructedDestroyEvent sender, int createdLine, int lane, MonsterController monster)
     {
+        if (!monsterLines.ContainsKey(createdLine))
+        {
+            return;
+        }
+
         monsterLines[createdLine].Remove(lane);
         --laneMonsterCounts[lane];
         if (monsterLines[createdLine].Count == 0)

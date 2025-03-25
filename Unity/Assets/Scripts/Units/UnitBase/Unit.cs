@@ -197,7 +197,6 @@ public class Unit : MonoBehaviour
     {
         StartCoroutine(NormalAttackCor());
         lastAttackTime = Time.time;
-
     }
 
     public IEnumerator NormalAttackCor()
@@ -209,5 +208,4 @@ public class Unit : MonoBehaviour
         yield return new WaitForSeconds(attackUsingTime);
         IsNormalAttacking = false;
     }
-
 }

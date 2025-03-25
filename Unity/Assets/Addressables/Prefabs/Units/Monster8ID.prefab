@@ -12,12 +12,12 @@ GameObject:
   - component: {fileID: -1111162795851042095}
   - component: {fileID: 3089566289629320734}
   - component: {fileID: 8961125682003663626}
-  - component: {fileID: 7788105499040662219}
   - component: {fileID: 6305094812615239833}
   - component: {fileID: 3306440116249685385}
+  - component: {fileID: 2237338821017767334}
   - component: {fileID: -3596748232175864356}
   m_Layer: 6
-  m_Name: Monster8
+  m_Name: Monster8ID
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -54,11 +54,9 @@ MonoBehaviour:
   status: 0
   <weapon>k__BackingField: {fileID: 11400000, guid: ecc5d284510489041a081ec5c4d66ca9, type: 2}
   animations: {fileID: 7982837252065055135}
-  mask:
-    serializedVersion: 2
-    m_Bits: 64
   <Speed>k__BackingField: 4
-  currentLane: 0
+  <minDistanceInMonster>k__BackingField: 2
+  frontLine: -1
 --- !u!114 &3089566289629320734
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -72,13 +70,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   maxHp:
-    currentValue: 
-    parts: 
-    sign: 0
+    currentValue: 0
   damage:
-    currentValue: 
-    parts: 
-    sign: 0
+    currentValue: 0
   armor: 0
 --- !u!114 &8961125682003663626
 MonoBehaviour:
@@ -90,18 +84,6 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 8aa1921a0dca5b34c8e13a04da6dfd7a, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
---- !u!114 &7788105499040662219
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 9151133835082727212}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 60d98ccbb194c9c4db6bea50cb6a7920, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!114 &6305094812615239833
@@ -126,6 +108,18 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 35319348902dac24d93bf58993d6a493, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &2237338821017767334
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 9151133835082727212}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 01c571c7b0d3c9242a0169cc80cc27d6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!65 &-3596748232175864356

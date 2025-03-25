@@ -9,5 +9,6 @@ public class DestructedDestroyEvent : MonoBehaviour, IDestructable
     public void OnDestruction(GameObject Attacker)
     {
         OnDestroyed?.Invoke(this);
+        OnDestroyed = null;
     }
 }

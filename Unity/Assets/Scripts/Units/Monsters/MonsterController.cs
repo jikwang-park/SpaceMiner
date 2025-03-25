@@ -3,7 +3,7 @@ using System.Collections;
 using UnityEngine;
 using UnityEngine.Pool;
 
-public class MonsterController : MonoBehaviour
+public class MonsterController : MonoBehaviour, IObjectPoolGameObject
 {
     private readonly int hashAttack = Animator.StringToHash("Attack");
 
@@ -57,22 +57,32 @@ public class MonsterController : MonoBehaviour
         }
     }
 
+    public IObjectPool<GameObject> ObjectPool { get; set; }
+
     private void Awake()
     {
         InitBehaviourTree();
         status = Status.Wait;
     }
 
-    private void Start()
+    private void OnEnable()
     {
         isDrawRegion = true;
 
         stageManager = GameObject.FindGameObjectWithTag("GameController").GetComponent<StageManager>();
     }
 
+    private void OnDisable()
+    {
+        isDrawRegion = false;
+
+        stageManager = null;
+    }
+
     private void Update()
     {
         Target = stageManager.UnitPartyManager.GetFirstLineUnit();
+
         if (Target is not null)
         {
             TargetDistance = Vector3.Dot(Target.position - transform.position, Vector3.back);
@@ -135,5 +145,11 @@ public class MonsterController : MonoBehaviour
         {
             Gizmos.DrawWireCube(transform.position + transform.forward * 0.5f, new Vector3(1f, 1f, 1f));
         }
+    }
+
+    public void Release()
+    {
+        
+        ObjectPool.Release(gameObject);
     }
 }

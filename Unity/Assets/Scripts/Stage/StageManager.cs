@@ -122,7 +122,7 @@ public class StageManager : MonoBehaviour
 
         Transform unit = UnitPartyManager.GetFirstLineUnit();
         if (unit != null)
-            waveSpawner.Spawn(unit.position + Vector3.forward * 10f, corpsData);
+            waveSpawner.Spawn(unit.position + Vector3.forward * spawnDistance, corpsData);
         else
             waveSpawner.Spawn(transform.position, corpsData);
 

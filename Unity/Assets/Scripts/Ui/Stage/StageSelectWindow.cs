@@ -11,5 +11,8 @@ public class StageSelectWindow : MonoBehaviour
     private StageSelectScroll stageScroll;
 
 
-
+    private void Start()
+    {
+        planetScroll.OnPlanetSelected += stageScroll.SetButtons;
+    }
 }

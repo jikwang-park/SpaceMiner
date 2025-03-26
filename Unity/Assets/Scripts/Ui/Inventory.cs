@@ -194,7 +194,7 @@ public class Inventory : MonoBehaviour
             }
         }
         OnElementSelected(selectedElement);
-        SaveLoadManager.Instance.SaveGame();
+        SaveLoadManager.SaveGame();
     }
     public InventorySaveData Save()
     {

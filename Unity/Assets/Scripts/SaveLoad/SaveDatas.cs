@@ -30,5 +30,5 @@ public class StageSaveData
 public class TotalSaveData
 {
     public Dictionary<UnitTypes, InventorySaveData> inventorySaveData = new Dictionary<UnitTypes, InventorySaveData>();
-    public StageSaveData stageSaveData = new StageSaveData();
+    public StageSaveData stageSaveData;
 }

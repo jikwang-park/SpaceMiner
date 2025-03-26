@@ -90,6 +90,16 @@ public class InventoryPanelUI : MonoBehaviour
                 break;
         }
     }
+
+    private void OnEnable()
+    {
+        SaveLoadManager.onSaveRequested += DoSave;
+    }
+
+    private void OnDisable()
+    {
+        SaveLoadManager.onSaveRequested -= DoSave;
+    }
     private void DoSave(TotalSaveData totalSaveData)
     {
         totalSaveData.inventorySaveData[UnitTypes.Tanker] = tankerInventory.Save();

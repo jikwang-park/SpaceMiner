@@ -1,6 +1,7 @@
 
 using System.Collections.Generic;
 using System;
+using JetBrains.Annotations;
 
 [Serializable]
 public class InventoryElementSaveData
@@ -14,8 +15,16 @@ public class InventoryElementSaveData
 public class InventorySaveData
 {
     public List<InventoryElementSaveData> elements = new List<InventoryElementSaveData>();
-    public string currentElementID;
+    public string equipElementID;
     public UnitTypes inventoryType;
+}
+[Serializable]
+public class StageSaveData
+{
+    public int currentPlanet;
+    public int currentStage;
+    public int HighPlanet;
+    public int HighStage;
 }
 [Serializable]
 public class TotalSaveData

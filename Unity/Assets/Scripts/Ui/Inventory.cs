@@ -22,7 +22,7 @@ public class Inventory : MonoBehaviour
     private int requireMergeCount = 5;
     private UnitTypes type;
     private InventoryElement selectedElement;
-    private InventoryElement currentElement;
+    private InventoryElement equipElement;
     private UnitPartyManager unitPartyManager;
     private SoldierInteractableUI soldierInteractableUI;
     private void Awake()
@@ -130,18 +130,18 @@ public class Inventory : MonoBehaviour
     private void Equip()
     {
         UnEquip();
-        currentElement = selectedElement;
-        currentElement.SetEquip();
-        unitPartyManager.SetUnitData(DataTableManager.SoldierTable.GetData(currentElement.soldierId), type);
+        equipElement = selectedElement;
+        equipElement.SetEquip();
+        unitPartyManager.SetUnitData(DataTableManager.SoldierTable.GetData(equipElement.soldierId), type);
     }
     private void UnEquip()
     {
-        if(currentElement == null)
+        if(equipElement == null)
         {
             return;
         }
-        currentElement.SetUnEquip();
-        currentElement = null;
+        equipElement.SetUnEquip();
+        equipElement = null;
     }
     private void Merge(InventoryElement element)
     {
@@ -202,20 +202,20 @@ public class Inventory : MonoBehaviour
         saveData.inventoryType = this.type;
         foreach (var element in inventoryElements)
         {
-            InventoryElementSaveData ed = new InventoryElementSaveData();
-            ed.IsLocked = element.IsLocked;
-            ed.soldierId = element.soldierId;
-            ed.Count = element.Count;
-            ed.Level = element.Level;
-            saveData.elements.Add(ed);
+            InventoryElementSaveData data = new InventoryElementSaveData();
+            data.IsLocked = element.IsLocked;
+            data.soldierId = element.soldierId;
+            data.Count = element.Count;
+            data.Level = element.Level;
+            saveData.elements.Add(data);
         }
-        if (currentElement != null)
+        if (equipElement != null)
         {
-            saveData.currentElementID = currentElement.soldierId;
+            saveData.equipElementID = equipElement.soldierId;
         }
         else
         {
-            saveData.currentElementID = "";
+            saveData.equipElementID = "";
         }
         return saveData;
     }

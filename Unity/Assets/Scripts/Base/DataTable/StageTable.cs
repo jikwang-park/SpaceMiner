@@ -32,6 +32,7 @@ public class StageTable : DataTable
 
     private Dictionary<string, Data> dict = new Dictionary<string, Data>();
     private Dictionary<int, Dictionary<int, Data>> planetDict = new Dictionary<int, Dictionary<int, Data>>();
+
     public override Type DataType => typeof(Data);
 
     public override void LoadFromText(string text)

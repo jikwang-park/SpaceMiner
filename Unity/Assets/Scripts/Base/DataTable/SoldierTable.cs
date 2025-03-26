@@ -94,6 +94,7 @@ public class SoldierTable : DataTable
         }
         return dict[key];
     }
+
     public override void Set(List<string[]> data)
     {
         var dictionary = new Dictionary<string, Data>();

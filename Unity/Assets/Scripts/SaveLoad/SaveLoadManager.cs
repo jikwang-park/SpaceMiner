@@ -8,14 +8,19 @@ using UnityEngine;
 public class SaveLoadManager : Singleton<SaveLoadManager>
 {
     public static string fileName = "SaveData.json";
-    public event Action<TotalSaveData> OnSaveRequested;
-    public event Action<TotalSaveData> OnLoadRequested;
+
+    private InventoryPanelUI inventoryPanelUI;
+    private StageManager stageManger;
+
+    private void Awake()
+    {
+        inventoryPanelUI = FindObjectOfType<InventoryPanelUI>();
+        stageManger = FindObjectOfType<StageManager>();
+    }
 
     public void SaveGame()
     {
         TotalSaveData data = new TotalSaveData();
-
-        OnSaveRequested?.Invoke(data);
 
         string json = JsonConvert.SerializeObject(data, Formatting.Indented);
         string filePath = Path.Combine(Application.persistentDataPath, fileName);

@@ -19,3 +19,9 @@ public class DataTableIds
     public const string waveTable = "WaveTable";
     public const string soldierTable = "SoldierTable";
 }
+
+public enum StageMode
+{
+    Ascend,
+    Repeat,
+}

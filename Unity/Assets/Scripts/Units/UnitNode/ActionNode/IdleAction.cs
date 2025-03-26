@@ -17,7 +17,7 @@ public class IdleAction : ActionNode<Unit>
     {
         if (context.IsSkillCoolTimeOn || context.IsAttackCoolTimeOn)
         {
-            return NodeStatus.Failure;
+            return NodeStatus.Success;
         }
 
         return NodeStatus.Running;

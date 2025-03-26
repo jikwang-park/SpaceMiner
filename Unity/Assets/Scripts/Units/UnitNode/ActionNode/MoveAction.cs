@@ -11,7 +11,6 @@ public class MoveAction : ActionNode<Unit>
     protected override void OnStart()
     {
         base.OnStart();
-        Debug.Log("이동시작");
     }
 
     protected override NodeStatus OnUpdate()
@@ -19,7 +18,7 @@ public class MoveAction : ActionNode<Unit>
         if(context.IsUnitCanAttack)
         {
             Debug.Log("이동종료");
-            return NodeStatus.Failure;
+            return NodeStatus.Success;
         }
         Debug.Log("이동중");
         context.Move();

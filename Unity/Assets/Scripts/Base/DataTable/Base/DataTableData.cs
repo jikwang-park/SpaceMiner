@@ -4,5 +4,5 @@ using UnityEngine;
 
 public abstract class DataTableData
 {
-    
+    public abstract void Set(string[] argument);
 }

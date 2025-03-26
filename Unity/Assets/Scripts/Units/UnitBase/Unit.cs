@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
+using static UnityEditor.Timeline.TimelinePlaybackControls;
 
 
 
@@ -12,11 +13,15 @@ public class Unit : MonoBehaviour
     public CharacterStats unitStats;
 
 
-    public int unitArmor;
+
+    private BigNumber unitMaxHp;
+    private BigNumber unitDamage;
+    private int unitArmor;
+    private BigNumber currentHp;
 
 
+    private float targetDistance;
 
-    public GameObject enermyPrefab;
     //탱커 스킬 쿨타임
     public float skillCoolTime = 10f;
 
@@ -29,23 +34,22 @@ public class Unit : MonoBehaviour
     public float speed = 20f;
     public int aliveCount = 0;
 
-    public UnitPartyManager unitPartyManager;
 
 
-    public AttackDefinition unitWeapon;
+    public UnitWeapon unitWeapon;
 
     private Transform targetPos;
 
-    private BigNumber currentHp;
+    private bool isTargetInArea = false;
 
-    private void SetStatus(BigNumber unitMaxHp, BigNumber unitdamage, int unitArmor)
+    private int lane = 0;
+
+    private void SetStatus(BigNumber unitMaxHp, int unitArmor)
     {
-        unitdamage = unitWeapon.damage;
+        unitStats.maxHp = unitMaxHp;
+        unitStats.Hp = currentHp;
+        unitStats.armor = unitArmor;
 
-        this.unitStats.maxHp = unitMaxHp;
-        this.unitStats.damage = unitdamage;
-        this.unitStats.armor = unitArmor;
-        this.unitStats.Hp = currentHp;
     }
 
 
@@ -64,7 +68,7 @@ public class Unit : MonoBehaviour
     private void SetDealerStats()
     {
         behaviorTree = UnitBTManager.GetBehaviorTree(this, UnitTypes.Dealer);
-        SetStatus(70, 25, 3);
+        SetStatus(70, 3);
         currentHp = 40;
     }
 
@@ -72,18 +76,20 @@ public class Unit : MonoBehaviour
     private void SetTankerStats()
     {
         behaviorTree = UnitBTManager.GetBehaviorTree(this, UnitTypes.Tanker);
-        SetStatus(100, 15, 10);
+        SetStatus(100, 10);
         currentHp = 50;
     }
     private void Awake()
     {
-
+        stageManger = GameObject.FindGameObjectWithTag("GameController").GetComponent<StageManager>();
+        unitStats = GetComponent<CharacterStats>();
         Init();
     }
 
+
+
     private void Start()
     {
-        targetPos = stageManger.MonsterLaneManager.GetFirstMonster(0);
     }
     // 유닛 컨디션 bool값
     public bool IsDead // 플레이어가 죽었는지
@@ -102,11 +108,10 @@ public class Unit : MonoBehaviour
     {
         get
         {
-            if (targetPos.gameObject==null)
-            {
+            if (targetPos == null)
                 return false;
-            }
-            if (Vector3.Distance(transform.position, targetPos.position) <= unitWeapon.range)
+
+            if (targetDistance <= unitWeapon.range)
             {
                 return true;
             }
@@ -124,7 +129,7 @@ public class Unit : MonoBehaviour
     {
         get
         {
-            if(Time.time > lastAttackTime+ skillCoolTime)
+            if (Time.time > lastAttackTime + skillCoolTime)
                 return true;
 
             return false;
@@ -134,7 +139,7 @@ public class Unit : MonoBehaviour
     {
         get
         {
-            if(Time.time > lastAttackTime + unitWeapon.coolDown)
+            if (Time.time > lastAttackTime + unitWeapon.coolDown)
                 return true;
 
             return false;
@@ -142,17 +147,45 @@ public class Unit : MonoBehaviour
     }
     public float lastAttackTime;
     public float lastSkillAttackTime;
-    
+
+    private bool isMonsterSpawn;
+
 
     private void Update()
     {
+        GetTargetPosition();
         behaviorTree.Update();
 
         IsUnitHit = false;
-        if(Input.GetKeyDown(KeyCode.M))
+        if (Input.GetKeyDown(KeyCode.M))
         {
             IsUnitHit = true;
         }
+       
+    }
+
+    private Transform GetTargetPosition()
+    {
+        var lane = stageManger.MonsterLaneManager.LaneCount;
+
+        for(int i = 0; i< lane; ++i)
+        {
+            var target = stageManger.MonsterLaneManager.GetMonsterCount(i);
+            var targetPosition = stageManger.MonsterLaneManager.GetFirstMonster(i);
+
+            if (target > 0)
+            {
+
+                targetDistance = Vector3.Distance(stageManger.UnitPartyManager.generateInstance[0].transform.position, targetPosition.position);
+                if(targetDistance <= unitWeapon.range)
+                {
+                    targetPos = targetPosition;
+                    Debug.Log(targetPos.position);
+                    return targetPos;
+                }
+            }
+        }
+        return null;
     }
 
     public void Move()
@@ -163,16 +196,16 @@ public class Unit : MonoBehaviour
     public void AttackCorutine()
     {
         StartCoroutine(NormalAttackCor());
+        lastAttackTime = Time.time;
     }
 
     public IEnumerator NormalAttackCor()
     {
-        if (enermyPrefab != null)
+        if (targetPos.gameObject != null)
         {
             unitWeapon.Execute(gameObject, targetPos.gameObject);
         }
         yield return new WaitForSeconds(attackUsingTime);
         IsNormalAttacking = false;
     }
-
 }

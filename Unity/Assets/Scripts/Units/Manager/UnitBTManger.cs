@@ -30,6 +30,28 @@ public static class UnitBTManager
 
     public static BehaviorTree<Unit> InitTankBehaviorTree(Unit context)
     {
+        //var tankBehaviortree = new BehaviorTree<Unit>(context);
+
+        //var rootSelcetorNode = new SelectorNode<Unit>(context);
+
+        //var attackSequence = new SquenceNode<Unit>(context);
+
+        //attackSequence.AddChild(new IsUnitAliveCondition(context));
+        //attackSequence.AddChild(new IsUnitOnRangeCondition(context));
+        //attackSequence.AddChild(new IsUnitCanAttackCondition(context));
+        //attackSequence.AddChild(new NormalAttackAction(context));
+
+        //var moveSequence = new SquenceNode<Unit>(context);
+
+        //moveSequence.AddChild(new IsUnitNotOnRangeCondition(context));
+        //moveSequence.AddChild(new MoveAction(context));
+
+        //rootSelcetorNode.AddChild(attackSequence);
+        //rootSelcetorNode.AddChild(moveSequence);
+
+        //tankBehaviortree.SetRoot(rootSelcetorNode);
+
+        //return tankBehaviortree;
 
         var tankBehaviortree = new BehaviorTree<Unit>(context);
 
@@ -55,8 +77,12 @@ public static class UnitBTManager
         return tankBehaviortree;
 
 
+
+
+
+
         //var tankerbehaviorTree = new BehaviorTree<Unit>(context);
-        
+
         //var rootSelectorNode = new SelectorNode<Unit>(context);
         //tankerbehaviorTree.SetRoot(rootSelectorNode);
 
@@ -65,10 +91,10 @@ public static class UnitBTManager
         //attackSqence.AddChild(new IsUnitAliveCondition(context));
         //attackSqence.AddChild(new IsUnitOnRangeCondition(context));
         //attackSqence.AddChild(new IsUnitUsingSkillCondition(context));
-        
+
         //var attackTypeSelector = new SelectorNode<Unit>(context);
         //attackSqence.AddChild(attackTypeSelector);
-        
+
         //var skillAttackSquence = new SquenceNode<Unit>(context);
         //attackTypeSelector.AddChild(skillAttackSquence);
         //skillAttackSquence.AddChild(new IsUnitHitCondition(context));
@@ -86,7 +112,7 @@ public static class UnitBTManager
         //idleSquence.AddChild(new IdleAction(context));
 
         //return tankerbehaviorTree;
-        
+
     }
 
     public static BehaviorTree<Unit> InitDelarBehaviorTree(Unit context)
@@ -94,10 +120,8 @@ public static class UnitBTManager
         var dealerBehaviorTree = new BehaviorTree<Unit>(context);
 
         var rootSelcetorNode = new SelectorNode<Unit>(context);
-        dealerBehaviorTree.SetRoot(rootSelcetorNode);
 
         var attackSequence = new SquenceNode<Unit>(context);
-        rootSelcetorNode.AddChild(attackSequence);
 
         attackSequence.AddChild(new IsUnitAliveCondition(context));
         attackSequence.AddChild(new IsUnitOnRangeCondition(context));
@@ -105,12 +129,14 @@ public static class UnitBTManager
         attackSequence.AddChild(new NormalAttackAction(context));
 
         var moveSequence = new SquenceNode<Unit>(context);
-        rootSelcetorNode.AddChild(moveSequence);
 
         moveSequence.AddChild(new IsUnitNotOnRangeCondition(context));
         moveSequence.AddChild(new MoveAction(context));
 
+        rootSelcetorNode.AddChild(attackSequence);
+        rootSelcetorNode.AddChild(moveSequence);
         rootSelcetorNode.AddChild(new IdleAction(context));
+        dealerBehaviorTree.SetRoot(rootSelcetorNode);
 
         return dealerBehaviorTree;
     }

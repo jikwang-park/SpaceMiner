@@ -1,10 +1,9 @@
 using System;
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Pool;
 
-public class MonsterController : MonoBehaviour
+public class MonsterController : MonoBehaviour, IObjectPoolGameObject
 {
     private readonly int hashAttack = Animator.StringToHash("Attack");
 
@@ -23,20 +22,20 @@ public class MonsterController : MonoBehaviour
     private Animation animations;
     private BehaviorTree<MonsterController> behaviorTree;
 
-    private Collider[] colliders;
-    [SerializeField]
-    private LayerMask mask;
-
     public StageManager stageManager { get; private set; }
 
     [field: SerializeField]
     public float Speed { get; private set; } = 4f;
-    private float aggroRange;
+
+    [field: SerializeField]
+    public float minDistanceInMonster { get; private set; } = 2f;
     public float TargetDistance { get; private set; }
 
     public Transform Target { get; private set; }
 
-    public int currentLane;
+    public Func<int, Transform> findFrontMonster;
+
+    public int frontLine = -1;
 
     public float LastAttackTime { get; private set; }
 
@@ -54,34 +53,39 @@ public class MonsterController : MonoBehaviour
     {
         get
         {
-            int frontMonsters = Physics.OverlapBoxNonAlloc(transform.position + transform.forward * 0.5f, new Vector3(0.5f, 0.5f, 0.5f), colliders, Quaternion.identity, mask.value);
-            return frontMonsters == 1;
+            return frontLine < 0 || Vector3.Dot(findFrontMonster(frontLine).position - transform.position, Vector3.back) > minDistanceInMonster;
         }
     }
+
+    public IObjectPool<GameObject> ObjectPool { get; set; }
 
     private void Awake()
     {
         InitBehaviourTree();
         status = Status.Wait;
-        colliders = new Collider[3];
     }
 
-    private void Start()
+    private void OnEnable()
     {
         isDrawRegion = true;
 
         stageManager = GameObject.FindGameObjectWithTag("GameController").GetComponent<StageManager>();
     }
 
+    private void OnDisable()
+    {
+        isDrawRegion = false;
+
+        stageManager = null;
+    }
+
     private void Update()
     {
-        if (Target == null)
+        Target = stageManager.UnitPartyManager.GetFirstLineUnit();
+
+        if (Target is not null)
         {
-            Target = stageManager.UnitPartyManager.GetFirstLineUnit();
-        }
-        if (Target != null)
-        {
-            TargetDistance = Vector3.Dot((Target.position - transform.position), Vector3.back);
+            TargetDistance = Vector3.Dot(Target.position - transform.position, Vector3.back);
         }
 
         if (Input.GetKeyDown(KeyCode.Alpha8))
@@ -141,5 +145,11 @@ public class MonsterController : MonoBehaviour
         {
             Gizmos.DrawWireCube(transform.position + transform.forward * 0.5f, new Vector3(1f, 1f, 1f));
         }
+    }
+
+    public void Release()
+    {
+        
+        ObjectPool.Release(gameObject);
     }
 }

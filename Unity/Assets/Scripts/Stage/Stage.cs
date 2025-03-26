@@ -30,7 +30,7 @@ public class Stage : MonoBehaviour
     private void Update()
     {
         Transform unit = stageManager.UnitPartyManager.GetFirstLineUnit();
-        if (unit == null)
+        if (unit is null)
         {
             return;
         }

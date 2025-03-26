@@ -47,12 +47,12 @@ public class UnitPartyManager : MonoBehaviour
             return;
         }
 
-
-        for(int i =0; i< unitprefabs.Count; ++i)
+        
+        for (int i =0; i< unitprefabs.Count; ++i)
         {
-            var go = Instantiate(unitprefabs[i]); // 나중에 비동기로드로 바꿈
+            var go = Instantiate(unitprefabs[i], Vector3.zero ,Quaternion.identity); // 나중에 비동기로드로 바꿈
+            go.transform.position += new Vector3(0, 0, -5 * i);
             generateInstance.Add(go);
-            go.transform.position += new Vector3(0, 0, -5);
         }
     }
 

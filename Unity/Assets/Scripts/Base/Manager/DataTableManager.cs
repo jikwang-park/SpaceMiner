@@ -9,6 +9,8 @@ public static class DataTableManager
 {
     private static readonly Dictionary<string, DataTable> tables = new Dictionary<string, DataTable>();
 
+    public static Dictionary<string, DataTable> Tables => tables;
+
     static DataTableManager()
     {
         LoadTables();
@@ -25,10 +27,10 @@ public static class DataTableManager
         }
 #else
         {
-         var table = new StringTable();
-         var stringTableId = DataTableIds.stringTables[(int)Variables.currentLanguage];
-         table.Load(stringTableId);
-         tables.Add(stringTableId, table);
+            var table = new StringTable();
+            var stringTableId = DataTableIds.stringTables[(int)Variables.currentLanguage];
+            table.Load(stringTableId);
+            tables.Add(stringTableId, table);
         }
 #endif
 

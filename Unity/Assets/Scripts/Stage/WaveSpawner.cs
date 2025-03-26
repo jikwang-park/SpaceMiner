@@ -9,33 +9,27 @@ public class WaveSpawner : MonoBehaviour
     [field: SerializeField]
     public Vector3[] SpawnPoints { get; private set; } = new Vector3[]
     {
-        new Vector3(3f, 0f, 2f),
-        new Vector3(0f, 0f, 2f),
         new Vector3(-3f, 0f, 2f),
-        new Vector3(3f, 0f, 6f),
-        new Vector3(0f, 0f, 6f),
+        new Vector3(0f, 0f, 2f),
+        new Vector3(3f, 0f, 2f),
         new Vector3(-3f, 0f, 6f),
-        new Vector3(3f, 0f, 10f),
-        new Vector3(0f, 0f, 10f),
+        new Vector3(0f, 0f, 6f),
+        new Vector3(3f, 0f, 6f),
         new Vector3(-3f, 0f, 10f),
-        new Vector3(3f, 0f, 14f),
-        new Vector3(0f, 0f, 14f),
+        new Vector3(0f, 0f, 10f),
+        new Vector3(3f, 0f, 10f),
         new Vector3(-3f, 0f, 14f),
+        new Vector3(0f, 0f, 14f),
+        new Vector3(3f, 0f, 14f),
     };
-
-    public Vector3[] SpawnOffsets { get; private set; } = new Vector3[]
-    {
-        Vector3.back,
-        Vector3.forward,
-    };
-
-    private const string prefabFormat = "Prefabs/Units/{0}";
 
     private StageManager stageManager;
+    private ObjectPoolManager objectPoolManager;
 
     private void Awake()
     {
         stageManager = GetComponent<StageManager>();
+        objectPoolManager = GetComponent<ObjectPoolManager>();
     }
 
     public void Spawn(Vector3 frontPosition, CorpsTable.Data data)
@@ -43,10 +37,7 @@ public class WaveSpawner : MonoBehaviour
         if (data.FrontSlots == 0 && data.BackSlots == 0 && data.BossMonsterID != "0")
         {
             int lane = 1;
-            var handle = Addressables.InstantiateAsync(string.Format(prefabFormat, data.BossMonsterID),
-                frontPosition + SpawnPoints[lane],
-                Quaternion.LookRotation(Vector3.back, Vector3.up));
-            handle.Completed += (eventHandle) => SetMonsterLane(lane, eventHandle);
+            SpawnMonster(lane, lane, frontPosition, data.BossMonsterID);
             return;
         }
 
@@ -67,17 +58,7 @@ public class WaveSpawner : MonoBehaviour
 
             string monsterId = data.NormalMonsterIDs[index];
             int lane = i % 3;
-            var handle = Addressables.InstantiateAsync(string.Format(prefabFormat, monsterId),
-                frontPosition + SpawnPoints[i] + SpawnOffsets[0],
-                Quaternion.LookRotation(Vector3.back, Vector3.up));
-            handle.WaitForCompletion();
-            SetMonsterLane(lane, handle);
-            var handle2 = Addressables.InstantiateAsync(string.Format(prefabFormat, monsterId),
-                frontPosition + SpawnPoints[i] + SpawnOffsets[1],
-                Quaternion.LookRotation(Vector3.back, Vector3.up));
-            handle2.WaitForCompletion();
-            SetMonsterLane(lane, handle2);
-
+            SpawnMonster(lane, i, frontPosition, monsterId);
             ++createdCount[index];
         }
 
@@ -85,28 +66,28 @@ public class WaveSpawner : MonoBehaviour
 
         for (int i = 0, j = backStartPos; i < data.BackSlots; ++i, ++j)
         {
-            var handle = Addressables.InstantiateAsync(string.Format(prefabFormat, data.RangedMonsterID),
-                frontPosition + SpawnPoints[j],
-            Quaternion.LookRotation(Vector3.back, Vector3.up));
             int lane = i % 3;
-
-            handle.Completed += (eventHandle) => SetMonsterLane(lane, eventHandle);
+            SpawnMonster(lane, j, frontPosition, data.RangedMonsterID);
         }
     }
 
-    private void SetMonsterLane(int lane, AsyncOperationHandle<GameObject> handle)
+    private void SetMonsterLane(int lane, GameObject gameObject)
     {
-        if (handle.Status != AsyncOperationStatus.Succeeded)
-        {
-            return;
-        }
-
-        var monsterController = handle.Result.GetComponent<MonsterController>();
-        if (monsterController == null)
+        var monsterController = gameObject.GetComponent<MonsterController>();
+        if (monsterController is null)
         {
             return;
         }
         stageManager.AddMonster(monsterController);
         stageManager.MonsterLaneManager.AddMonster(lane, monsterController);
+    }
+
+    private void SpawnMonster(int lane, int index, Vector3 frontPosition, string monsterId)
+    {
+        var monster = objectPoolManager.gameObjectPool[monsterId].Get();
+        monster.transform.parent = null;
+        monster.transform.position = frontPosition + SpawnPoints[index];
+        monster.transform.rotation = Quaternion.LookRotation(Vector3.back, Vector3.up);
+        SetMonsterLane(lane, monster);
     }
 }

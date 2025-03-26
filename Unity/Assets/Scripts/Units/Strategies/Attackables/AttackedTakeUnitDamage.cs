@@ -26,19 +26,19 @@ public class AttackedTakeUnitDamage : MonoBehaviour,IAttackable
             unit.barrier -= attack.damage;
             if (unit.barrier < 0 )
             {
-                unit.currentHp += unit.barrier;
+                unit.unitStats.Hp += unit.barrier;
                 unit.barrier = 0;
             }
             
         }
         else
         {
-            unit.currentHp -= attack.damage;
+            unit.unitStats.Hp -= attack.damage;
         }
 
-        if (unit.currentHp < 0 && gameObjectEnabled)
+        if (unit.unitStats.Hp < 0 && gameObjectEnabled)
         {
-            unit.currentHp = new BigNumber("0");
+            unit.unitStats.Hp = new BigNumber("0");
             IDestructable[] destructables = GetComponents<IDestructable>();
             if (destructables.Length > 0)
             {

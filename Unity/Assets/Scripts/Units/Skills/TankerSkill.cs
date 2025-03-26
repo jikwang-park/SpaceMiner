@@ -45,7 +45,7 @@ public class TankerSkill : UnitSkill
     {
         foreach(var target in targetList)
         {
-            var amount = unit.UnitArmor * shieldRatio;
+            var amount = unit.unitStats.armor * shieldRatio;
             target.SetBarrier(duration, amount);
         }
     }

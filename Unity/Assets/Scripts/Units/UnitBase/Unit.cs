@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting.Antlr3.Runtime.Misc;
 using UnityEditor;
 using UnityEngine;
 
@@ -18,12 +19,6 @@ public class Unit : MonoBehaviour
     }
     private UnitTypes currentUnitType;
 
-    public BigNumber UnitMaxHp { get; private set; }
-    private BigNumber unitDamage;
-    public BigNumber UnitArmor { get; private set; } // weapon의 armor 추가해야됌
-    public BigNumber currentHp;
-    public float speed = 20f;
-    public float healamount;
 
     public BigNumber barrier;
 
@@ -31,7 +26,7 @@ public class Unit : MonoBehaviour
     {
         get
         {
-            if( barrier > 0 )
+            if (barrier > 0)
                 return true;
 
             return false;
@@ -40,7 +35,7 @@ public class Unit : MonoBehaviour
 
     public StageManager stageManger;
 
-    public CharacterStats unitStats;
+    public UnitStats unitStats;
 
 
 
@@ -64,10 +59,6 @@ public class Unit : MonoBehaviour
     [SerializeField]
     public UnitSkill unitSkill;
 
-
-
-    public UnitWeapon unitWeapon;
-
     public Transform targetPos;
 
     private bool isTargetInArea = false;
@@ -76,18 +67,16 @@ public class Unit : MonoBehaviour
 
     private void Awake()
     {
-
+        unitStats = GetComponent<UnitStats>();
         stageManger = GameObject.FindGameObjectWithTag("GameController").GetComponent<StageManager>();
-        unitStats = GetComponent<CharacterStats>();
-
     }
- 
+
     // ���� ����� bool��
     public bool IsDead // �÷��̾ �׾�����
     {
         get
         {
-            if (currentHp <= 0)
+            if (unitStats.Hp <= 0)
             {
                 return true;
             }
@@ -104,7 +93,7 @@ public class Unit : MonoBehaviour
             if (Time.time < unitSkill.coolTime + lastSkillUsingTime)
             {
                 return false;
-            }    
+            }
             return true;
         }
     }
@@ -117,7 +106,7 @@ public class Unit : MonoBehaviour
             if (targetPos == null)
                 return false;
 
-            if (targetDistance <= unitWeapon.range && IsAttackCoolTimeOn)
+            if (targetDistance <= unitStats.range && IsAttackCoolTimeOn)
             {
                 return true;
             }
@@ -145,7 +134,7 @@ public class Unit : MonoBehaviour
     {
         get
         {
-            if (Time.time > lastAttackTime + unitWeapon.coolDown)
+            if (Time.time > lastAttackTime + unitStats.coolDown)
                 return true;
 
             return false;
@@ -159,24 +148,14 @@ public class Unit : MonoBehaviour
 
     public void SetData(SoldierTable.Data data, UnitTypes type)
     {
-        unitStats.Hp = currentHp;
-        unitStats.maxHp = UnitMaxHp;
-        unitStats.damage = unitDamage;
-        unitStats.armor = UnitArmor;
+        unitStats.SetData(data, type);
 
-        ///
-        speed = data.MoveSpeed;
-        UnitMaxHp = (int)data.Basic_HP;
-        currentHp = UnitMaxHp;
-        UnitArmor = (int)data.Basic_DP;
-        healamount = (int)data.Special_H;
-        unitWeapon.damage = (int)data.Basic_DP;
         currentUnitType = type;
         behaviorTree = UnitBTManager.SetBehaviorTree(this, currentUnitType);
     }
 
 
-   
+
 
     public bool IsMonsterExist()
     {
@@ -208,8 +187,8 @@ public class Unit : MonoBehaviour
             if (target > 0)
             {
 
-                targetDistance = Vector3.Distance(stageManger.UnitPartyManager.generateInstance[0].transform.position, targetPosition.position);
-                if (targetDistance <= unitWeapon.range)
+                targetDistance = Vector3.Dot(targetPosition.position - stageManger.UnitPartyManager.generateInstance[0].transform.position, Vector3.forward);
+                if (targetDistance <= unitStats.range)
                 {
                     targetPos = targetPosition;
                     return targetPos;
@@ -221,7 +200,7 @@ public class Unit : MonoBehaviour
 
     public void Move()
     {
-        transform.position += Vector3.forward * Time.deltaTime * speed;
+        transform.position += Vector3.forward * Time.deltaTime * unitStats.moveSpeed;
     }
 
     public void AttackCorutine()
@@ -234,7 +213,7 @@ public class Unit : MonoBehaviour
     {
         if (targetPos.gameObject != null)
         {
-            unitWeapon.Execute(gameObject, targetPos.gameObject);
+            unitStats.Execute(targetPos.gameObject);
         }
         yield return new WaitForSeconds(attackUsingTime);
         IsNormalAttacking = false;
@@ -260,14 +239,14 @@ public class Unit : MonoBehaviour
 
     private void Update()
     {
-        if(HasBarrier)
+        if (HasBarrier)
         {
             if (Time.time > skillEndTime)
             {
                 barrier = 0;
             }
         }
-      
+
 
 
         GetTargetPosition();

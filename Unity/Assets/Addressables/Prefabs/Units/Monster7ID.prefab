@@ -10,7 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4077528635843874768}
   - component: {fileID: -3095665512574750650}
-  - component: {fileID: -2557330966592793596}
+  - component: {fileID: -6255474696560110023}
   - component: {fileID: -402503540396554318}
   - component: {fileID: 5941137256963788250}
   - component: {fileID: -2012680022784767228}
@@ -52,12 +52,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   status: 0
-  <weapon>k__BackingField: {fileID: 11400000, guid: ecc5d284510489041a081ec5c4d66ca9, type: 2}
+  <stats>k__BackingField: {fileID: 0}
   animations: {fileID: 4505142530759930608}
-  <Speed>k__BackingField: 4
   <minDistanceInMonster>k__BackingField: 2
   frontLine: -1
---- !u!114 &-2557330966592793596
+--- !u!114 &-6255474696560110023
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -66,14 +65,20 @@ MonoBehaviour:
   m_GameObject: {fileID: 9151133835082727212}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: daaeb550509fd4449b1c8380128eaffe, type: 3}
+  m_Script: {fileID: 11500000, guid: 55177d63adc8889498b79040daf4b4a3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   maxHp:
-    currentValue: 0
+    currentValue: 50
   damage:
-    currentValue: 0
-  armor: 0
+    currentValue: 1
+  armor:
+    currentValue: 1
+  coolDown: 1
+  range: 1
+  criticalChance: 0
+  criticalMultiplier: 0
+  moveSpeed: 3
 --- !u!114 &-402503540396554318
 MonoBehaviour:
   m_ObjectHideFlags: 0

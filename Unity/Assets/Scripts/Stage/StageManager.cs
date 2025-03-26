@@ -52,15 +52,13 @@ public class StageManager : MonoBehaviour
         MonsterLaneManager = GetComponent<MonsterLaneManager>();
         UnitPartyManager = GetComponent<UnitPartyManager>();
         monsters = new HashSet<MonsterController>();
-
-        SetStageInfo();
-
-        SpawnNextWave();
     }
 
     private void Start()
     {
+        SetStageInfo();
         Addressables.InstantiateAsync(stage, Vector3.back * 10f, Quaternion.identity);
+        SpawnNextWave();
     }
 
     private void Update()

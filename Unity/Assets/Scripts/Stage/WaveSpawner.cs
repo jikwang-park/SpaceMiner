@@ -85,6 +85,8 @@ public class WaveSpawner : MonoBehaviour
     private void SpawnMonster(int lane, int index, Vector3 frontPosition, string monsterId)
     {
         var monster = objectPoolManager.gameObjectPool[monsterId].Get();
+        var monsterController = monster.GetComponent<MonsterController>();
+        monsterController.SetMonsterId(monsterId);
         monster.transform.parent = null;
         monster.transform.position = frontPosition + SpawnPoints[index];
         monster.transform.rotation = Quaternion.LookRotation(Vector3.back, Vector3.up);

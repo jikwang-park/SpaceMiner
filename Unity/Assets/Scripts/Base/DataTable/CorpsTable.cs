@@ -20,7 +20,7 @@ public class CorpsTable : DataTable
 
         public override void Set(string[] argument)
         {
-            ID= argument[0];
+            ID = argument[0];
             FrontSlots = int.Parse(argument[1]);
             NormalMonsterID = argument[2];
             NormalMonsterIDs = NormalMonsterID.Split('_');
@@ -68,7 +68,7 @@ public class CorpsTable : DataTable
     {
         var dictionary = new Dictionary<string, Data>();
         var tableData = new Dictionary<string, DataTableData>();
-        foreach(var item in data)
+        foreach (var item in data)
         {
             var datum = CreateData<Data>(item);
             dictionary.Add(datum.ID, datum);

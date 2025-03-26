@@ -77,7 +77,7 @@ public class MonsterController : MonoBehaviour
     {
         if (Target == null)
         {
-            Target = stageManager.UnitPartyManager.GetFirstLineUnit();
+            Target = stageManager.UnitPartyManager.GetFirstLineUnitTransform();
         }
         if (Target != null)
         {

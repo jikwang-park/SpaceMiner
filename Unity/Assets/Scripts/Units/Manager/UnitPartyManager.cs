@@ -1,7 +1,10 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.AddressableAssets;
+using UnityEngine.Video;
 
 public class UnitPartyManager : MonoBehaviour
 {
@@ -9,32 +12,33 @@ public class UnitPartyManager : MonoBehaviour
 
     public List<Unit> generateInstance = new List<Unit>();
 
+
     public int AliveCount
-    {
+    { 
         get
         {
-            foreach (var unit in unitprefabs)
-            {
-                if (!unit.IsDead)
-                {
-                    unit.aliveCount++;
-                }
-                return unit.aliveCount;
-            }
-            return 0;
-        }
+            return generateInstance.Where(x => !x.IsDead).Count();
+        }     
     }
+   
 
 
     private void Awake()
     {
         UnitSpwan();
     }
-  
+    private void Update()
+    {
+        
+    }
 
     public void UnitSpwan()
-    {
-        if(unitprefabs.Count <= 0)
+    {           
+        
+
+
+
+        if (unitprefabs.Count <= 0)
         {
             Debug.Log("유닛 프리팹 존재하지않음");
             return;
@@ -49,13 +53,34 @@ public class UnitPartyManager : MonoBehaviour
         
         for (int i =0; i< unitprefabs.Count; ++i)
         {
-            var go = Instantiate(unitprefabs[i], Vector3.zero ,Quaternion.identity); // 나중에 비동기로드로 바꿈
+            var go = Instantiate(unitprefabs[i], Vector3.zero ,Quaternion.identity);
+            // 나중에 비동기로드로 바꿈
             go.transform.position += new Vector3(0, 0, -5 * i);
             generateInstance.Add(go);
         }
+        SetInitData();
+    }
+     
+
+    private void SetInitData()
+    {
+        var data = DataTableManager.SoldierTable.GetTypeDictionary();
+        for(int i = 0; i < generateInstance.Count; ++i)
+        {
+            generateInstance[i].SetData(data[(UnitTypes)i + 1][0], (UnitTypes)i + 1);
+            
+            
+        }
     }
 
- 
+
+    //private void SetInitData(UnitTypes type)
+    //{
+    //    var data = DataTableManager.SoldierTable.GetTypeDictionary();
+    //    var UnitData = data[type][0];
+    //    unitDic[type].SetData(UnitData, type);
+    //}
+
 
     public int GetAliveUnitCount()
     {
@@ -70,8 +95,31 @@ public class UnitPartyManager : MonoBehaviour
         return 0;
     }
 
-    public Transform GetFirstLineUnit()
+
+    public Unit GetFirstLineUnitGo()
     {
+        if (generateInstance.Count == 0)
+        {
+            Debug.Log("Unit is Empty");
+            return null;
+        }
+
+        for (int i = 0; i < generateInstance.Count; i++)
+        {
+            if (generateInstance[i].IsDead)
+            {
+                continue;
+            }
+            return generateInstance[i];
+        }
+
+        return null;
+    }
+
+    public Transform GetFirstLineUnitTransform()
+    {
+  
+
         if(generateInstance.Count == 0)
         {
             Debug.Log("Unit is Empty");

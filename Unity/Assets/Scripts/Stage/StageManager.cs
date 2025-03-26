@@ -111,7 +111,7 @@ public class StageManager : MonoBehaviour
         var corpsData = DataTableManager.CorpsTable.GetData(waveData.WaveCorpsIDs[CurrentWave]);
         ++CurrentWave;
 
-        Transform unit = UnitPartyManager.GetFirstLineUnit();
+        Transform unit = UnitPartyManager.GetFirstLineUnitTransform();
         if (unit != null)
             waveSpawner.Spawn(unit.position + Vector3.forward * 5f, corpsData);
         else

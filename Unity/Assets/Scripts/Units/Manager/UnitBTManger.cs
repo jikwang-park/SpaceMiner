@@ -28,6 +28,20 @@ public static class UnitBTManager
         }
     }
 
+    public static BehaviorTree<Unit> SetBehaviorTree(Unit context, UnitTypes type)
+    {
+        switch (type)
+        {
+            case UnitTypes.Tanker:
+                return InitTankBehaviorTree(context);
+
+            case UnitTypes.Dealer:
+                return InitDelarBehaviorTree(context);
+            default:
+                return InitTankBehaviorTree(context);
+        }
+    }
+
     public static BehaviorTree<Unit> InitTankBehaviorTree(Unit context)
     {
 

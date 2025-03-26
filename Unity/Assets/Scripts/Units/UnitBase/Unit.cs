@@ -6,16 +6,30 @@ using UnityEngine;
 
 public class Unit : MonoBehaviour
 {
+    //Base Stats\
+    public UnitTypes UnitTypes
+    {
+        get
+        {
+            return currentUnitType;
+        }
+        
+    }
+    private UnitTypes currentUnitType;
+
+    private BigNumber unitMaxHp;
+    private BigNumber unitDamage;
+    private int unitArmor;
+    public BigNumber currentHp;
+    public float speed = 20f;
+    public float healamount;
+
     public StageManager stageManger;
 
     public CharacterStats unitStats;
 
 
 
-    private BigNumber unitMaxHp;
-    private BigNumber unitDamage;
-    private int unitArmor;
-    private BigNumber currentHp;
 
 
     public float targetDistance;
@@ -23,14 +37,18 @@ public class Unit : MonoBehaviour
     //ÅÊÄ¿ ½ºÅ³ ÄðÅ¸ÀÓ
     public float skillCoolTime = 10f;
 
-    public UnitTypes currentUnitType;
-    private BehaviorTree<Unit> behaviorTree;
+    public BehaviorTree<Unit> behaviorTree;
 
     public float skillUsingTime = 2.0f;
     public float attackUsingTime = 0.4f;
 
-    public float speed = 20f;
+   
     public int aliveCount = 0;
+
+    [SerializeField]
+    private SoldierTable.Data soldierData;
+    [SerializeField]
+    public UnitSkill unitSkill;
 
 
 
@@ -42,49 +60,50 @@ public class Unit : MonoBehaviour
 
     private int lane = 0;
 
-    private void SetStatus(BigNumber unitMaxHp, int unitArmor)
-    {
-        unitStats.maxHp = unitMaxHp;
-        unitStats.Hp = currentHp;
-        unitStats.armor = unitArmor;
-
-    }
+    //private void SetStatus(BigNumber unitMaxHp, int unitArmor)
+    //{
+    //    unitStats.maxHp = unitMaxHp;
+    //    unitStats.Hp = currentHp;
+    //    unitStats.armor = unitArmor;
+    //}
 
 
     private void Init()
     {
-        switch (currentUnitType)
-        {
-            case UnitTypes.Tanker:
-                SetTankerStats();
-                break;
-            case UnitTypes.Dealer:
-                SetDealerStats();
-                break;
-        }
+        //switch (currentUnitType)
+        //{
+        //    case UnitTypes.Tanker:
+        //        SetTankerStats();
+
+        //        break;
+        //    case UnitTypes.Dealer:
+        //        SetDealerStats();
+        //        break;
+        //}
     }
-    private void SetDealerStats()
-    {
-        behaviorTree = UnitBTManager.GetBehaviorTree(this, UnitTypes.Dealer);
-        SetStatus(70, 3);
-        currentHp = 40;
-    }
+    //private void SetDealerStats()
+    //{
+    //    behaviorTree = UnitBTManager.GetBehaviorTree(this, UnitTypes.Dealer);
+    //    SetStatus(70, 3);
+    //    currentHp = 40;
+    //}
 
 
-    private void SetTankerStats()
-    {
-        behaviorTree = UnitBTManager.GetBehaviorTree(this, UnitTypes.Tanker);
-        SetStatus(100, 10);
-        currentHp = 50;
-    }
+    //private void SetTankerStats()
+    //{
+    //    behaviorTree = UnitBTManager.GetBehaviorTree(this, UnitTypes.Tanker);
+    //    SetStatus(100, 10);
+    //    currentHp = 50;
+    //}
     private void Awake()
     {
+
         stageManger = GameObject.FindGameObjectWithTag("GameController").GetComponent<StageManager>();
         unitStats = GetComponent<CharacterStats>();
         Init();
     }
 
- 
+
     private void Start()
     {
     }
@@ -147,6 +166,18 @@ public class Unit : MonoBehaviour
 
     private bool isMonsterSpawn;
 
+   
+    public void SetData(SoldierTable.Data data,UnitTypes type)
+    { 
+        speed = data.MoveSpeed;
+        unitMaxHp = (int)data.Basic_HP;
+        currentHp = unitMaxHp;
+        unitArmor = (int)data.Basic_DP;
+        healamount = (int)data.Special_H;
+        unitWeapon.damage = (int)data.Basic_DP;
+        currentUnitType = type;
+        behaviorTree = UnitBTManager.SetBehaviorTree(this,currentUnitType);
+    }
 
 
     private void Update()
@@ -223,5 +254,15 @@ public class Unit : MonoBehaviour
         yield return new WaitForSeconds(attackUsingTime);
         IsNormalAttacking = false;
     }
-
+    public float lastSkillUsingTime;
+    public void UseSkill()
+    {
+        if(Time.time < unitSkill.coolTime + lastSkillUsingTime)
+        {
+            return;
+        }
+        unitSkill.ExcuteSkill();
+        lastSkillUsingTime = Time.time;
+    }
+   
 }

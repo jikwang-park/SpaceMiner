@@ -149,7 +149,6 @@ public class MonsterController : MonoBehaviour, IObjectPoolGameObject
 
     public void Release()
     {
-        
         ObjectPool.Release(gameObject);
     }
 }

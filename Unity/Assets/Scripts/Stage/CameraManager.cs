@@ -22,7 +22,7 @@ public class CameraManager : MonoBehaviour
 
     private void Update()
     {
-        Unit = unitPartyManager.GetFirstLineUnit();
+        Unit = unitPartyManager.GetFirstLineUnitTransform();
         if (Unit != null)
         {
             transform.position = Vector3.Lerp(transform.position, Unit.position + Offset, Time.deltaTime * followingSpeed);

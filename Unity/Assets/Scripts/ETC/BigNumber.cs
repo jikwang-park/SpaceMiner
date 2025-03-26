@@ -20,6 +20,7 @@ public class BigNumber : ISerializationCallbackReceiver
         if(input.Length == 0)
         {
             parts.Add(0);
+            currentValue = ToString();
             return;
         }
 
@@ -42,6 +43,10 @@ public class BigNumber : ISerializationCallbackReceiver
             if(tokens.Length > 1 && tokens[1] != "") 
             {
                 fractionPart = int.Parse(tokens[1]);
+                while(fractionPart * 10 < 1000)
+                {
+                    fractionPart *= 10;
+                }
             }
 
             for(int i = 0; i <= targetUnitIndex; i++)
@@ -73,6 +78,7 @@ public class BigNumber : ISerializationCallbackReceiver
         if(input == 0)
         {
             parts.Add(0);
+            currentValue = ToString();
             return;
         }
         while(input > 0)
@@ -254,6 +260,45 @@ public class BigNumber : ISerializationCallbackReceiver
         result.sign = a.sign * (divisor < 0 ? -1 : 1);
         return result;
     }
+    public float DivideToFloat(BigNumber other)
+    {
+        if(other is null)
+        {
+            throw new Exception("other is null");
+        }
+
+        if(other == 0)
+        {
+            throw new DivideByZeroException("Cannot divide by zero");
+        }
+
+        int n = Math.Min(3, Math.Min(this.parts.Count, other.parts.Count));
+
+        float thisValue = 0f;
+        float otherValue = 0f;
+
+        for(int i = this.parts.Count - 1; i > this.parts.Count - 1 - n; i--)
+        {
+            thisValue = thisValue * 1000f + (float)this.parts[i];
+        }
+        for (int i = other.parts.Count - 1; i > other.parts.Count - 1 - n; i--)
+        {
+            otherValue = otherValue * 1000f + (float)other.parts[i];
+        }
+
+        int diff = this.parts.Count - other.parts.Count;
+
+        if(diff > 0)
+        {
+            thisValue *= Mathf.Pow(1000f, Math.Abs(diff));
+        }
+        if (diff < 0)
+        {
+            otherValue *= Mathf.Pow(1000f, Math.Abs(diff));
+        }
+
+        return (this.sign * thisValue) / (other.sign * otherValue);
+    }
     public int CompareTo(BigNumber other)
     {
         if(other == null)
@@ -414,15 +459,13 @@ public class BigNumber : ISerializationCallbackReceiver
         }
         else 
         {
-            return $"{stringSign}";
+            return $"{stringSign}{parts[parts.Count - 1]}";
         }
     }
 
     public void OnBeforeSerialize()
     {
-        currentValue = ToString();
     }
-
     public void OnAfterDeserialize()
     {
         if (!string.IsNullOrEmpty(currentValue))

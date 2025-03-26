@@ -20,6 +20,10 @@ public class DataTableViewer : MonoBehaviour
     private TMP_InputField inputField;
     [SerializeField]
     private Toggle inputToggle;
+    [field: SerializeField]
+    public Button SaveButton { get; private set; }
+    [field: SerializeField]
+    public TextMeshProUGUI SaveButtonText { get; private set; }
 
     private Dictionary<string, DataTableView> views = new Dictionary<string, DataTableView>();
 
@@ -126,6 +130,8 @@ public class DataTableViewer : MonoBehaviour
         {
             string text = inputField.text;
 
+            int previous = currentIndex;
+
             if (!string.IsNullOrEmpty(text))
             {
                 string csvText = text.Replace('\t', ',');
@@ -134,6 +140,7 @@ public class DataTableViewer : MonoBehaviour
                 currentTable.LoadFromText(csvText);
                 ResetTables();
             }
+            tableDropdown.value = previous;
 
             inputToggle.image.color = Color.white;
         }

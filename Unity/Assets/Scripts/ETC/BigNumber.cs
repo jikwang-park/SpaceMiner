@@ -4,23 +4,25 @@ using System.Collections.Generic;
 using UnityEngine;
 
 [Serializable]
-public class BigNumber : ISerializationCallbackReceiver
+public struct BigNumber : ISerializationCallbackReceiver
 {
     [SerializeField]
     private string currentValue;
     private List<int> parts;
-    private int sign = 1;
-    private string[] units = {"", "A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", 
+    private int sign;
+    private static readonly string[] units = {"", "A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", 
                                 "N", "O", "P", "Q", "R", "S", "T", "U", "V",  "W", "X", "Y", "Z"};
     public BigNumber(string input)
     {
         parts = new List<int>();
+        sign = 1;
         input = input.Trim();
+        currentValue = "";
 
-        if(input.Length == 0)
+        if (input.Length == 0)
         {
             parts.Add(0);
-            currentValue = ToString();
+            currentValue = "0";
             return;
         }
 
@@ -43,7 +45,7 @@ public class BigNumber : ISerializationCallbackReceiver
             if(tokens.Length > 1 && tokens[1] != "") 
             {
                 fractionPart = int.Parse(tokens[1]);
-                while(fractionPart * 10 < 1000)
+                while(fractionPart != 0 && fractionPart * 10 < 1000)
                 {
                     fractionPart *= 10;
                 }
@@ -71,6 +73,9 @@ public class BigNumber : ISerializationCallbackReceiver
     public BigNumber(int input)
     {
         parts = new List<int>();
+        sign = 1;
+        currentValue = "";
+
         if (input < 0)
         {
             sign = -1;
@@ -78,7 +83,6 @@ public class BigNumber : ISerializationCallbackReceiver
         if(input == 0)
         {
             parts.Add(0);
-            currentValue = ToString();
             return;
         }
         while(input > 0)
@@ -91,6 +95,9 @@ public class BigNumber : ISerializationCallbackReceiver
     private BigNumber(List<int> parts)
     {
         this.parts = parts;
+        sign = 1;
+        currentValue = "";
+
         Normalize();    
         currentValue = ToString();
     }
@@ -251,7 +258,7 @@ public class BigNumber : ISerializationCallbackReceiver
     {
         if (divisor == 0f)
         {
-            throw new DivideByZeroException();
+            throw new DivideByZeroException("Cannot divide by zero");
         }
         int scale = 10000;
         int intDivisor = (int)Math.Round(Math.Abs(divisor) * scale);
@@ -262,11 +269,6 @@ public class BigNumber : ISerializationCallbackReceiver
     }
     public float DivideToFloat(BigNumber other)
     {
-        if(other is null)
-        {
-            throw new Exception("other is null");
-        }
-
         if(other == 0)
         {
             throw new DivideByZeroException("Cannot divide by zero");
@@ -301,7 +303,7 @@ public class BigNumber : ISerializationCallbackReceiver
     }
     public int CompareTo(BigNumber other)
     {
-        if(other == null)
+        if(other.Equals(new BigNumber("0")))
         {
             return 1;
         }
@@ -352,10 +354,6 @@ public class BigNumber : ISerializationCallbackReceiver
     }
     public static bool operator ==(BigNumber a, BigNumber b)
     {
-        if(a is null || b is null)
-        {
-            return false;
-        }
         return a.CompareTo(b) == 0;
     }
     public static bool operator ==(BigNumber a, int b)

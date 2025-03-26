@@ -130,9 +130,14 @@ public class MonsterLaneManager : MonoBehaviour
 
             for (int i = 0; i < laneCount; ++i)
             {
-                if (monsterLines[line].ContainsKey(i))
+                if (!monsterLines[line].ContainsKey(i))
                 {
-                    monsters.Add(monsterLines[line][i].transform);
+                    continue;
+                }
+                monsters.Add(monsterLines[line][i].transform);
+                if (monsters.Count >= count)
+                {
+                    break;
                 }
             }
             ++line;

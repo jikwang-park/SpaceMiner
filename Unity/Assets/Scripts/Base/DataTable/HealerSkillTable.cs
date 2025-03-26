@@ -1,3 +1,5 @@
+using System;
+using System.Linq;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -14,40 +16,67 @@ public class HealerSkillTable : DataTable
         public string BuffID { get; set; }
         public string SoilderTarget { get; set; }
 
+        public override void Set(string[] argument)
+        {
+            ID = argument[0];
+            Type = (SkillType)int.Parse(argument[1]);
+            HealRatio = float.Parse(argument[2]);
+            CoolTime = float.Parse(argument[3]);
+            BuffID = argument[4];
+            SoilderTarget = argument[5];
+        }
     }
-    private Dictionary<string, Data> HealerDictionary = new Dictionary<string, Data>();
 
-    public override void Load(string fileName)
+    private Dictionary<string, Data> dict = new Dictionary<string, Data>();
+
+    public override Type DataType => typeof(Data);
+
+    public override void LoadFromText(string text)
     {
-        var path = string.Format(FormatPath, fileName);
-        var loadHandle = Addressables.LoadAssetAsync<TextAsset>(path);
-        loadHandle.WaitForCompletion();
-
-        var list = LoadCsv<Data>(loadHandle.Result.text);
-
-
-        HealerDictionary.Clear();
+        var list = LoadCsv<Data>(text);
+        dict.Clear();
+        TableData.Clear();
 
         foreach (var item in list)
         {
-            if (!HealerDictionary.ContainsKey(item.ID))
+            if (!dict.ContainsKey(item.ID))
             {
-                HealerDictionary.Add(item.ID, item);
+                dict.Add(item.ID, item);
+                TableData.Add(item.ID, item);
             }
             else
             {
                 Debug.Log($"Key Duplicated: {item.ID}");
             }
         }
-        Addressables.Release(loadHandle);
     }
 
     public Data GetData(string key)
     {
-        if (!HealerDictionary.ContainsKey(key))
+        if (!dict.ContainsKey(key))
         {
             return null;
         }
-        return HealerDictionary[key];
+        return dict[key];
+    }
+
+
+    public override void Set(List<string[]> data)
+    {
+        var dictionary = new Dictionary<string, Data>();
+        var tableData = new Dictionary<string, DataTableData>();
+        foreach (var item in data)
+        {
+            var datum = CreateData<Data>(item);
+            dictionary.Add(datum.ID, datum);
+            tableData.Add(datum.ID, datum);
+        }
+        dict = dictionary;
+        TableData = tableData;
+    }
+
+    public override string GetCsvData()
+    {
+        return CreateCsv(dict.Values.ToList());
     }
 }

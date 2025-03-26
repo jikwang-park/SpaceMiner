@@ -35,8 +35,8 @@ public class SoldierTable : DataTable
         {
             ID = argument[0];
             StringID = argument[1];
-            Kind = Enum.Parse<UnitTypes>(argument[2]);
-            Rating = Enum.Parse<Grade>(argument[3]);
+            Kind = (UnitTypes)int.Parse(argument[2]);
+            Rating = (Grade)int.Parse(argument[3]);
             Basic_AP = float.Parse(argument[4]);
             Basic_HP = float.Parse(argument[5]);
             Basic_DP = float.Parse(argument[6]);

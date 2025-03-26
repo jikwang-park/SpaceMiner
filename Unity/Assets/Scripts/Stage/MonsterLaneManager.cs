@@ -64,13 +64,14 @@ public class MonsterLaneManager : MonoBehaviour
         if (monsterLines[createdLine].Count == 0)
         {
             monsterLines.Remove(createdLine);
-            if (monsterLines.ContainsKey(currentFrontLine + 1))
+            if (!monsterLines.ContainsKey(currentFrontLine + 1))
             {
-                ++currentFrontLine;
-                foreach (var nextMonster in monsterLines[currentFrontLine])
-                {
-                    nextMonster.Value.frontLine = -1;
-                }
+                return;
+            }
+            ++currentFrontLine;
+            foreach (var nextMonster in monsterLines[currentFrontLine])
+            {
+                nextMonster.Value.frontLine = -1;
             }
         }
     }
@@ -105,6 +106,38 @@ public class MonsterLaneManager : MonoBehaviour
         }
 
         return GetLineMonster(currentFrontLine);
+    }
+
+    public List<Transform> GetMonsters(int count)
+    {
+        List<Transform> monsters = new List<Transform>();
+
+        int line = currentFrontLine;
+
+        while (line <= currentLastLine && monsters.Count < count)
+        {
+            if (!monsterLines.ContainsKey(line))
+            {
+                ++line;
+                continue;
+            }
+
+            if (monsterLines[line].Count == 0)
+            {
+                ++line;
+                continue;
+            }
+
+            for (int i = 0; i < laneCount; ++i)
+            {
+                if (monsterLines[line].ContainsKey(i))
+                {
+                    monsters.Add(monsterLines[line][i].transform);
+                }
+            }
+            ++line;
+        }
+        return monsters;
     }
 
     public Transform GetLineMonster(int line)

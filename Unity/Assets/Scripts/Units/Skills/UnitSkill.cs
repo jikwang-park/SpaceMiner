@@ -33,7 +33,6 @@ public abstract class UnitSkill : MonoBehaviour
     private void Awake()
     {
         stageManager = GameObject.FindGameObjectWithTag("GameController").GetComponent<StageManager>();
-        
     }
 
     public abstract void Init();

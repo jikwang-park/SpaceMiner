@@ -30,6 +30,10 @@ public class InventoryPanelUI : MonoBehaviour
         displayDealerInvenButton.onClick.AddListener(() => DisplayInventory(UnitTypes.Dealer));
         displayHealerInvenButton.onClick.AddListener(() => DisplayInventory(UnitTypes.Healer));
         BatchMergeButton.onClick.AddListener(() => OnClickBatchMergeButton());
+        BigNumber a = "25.0A";
+        BigNumber b = "100.0B";
+
+        Debug.Log(a.DivideToFloat(b));
     }
 
     public void DisplayInventory(UnitTypes type)

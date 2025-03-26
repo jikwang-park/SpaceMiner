@@ -37,8 +37,8 @@ public class HealerSkill : UnitSkill
     {
         foreach(var target in targetList)
         {
-            var amount = unit.UnitMaxHp * healRatio;
-            unit.currentHp += amount;
+            var amount = unit.unitStats.maxHp * healRatio;
+            unit.unitStats.Hp += amount;
         }
     }
 

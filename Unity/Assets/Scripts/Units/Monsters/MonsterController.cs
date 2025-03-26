@@ -16,7 +16,7 @@ public class MonsterController : MonoBehaviour, IObjectPoolGameObject
     public Status status;
 
     [field: SerializeField]
-    public AttackDefinition weapon { get; private set; }
+    public CharacterStats stats { get; private set; }
 
     [SerializeField]
     private Animation animations;
@@ -25,13 +25,11 @@ public class MonsterController : MonoBehaviour, IObjectPoolGameObject
     public StageManager stageManager { get; private set; }
 
     [field: SerializeField]
-    public float Speed { get; private set; } = 4f;
-
-    [field: SerializeField]
     public float minDistanceInMonster { get; private set; } = 2f;
-    public float TargetDistance { get; private set; }
 
+    public float TargetDistance { get; private set; }
     public Transform Target { get; private set; }
+
 
     public Func<int, Transform> findFrontMonster;
 
@@ -45,7 +43,7 @@ public class MonsterController : MonoBehaviour, IObjectPoolGameObject
     {
         get
         {
-            return weapon.range > TargetDistance && LastAttackTime + weapon.coolDown < Time.time;
+            return stats.range > TargetDistance && LastAttackTime + stats.coolDown < Time.time;
         }
     }
 
@@ -61,8 +59,9 @@ public class MonsterController : MonoBehaviour, IObjectPoolGameObject
 
     private void Awake()
     {
-        InitBehaviourTree();
+        stats = GetComponent<CharacterStats>();
         status = Status.Wait;
+        InitBehaviourTree();
     }
 
     private void OnEnable()
@@ -131,9 +130,10 @@ public class MonsterController : MonoBehaviour, IObjectPoolGameObject
 
     private IEnumerator AttackTimer()
     {
+        //TODO: 애니메이션 정의되거나 공격 정의 후 수정 필요
         yield return new WaitForSeconds(0.25f);
         if (Target != null)
-            weapon.Execute(gameObject, Target.gameObject);
+            stats.Execute(Target.gameObject);
         yield return new WaitForSeconds(0.25f);
         status = Status.Wait;
     }

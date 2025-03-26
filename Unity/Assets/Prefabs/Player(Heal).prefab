@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: 4379156752529801871}
   - component: {fileID: 2249795844495973534}
   - component: {fileID: 260608730919283204}
-  - component: {fileID: 2559169851918841282}
+  - component: {fileID: 8137069369275626381}
   m_Layer: 0
   m_Name: Player(Heal)
   m_TagString: Untagged
@@ -121,23 +121,24 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2acae83752c74ec40a8d4711671c70d2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  barrier:
+    currentValue: 
   stageManger: {fileID: 0}
   unitStats: {fileID: 0}
   targetDistance: 0
   skillCoolTime: 10
-  currentUnitType: 3
   skillUsingTime: 2
   attackUsingTime: 0.4
-  speed: 20
   aliveCount: 0
-  unitWeapon: {fileID: 0}
+  unitSkill: {fileID: 0}
   targetPos: {fileID: 0}
+  lastSkillUsingTime: 0
   IsSkillUsing: 0
   IsNormalAttacking: 0
   IsUnitHit: 0
   lastAttackTime: 0
   lastSkillAttackTime: 0
---- !u!114 &2559169851918841282
+--- !u!114 &8137069369275626381
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -146,15 +147,17 @@ MonoBehaviour:
   m_GameObject: {fileID: 4371998658437541081}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: daaeb550509fd4449b1c8380128eaffe, type: 3}
+  m_Script: {fileID: 11500000, guid: 0a6ab8b728e2d454191e5a93559e1c3a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   maxHp:
     currentValue: 
-    parts: 
-    sign: 0
   damage:
     currentValue: 
-    parts: 
-    sign: 0
-  armor: 1
+  armor:
+    currentValue: 1
+  coolDown: 0
+  range: 0
+  criticalChance: 0
+  criticalMultiplier: 0
+  moveSpeed: 0

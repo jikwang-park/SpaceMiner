@@ -69,6 +69,26 @@ public static class DataTableManager
             dealerSkillTable.Load(DataTableIds.dealerSkillTable);
             tables.Add(DataTableIds.dealerSkillTable, dealerSkillTable);
         }
+        {
+            var monsterTable = new MonsterTable();
+            monsterTable.Load(DataTableIds.monsterTable);
+            tables.Add(DataTableIds.monsterTable, monsterTable);
+        }
+        {
+            var gachaTable = new GachaTable();
+            gachaTable.Load(DataTableIds.gachaTable);
+            tables.Add(DataTableIds.gachaTable, gachaTable);
+        }
+        {
+            var gachaGradeTable = new GachaGradeTable();
+            gachaGradeTable.Load(DataTableIds.gachaGradeTable);
+            tables.Add(DataTableIds.gachaGradeTable, gachaGradeTable);
+        }
+        {
+            var gachaSoldierTable = new GachaSoldierTable();
+            gachaSoldierTable.Load(DataTableIds.gachaSoldierTable);
+            tables.Add(DataTableIds.gachaSoldierTable, gachaSoldierTable);
+        }
     }
 
 
@@ -83,65 +103,40 @@ public static class DataTableManager
         return tables[tableId] as T;
     }
 
-    public static StringTable StringTable
-    {
-        get
-        {
-            return GetTable<StringTable>(DataTableIds.stringTables[(int)Variables.currentLanguage]);
-        }
-    }
+    public static StringTable StringTable 
+        => GetTable<StringTable>(DataTableIds.stringTables[(int)Variables.currentLanguage]);
+    
 
     public static CorpsTable CorpsTable
-    {
-        get
-        {
-            return GetTable<CorpsTable>(DataTableIds.corpsTable);
-        }
-    }
+        => GetTable<CorpsTable>(DataTableIds.corpsTable);
 
     public static StageTable StageTable
-    {
-        get
-        {
-            return GetTable<StageTable>(DataTableIds.stageTable);
-        }
-    }
+        => GetTable<StageTable>(DataTableIds.stageTable);
 
     public static WaveTable WaveTable
-    {
-        get
-        {
-            return GetTable<WaveTable>(DataTableIds.waveTable);
-        }
-    }
+        => GetTable<WaveTable>(DataTableIds.waveTable);
+
     public static SoldierTable SoldierTable
-    {
-        get
-        {
-            return GetTable<SoldierTable>(DataTableIds.soldierTable);
-        }
-    }
+        => GetTable<SoldierTable>(DataTableIds.soldierTable);
+
     public static TankerSkillTable TankerSkillTable
-    {
-        get
-        {
-            return GetTable<TankerSkillTable>(DataTableIds.tankerSkillTable);
-        }
-    }
+        => GetTable<TankerSkillTable>(DataTableIds.tankerSkillTable);
 
     public static HealerSkillTable HealerSkillTable
-    {
-        get
-        {
-            return GetTable<HealerSkillTable>(DataTableIds.healerSkillTable);
-        }
-    }
+        => GetTable<HealerSkillTable>(DataTableIds.healerSkillTable);
 
     public static DealerSkillTable DealerSkillTable
-    {
-        get
-        {
-            return GetTable<DealerSkillTable>(DataTableIds.dealerSkillTable);
-        }
-    }
+        => GetTable<DealerSkillTable>(DataTableIds.dealerSkillTable);
+
+    public static MonsterTable MonsterTable
+        => GetTable<MonsterTable>(DataTableIds.monsterTable);
+
+    public static GachaTable GachaTable
+        => GetTable<GachaTable>(DataTableIds.gachaTable);
+
+    public static GachaGradeTable GachaGradeTable
+        => GetTable<GachaGradeTable>(DataTableIds.gachaGradeTable);
+
+    public static GachaSoldierTable GachaSoldierTable
+        => GetTable<GachaSoldierTable>(DataTableIds.gachaSoldierTable);
 }

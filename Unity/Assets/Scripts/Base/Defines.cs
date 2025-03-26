@@ -21,6 +21,10 @@ public class DataTableIds
     public const string tankerSkillTable = "TankerSkillTable";
     public const string healerSkillTable = "HealerSkillTable";
     public const string dealerSkillTable = "DealerSkillTable";
+    public const string monsterTable = "MonsterTable";
+    public const string gachaTable = "GachaTable";
+    public const string gachaGradeTable = "GachaGradeTable";
+    public const string gachaSoldierTable = "GachaSoldierTable";
 }
 
 public enum StageMode

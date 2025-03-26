@@ -17,9 +17,9 @@ public abstract class UnitSkill : MonoBehaviour
 
     protected float lastSkillUsingTime;
 
-    private StageManager stageManager;
+    protected StageManager stageManager;
 
-    protected SkillType currentType;
+    protected SkillType currentSkillType;
 
 
     private Transform TragetTransform
@@ -40,11 +40,8 @@ public abstract class UnitSkill : MonoBehaviour
     private void Awake()
     {
         stageManager = GameObject.FindGameObjectWithTag("GameController").GetComponent<StageManager>();
-        unit = stageManager.UnitPartyManager.GetFirstLineUnitGo();
+        
     }
-
- 
-
 
     public abstract void Init();
     public abstract void SetTarget(List<Transform> target);

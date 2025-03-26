@@ -13,7 +13,7 @@ public class Unit : MonoBehaviour
         {
             return currentUnitType;
         }
-        
+
     }
     private UnitTypes currentUnitType;
 
@@ -42,7 +42,7 @@ public class Unit : MonoBehaviour
     public float skillUsingTime = 2.0f;
     public float attackUsingTime = 0.4f;
 
-   
+
     public int aliveCount = 0;
 
     [SerializeField]
@@ -60,47 +60,11 @@ public class Unit : MonoBehaviour
 
     private int lane = 0;
 
-    //private void SetStatus(BigNumber unitMaxHp, int unitArmor)
-    //{
-    //    unitStats.maxHp = unitMaxHp;
-    //    unitStats.Hp = currentHp;
-    //    unitStats.armor = unitArmor;
-    //}
-
-
-    private void Init()
-    {
-        //switch (currentUnitType)
-        //{
-        //    case UnitTypes.Tanker:
-        //        SetTankerStats();
-
-        //        break;
-        //    case UnitTypes.Dealer:
-        //        SetDealerStats();
-        //        break;
-        //}
-    }
-    //private void SetDealerStats()
-    //{
-    //    behaviorTree = UnitBTManager.GetBehaviorTree(this, UnitTypes.Dealer);
-    //    SetStatus(70, 3);
-    //    currentHp = 40;
-    //}
-
-
-    //private void SetTankerStats()
-    //{
-    //    behaviorTree = UnitBTManager.GetBehaviorTree(this, UnitTypes.Tanker);
-    //    SetStatus(100, 10);
-    //    currentHp = 50;
-    //}
     private void Awake()
     {
 
         stageManger = GameObject.FindGameObjectWithTag("GameController").GetComponent<StageManager>();
         unitStats = GetComponent<CharacterStats>();
-        Init();
     }
 
 
@@ -119,6 +83,21 @@ public class Unit : MonoBehaviour
             return false;
         }
     }
+
+    public float lastSkillUsingTime;
+
+    public bool CanUseSkill
+    {
+        get
+        {
+            if (Time.time < unitSkill.coolTime + lastSkillUsingTime)
+            {
+                return false;
+            }    
+            return true;
+        }
+    }
+
 
     public bool IsUnitCanAttack // 사정거리 내에 있는지
     {
@@ -166,9 +145,9 @@ public class Unit : MonoBehaviour
 
     private bool isMonsterSpawn;
 
-   
-    public void SetData(SoldierTable.Data data,UnitTypes type)
-    { 
+
+    public void SetData(SoldierTable.Data data, UnitTypes type)
+    {
         speed = data.MoveSpeed;
         unitMaxHp = (int)data.Basic_HP;
         currentHp = unitMaxHp;
@@ -176,7 +155,7 @@ public class Unit : MonoBehaviour
         healamount = (int)data.Special_H;
         unitWeapon.damage = (int)data.Basic_DP;
         currentUnitType = type;
-        behaviorTree = UnitBTManager.SetBehaviorTree(this,currentUnitType);
+        behaviorTree = UnitBTManager.SetBehaviorTree(this, currentUnitType);
     }
 
 
@@ -190,7 +169,7 @@ public class Unit : MonoBehaviour
         {
             IsUnitHit = true;
         }
-       
+
     }
 
     public bool IsMonsterExist()
@@ -204,18 +183,18 @@ public class Unit : MonoBehaviour
             if (target > 0)
             {
                 return true;
-                
+
             }
         }
         return false;
     }
-   
+
 
     private Transform GetTargetPosition()
     {
         var lane = stageManger.MonsterLaneManager.LaneCount;
 
-        for(int i = 0; i< lane; ++i)
+        for (int i = 0; i < lane; ++i)
         {
             var target = stageManger.MonsterLaneManager.GetMonsterCount(i);
             var targetPosition = stageManger.MonsterLaneManager.GetFirstMonster(i);
@@ -224,7 +203,7 @@ public class Unit : MonoBehaviour
             {
 
                 targetDistance = Vector3.Distance(stageManger.UnitPartyManager.generateInstance[0].transform.position, targetPosition.position);
-                if(targetDistance <= unitWeapon.range)
+                if (targetDistance <= unitWeapon.range)
                 {
                     targetPos = targetPosition;
                     return targetPos;
@@ -242,7 +221,6 @@ public class Unit : MonoBehaviour
     public void AttackCorutine()
     {
         StartCoroutine(NormalAttackCor());
-
     }
 
     public IEnumerator NormalAttackCor()
@@ -254,15 +232,14 @@ public class Unit : MonoBehaviour
         yield return new WaitForSeconds(attackUsingTime);
         IsNormalAttacking = false;
     }
-    public float lastSkillUsingTime;
     public void UseSkill()
     {
-        if(Time.time < unitSkill.coolTime + lastSkillUsingTime)
+        if (Time.time < unitSkill.coolTime + lastSkillUsingTime)
         {
             return;
         }
         unitSkill.ExcuteSkill();
         lastSkillUsingTime = Time.time;
     }
-   
+
 }

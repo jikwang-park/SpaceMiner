@@ -93,12 +93,12 @@ public class InventoryPanelUI : MonoBehaviour
 
     private void OnEnable()
     {
-        SaveLoadManager.Instance.onSaveRequested += DoSave;
+        SaveLoadManager.onSaveRequested += DoSave;
     }
 
     private void OnDisable()
     {
-        SaveLoadManager.Instance.onSaveRequested -= DoSave;
+        SaveLoadManager.onSaveRequested -= DoSave;
     }
     private void DoSave(TotalSaveData totalSaveData)
     {

@@ -22,4 +22,8 @@ public static class SaveLoadManager
         File.WriteAllText(filePath, json);
         Debug.Log("Game saved to: " + filePath);
     }
+    public static void LoadGame()
+    {
+
+    }
 }

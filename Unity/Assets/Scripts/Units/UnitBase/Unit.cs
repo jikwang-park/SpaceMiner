@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using UnityEditor;
 using UnityEngine;
 
 
@@ -17,12 +18,25 @@ public class Unit : MonoBehaviour
     }
     private UnitTypes currentUnitType;
 
-    private BigNumber unitMaxHp;
+    public BigNumber UnitMaxHp { get; private set; }
     private BigNumber unitDamage;
-    private int unitArmor;
+    public BigNumber UnitArmor { get; private set; } // weapon의 armor 추가해야됌
     public BigNumber currentHp;
     public float speed = 20f;
     public float healamount;
+
+    public BigNumber barrier;
+
+    public bool HasBarrier
+    {
+        get
+        {
+            if( barrier > 0 )
+                return true;
+
+            return false;
+        }
+    }
 
     public StageManager stageManger;
 
@@ -65,12 +79,9 @@ public class Unit : MonoBehaviour
 
         stageManger = GameObject.FindGameObjectWithTag("GameController").GetComponent<StageManager>();
         unitStats = GetComponent<CharacterStats>();
-    }
 
-
-    private void Start()
-    {
     }
+ 
     // ���� ����� bool��
     public bool IsDead // �÷��̾ �׾�����
     {
@@ -148,10 +159,16 @@ public class Unit : MonoBehaviour
 
     public void SetData(SoldierTable.Data data, UnitTypes type)
     {
+        unitStats.Hp = currentHp;
+        unitStats.maxHp = UnitMaxHp;
+        unitStats.damage = unitDamage;
+        unitStats.armor = UnitArmor;
+
+        ///
         speed = data.MoveSpeed;
-        unitMaxHp = (int)data.Basic_HP;
-        currentHp = unitMaxHp;
-        unitArmor = (int)data.Basic_DP;
+        UnitMaxHp = (int)data.Basic_HP;
+        currentHp = UnitMaxHp;
+        UnitArmor = (int)data.Basic_DP;
         healamount = (int)data.Special_H;
         unitWeapon.damage = (int)data.Basic_DP;
         currentUnitType = type;
@@ -159,18 +176,7 @@ public class Unit : MonoBehaviour
     }
 
 
-    private void Update()
-    {
-        GetTargetPosition();
-        behaviorTree.Update();
-
-        IsUnitHit = false;
-        if (Input.GetKeyDown(KeyCode.M))
-        {
-            IsUnitHit = true;
-        }
-
-    }
+   
 
     public bool IsMonsterExist()
     {
@@ -243,4 +249,35 @@ public class Unit : MonoBehaviour
         lastSkillUsingTime = Time.time;
     }
 
+    private float skillEndTime;
+
+    public void SetBarrier(float time, BigNumber amount)
+    {
+        skillEndTime = Time.time + time;
+        barrier = amount;
+
+    }
+
+    private void Update()
+    {
+        if(HasBarrier)
+        {
+            if (Time.time > skillEndTime)
+            {
+                barrier = 0;
+            }
+        }
+      
+
+
+        GetTargetPosition();
+        behaviorTree.Update();
+
+        IsUnitHit = false;
+        if (Input.GetKeyDown(KeyCode.M))
+        {
+            IsUnitHit = true;
+        }
+
+    }
 }

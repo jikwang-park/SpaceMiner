@@ -6,7 +6,7 @@ public class CharacterStats : MonoBehaviour
 {
     public BigNumber maxHp;
     public BigNumber damage;
-    public int armor = 1;
+    public BigNumber armor = 1;
 
     public BigNumber Hp { get; set; }
 

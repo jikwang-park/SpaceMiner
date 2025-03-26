@@ -13,6 +13,8 @@ public abstract class UnitSkill : MonoBehaviour
 
     public float coolTime;
 
+    protected float timer;
+
     protected Unit unit;
 
     protected float lastSkillUsingTime;
@@ -22,16 +24,7 @@ public abstract class UnitSkill : MonoBehaviour
     protected SkillType currentSkillType;
 
 
-    private Transform TragetTransform
-    {
-        get
-        {
-            if (unit == null)
-                return null;
-
-            return unit.targetPos;
-        }
-    }
+  
    
     private void Start()
     {
@@ -44,7 +37,6 @@ public abstract class UnitSkill : MonoBehaviour
     }
 
     public abstract void Init();
-    public abstract void SetTarget(List<Transform> target);
     public abstract void ExcuteSkill();
     
 }

@@ -35,23 +35,16 @@ public class UnitPartyManager : MonoBehaviour
 
     public void UnitSpwan()
     {           
-        
-
-
-
         if (unitprefabs.Count <= 0)
         {
             Debug.Log("유닛 프리팹 존재하지않음");
             return;
         }
-
         if(unitprefabs.Count >= 3)
         {
             Debug.Log("유닛이 3마리 이상입니다");
             return;
         }
-
-        
         for (int i =0; i< unitprefabs.Count; ++i)
         {
             var go = Instantiate(unitprefabs[i], Vector3.zero ,Quaternion.identity);
@@ -141,5 +134,34 @@ public class UnitPartyManager : MonoBehaviour
     }
     public void SetUnitData(SoldierTable.Data data, UnitTypes type)
     {
+    }
+
+    public Transform GetUnit(UnitTypes type)
+    {
+        for(int i= 0; i< generateInstance.Count; i++)
+        {
+            if(type == generateInstance[i].UnitTypes)
+                return generateInstance[i].transform;
+        }
+        return null;
+    }
+
+
+    public Unit GetCurrentTargetType(string targetString)
+    {
+        switch (targetString)
+        {
+            case "TankID":
+                return generateInstance.Find((x) => x.UnitTypes == UnitTypes.Tanker);
+
+            case "DealID":
+                return generateInstance.Find((x) => x.UnitTypes == UnitTypes.Dealer);
+
+            case "HealID":
+                return generateInstance.Find((x) => x.UnitTypes == UnitTypes.Healer);
+
+            default:
+                return null;
+        }
     }
 }

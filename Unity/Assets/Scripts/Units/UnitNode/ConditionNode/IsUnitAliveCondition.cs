@@ -10,11 +10,6 @@ public class IsUnitAliveCondition : ConditionNode<Unit>
 
     protected override NodeStatus OnUpdate()
     {
-        Debug.Log("생존컨디션");
-        if(!context.IsDead)
-        {
-            return NodeStatus.Success;
-        }
-        return NodeStatus.Failure;
+        return !context.IsDead ? NodeStatus.Success : NodeStatus.Failure;
     }
 }

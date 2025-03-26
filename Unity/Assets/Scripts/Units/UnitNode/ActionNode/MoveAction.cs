@@ -15,13 +15,15 @@ public class MoveAction : ActionNode<Unit>
 
     protected override NodeStatus OnUpdate()
     {
-        if(context.IsUnitCanAttack)
+        if(context.targetPos != null ||context.targetDistance > context.unitWeapon.range)
         {
+            
             Debug.Log("이동종료");
             return NodeStatus.Success;
         }
-        Debug.Log("이동중");
+        Debug.Log("이동중"); 
         context.Move();
+
         return NodeStatus.Running;
     }
 }

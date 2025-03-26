@@ -20,7 +20,10 @@ public class SaveLoadManager : Singleton<SaveLoadManager>
 
     public void SaveGame()
     {
-        TotalSaveData data = new TotalSaveData();
+        TotalSaveData data = new TotalSaveData
+        {
+            inventorySaveData = inventoryPanelUI.
+        };
 
         string json = JsonConvert.SerializeObject(data, Formatting.Indented);
         string filePath = Path.Combine(Application.persistentDataPath, fileName);

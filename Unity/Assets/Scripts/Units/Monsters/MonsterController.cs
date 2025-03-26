@@ -81,7 +81,7 @@ public class MonsterController : MonoBehaviour, IObjectPoolGameObject
 
     private void Update()
     {
-        Target = stageManager.UnitPartyManager.GetFirstLineUnit();
+        Target = stageManager.UnitPartyManager.GetFirstLineUnitTransform();
 
         if (Target is not null)
         {

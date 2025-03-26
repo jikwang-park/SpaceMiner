@@ -54,6 +54,21 @@ public static class DataTableManager
             soldierTable.Load(DataTableIds.soldierTable);
             tables.Add(DataTableIds.soldierTable, soldierTable);
         }
+        {
+            var tankerSkillTable = new TankerSkillTable();
+            tankerSkillTable.Load(DataTableIds.tankerSkillTable);
+            tables.Add(DataTableIds.tankerSkillTable, tankerSkillTable);
+        }
+        {
+            var healerSkillTable = new HealerSkillTable();
+            healerSkillTable.Load(DataTableIds.healerSkillTable);
+            tables.Add(DataTableIds.healerSkillTable, healerSkillTable);
+        }
+        {
+            var dealerSkillTable = new DealerSkillTable();
+            dealerSkillTable.Load(DataTableIds.dealerSkillTable);
+            tables.Add(DataTableIds.dealerSkillTable, dealerSkillTable);
+        }
     }
 
 
@@ -104,6 +119,29 @@ public static class DataTableManager
         get
         {
             return GetTable<SoldierTable>(DataTableIds.soldierTable);
+        }
+    }
+    public static TankerSkillTable TankerSkillTable
+    {
+        get
+        {
+            return GetTable<TankerSkillTable>(DataTableIds.tankerSkillTable);
+        }
+    }
+
+    public static HealerSkillTable HealerSkillTable
+    {
+        get
+        {
+            return GetTable<HealerSkillTable>(DataTableIds.healerSkillTable);
+        }
+    }
+
+    public static DealerSkillTable DealerSkillTable
+    {
+        get
+        {
+            return GetTable<DealerSkillTable>(DataTableIds.dealerSkillTable);
         }
     }
 }

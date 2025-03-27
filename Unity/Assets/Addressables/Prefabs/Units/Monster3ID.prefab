@@ -11,9 +11,10 @@ GameObject:
   - component: {fileID: 4077528635843874768}
   - component: {fileID: 7208182594462550290}
   - component: {fileID: 2716233465264221093}
-  - component: {fileID: -7340850372538210932}
+  - component: {fileID: -2108817306920966935}
   - component: {fileID: -7643524621036844067}
   - component: {fileID: -7795511920448012880}
+  - component: {fileID: -7340850372538210932}
   - component: {fileID: 1504359759738761055}
   - component: {fileID: 774849100692196743}
   m_Layer: 6
@@ -52,7 +53,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   status: 0
-  <stats>k__BackingField: {fileID: 0}
+  <Stats>k__BackingField: {fileID: 0}
   animations: {fileID: 512612785384016957}
   <minDistanceInMonster>k__BackingField: 2
   frontLine: -1
@@ -79,7 +80,7 @@ MonoBehaviour:
   criticalChance: 0
   criticalMultiplier: 0
   moveSpeed: 3
---- !u!114 &-7340850372538210932
+--- !u!114 &-2108817306920966935
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -88,9 +89,12 @@ MonoBehaviour:
   m_GameObject: {fileID: 9151133835082727212}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8aa1921a0dca5b34c8e13a04da6dfd7a, type: 3}
+  m_Script: {fileID: 11500000, guid: 1fed17400599b764f8362d3bc865d7c5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  textPrefabAddress: Prefabs/UI/DamageText
+  showingDuration: 1.5
+  risingSpeed: 2
 --- !u!114 &-7643524621036844067
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -113,6 +117,18 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 35319348902dac24d93bf58993d6a493, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &-7340850372538210932
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 9151133835082727212}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8aa1921a0dca5b34c8e13a04da6dfd7a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!114 &1504359759738761055

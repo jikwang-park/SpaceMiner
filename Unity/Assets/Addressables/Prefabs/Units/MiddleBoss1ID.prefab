@@ -12,9 +12,10 @@ GameObject:
   - component: {fileID: 6427316517599210311}
   - component: {fileID: 8011384936818028670}
   - component: {fileID: 154961287735532075}
-  - component: {fileID: 8912939422788091432}
+  - component: {fileID: -4966906164547127433}
   - component: {fileID: 3402519790608499144}
   - component: {fileID: -840533646824632824}
+  - component: {fileID: 8912939422788091432}
   - component: {fileID: 2764409918317614393}
   - component: {fileID: 1001392313764621160}
   m_Layer: 6
@@ -92,7 +93,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9e7889334f4e429499ec56ac18c6eda1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!114 &8912939422788091432
+--- !u!114 &-4966906164547127433
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -101,9 +102,12 @@ MonoBehaviour:
   m_GameObject: {fileID: 9151133835082727212}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8aa1921a0dca5b34c8e13a04da6dfd7a, type: 3}
+  m_Script: {fileID: 11500000, guid: 1fed17400599b764f8362d3bc865d7c5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  textPrefabAddress: Prefabs/UI/DamageText
+  showingDuration: 1.5
+  risingSpeed: 2
 --- !u!114 &3402519790608499144
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -126,6 +130,18 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 35319348902dac24d93bf58993d6a493, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &8912939422788091432
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 9151133835082727212}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8aa1921a0dca5b34c8e13a04da6dfd7a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!114 &2764409918317614393

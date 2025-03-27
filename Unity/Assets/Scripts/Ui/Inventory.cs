@@ -25,6 +25,7 @@ public class Inventory : MonoBehaviour
     private InventoryElement equipElement;
     private UnitPartyManager unitPartyManager;
     private SoldierInteractableUI soldierInteractableUI;
+    public event Action OnInitialized;
     private void Awake()
     {
         unitPartyManager = FindObjectOfType<UnitPartyManager>();
@@ -82,7 +83,6 @@ public class Inventory : MonoBehaviour
                         inventoryElement.SetLevel(0);
                         buttonElement.image.sprite = gradeSprites[(int)soldierData.Rating - 1];
                         inventoryElements.Add(inventoryElement);
-
                     }
                 }
                 else
@@ -98,6 +98,7 @@ public class Inventory : MonoBehaviour
                     inventoryElements[0].UpdateCount(9999);
                     OnElementSelected(inventoryElements[0]);
                     Equip();
+                    OnInitialized?.Invoke();
                 }
             };
         }
@@ -219,5 +220,47 @@ public class Inventory : MonoBehaviour
         }
         return saveData;
     }
+    public void Load(InventorySaveData saveData)
+    {
+        if (saveData == null)
+        {
+            Debug.Log("No inventory save data to load.");
+            return;
+        }
 
+        if (saveData.inventoryType != this.type)
+        {
+            Debug.Log("저장된 인벤토리 타입과 현재 인벤토리 타입이 다릅니다.");
+        }
+
+        foreach (var elementData in saveData.elements)
+        {
+            InventoryElement element = inventoryElements.Find(e => e.soldierId == elementData.soldierId);
+            if (element != null)
+            {
+                if (!elementData.IsLocked)
+                {
+                    element.UnlockElement();
+                    element.UpdateCount(elementData.Count);
+                    element.SetLevel(elementData.Level);
+                    element.soldierId = elementData.soldierId;
+                }
+            }
+        }
+
+        if (!string.IsNullOrEmpty(saveData.equipElementID))
+        {
+            InventoryElement loadedEquipElement = inventoryElements.Find(e => e.soldierId == saveData.equipElementID);
+            if (loadedEquipElement != null)
+            {
+                selectedElement = loadedEquipElement;
+                Equip();
+                OnElementSelected(inventoryElements[0]);
+            }
+        }
+        else
+        {
+            UnEquip();
+        }
+    }
 }

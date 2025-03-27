@@ -6,7 +6,8 @@ public class DealerSkill : UnitSkill
 {
     private float damageRatio;
     private SkillType currentSkillType;
-    private 
+    private int targetCount;
+     
 
     public override void Init()
     {
@@ -15,13 +16,19 @@ public class DealerSkill : UnitSkill
         {
             coolTime = delaerSkillData.CoolTime;
             damageRatio = delaerSkillData.DamageRatio;
+            targetCount = delaerSkillData.MonsterMaxTarget;
         }
     }
 
 
-    public override void ExcuteSkill()
+    public override void ExecuteSkill()
     {
-        throw new System.NotImplementedException();
+        List<Transform> targetTransforms = new List<Transform>();
+        targetTransforms = stageManager.MonsterLaneManager.GetMonsters(targetCount);
+        for(int i = 0; i < targetTransforms.Count; ++i)
+        {
+            currentStats.SkillExecute(targetTransforms[i].gameObject);
+        }
     }
 
  

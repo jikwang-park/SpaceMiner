@@ -24,6 +24,15 @@ public static class SaveLoadManager
     }
     public static void LoadGame()
     {
+        string filePath = Path.Combine(Application.persistentDataPath, fileName);
+        if (!File.Exists(filePath))
+        {
+            Debug.LogWarning("Save file not found at: " + filePath);
+            return;
+        }
+        string json = File.ReadAllText(filePath);
+        TotalSaveData loadedSaveData = JsonConvert.DeserializeObject<TotalSaveData>(json);
+
 
     }
 }

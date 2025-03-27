@@ -31,7 +31,27 @@ public class UnitStats : CharacterStats
                 break;
         }
     }
+    public void SkillExecute(GameObject defender) // 스킬 인포및 디펜더 정보 넘겨서 데미지 처리
+    {
+        if(defender is null)
+        {
+            return;
+        }
+        var distance = Vector3.Dot(transform.position - defender.transform.position, Vector3.forward);
 
+        if (distance > range)
+        {
+            return;
+        }
+
+        CharacterStats dStats = defender.GetComponent<CharacterStats>();
+        Attack attack = CreateSkillAttack(dStats);
+        IAttackable[] attackables = defender.GetComponents<IAttackable>();
+        foreach (var attackable in attackables)
+        {
+            attackable.OnAttack(gameObject, attack);
+        }
+    }
 
     public override void Execute(GameObject defender)
     {
@@ -53,6 +73,30 @@ public class UnitStats : CharacterStats
         {
             attackable.OnAttack(gameObject, attack);
         }
+    }
+
+    public Attack CreateSkillAttack(CharacterStats defenderStats)
+    {
+        //나중에 추가 해야됌
+        Attack attack = new Attack();
+
+        var dealerData = DataTableManager.DealerSkillTable.GetData("노말딜러스킬Lv1");
+
+        BigNumber damage = this.damage;
+
+        attack.isCritical = criticalChance >= Random.value;
+        if(attack.isCritical)
+        {
+            damage *= criticalMultiplier;
+        }
+        attack.damage = damage;
+
+        if (defenderStats != null)
+        {
+            attack.damage -= defenderStats.armor;
+        }
+
+        return attack;
     }
 
     public override Attack CreateAttack(CharacterStats defenderStats)

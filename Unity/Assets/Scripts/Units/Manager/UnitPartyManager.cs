@@ -146,6 +146,15 @@ public class UnitPartyManager : MonoBehaviour
         return null;
     }
 
+    public Unit GetCurrentUnitGo(UnitTypes type)
+    {
+        for(int i = 0; i< generateInstance.Count; i++)
+        {
+            if (type == generateInstance[i].UnitTypes)
+                return generateInstance[i];
+        }
+        return null;
+    }
 
     public Unit GetCurrentTargetType(string targetString)
     {

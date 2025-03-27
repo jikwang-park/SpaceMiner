@@ -207,4 +207,19 @@ public class StageManager : MonoBehaviour
 
         stageEndMessageWindow.SetActive(false);
     }
+    private void OnEnable()
+    {
+        SaveLoadManager.onSaveRequested += DoSave;
+    }
+    private void DoSave(TotalSaveData totalSaveData)
+    {
+        StageSaveData stageSaveData = new StageSaveData
+        {
+            currentPlanet = CurrentPlanet,
+            currentStage = CurrentStage,
+            HighPlanet = CurrentPlanet,
+            HighStage = CurrentStage,
+        };
+        totalSaveData.stageSaveData = stageSaveData;
+    }
 }

@@ -6,8 +6,8 @@ using UnityEngine.UI;
 
 public class RushSelectToggle : MonoBehaviour
 {
-    private const string Ascend = "Ascend";
-    private const string Repeat = "Repeat";
+    private const string Ascend = "돌파";
+    private const string Repeat = "반복";
 
     [SerializeField]
     private TextMeshProUGUI text;

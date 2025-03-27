@@ -11,6 +11,7 @@ public class MonsterController : MonoBehaviour, IObjectPoolGameObject
     {
         Wait,
         Attacking,
+        SkillUsing,
     }
 
     public Status status;
@@ -22,7 +23,7 @@ public class MonsterController : MonoBehaviour, IObjectPoolGameObject
     private Animation animations;
     private BehaviorTree<MonsterController> behaviorTree;
 
-    public StageManager stageManager { get; private set; }
+    public StageManager StageManager { get; private set; }
 
     [field: SerializeField]
     public float minDistanceInMonster { get; private set; } = 2f;
@@ -40,8 +41,6 @@ public class MonsterController : MonoBehaviour, IObjectPoolGameObject
 
     private bool isDrawRegion;
 
-    
-
     public bool CanAttack
     {
         get
@@ -54,7 +53,7 @@ public class MonsterController : MonoBehaviour, IObjectPoolGameObject
     {
         get
         {
-            return frontLine < 0 || Vector3.Dot(findFrontMonster(frontLine).position - transform.position, Vector3.back) > minDistanceInMonster;
+            return frontLine < 0 || -(findFrontMonster(frontLine).position.z - transform.position.z) > minDistanceInMonster;
         }
     }
 
@@ -64,30 +63,28 @@ public class MonsterController : MonoBehaviour, IObjectPoolGameObject
     {
         Stats = GetComponent<MonsterStats>();
         status = Status.Wait;
-        InitBehaviourTree();
     }
 
     private void OnEnable()
     {
         isDrawRegion = true;
 
-        stageManager = GameObject.FindGameObjectWithTag("GameController").GetComponent<StageManager>();
+        StageManager = GameObject.FindGameObjectWithTag("GameController").GetComponent<StageManager>();
     }
 
     private void OnDisable()
     {
         isDrawRegion = false;
-
-        stageManager = null;
+        StageManager = null;
     }
 
     private void Update()
     {
-        Target = stageManager.UnitPartyManager.GetFirstLineUnitTransform();
+        Target = StageManager.UnitPartyManager.GetFirstLineUnitTransform();
 
         if (Target is not null)
         {
-            TargetDistance = Vector3.Dot(Target.position - transform.position, Vector3.back);
+            TargetDistance = -(Target.position.z - transform.position.z);
         }
 
         if (Input.GetKeyDown(KeyCode.Alpha8))
@@ -109,6 +106,15 @@ public class MonsterController : MonoBehaviour, IObjectPoolGameObject
 
         var rootSelector = new SelectorNode<MonsterController>(this);
 
+        if (MonsterData.MonsterSkill != "0")
+        {
+            var skillSequence = new SquenceNode<MonsterController>(this);
+            skillSequence.AddChild(new IsMonsterSkillCooltimeCondition(this));
+            skillSequence.AddChild(new IsMonsterSkillTargetExistCondition(this));
+            skillSequence.AddChild(new SkillMonsterAction(this));
+            rootSelector.AddChild(skillSequence);
+        }
+
         var attackSequence = new SquenceNode<MonsterController>(this);
         attackSequence.AddChild(new CanAttackMonsterCondition(this));
         attackSequence.AddChild(new AttackMonsterAction(this));
@@ -128,6 +134,11 @@ public class MonsterController : MonoBehaviour, IObjectPoolGameObject
     {
         MonsterData = DataTableManager.MonsterTable.GetData(monsterId);
         Stats.SetData(MonsterData);
+        InitBehaviourTree();
+        if (MonsterData.MonsterSkill != "0")
+        {
+            GetComponent<MonsterSkill>().SetSkill(MonsterData.MonsterSkill);
+        }
     }
 
     public void AttackTarget()

@@ -88,7 +88,7 @@ public class StageManager : MonoBehaviour
             }
         }
 
-        float remainTime = 30f + stageStartTime - Time.time;
+        float remainTime = 60f + stageStartTime - Time.time;
 
         if (remainTime <= 0f)
         {

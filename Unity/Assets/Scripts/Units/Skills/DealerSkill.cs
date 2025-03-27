@@ -5,10 +5,14 @@ using UnityEngine;
 public class DealerSkill : UnitSkill
 {
     private float damageRatio;
-    private SkillType currentSkillType;
     private int targetCount;
-     
 
+    protected override void Awake()
+    {
+        base.Awake();
+        Init();
+        unit = GetComponent<Unit>();
+    }
     public override void Init()
     {
         var delaerSkillData = DataTableManager.DealerSkillTable.GetData("노말딜러스킬Lv1");
@@ -27,7 +31,7 @@ public class DealerSkill : UnitSkill
         targetTransforms = stageManager.MonsterLaneManager.GetMonsters(targetCount);
         for(int i = 0; i < targetTransforms.Count; ++i)
         {
-            currentStats.SkillExecute(targetTransforms[i].gameObject);
+            unit.unitStats.SkillExecute(targetTransforms[i].gameObject);
         }
     }
 

@@ -5,13 +5,15 @@ using UnityEngine;
 public class TankerSkill : UnitSkill
 {
     private float shieldRatio;
-    private float duration;
     private string buffId;
-    
-    private SkillType currentSkillType;
-    private List<Unit> targetList;    
 
-    // init 贸府 秦拎具达
+
+    protected override void Awake()
+    {
+        base.Awake();
+        Init();
+        unit = GetComponent<Unit>();
+    }
     public override void Init()
     {
         var tankerSkillData = DataTableManager.TankerSkillTable.GetData("畴富攀目胶懦Lv1");
@@ -21,11 +23,10 @@ public class TankerSkill : UnitSkill
             shieldRatio = tankerSkillData.ShieldRatio;
             duration = tankerSkillData.Duration;
             buffId = tankerSkillData.BuffID;
-            GetTarget();
         }
     }   
     
-    public void GetTarget()
+    public override void GetTarget()
     {
         var tankerSkillData = DataTableManager.TankerSkillTable.GetData("畴富攀目胶懦Lv1");
         string soliderTarget = tankerSkillData.SoilderTarget;

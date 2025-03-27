@@ -7,8 +7,12 @@ public class HealerSkill : UnitSkill
     private float healRatio;
     private string buffId;
 
-    private List<Unit> targetList;
-
+    protected override void Awake()
+    {
+        base.Awake();
+        Init();
+        unit = GetComponent<Unit>();
+    }
     public override void Init()
     {
         var healerSkillData = DataTableManager.HealerSkillTable.GetData("노말힐러스킬Lv1");
@@ -17,11 +21,10 @@ public class HealerSkill : UnitSkill
             coolTime = healerSkillData.CoolTime;
             healRatio = healerSkillData.HealRatio;
             buffId = healerSkillData.BuffID;
-            GetTarget();
         }
     }
 
-    public void GetTarget()
+    public override void GetTarget()
     {
         var tankerSkillData = DataTableManager.HealerSkillTable.GetData("노말힐러스킬Lv1");
         string soliderTarget = tankerSkillData.SoilderTarget;
@@ -39,7 +42,6 @@ public class HealerSkill : UnitSkill
         {
             var amount = unit.unitStats.maxHp * healRatio;
             unit.unitStats.Hp += amount;
-
         }
     }
 

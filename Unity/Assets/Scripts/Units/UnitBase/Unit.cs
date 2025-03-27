@@ -1,13 +1,25 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using Unity.VisualScripting.Antlr3.Runtime.Misc;
 using UnityEditor;
 using UnityEngine;
 
 
 
+
 public class Unit : MonoBehaviour
 {
+    public enum UnitStatus
+    {
+        Attacking,
+        UsingSkill,
+        Wait,
+    }
+
+    public UnitStatus currentStatus;
+
+
     //Base Stats\
     public UnitTypes UnitTypes
     {
@@ -37,6 +49,17 @@ public class Unit : MonoBehaviour
 
     public UnitStats unitStats;
 
+    public bool IsInAttackRange
+    {
+        get
+        {
+           if(targetDistance <= unitStats.range)
+                return true;
+
+           return false;
+        }
+    }
+
 
 
 
@@ -51,7 +74,7 @@ public class Unit : MonoBehaviour
     public float attackUsingTime = 0.4f;
 
 
-    public int aliveCount = 0;
+    public int unitAliveCount = 0;
 
     [SerializeField]
     private SoldierTable.Data soldierData;
@@ -64,41 +87,88 @@ public class Unit : MonoBehaviour
 
     private int lane = 0;
 
+    private int currentUnitNum = 0;
+
+
     private void Awake()
     {
         unitStats = GetComponent<UnitStats>();
         stageManger = GameObject.FindGameObjectWithTag("GameController").GetComponent<StageManager>();
     }
 
-    // ���� ����� bool��
-    public bool IsDead // �÷��̾ �׾�����
+    public bool IsDead 
     {
         get
         {
             if (unitStats.Hp <= 0)
             {
+                currentUnitNum++;
                 return true;
             }
             return false;
         }
     }
 
-    public float lastSkillUsingTime;
 
-    public bool CanUseSkill
+
+
+    public float lastDealerSkillUsedTime;
+    public float lastTankerSkillUsedTime;
+    public float lastHealerSkillUsedTime;
+
+    public bool IsTankerCanUseSkill
     {
         get
         {
-            if (Time.time < unitSkill.coolTime + lastSkillUsingTime)
+            
+            if (currentUnitType == UnitTypes.Tanker)
             {
-                return false;
+                if (Time.time < unitSkill.coolTime + lastTankerSkillUsedTime)
+                    return false;
+
+                return true;
             }
-            return true;
+            return false;
         }
     }
 
+    public bool IsDealerCanUseSkill
+    {
+        get
+        {
+            if (currentUnitType == UnitTypes.Dealer)
+            {
+                if (targetDistance > unitStats.range ||
+                        Time.time < unitSkill.coolTime + lastDealerSkillUsedTime)
+                    return false;
+                
+                return true;
+            }
+            return false;
+        }
+    }
 
-    public bool IsUnitCanAttack // �����Ÿ� ���� �ִ���
+    public bool IsHealerCanUseSkill
+    {
+        get
+        {
+            if (currentUnitType == UnitTypes.Healer)
+            {
+                if (unitSkill.targetList == null ||
+                    Time.time < unitSkill.coolTime + lastHealerSkillUsedTime)
+                    return false;
+                
+                return true;
+            }
+            return false;
+        }
+    }
+
+   
+
+
+
+    public bool IsUnitCanAttack 
     {
         get
         {
@@ -112,8 +182,7 @@ public class Unit : MonoBehaviour
             return false;
         }
     }
-    //��ų������̴�?
-    public bool IsSkillUsing;
+
     //�Ϲ� �������̴�?
     public bool IsNormalAttacking;
     //1�� �¾Ҵ�?
@@ -150,6 +219,18 @@ public class Unit : MonoBehaviour
         unitStats.SetData(data, type);
 
         currentUnitType = type;
+        switch (currentUnitType)
+        {
+            case UnitTypes.Tanker:
+                unitSkill = gameObject.AddComponent<TankerSkill>();
+                break;
+            case UnitTypes.Dealer:
+                unitSkill = gameObject.AddComponent<DealerSkill>();
+                break;
+            case UnitTypes.Healer:
+                unitSkill = gameObject.AddComponent<HealerSkill>();
+                break;
+        }
         behaviorTree = UnitBTManager.SetBehaviorTree(this, currentUnitType);
     }
 
@@ -185,8 +266,9 @@ public class Unit : MonoBehaviour
 
             if (target > 0)
             {
+                var units = stageManger.UnitPartyManager.generateInstance;
 
-                targetDistance = Vector3.Dot(targetPosition.position - stageManger.UnitPartyManager.generateInstance[0].transform.position, Vector3.forward);
+                targetDistance = Vector3.Dot(targetPosition.position - units[0].transform.position, Vector3.forward);
                 if (targetDistance <= unitStats.range)
                 {
                     targetPos = targetPosition;
@@ -204,8 +286,30 @@ public class Unit : MonoBehaviour
 
     public void AttackCorutine()
     {
+        currentStatus = UnitStatus.Attacking;
         StartCoroutine(NormalAttackCor());
         lastAttackTime = Time.time;
+    }
+    public void UseSkill()
+    {
+        
+        currentStatus = UnitStatus.UsingSkill;
+
+        switch (currentUnitType)
+        {
+            case UnitTypes.Tanker:
+                StartCoroutine(TankerSkillTimer());
+                lastTankerSkillUsedTime = Time.time;
+                break;
+            case UnitTypes.Dealer:
+                StartCoroutine(DealerSkillTimer());
+                lastDealerSkillUsedTime = Time.time;
+                break;
+            case UnitTypes.Healer:
+                StartCoroutine(HealerSkillTimer());
+                lastHealerSkillUsedTime = Time.time;
+                break;
+        }
     }
 
     public IEnumerator NormalAttackCor()
@@ -215,16 +319,32 @@ public class Unit : MonoBehaviour
             unitStats.Execute(targetPos.gameObject);
         }
         yield return new WaitForSeconds(attackUsingTime);
-        IsNormalAttacking = false;
+        currentStatus = UnitStatus.Wait;
     }
-    public void UseSkill()
+
+    private IEnumerator HealerSkillTimer()
     {
-        if (Time.time < unitSkill.coolTime + lastSkillUsingTime)
-        {
-            return;
-        }
+        unitSkill.GetTarget();
         unitSkill.ExecuteSkill();
-        lastSkillUsingTime = Time.time;
+        yield return new WaitForSeconds(2.5f);
+        lastAttackTime = Time.time;
+        currentStatus = UnitStatus.Wait;
+    }
+
+
+    private IEnumerator DealerSkillTimer()
+    {
+
+        unitSkill.ExecuteSkill();
+        yield return new WaitForSeconds(2f);
+        currentStatus = UnitStatus.Wait;
+    }
+    private IEnumerator TankerSkillTimer()
+    {
+        unitSkill.GetTarget();
+        unitSkill.ExecuteSkill();
+        yield return new WaitForSeconds(2f);
+        currentStatus = UnitStatus.Wait;
     }
 
     private float skillEndTime;
@@ -237,7 +357,7 @@ public class Unit : MonoBehaviour
     }
 
 
-   
+
 
     private void Update()
     {

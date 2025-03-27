@@ -10,7 +10,7 @@ public class UnitStats : CharacterStats
     public void SetData(SoldierTable.Data data, UnitTypes type)
     {
         moveSpeed = data.MoveSpeed;
-        maxHp = (int)data.Basic_HP;
+        maxHp = 1000;/*(int)data.Basic_HP;*/
         Hp = maxHp;
 
         coolDown = 1;

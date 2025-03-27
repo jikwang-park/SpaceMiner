@@ -2,9 +2,9 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class IsUnitCanAttackCondition : ConditionNode<Unit>
+public class IsUnitCanNormalAttackCondition : ConditionNode<Unit>
 {
-    public IsUnitCanAttackCondition(Unit context) : base(context)
+    public IsUnitCanNormalAttackCondition(Unit context) : base(context)
     {
     }
 

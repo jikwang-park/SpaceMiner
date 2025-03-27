@@ -4,7 +4,6 @@ using UnityEngine;
 
 public class SkillAttackAction : ActionNode<Unit>
 {
-    private float lastAttackTime = 0f;
 
     public SkillAttackAction(Unit context) : base(context)
     {
@@ -12,23 +11,19 @@ public class SkillAttackAction : ActionNode<Unit>
     protected override void OnStart()
     {
         base.OnStart();
-        context.lastSkillAttackTime = Time.time;
-        context.IsSkillUsing = true;
+        context.UseSkill();
         Debug.Log("스킬 사용시작");
     }
     protected override NodeStatus OnUpdate()
     {
-        if(context.IsSkillUsing)
+        if (context.currentStatus == Unit.UnitStatus.UsingSkill)
         {
-
+            Debug.Log("스킬사용중");
             return NodeStatus.Running;
+
         }
-        else
-        {
-            Debug.Log("스킬 사용성공");
-            context.IsSkillUsing = false;
-            return NodeStatus.Success;
-        }
-       
+
+        return NodeStatus.Success;
+
     }
 }

@@ -994,6 +994,17 @@ RectTransform:
   m_CorrespondingSourceObject: {fileID: 5293860445760245432, guid: ec252e0cfdee70d4290cf27124439152, type: 3}
   m_PrefabInstance: {fileID: 1264219028}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &1264219030 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 7621950559863487496, guid: ec252e0cfdee70d4290cf27124439152, type: 3}
+  m_PrefabInstance: {fileID: 1264219028}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e4cd994f1bea8a542887f046c528936c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1001 &1289392212
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -1423,6 +1434,8 @@ GameObject:
   - component: {fileID: 1827042466}
   - component: {fileID: 1827042465}
   - component: {fileID: 1827042464}
+  - component: {fileID: 1827042469}
+  - component: {fileID: 1827042468}
   m_Layer: 5
   m_Name: Canvas
   m_TagString: Untagged
@@ -1517,6 +1530,45 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0, y: 0}
+--- !u!114 &1827042468
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1827042463}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 188f3f5fa5184ba438ecdc0070fabb7c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  stageText: {fileID: 182756847}
+  timerText: {fileID: 1048497065}
+  stageEndMessageWindow: {fileID: 648075828}
+  stageEndMessageText: {fileID: 1637228220}
+  stageSelectWindow: {fileID: 1264219030}
+--- !u!114 &1827042469
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1827042463}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cdff7f4ff5d36b84b82f92a0576bf5fb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  addressableAssets:
+  - m_AssetGUID: b19ccc02cfe55dd41a5d8de7f0f77c05
+    m_SubObjectName: 
+    m_SubObjectType: 
+    m_EditorAssetChanged: 0
+  - m_AssetGUID: 6fd61241347240049bf0ed2c31538fb9
+    m_SubObjectName: 
+    m_SubObjectType: 
+    m_EditorAssetChanged: 0
+  prefabs: []
 --- !u!1 &1939840561
 GameObject:
   m_ObjectHideFlags: 0
@@ -1687,6 +1739,10 @@ PrefabInstance:
       propertyPath: stageEndMessageWindow
       value: 
       objectReference: {fileID: 648075828}
+    - target: {fileID: 9103504561039988271, guid: 101330edd7cb4b34ca9628876b2f2805, type: 3}
+      propertyPath: <stageUiManager>k__BackingField
+      value: 
+      objectReference: {fileID: 1827042468}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []

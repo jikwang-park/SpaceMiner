@@ -26,69 +26,51 @@ public static class DataTableManager
             tables.Add(id, table);
         }
 #else
-        {
-            var table = new StringTable();
-            var stringTableId = DataTableIds.stringTables[(int)Variables.currentLanguage];
-            table.Load(stringTableId);
-            tables.Add(stringTableId, table);
-        }
+        var table = new StringTable();
+        var stringTableId = DataTableIds.stringTables[(int)Variables.currentLanguage];
+        table.Load(stringTableId);
+        tables.Add(stringTableId, table);
 #endif
 
-        {
-            var corpsTable = new CorpsTable();
-            corpsTable.Load(DataTableIds.corpsTable);
-            tables.Add(DataTableIds.corpsTable, corpsTable);
-        }
-        {
-            var stageTable = new StageTable();
-            stageTable.Load(DataTableIds.stageTable);
-            tables.Add(DataTableIds.stageTable, stageTable);
-        }
-        {
-            var waveTable = new WaveTable();
-            waveTable.Load(DataTableIds.waveTable);
-            tables.Add(DataTableIds.waveTable, waveTable);
-        }
-        {
-            var soldierTable = new SoldierTable();
-            soldierTable.Load(DataTableIds.soldierTable);
-            tables.Add(DataTableIds.soldierTable, soldierTable);
-        }
-        {
-            var tankerSkillTable = new TankerSkillTable();
-            tankerSkillTable.Load(DataTableIds.tankerSkillTable);
-            tables.Add(DataTableIds.tankerSkillTable, tankerSkillTable);
-        }
-        {
-            var healerSkillTable = new HealerSkillTable();
-            healerSkillTable.Load(DataTableIds.healerSkillTable);
-            tables.Add(DataTableIds.healerSkillTable, healerSkillTable);
-        }
-        {
-            var dealerSkillTable = new DealerSkillTable();
-            dealerSkillTable.Load(DataTableIds.dealerSkillTable);
-            tables.Add(DataTableIds.dealerSkillTable, dealerSkillTable);
-        }
-        {
-            var monsterTable = new MonsterTable();
-            monsterTable.Load(DataTableIds.monsterTable);
-            tables.Add(DataTableIds.monsterTable, monsterTable);
-        }
-        {
-            var gachaTable = new GachaTable();
-            gachaTable.Load(DataTableIds.gachaTable);
-            tables.Add(DataTableIds.gachaTable, gachaTable);
-        }
-        {
-            var gachaGradeTable = new GachaGradeTable();
-            gachaGradeTable.Load(DataTableIds.gachaGradeTable);
-            tables.Add(DataTableIds.gachaGradeTable, gachaGradeTable);
-        }
-        {
-            var gachaSoldierTable = new GachaSoldierTable();
-            gachaSoldierTable.Load(DataTableIds.gachaSoldierTable);
-            tables.Add(DataTableIds.gachaSoldierTable, gachaSoldierTable);
-        }
+        var corpsTable = new CorpsTable();
+        corpsTable.Load(DataTableIds.corpsTable);
+        tables.Add(DataTableIds.corpsTable, corpsTable);
+        var stageTable = new StageTable();
+        stageTable.Load(DataTableIds.stageTable);
+        tables.Add(DataTableIds.stageTable, stageTable);
+        var waveTable = new WaveTable();
+        waveTable.Load(DataTableIds.waveTable);
+        tables.Add(DataTableIds.waveTable, waveTable);
+
+        var soldierTable = new SoldierTable();
+        soldierTable.Load(DataTableIds.soldierTable);
+        tables.Add(DataTableIds.soldierTable, soldierTable);
+        var tankerSkillTable = new TankerSkillTable();
+        tankerSkillTable.Load(DataTableIds.tankerSkillTable);
+        tables.Add(DataTableIds.tankerSkillTable, tankerSkillTable);
+        var healerSkillTable = new HealerSkillTable();
+        healerSkillTable.Load(DataTableIds.healerSkillTable);
+        tables.Add(DataTableIds.healerSkillTable, healerSkillTable);
+        var dealerSkillTable = new DealerSkillTable();
+        dealerSkillTable.Load(DataTableIds.dealerSkillTable);
+        tables.Add(DataTableIds.dealerSkillTable, dealerSkillTable);
+
+        var monsterTable = new MonsterTable();
+        monsterTable.Load(DataTableIds.monsterTable);
+        tables.Add(DataTableIds.monsterTable, monsterTable);
+        var monsterSkillTable = new MonsterSkillTable();
+        monsterSkillTable.Load(DataTableIds.monsterSkillTable);
+        tables.Add(DataTableIds.monsterSkillTable, monsterSkillTable);
+
+        var gachaTable = new GachaTable();
+        gachaTable.Load(DataTableIds.gachaTable);
+        tables.Add(DataTableIds.gachaTable, gachaTable);
+        var gachaGradeTable = new GachaGradeTable();
+        gachaGradeTable.Load(DataTableIds.gachaGradeTable);
+        tables.Add(DataTableIds.gachaGradeTable, gachaGradeTable);
+        var gachaSoldierTable = new GachaSoldierTable();
+        gachaSoldierTable.Load(DataTableIds.gachaSoldierTable);
+        tables.Add(DataTableIds.gachaSoldierTable, gachaSoldierTable);
     }
 
 
@@ -103,9 +85,9 @@ public static class DataTableManager
         return tables[tableId] as T;
     }
 
-    public static StringTable StringTable 
+    public static StringTable StringTable
         => GetTable<StringTable>(DataTableIds.stringTables[(int)Variables.currentLanguage]);
-    
+
 
     public static CorpsTable CorpsTable
         => GetTable<CorpsTable>(DataTableIds.corpsTable);
@@ -130,6 +112,9 @@ public static class DataTableManager
 
     public static MonsterTable MonsterTable
         => GetTable<MonsterTable>(DataTableIds.monsterTable);
+
+    public static MonsterSkillTable MonsterSkillTable
+        => GetTable<MonsterSkillTable>(DataTableIds.monsterSkillTable);
 
     public static GachaTable GachaTable
         => GetTable<GachaTable>(DataTableIds.gachaTable);

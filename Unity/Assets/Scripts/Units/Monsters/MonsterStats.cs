@@ -21,7 +21,7 @@ public class MonsterStats : CharacterStats
         {
             return;
         }
-        var distance = Vector3.Dot(transform.position - defender.transform.position, Vector3.forward);
+        var distance = transform.position.z - defender.transform.position.z;
 
         if (distance > range)
         {

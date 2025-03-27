@@ -16,7 +16,7 @@ public class MonsterController : MonoBehaviour, IObjectPoolGameObject
     public Status status;
 
     [field: SerializeField]
-    public CharacterStats stats { get; private set; }
+    public MonsterStats Stats { get; private set; }
 
     [SerializeField]
     private Animation animations;
@@ -29,6 +29,7 @@ public class MonsterController : MonoBehaviour, IObjectPoolGameObject
 
     public float TargetDistance { get; private set; }
     public Transform Target { get; private set; }
+    public MonsterTable.Data MonsterData { get; private set; }
 
 
     public Func<int, Transform> findFrontMonster;
@@ -39,11 +40,13 @@ public class MonsterController : MonoBehaviour, IObjectPoolGameObject
 
     private bool isDrawRegion;
 
+    
+
     public bool CanAttack
     {
         get
         {
-            return stats.range > TargetDistance && LastAttackTime + stats.coolDown < Time.time;
+            return Stats.range > TargetDistance && LastAttackTime + Stats.coolDown < Time.time;
         }
     }
 
@@ -59,7 +62,7 @@ public class MonsterController : MonoBehaviour, IObjectPoolGameObject
 
     private void Awake()
     {
-        stats = GetComponent<CharacterStats>();
+        Stats = GetComponent<MonsterStats>();
         status = Status.Wait;
         InitBehaviourTree();
     }
@@ -121,6 +124,12 @@ public class MonsterController : MonoBehaviour, IObjectPoolGameObject
         behaviorTree.SetRoot(rootSelector);
     }
 
+    public void SetMonsterId(string monsterId)
+    {
+        MonsterData = DataTableManager.MonsterTable.GetData(monsterId);
+        Stats.SetData(MonsterData);
+    }
+
     public void AttackTarget()
     {
         status = Status.Attacking;
@@ -133,7 +142,7 @@ public class MonsterController : MonoBehaviour, IObjectPoolGameObject
         //TODO: 애니메이션 정의되거나 공격 정의 후 수정 필요
         yield return new WaitForSeconds(0.25f);
         if (Target != null)
-            stats.Execute(Target.gameObject);
+            Stats.Execute(Target.gameObject);
         yield return new WaitForSeconds(0.25f);
         status = Status.Wait;
     }

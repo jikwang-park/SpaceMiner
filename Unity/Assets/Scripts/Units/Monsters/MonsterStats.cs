@@ -4,6 +4,17 @@ using UnityEngine;
 
 public class MonsterStats : CharacterStats
 {
+    public void SetData(MonsterTable.Data monsterData)
+    {
+        damage = monsterData.Atk;
+        range = monsterData.AtkRange;
+        maxHp = monsterData.Hp;
+        Hp = maxHp;
+        coolDown = 100f / monsterData.AtkSpeed;
+        moveSpeed = monsterData.MoveSpeed;
+    }
+
+
     public override void Execute(GameObject defender)
     {
         if (defender is null)

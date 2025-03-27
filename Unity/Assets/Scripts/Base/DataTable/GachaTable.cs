@@ -10,19 +10,27 @@ public class GachaTable : DataTable
     {
         public string gachaID { get; set; }
         public string nameStringID { get; set; }
-        public string cost_Item { get; set; }
+        public string cost_ItemID { get; set; }
         public int cost { get; set; }
+        public string cost_Item2ID { get; set; }
+        public int cost2 { get; set; }
         public int repeat { get; set; }
+        public int repeat2 { get; set; }
+        public int growRate { get; set; }
         public string explainStringID { get; set; }
 
         public override void Set(string[] argument)
         {
             gachaID = argument[0];
             nameStringID = argument[1];
-            cost_Item = argument[2];
+            cost_ItemID = argument[2];
             cost = int.Parse(argument[3]);
-            repeat = int.Parse(argument[4]);
-            explainStringID = argument[5];
+            cost_Item2ID = argument[4];
+            cost2 = int.Parse(argument[5]);
+            repeat = int.Parse(argument[6]);
+            repeat2 = int.Parse(argument[7]);
+            growRate = int.Parse(argument[8]);
+            explainStringID = argument[9];
         }
     }
 

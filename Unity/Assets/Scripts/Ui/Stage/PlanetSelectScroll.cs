@@ -13,6 +13,7 @@ public class PlanetSelectScroll : MonoBehaviour
     private Transform contents;
 
     public event Action<int> OnPlanetSelected;
+    private List<PlanetButton> buttons = new List<PlanetButton>();
 
     private void Start()
     {
@@ -21,7 +22,7 @@ public class PlanetSelectScroll : MonoBehaviour
 
     private void SetPlanetButtons()
     {
-        var objectpoolManager = GameObject.FindGameObjectWithTag("GameController").GetComponent<ObjectPoolManager>();
+        var objectpoolManager = GameObject.FindGameObjectWithTag("GameController").GetComponent<StageManager>().stageUiManager.GetComponent<ObjectPoolManager>();
         var planets = DataTableManager.StageTable.GetPlanetKeys();
 
         for (int i = 0; i < planets.Count; ++i)
@@ -29,9 +30,27 @@ public class PlanetSelectScroll : MonoBehaviour
             var button = objectpoolManager.gameObjectPool[buttonReference].Get();
             button.transform.SetParent(contents);
             button.transform.localScale = Vector3.one;
-            button.GetComponent<PlanetButton>().Set(planets[i]);
+
+            var planetButton = button.GetComponent<PlanetButton>();
+            planetButton.Set(planets[i]);
+            buttons.Add(planetButton);
+
             int index = planets[i];
-            button.GetComponent<Button>().onClick.AddListener(() => OnPlanetSelected?.Invoke(index));
+            planetButton.Button.onClick.AddListener(() => OnPlanetSelected?.Invoke(index));
+            if (i >= Variables.maxPlanetNumber)
+            {
+                planetButton.Button.interactable = false;
+            }
         }
+    }
+
+    public void UnlockPlanet(int planet)
+    {
+        if (buttons.Count < planet)
+        {
+            return;
+        }
+
+        buttons[planet - 1].Button.interactable = true;
     }
 }

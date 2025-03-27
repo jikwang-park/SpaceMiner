@@ -23,9 +23,14 @@ public class CameraManager : MonoBehaviour
     private void Update()
     {
         Unit = unitPartyManager.GetFirstLineUnitTransform();
-        if (Unit != null)
+        if (Unit is null)
         {
-            transform.position = Vector3.Lerp(transform.position, Unit.position + Offset, Time.deltaTime * followingSpeed);
+            return;
         }
+        if (Vector3.SqrMagnitude(Unit.position + Offset - transform.position) < 0.001f)
+        {
+            return;
+        }
+        transform.position = Vector3.Lerp(transform.position, Unit.position + Offset, Time.deltaTime * followingSpeed);
     }
 }

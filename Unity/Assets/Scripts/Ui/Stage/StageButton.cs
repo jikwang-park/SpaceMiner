@@ -16,17 +16,19 @@ public class StageButton : MonoBehaviour, IObjectPoolGameObject
     private int planet;
     private int stage;
 
-    private Button button;
+    [field: SerializeField]
+    public Button Button { get; private set; }
     private StageManager stageManager;
 
     private void Awake()
     {
-        button = GetComponent<Button>();
+        Button = GetComponent<Button>();
     }
 
     public void Release()
     {
-        button.onClick.RemoveAllListeners();
+        Button.onClick.RemoveAllListeners();
+        Button.interactable = true;
         ObjectPool.Release(gameObject);
     }
 
@@ -35,7 +37,7 @@ public class StageButton : MonoBehaviour, IObjectPoolGameObject
         this.planet = planet;
         this.stage = stage;
         text.text = $"{planet}-{stage}";
-        button.onClick.AddListener(MoveStage);
+        Button.onClick.AddListener(MoveStage);
     }
 
     private void MoveStage()

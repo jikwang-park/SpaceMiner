@@ -16,14 +16,15 @@ public class StageSelectScroll : MonoBehaviour
 
     private void Start()
     {
-        objectpoolManager = GameObject.FindGameObjectWithTag("GameController").GetComponent<ObjectPoolManager>();
+        objectpoolManager = GameObject.FindGameObjectWithTag("GameController").GetComponent<StageManager>().stageUiManager.GetComponent<ObjectPoolManager>();
+
 
         SetButtons(Variables.planetNumber);
     }
 
     public void SetButtons(int planet)
     {
-        foreach(var button in buttons)
+        foreach (var button in buttons)
         {
             button.Release();
         }
@@ -38,6 +39,15 @@ public class StageSelectScroll : MonoBehaviour
             var button = buttonGo.GetComponent<StageButton>();
             button.Set(planet, planetDatas[i].Stage);
             buttons.Add(button);
+            if (planet <= Variables.maxPlanetNumber && i >= Variables.maxStageNumber)
+            {
+                button.Button.interactable = false;
+            }
         }
+    }
+
+    public void UnlockStage(int stage)
+    {
+        buttons[stage - 1].Button.interactable = true;
     }
 }

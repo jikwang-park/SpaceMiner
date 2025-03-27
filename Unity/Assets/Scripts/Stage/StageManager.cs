@@ -134,7 +134,7 @@ public class StageManager : MonoBehaviour
         monsters.Remove(monsterController);
         if (monsters.Count == 0)
         {
-            if (CurrentWave >= waveData.WaveCorpsIDs.Length)
+            if (CurrentWave > waveData.WaveCorpsIDs.Length)
             {
                 ResetStage(true);
                 return;

@@ -23,7 +23,7 @@ public abstract class UnitSkill : MonoBehaviour
 
     protected SkillType currentSkillType;
 
-
+    protected UnitStats currentStats;
   
    
     private void Start()
@@ -33,9 +33,10 @@ public abstract class UnitSkill : MonoBehaviour
     private void Awake()
     {
         stageManager = GameObject.FindGameObjectWithTag("GameController").GetComponent<StageManager>();
+        currentStats = stageManager.GetComponent<UnitStats>();
     }
 
     public abstract void Init();
-    public abstract void ExcuteSkill();
+    public abstract void ExecuteSkill();
     
 }

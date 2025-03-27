@@ -33,12 +33,13 @@ public class HealerSkill : UnitSkill
         }
     }
 
-    public override void ExcuteSkill()
+    public override void ExecuteSkill()
     {
         foreach(var target in targetList)
         {
             var amount = unit.unitStats.maxHp * healRatio;
             unit.unitStats.Hp += amount;
+
         }
     }
 

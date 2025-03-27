@@ -41,7 +41,7 @@ public class TankerSkill : UnitSkill
 
     }
 
-    public override void ExcuteSkill()
+    public override void ExecuteSkill()
     {
         foreach(var target in targetList)
         {

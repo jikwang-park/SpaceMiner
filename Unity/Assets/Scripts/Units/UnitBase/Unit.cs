@@ -43,7 +43,6 @@ public class Unit : MonoBehaviour
 
     public float targetDistance;
 
-    //��Ŀ ��ų ��Ÿ��
     public float skillCoolTime = 10f;
 
     public BehaviorTree<Unit> behaviorTree;
@@ -224,7 +223,7 @@ public class Unit : MonoBehaviour
         {
             return;
         }
-        unitSkill.ExcuteSkill();
+        unitSkill.ExecuteSkill();
         lastSkillUsingTime = Time.time;
     }
 
@@ -236,6 +235,9 @@ public class Unit : MonoBehaviour
         barrier = amount;
 
     }
+
+
+   
 
     private void Update()
     {

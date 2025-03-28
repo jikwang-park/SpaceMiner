@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using Unity.IO.LowLevel.Unsafe;
 using UnityEngine;
 using UnityEngine.AddressableAssets;
 
@@ -36,9 +37,15 @@ public class CorpsTable : DataTable
 
     public override void LoadFromText(string text)
     {
-        var list = LoadCsv<Data>(text);
         dict.Clear();
         TableData.Clear();
+
+        if (string.IsNullOrEmpty(text))
+        {
+            return;
+        }
+
+        var list = LoadCsv<Data>(text);
 
         foreach (var item in list)
         {

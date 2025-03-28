@@ -25,10 +25,13 @@ public class DataTableIds
 
     public const string monsterTable = "MonsterTable";
     public const string monsterSkillTable = "MonsterSkillTable";
+    public const string monsterRewardTable = "MonsterRewardTable";
 
     public const string gachaTable = "GachaTable";
     public const string gachaGradeTable = "GachaGradeTable";
     public const string gachaSoldierTable = "GachaSoldierTable";
+
+    public const string itemTable = "ItemTable";
 }
 
 public enum StageMode

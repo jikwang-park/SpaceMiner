@@ -1,28 +1,39 @@
+using JetBrains.Annotations;
 using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 using UnityEngine;
-using UnityEngine.AddressableAssets;
 
-public class StringTable : DataTable
+public class MonsterRewardTable : DataTable
 {
     public class Data : DataTableData
     {
         public string ID { get; set; }
-        public string Line { get; set; }
+        public string Reward1 { get; set; }
+        public int Count { get; set; }
+        public string Reward2 { get; set; }
+        public string CountArray { get; set; }
+        public string Probability { get; set; }
+
+        public int[] counts;
+        public float[] probabilities;
 
         public override void Set(string[] argument)
         {
             ID = argument[0];
-            Line = argument[1];
+            Reward1 = argument[1];
+            Count = int.Parse(argument[2]);
+            Reward2 = argument[3];
+            CountArray = argument[4];
+            Probability = argument[5];
         }
     }
 
-    private Dictionary<string, Data> dict = new Dictionary<string, Data>();
-    public override Type DataType => typeof(Data);
 
+    private Dictionary<string, Data> dict = new Dictionary<string, Data>();
+
+    public override Type DataType => typeof(Data);
 
     public override void LoadFromText(string text)
     {
@@ -41,6 +52,22 @@ public class StringTable : DataTable
             if (!dict.ContainsKey(item.ID))
             {
                 dict.Add(item.ID, item);
+                var strCounts = item.CountArray.Split('_');
+                int countLength = strCounts.Length;
+                item.counts = new int[countLength];
+                for (int i = 0; i < countLength; ++i)
+                {
+                    item.counts[i] = int.Parse(strCounts[i]);
+                }
+
+                var strProbabilities = item.Probability.Split('_');
+                countLength = strProbabilities.Length;
+                item.probabilities = new float[countLength];
+                for (int i = 0; i < countLength; ++i)
+                {
+                    item.probabilities[i] = float.Parse(strProbabilities[i]);
+                }
+
                 TableData.Add(item.ID, item);
             }
             else
@@ -50,13 +77,13 @@ public class StringTable : DataTable
         }
     }
 
-    public string GetData(string key)
+    public Data GetData(string key)
     {
         if (!dict.ContainsKey(key))
         {
-            return "NULL";
+            return null;
         }
-        return dict[key].Line;
+        return dict[key];
     }
 
     public override void Set(List<string[]> data)

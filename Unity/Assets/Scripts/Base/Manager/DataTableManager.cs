@@ -35,42 +35,64 @@ public static class DataTableManager
         var corpsTable = new CorpsTable();
         corpsTable.Load(DataTableIds.corpsTable);
         tables.Add(DataTableIds.corpsTable, corpsTable);
+
         var stageTable = new StageTable();
         stageTable.Load(DataTableIds.stageTable);
         tables.Add(DataTableIds.stageTable, stageTable);
+
         var waveTable = new WaveTable();
         waveTable.Load(DataTableIds.waveTable);
         tables.Add(DataTableIds.waveTable, waveTable);
 
+
+
         var soldierTable = new SoldierTable();
         soldierTable.Load(DataTableIds.soldierTable);
         tables.Add(DataTableIds.soldierTable, soldierTable);
+
         var tankerSkillTable = new TankerSkillTable();
         tankerSkillTable.Load(DataTableIds.tankerSkillTable);
         tables.Add(DataTableIds.tankerSkillTable, tankerSkillTable);
+
         var healerSkillTable = new HealerSkillTable();
         healerSkillTable.Load(DataTableIds.healerSkillTable);
         tables.Add(DataTableIds.healerSkillTable, healerSkillTable);
+
         var dealerSkillTable = new DealerSkillTable();
         dealerSkillTable.Load(DataTableIds.dealerSkillTable);
         tables.Add(DataTableIds.dealerSkillTable, dealerSkillTable);
 
+
+
         var monsterTable = new MonsterTable();
         monsterTable.Load(DataTableIds.monsterTable);
         tables.Add(DataTableIds.monsterTable, monsterTable);
+
         var monsterSkillTable = new MonsterSkillTable();
         monsterSkillTable.Load(DataTableIds.monsterSkillTable);
         tables.Add(DataTableIds.monsterSkillTable, monsterSkillTable);
 
+        var monsterRewardTable = new MonsterRewardTable();
+        monsterRewardTable.Load(DataTableIds.monsterRewardTable);
+        tables.Add(DataTableIds.monsterRewardTable, monsterRewardTable);
+
+
+
         var gachaTable = new GachaTable();
         gachaTable.Load(DataTableIds.gachaTable);
         tables.Add(DataTableIds.gachaTable, gachaTable);
+
         var gachaGradeTable = new GachaGradeTable();
         gachaGradeTable.Load(DataTableIds.gachaGradeTable);
         tables.Add(DataTableIds.gachaGradeTable, gachaGradeTable);
+
         var gachaSoldierTable = new GachaSoldierTable();
         gachaSoldierTable.Load(DataTableIds.gachaSoldierTable);
         tables.Add(DataTableIds.gachaSoldierTable, gachaSoldierTable);
+
+        var itemTable = new ItemTable();
+        itemTable.Load(DataTableIds.itemTable);
+        tables.Add(DataTableIds.itemTable, itemTable);
     }
 
 
@@ -87,7 +109,6 @@ public static class DataTableManager
 
     public static StringTable StringTable
         => GetTable<StringTable>(DataTableIds.stringTables[(int)Variables.currentLanguage]);
-
 
     public static CorpsTable CorpsTable
         => GetTable<CorpsTable>(DataTableIds.corpsTable);
@@ -116,6 +137,9 @@ public static class DataTableManager
     public static MonsterSkillTable MonsterSkillTable
         => GetTable<MonsterSkillTable>(DataTableIds.monsterSkillTable);
 
+    public static MonsterRewardTable MonsterRewardTable
+        => GetTable<MonsterRewardTable>(DataTableIds.monsterRewardTable);
+
     public static GachaTable GachaTable
         => GetTable<GachaTable>(DataTableIds.gachaTable);
 
@@ -124,4 +148,7 @@ public static class DataTableManager
 
     public static GachaSoldierTable GachaSoldierTable
         => GetTable<GachaSoldierTable>(DataTableIds.gachaSoldierTable);
+
+    public static ItemTable ItemTable
+        => GetTable<ItemTable>(DataTableIds.itemTable);
 }

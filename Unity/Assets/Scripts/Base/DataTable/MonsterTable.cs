@@ -36,9 +36,15 @@ public class MonsterTable : DataTable
 
     public override void LoadFromText(string text)
     {
-        var list = LoadCsv<Data>(text);
         dict.Clear();
         TableData.Clear();
+
+        if (string.IsNullOrEmpty(text))
+        {
+            return;
+        }
+
+        var list = LoadCsv<Data>(text);
 
         foreach (var item in list)
         {

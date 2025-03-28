@@ -43,6 +43,9 @@ public class StageManager : MonoBehaviour
         MonsterLaneManager = GetComponent<MonsterLaneManager>();
         UnitPartyManager = GetComponent<UnitPartyManager>();
         monsters = new HashSet<MonsterController>();
+            
+        SaveLoadManager.LoadGame();
+        DoLoad();
     }
 
     private void Start()
@@ -232,5 +235,17 @@ public class StageManager : MonoBehaviour
             HighStage = CurrentStage,
         };
         totalSaveData.stageSaveData = stageSaveData;
+    }
+    private void DoLoad()
+    {
+        StageSaveData stageLoadData = SaveLoadManager.LoadedData.stageSaveData;
+
+        if(stageLoadData != null)
+        {
+            Variables.planetNumber = stageLoadData.currentPlanet;
+            Variables.stageNumber = stageLoadData.currentStage;
+            // �ְ��� �� �༺ ������ �ҷ�����
+            // �ְ��� �� �������� ������ �ҷ�����
+        }
     }
 }

@@ -8,7 +8,7 @@ using UnityEngine;
 public static class SaveLoadManager
 {
     public static string fileName = "SaveData.json";
-
+    public static TotalSaveData LoadedData { get; private set; }
     public static event Action<TotalSaveData> onSaveRequested;
 
     public static void SaveGame()
@@ -33,6 +33,10 @@ public static class SaveLoadManager
         string json = File.ReadAllText(filePath);
         TotalSaveData loadedSaveData = JsonConvert.DeserializeObject<TotalSaveData>(json);
 
-
+        if(loadedSaveData != null)
+        {
+            LoadedData = loadedSaveData;
+        }
     }
+
 }

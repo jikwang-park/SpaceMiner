@@ -4,6 +4,7 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.AddressableAssets;
 using UnityEngine.Pool;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 public class StageButton : MonoBehaviour, IObjectPoolGameObject
@@ -44,6 +45,7 @@ public class StageButton : MonoBehaviour, IObjectPoolGameObject
     {
         Variables.planetNumber = planet;
         Variables.stageNumber = stage;
-        Addressables.LoadSceneAsync("StageDevelopScene");
+        SceneManager.LoadScene(0);
+        //Addressables.LoadSceneAsync("StageDevelopScene");
     }
 }

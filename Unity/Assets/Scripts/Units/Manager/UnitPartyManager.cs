@@ -32,10 +32,10 @@ public class UnitPartyManager : MonoBehaviour
             return generateInstance.Where(x => !x.IsDead).Count();
         }     
     }
-   
 
 
-    private void Awake()
+    // HKY 250328 Awake에서 스폰시 WaitForCompletion 발생하여 Start로 변경
+    private void Start()
     {
         UnitSpwan();
     }

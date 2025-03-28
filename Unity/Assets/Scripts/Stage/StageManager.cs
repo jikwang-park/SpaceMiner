@@ -53,7 +53,7 @@ public class StageManager : MonoBehaviour
     {
         SetStageInfo();
         SaveLoadManager.onSaveRequested += DoSave;
-        Addressables.InstantiateAsync(stage, Vector3.back * 10f, Quaternion.identity);
+        Addressables.InstantiateAsync(stage, Vector3.back * 30f, Quaternion.identity);
         SpawnNextWave();
     }
 

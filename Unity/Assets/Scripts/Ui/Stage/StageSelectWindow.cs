@@ -15,10 +15,15 @@ public class StageSelectWindow : MonoBehaviour
     private void Start()
     {
         planetScroll.OnPlanetSelected += OnPlanetSelected;
+        OnPlanetSelected(Variables.planetNumber);
     }
 
     public void UnlockStage(int planet, int stage)
     {
+        if(currentPlanet != planet)
+        {
+            OnPlanetSelected(planet);
+        }
         planetScroll.UnlockPlanet(planet);
         stageScroll.UnlockStage(stage);
     }

@@ -7,7 +7,6 @@ using UnityEngine.AddressableAssets;
 public class StageManager : MonoBehaviour
 {
     private const string stageIDFormat = "{0:D2}Planet-{1}";
-    private const string stageTextFormat = "{0}-{1}\n{2} Wave";
 
     [field: SerializeField]
     public int CurrentPlanet { get; private set; }
@@ -18,16 +17,8 @@ public class StageManager : MonoBehaviour
 
     public MonsterLaneManager MonsterLaneManager { get; private set; }
     public UnitPartyManager UnitPartyManager { get; private set; }
-
-    [SerializeField]
-    private TextMeshProUGUI stageText;
-    [SerializeField]
-    private TextMeshProUGUI timerText;
-    [SerializeField]
-    private GameObject stageEndMessageWindow;
-    [SerializeField]
-    private TextMeshProUGUI stageEndMessageText;
-
+    [field: SerializeField]
+    public StageUiManger stageUiManager { get; private set; }
 
     [SerializeField]
     private AssetReferenceGameObject stage;
@@ -55,15 +46,14 @@ public class StageManager : MonoBehaviour
             
         SaveLoadManager.LoadGame();
         DoLoad();
-
-        SetStageInfo();
-
-        SpawnNextWave();
     }
 
     private void Start()
     {
+        SetStageInfo();
+        SaveLoadManager.onSaveRequested += DoSave;
         Addressables.InstantiateAsync(stage, Vector3.back * 10f, Quaternion.identity);
+        SpawnNextWave();
     }
 
     private void Update()
@@ -93,14 +83,15 @@ public class StageManager : MonoBehaviour
             }
         }
 
-        float remainTime = 30f + stageStartTime - Time.time;
+        float remainTime = 60f + stageStartTime - Time.time;
 
         if (remainTime <= 0f)
         {
             remainTime = 0f;
             ResetStage(false);
         }
-        timerText.text = remainTime.ToString("F2");
+
+        stageUiManager.SetTimer(remainTime);
     }
 
     public void AddMonster(MonsterController monsterController)
@@ -113,7 +104,8 @@ public class StageManager : MonoBehaviour
 
     public void SpawnNextWave(float delay = 2f)
     {
-        stageText.text = string.Format(stageTextFormat, CurrentPlanet, CurrentStage, CurrentWave);
+        stageUiManager.SetStageText(CurrentPlanet, CurrentStage, CurrentWave);
+
         StartCoroutine(coSpawnNextWave(delay));
     }
 
@@ -123,13 +115,18 @@ public class StageManager : MonoBehaviour
 
         var corpsData = DataTableManager.CorpsTable.GetData(waveData.WaveCorpsIDs[CurrentWave - 1]);
 
+        if (corpsData is null)
+        {
+            ResetStage(false);
+        }
+
         Transform unit = UnitPartyManager.GetFirstLineUnitTransform();
         if (unit != null)
             waveSpawner.Spawn(unit.position + Vector3.forward * spawnDistance, corpsData);
         else
             waveSpawner.Spawn(transform.position, corpsData);
 
-        stageText.text = string.Format(stageTextFormat, CurrentPlanet, CurrentStage, CurrentWave);
+        stageUiManager.SetStageText(CurrentPlanet, CurrentStage, CurrentWave);
         ++CurrentWave;
     }
 
@@ -139,7 +136,7 @@ public class StageManager : MonoBehaviour
         monsters.Remove(monsterController);
         if (monsters.Count == 0)
         {
-            if (CurrentWave >= waveData.WaveCorpsIDs.Length)
+            if (CurrentWave > waveData.WaveCorpsIDs.Length)
             {
                 ResetStage(true);
                 return;
@@ -158,7 +155,7 @@ public class StageManager : MonoBehaviour
 
         stageData = DataTableManager.StageTable.GetData(string.Format(stageIDFormat, CurrentPlanet, CurrentStage));
         waveData = DataTableManager.WaveTable.GetData(stageData.CorpsID);
-        stageText.text = string.Format(stageTextFormat, CurrentPlanet, CurrentStage, CurrentWave);
+        stageUiManager.SetStageText(CurrentPlanet, CurrentStage, CurrentWave);
     }
 
     private IEnumerator coStageLoad()
@@ -169,8 +166,8 @@ public class StageManager : MonoBehaviour
         }
 
         Variables.stageMode = StageMode.Repeat;
-        stageEndMessageText.text = "Fail";
-        stageEndMessageWindow.SetActive(true);
+        stageUiManager.SetStageMessage(false);
+        stageUiManager.SetActiveStageMessage(true);
 
         yield return wait1;
         Addressables.LoadSceneAsync("StageDevelopScene");
@@ -189,8 +186,8 @@ public class StageManager : MonoBehaviour
 
     private IEnumerator coClearStage()
     {
-        stageEndMessageText.text = "Clear";
-        stageEndMessageWindow.SetActive(true);
+        stageUiManager.SetStageMessage(true);
+        stageUiManager.SetActiveStageMessage(true);
 
         yield return wait1;
 
@@ -199,23 +196,35 @@ public class StageManager : MonoBehaviour
             if (DataTableManager.StageTable.IsExistStage(CurrentPlanet, CurrentStage + 1))
             {
                 ++Variables.stageNumber;
+
+                if (Variables.maxPlanetNumber == CurrentPlanet
+                    && Variables.maxStageNumber < CurrentStage + 1)
+                {
+                    ++Variables.maxStageNumber;
+
+                    stageUiManager.UnlockStage(CurrentPlanet, CurrentStage + 1);
+                }
             }
             else if (DataTableManager.StageTable.IsExistPlanet(CurrentPlanet + 1))
             {
                 ++Variables.planetNumber;
                 Variables.stageNumber = 1;
+
+                if (Variables.maxPlanetNumber < Variables.planetNumber)
+                {
+                    Variables.maxPlanetNumber = Variables.planetNumber;
+                    Variables.maxStageNumber = Variables.stageNumber;
+                    stageUiManager.UnlockStage(Variables.planetNumber, Variables.stageNumber);
+                }
             }
         }
 
         SetStageInfo();
         SpawnNextWave();
 
-        stageEndMessageWindow.SetActive(false);
+        stageUiManager.SetActiveStageMessage(false);
     }
-    private void OnEnable()
-    {
-        SaveLoadManager.onSaveRequested += DoSave;
-    }
+
     private void DoSave(TotalSaveData totalSaveData)
     {
         StageSaveData stageSaveData = new StageSaveData
@@ -241,8 +250,8 @@ public class StageManager : MonoBehaviour
         {
             Variables.planetNumber = stageLoadData.currentPlanet;
             Variables.stageNumber = stageLoadData.currentStage;
-            // ÃÖ°í·Î °£ Çà¼º µ¥ÀÌÅÍ ºÒ·¯¿À±â
-            // ÃÖ°í·Î °£ ½ºÅ×ÀÌÁö µ¥ÀÌÅÍ ºÒ·¯¿À±â
+            // ï¿½Ö°ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½à¼º ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ò·ï¿½ï¿½ï¿½ï¿½ï¿½
+            // ï¿½Ö°ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ò·ï¿½ï¿½ï¿½ï¿½ï¿½
         }
     }
 }

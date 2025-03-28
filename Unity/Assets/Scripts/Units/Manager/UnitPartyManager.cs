@@ -13,6 +13,17 @@ public class UnitPartyManager : MonoBehaviour
     public List<Unit> generateInstance = new List<Unit>();
     public Dictionary<UnitTypes, Unit> units = new Dictionary<UnitTypes, Unit>();
 
+    public bool IsUnitAllDead
+    {
+        get
+        {
+            if(AliveCount ==  3)
+                return true;
+            
+            return false;
+            
+        }
+    }
 
     public int AliveCount
     { 
@@ -33,35 +44,50 @@ public class UnitPartyManager : MonoBehaviour
         
     }
 
+    //public Unit SearchNextUnit()
+    //{
+    //    for(int i = 0; i< generateInstance.Count; i++)
+    //    {
+    //        var firstUnit = generateInstance[0];
+    //        if (generateInstance[i].IsDead)
+    //        {
+                
+    //        }
+    //    }
+    //}
+
     public void UnitSpwan()
     {           
-        
-
-
-
         if (unitprefabs.Count <= 0)
         {
             Debug.Log("유닛 프리팹 존재하지않음");
             return;
         }
-
-        if(unitprefabs.Count >= 3)
+        if(unitprefabs.Count >= 4)
         {
-            Debug.Log("유닛이 3마리 이상입니다");
+            Debug.Log("넘쳐서 소환이 안됩니다");
             return;
         }
-
-        
         for (int i =0; i< unitprefabs.Count; ++i)
         {
             var go = Instantiate(unitprefabs[i], Vector3.zero ,Quaternion.identity);
+            go.GetComponent<DestructedDestroyEvent>().OnDestroyed += OnUnitDie;
             // 나중에 비동기로드로 바꿈
             go.transform.position += new Vector3(0, 0, -5 * i);
             generateInstance.Add(go);
         }
         SetInitData();
     }
+
+
      
+
+    private void OnUnitDie(DestructedDestroyEvent e)
+    {
+        var gameobejct = e.GetComponent<Unit>();
+        generateInstance.Remove(gameobejct);
+    }
+
 
     private void SetInitData()
     {
@@ -73,7 +99,7 @@ public class UnitPartyManager : MonoBehaviour
             
         }
     }
-
+  
 
     //private void SetInitData(UnitTypes type)
     //{
@@ -89,9 +115,9 @@ public class UnitPartyManager : MonoBehaviour
         {
             if (!unit.IsDead)
             {
-                unit.aliveCount++;
+                unit.unitAliveCount++;
             }
-            return unit.aliveCount;
+            return unit.unitAliveCount;
         }
         return 0;
     }
@@ -117,6 +143,8 @@ public class UnitPartyManager : MonoBehaviour
         return null;
     }
 
+
+
     public Transform GetFirstLineUnitTransform()
     {
   
@@ -141,5 +169,44 @@ public class UnitPartyManager : MonoBehaviour
     }
     public void SetUnitData(SoldierTable.Data data, UnitTypes type)
     {
+    }
+
+    public Transform GetUnit(UnitTypes type)
+    {
+        for(int i= 0; i< generateInstance.Count; i++)
+        {
+            if(type == generateInstance[i].UnitTypes)
+                return generateInstance[i].transform;
+        }
+        return null;
+    }
+
+    public Unit GetCurrentUnitGo(UnitTypes type)
+    {
+        for(int i = 0; i< generateInstance.Count; i++)
+        {
+            if (type == generateInstance[i].UnitTypes)
+                return generateInstance[i];
+        }
+        return null;
+    }
+ 
+
+    public Unit GetCurrentTargetType(string targetString)
+    {
+        switch (targetString)
+        {
+            case "TankID":
+                return generateInstance.Find((x) => x.UnitTypes == UnitTypes.Tanker);
+
+            case "DealID":
+                return generateInstance.Find((x) => x.UnitTypes == UnitTypes.Dealer);
+
+            case "HealID":
+                return generateInstance.Find((x) => x.UnitTypes == UnitTypes.Healer);
+
+            default:
+                return null;
+        }
     }
 }

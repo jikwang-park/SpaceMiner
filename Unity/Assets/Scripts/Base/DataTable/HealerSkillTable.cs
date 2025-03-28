@@ -19,7 +19,7 @@ public class HealerSkillTable : DataTable
         public override void Set(string[] argument)
         {
             ID = argument[0];
-            Type = (SkillType)int.Parse(argument[1]);
+            Type = Enum.Parse<SkillType>(argument[1]);
             HealRatio = float.Parse(argument[2]);
             CoolTime = float.Parse(argument[3]);
             BuffID = argument[4];

@@ -1,5 +1,4 @@
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Reflection;
 using TMPro;
@@ -14,8 +13,8 @@ public class DataTableView : MonoBehaviour
     [SerializeField]
     private TextMeshProUGUI columnCellPrefab;
 
-    public ScrollRect columns;
-    public ScrollRect cells;
+    public ScrollRect columnScroll;
+    public ScrollRect cellScroll;
 
     [SerializeField]
     private Transform columnContent;
@@ -24,22 +23,36 @@ public class DataTableView : MonoBehaviour
 
     public int columnCount;
 
+    public string TableName { get; private set; }
+
+    public List<TextMeshProUGUI> columns = new List<TextMeshProUGUI>();
     public List<DataRow> rows = new List<DataRow>();
 
     public void OnColumnMoved(Vector2 rot)
     {
-        cells.horizontalNormalizedPosition = rot.x;
+        cellScroll.horizontalNormalizedPosition = rot.x;
     }
 
     public void OnCellMoved(Vector2 rot)
     {
-        columns.horizontalNormalizedPosition = rot.x;
+        columnScroll.horizontalNormalizedPosition = rot.x;
+    }
+
+    public void SetColumns(PropertyInfo[] columnInfos)
+    {
+        columnCount = columnInfos.Length;
+        for (int i = 0; i < columnCount; ++i)
+        {
+            var text = Instantiate(columnCellPrefab, columnContent);
+            columns.Add(text);
+            text.text = columnInfos[i].Name;
+        }
     }
 
     public void SetColumns(string[] columns)
     {
         columnCount = columns.Length;
-        for (int i = 0; i < columns.Length; ++i)
+        for (int i = 0; i < columnCount; ++i)
         {
             var text = Instantiate(columnCellPrefab, columnContent);
             text.text = columns[i];
@@ -88,5 +101,34 @@ public class DataTableView : MonoBehaviour
             data.Add(datum);
         }
         return data;
+    }
+
+    public void Clear()
+    {
+        foreach (var column in columns)
+        {
+            Destroy(column.gameObject);
+        }
+        columns.Clear();
+        foreach (var row in rows)
+        {
+            Destroy(row.gameObject);
+        }
+        rows.Clear();
+    }
+
+    public void SetTableName(string name)
+    {
+        TableName = name;
+    }
+
+    public void ApplyTable()
+    {
+        if (string.IsNullOrEmpty(TableName))
+        {
+            return;
+        }
+        var table = DataTableManager.GetTable<DataTable>(TableName);
+        table.Set(GetData());
     }
 }

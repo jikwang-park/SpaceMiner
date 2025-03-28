@@ -11,27 +11,27 @@ public class MonsterController : MonoBehaviour, IObjectPoolGameObject
     {
         Wait,
         Attacking,
+        SkillUsing,
     }
 
     public Status status;
 
     [field: SerializeField]
-    public AttackDefinition weapon { get; private set; }
+    public MonsterStats Stats { get; private set; }
 
     [SerializeField]
     private Animation animations;
     private BehaviorTree<MonsterController> behaviorTree;
 
-    public StageManager stageManager { get; private set; }
-
-    [field: SerializeField]
-    public float Speed { get; private set; } = 4f;
+    public StageManager StageManager { get; private set; }
 
     [field: SerializeField]
     public float minDistanceInMonster { get; private set; } = 2f;
-    public float TargetDistance { get; private set; }
 
+    public float TargetDistance { get; private set; }
     public Transform Target { get; private set; }
+    public MonsterTable.Data MonsterData { get; private set; }
+
 
     public Func<int, Transform> findFrontMonster;
 
@@ -45,7 +45,7 @@ public class MonsterController : MonoBehaviour, IObjectPoolGameObject
     {
         get
         {
-            return weapon.range > TargetDistance && LastAttackTime + weapon.coolDown < Time.time;
+            return Stats.range > TargetDistance && LastAttackTime + Stats.coolDown < Time.time;
         }
     }
 
@@ -53,7 +53,7 @@ public class MonsterController : MonoBehaviour, IObjectPoolGameObject
     {
         get
         {
-            return frontLine < 0 || Vector3.Dot(findFrontMonster(frontLine).position - transform.position, Vector3.back) > minDistanceInMonster;
+            return frontLine < 0 || -(findFrontMonster(frontLine).position.z - transform.position.z) > minDistanceInMonster;
         }
     }
 
@@ -61,7 +61,7 @@ public class MonsterController : MonoBehaviour, IObjectPoolGameObject
 
     private void Awake()
     {
-        InitBehaviourTree();
+        Stats = GetComponent<MonsterStats>();
         status = Status.Wait;
     }
 
@@ -69,23 +69,22 @@ public class MonsterController : MonoBehaviour, IObjectPoolGameObject
     {
         isDrawRegion = true;
 
-        stageManager = GameObject.FindGameObjectWithTag("GameController").GetComponent<StageManager>();
+        StageManager = GameObject.FindGameObjectWithTag("GameController").GetComponent<StageManager>();
     }
 
     private void OnDisable()
     {
         isDrawRegion = false;
-
-        stageManager = null;
+        StageManager = null;
     }
 
     private void Update()
     {
-        Target = stageManager.UnitPartyManager.GetFirstLineUnitTransform();
+        Target = StageManager.UnitPartyManager.GetFirstLineUnitTransform();
 
         if (Target is not null)
         {
-            TargetDistance = Vector3.Dot(Target.position - transform.position, Vector3.back);
+            TargetDistance = -(Target.position.z - transform.position.z);
         }
 
         if (Input.GetKeyDown(KeyCode.Alpha8))
@@ -107,6 +106,15 @@ public class MonsterController : MonoBehaviour, IObjectPoolGameObject
 
         var rootSelector = new SelectorNode<MonsterController>(this);
 
+        if (MonsterData.MonsterSkill != "0")
+        {
+            var skillSequence = new SquenceNode<MonsterController>(this);
+            skillSequence.AddChild(new IsMonsterSkillCooltimeCondition(this));
+            skillSequence.AddChild(new IsMonsterSkillTargetExistCondition(this));
+            skillSequence.AddChild(new SkillMonsterAction(this));
+            rootSelector.AddChild(skillSequence);
+        }
+
         var attackSequence = new SquenceNode<MonsterController>(this);
         attackSequence.AddChild(new CanAttackMonsterCondition(this));
         attackSequence.AddChild(new AttackMonsterAction(this));
@@ -122,6 +130,17 @@ public class MonsterController : MonoBehaviour, IObjectPoolGameObject
         behaviorTree.SetRoot(rootSelector);
     }
 
+    public void SetMonsterId(string monsterId)
+    {
+        MonsterData = DataTableManager.MonsterTable.GetData(monsterId);
+        Stats.SetData(MonsterData);
+        InitBehaviourTree();
+        if (MonsterData.MonsterSkill != "0")
+        {
+            GetComponent<MonsterSkill>().SetSkill(MonsterData.MonsterSkill);
+        }
+    }
+
     public void AttackTarget()
     {
         status = Status.Attacking;
@@ -131,9 +150,10 @@ public class MonsterController : MonoBehaviour, IObjectPoolGameObject
 
     private IEnumerator AttackTimer()
     {
+        //TODO: 애니메이션 정의되거나 공격 정의 후 수정 필요
         yield return new WaitForSeconds(0.25f);
         if (Target != null)
-            weapon.Execute(gameObject, Target.gameObject);
+            Stats.Execute(Target.gameObject);
         yield return new WaitForSeconds(0.25f);
         status = Status.Wait;
     }
@@ -149,7 +169,6 @@ public class MonsterController : MonoBehaviour, IObjectPoolGameObject
 
     public void Release()
     {
-        
         ObjectPool.Release(gameObject);
     }
 }

@@ -4,21 +4,16 @@ using UnityEngine;
 
 public class TankerSkill : UnitSkill
 {
-
-
     private float shieldRatio;
-    private float duration;
     private string buffId;
-    private SkillType currentSkillType;
-    
 
 
-    private void Awake()
+    protected override void Awake()
     {
+        base.Awake();
+        Init();
+        unit = GetComponent<Unit>();
     }
-
-    
-
     public override void Init()
     {
         var tankerSkillData = DataTableManager.TankerSkillTable.GetData("노말탱커스킬Lv1");
@@ -29,20 +24,31 @@ public class TankerSkill : UnitSkill
             duration = tankerSkillData.Duration;
             buffId = tankerSkillData.BuffID;
         }
-    }
-
-
-     
-    public override void SetTarget(List<Transform> target)
+    }   
+    
+    public override void GetTarget()
     {
-        
+        var tankerSkillData = DataTableManager.TankerSkillTable.GetData("노말탱커스킬Lv1");
+        string soliderTarget = tankerSkillData.SoilderTarget;
+        string[] targetStrings = soliderTarget.Split("_");
+        foreach(string target in targetStrings)
+        {
+            var targetUnit = stageManager.UnitPartyManager.GetCurrentTargetType(target);
+            targetList.Add(targetUnit);
+        }
     }
-   
-    public override void ExcuteSkill()
+    private void Update()
     {
-        
+
     }
 
-
-
+    public override void ExecuteSkill()
+    {
+        foreach(var target in targetList)
+        {
+            var amount = unit.unitStats.armor * shieldRatio;
+            target.SetBarrier(duration, amount);
+        }
+    }
+    
 }

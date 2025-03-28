@@ -8,46 +8,55 @@ public enum SkillType
     Epic,
     Legend,
 }
-public abstract class UnitSkill : MonoBehaviour
+public class UnitSkill : MonoBehaviour
 {
 
     public float coolTime;
+
+    protected float timer;
 
     protected Unit unit;
 
     protected float lastSkillUsingTime;
 
-    private StageManager stageManager;
+    protected StageManager stageManager;
 
-    protected SkillType currentType;
+    protected SkillType currentSkillType;
+
+    protected UnitStats currentStats;
+
+    public float duration;
+
+    public List<Unit> targetList;
+
+    public List<Transform> dealerTargetList;
 
 
-    private Transform TragetTransform
-    {
-        get
-        {
-            if (unit == null)
-                return null;
+    public bool CanSaerchTarget;
 
-            return unit.targetPos;
-        }
-    }
    
     private void Start()
     {
- 
+        
     }
-    private void Awake()
+    protected virtual void Awake()
     {
         stageManager = GameObject.FindGameObjectWithTag("GameController").GetComponent<StageManager>();
-        unit = stageManager.UnitPartyManager.GetFirstLineUnitGo();
+        targetList = new List<Unit>();
+        dealerTargetList = new List<Transform>();
+    }
+    public virtual void GetTarget()
+    {
+
     }
 
- 
+    public virtual void Init()
+    {
 
+    }
+    public virtual void ExecuteSkill()
+    {
 
-    public abstract void Init();
-    public abstract void SetTarget(List<Transform> target);
-    public abstract void ExcuteSkill();
+    }
     
 }

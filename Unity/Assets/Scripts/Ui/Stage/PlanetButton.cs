@@ -12,18 +12,20 @@ public class PlanetButton : MonoBehaviour, IObjectPoolGameObject
     [SerializeField]
     private TextMeshProUGUI text;
 
-    private Button button;
+    [field: SerializeField]
+    public Button Button { get; private set; }
 
     private int planet;
 
     private void Awake()
     {
-        button = GetComponent<Button>();
+        Button = GetComponent<Button>();
     }
 
     public void Release()
     {
-        button.onClick.RemoveAllListeners();
+        Button.onClick.RemoveAllListeners();
+        Button.interactable = true;
         ObjectPool.Release(gameObject);
     }
 

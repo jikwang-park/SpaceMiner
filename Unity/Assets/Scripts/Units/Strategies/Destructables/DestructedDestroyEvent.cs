@@ -6,6 +6,7 @@ using UnityEngine;
 public class DestructedDestroyEvent : MonoBehaviour, IDestructable
 {
     public event Action<DestructedDestroyEvent> OnDestroyed;
+
     public void OnDestruction(GameObject Attacker)
     {
         OnDestroyed?.Invoke(this);

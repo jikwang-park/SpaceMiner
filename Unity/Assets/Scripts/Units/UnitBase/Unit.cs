@@ -276,6 +276,7 @@ public class Unit : MonoBehaviour
                     if (targetDistance <= unitStats.range)
                     {
                         targetPos = targetPosition;
+                        targetPos.gameObject.GetComponent<DestructedDestroyEvent>().OnDestroyed += (_) => targetPos = null;
                         return targetPos;
                     }
                 }
@@ -290,6 +291,7 @@ public class Unit : MonoBehaviour
         }
         return null;
     }
+
 
     public void Move()
     {

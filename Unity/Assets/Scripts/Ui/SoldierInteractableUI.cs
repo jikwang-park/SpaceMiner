@@ -54,6 +54,7 @@ public class SoldierInteractableUI : MonoBehaviour
 
         currentElementCount = currentElement.Count;
         nextElementCount = nextElement.Count;
+        count = 0;
 
         currentCountText.text = currentElementCount.ToString();
         nextCountText.text = nextElementCount.ToString();
@@ -101,12 +102,15 @@ public class SoldierInteractableUI : MonoBehaviour
 
         if(count <= 0)
         {
+            mergeButton.interactable = false;
             minusButton.interactable = false;
         }
         else
         {
+            mergeButton.interactable = true;
             minusButton.interactable = true;
         }
+
     }
     private void UpdateCountText()
     {

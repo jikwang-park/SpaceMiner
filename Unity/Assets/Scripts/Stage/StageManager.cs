@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 using UnityEngine.AddressableAssets;
+using UnityEngine.SceneManagement;
 
 public class StageManager : MonoBehaviour
 {
@@ -43,7 +44,7 @@ public class StageManager : MonoBehaviour
         MonsterLaneManager = GetComponent<MonsterLaneManager>();
         UnitPartyManager = GetComponent<UnitPartyManager>();
         monsters = new HashSet<MonsterController>();
-            
+
         SaveLoadManager.LoadGame();
         DoLoad();
     }
@@ -170,7 +171,9 @@ public class StageManager : MonoBehaviour
         stageUiManager.SetActiveStageMessage(true);
 
         yield return wait1;
-        Addressables.LoadSceneAsync("StageDevelopScene");
+
+        SceneManager.LoadScene(0);
+        //Addressables.LoadSceneAsync("StageDevelopScene");
     }
 
     private void ResetStage(bool cleared)

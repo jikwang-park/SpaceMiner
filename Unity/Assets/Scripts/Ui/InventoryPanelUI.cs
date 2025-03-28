@@ -22,10 +22,12 @@ public class InventoryPanelUI : MonoBehaviour
     private Button BatchMergeButton;
 
     private UnitTypes currentInventoryType;
+    private int inventoriesInitializedCount = 0;
+    private const int totalInventories = 3;
     private void Start()
     {
         InitializeInventories();
-        DisplayInventory(UnitTypes.Tanker);
+        SaveLoadManager.LoadGame();
         displayTankerInvenButton.onClick.AddListener(() => DisplayInventory(UnitTypes.Tanker));
         displayDealerInvenButton.onClick.AddListener(() => DisplayInventory(UnitTypes.Dealer));
         displayHealerInvenButton.onClick.AddListener(() => DisplayInventory(UnitTypes.Healer));
@@ -79,6 +81,15 @@ public class InventoryPanelUI : MonoBehaviour
             healerInventory.Initialize(typeDict[UnitTypes.Healer], UnitTypes.Healer);
         }
     }
+    private void InventoryInitialized()
+    {
+        inventoriesInitializedCount++;
+        if (inventoriesInitializedCount >= totalInventories)
+        {
+            DoLoad(SaveLoadManager.LoadedData);
+            DisplayInventory(UnitTypes.Tanker);
+        }
+    }
     private void OnClickBatchMergeButton()
     {
         switch (currentInventoryType)
@@ -97,11 +108,17 @@ public class InventoryPanelUI : MonoBehaviour
 
     private void OnEnable()
     {
+        tankerInventory.OnInitialized += InventoryInitialized;
+        dealerInventory.OnInitialized += InventoryInitialized;
+        healerInventory.OnInitialized += InventoryInitialized;
         SaveLoadManager.onSaveRequested += DoSave;
     }
 
     private void OnDisable()
     {
+        tankerInventory.OnInitialized -= InventoryInitialized;
+        dealerInventory.OnInitialized -= InventoryInitialized;
+        healerInventory.OnInitialized -= InventoryInitialized;
         SaveLoadManager.onSaveRequested -= DoSave;
     }
     private void DoSave(TotalSaveData totalSaveData)
@@ -109,5 +126,20 @@ public class InventoryPanelUI : MonoBehaviour
         totalSaveData.inventorySaveData[UnitTypes.Tanker] = tankerInventory.Save();
         totalSaveData.inventorySaveData[UnitTypes.Dealer] = dealerInventory.Save();
         totalSaveData.inventorySaveData[UnitTypes.Healer] = healerInventory.Save();
+    }
+    private void DoLoad(TotalSaveData totalSaveData)
+    {
+        if (totalSaveData.inventorySaveData.TryGetValue(UnitTypes.Tanker, out InventorySaveData tankerData))
+        {
+            tankerInventory.Load(tankerData);
+        }
+        if (totalSaveData.inventorySaveData.TryGetValue(UnitTypes.Dealer, out InventorySaveData dealerData))
+        {
+            dealerInventory.Load(dealerData);
+        }
+        if (totalSaveData.inventorySaveData.TryGetValue(UnitTypes.Healer, out InventorySaveData healerData))
+        {
+            healerInventory.Load(healerData);
+        }
     }
 }

@@ -192,33 +192,37 @@ public class StageManager : MonoBehaviour
         stageUiManager.SetStageMessage(true);
         stageUiManager.SetActiveStageMessage(true);
 
+        if (DataTableManager.StageTable.IsExistStage(CurrentPlanet, CurrentStage + 1))
+        {
+            if (Variables.maxPlanetNumber == CurrentPlanet
+            && Variables.maxStageNumber < CurrentStage + 1)
+            {
+                Variables.maxStageNumber = CurrentStage + 1;
+
+                stageUiManager.UnlockStage(Variables.maxPlanetNumber, Variables.maxStageNumber);
+            }
+        }
+        else if (DataTableManager.StageTable.IsExistPlanet(CurrentPlanet + 1)
+                  && Variables.maxPlanetNumber == CurrentPlanet)
+        {
+            Variables.maxPlanetNumber = CurrentPlanet + 1;
+            Variables.maxStageNumber = 1;
+            stageUiManager.UnlockStage(Variables.maxPlanetNumber, Variables.maxStageNumber);
+        }
+
         yield return wait1;
+
 
         if (Variables.stageMode == StageMode.Ascend)
         {
             if (DataTableManager.StageTable.IsExistStage(CurrentPlanet, CurrentStage + 1))
             {
                 ++Variables.stageNumber;
-
-                if (Variables.maxPlanetNumber == CurrentPlanet
-                    && Variables.maxStageNumber < CurrentStage + 1)
-                {
-                    ++Variables.maxStageNumber;
-
-                    stageUiManager.UnlockStage(CurrentPlanet, CurrentStage + 1);
-                }
             }
             else if (DataTableManager.StageTable.IsExistPlanet(CurrentPlanet + 1))
             {
                 ++Variables.planetNumber;
                 Variables.stageNumber = 1;
-
-                if (Variables.maxPlanetNumber < Variables.planetNumber)
-                {
-                    Variables.maxPlanetNumber = Variables.planetNumber;
-                    Variables.maxStageNumber = Variables.stageNumber;
-                    stageUiManager.UnlockStage(Variables.planetNumber, Variables.stageNumber);
-                }
             }
         }
 
@@ -249,7 +253,7 @@ public class StageManager : MonoBehaviour
 
         StageSaveData stageLoadData = SaveLoadManager.LoadedData.stageSaveData;
 
-        if(stageLoadData != null)
+        if (stageLoadData != null)
         {
             Variables.planetNumber = stageLoadData.currentPlanet;
             Variables.stageNumber = stageLoadData.currentStage;

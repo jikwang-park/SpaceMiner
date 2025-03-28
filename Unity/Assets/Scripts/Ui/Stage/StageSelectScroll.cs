@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.AddressableAssets;
 
 public class StageSelectScroll : MonoBehaviour
 {
@@ -39,7 +40,7 @@ public class StageSelectScroll : MonoBehaviour
             var button = buttonGo.GetComponent<StageButton>();
             button.Set(planet, planetDatas[i].Stage);
             buttons.Add(button);
-            if (planet <= Variables.maxPlanetNumber && i >= Variables.maxStageNumber)
+            if (planet >= Variables.maxPlanetNumber && i >= Variables.maxStageNumber)
             {
                 button.Button.interactable = false;
             }

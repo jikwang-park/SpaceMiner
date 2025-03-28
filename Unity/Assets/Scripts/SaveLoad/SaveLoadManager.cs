@@ -38,4 +38,5 @@ public static class SaveLoadManager
             LoadedData = loadedSaveData;
         }
     }
+
 }

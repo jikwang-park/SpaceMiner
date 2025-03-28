@@ -21,13 +21,21 @@ public class ObjectPoolManager : MonoBehaviour
     {
         for (int i = 0; i < addressableAssets.Length; ++i)
         {
-            if (!gameObjectPool.ContainsKey(addressableAssets[i].editorAsset.name))
+            var handle = addressableAssets[i].LoadAssetAsync<GameObject>();
+            handle.WaitForCompletion();
+
+            if (!handle.IsDone || handle.Status != AsyncOperationStatus.Succeeded)
+            {
+                throw new ArgumentException("에셋 로딩 실패");
+            }
+
+            if (!gameObjectPool.ContainsKey(handle.Result.name))
             {
                 ObjectPool<GameObject> pool = null;
                 AssetReferenceGameObject reference = addressableAssets[i];
                 pool = new ObjectPool<GameObject>
-                    (() => CreatePooledItem(reference, pool), OnTakeFromPool, OnReturnedToPool, OnDestroyOnObject, true);
-                gameObjectPool.Add(addressableAssets[i].editorAsset.name, pool);
+                    (() => CreatePooledItem(reference.Asset as GameObject, pool), OnTakeFromPool, OnReturnedToPool, OnDestroyOnObject, true);
+                gameObjectPool.Add(handle.Result.name, pool);
             }
         }
         for (int i = 0; i < prefabs.Length; ++i)
@@ -56,16 +64,6 @@ public class ObjectPoolManager : MonoBehaviour
 
     private GameObject CreatePooledItem(AssetReferenceGameObject reference, IObjectPool<GameObject> pool)
     {
-        if (reference.Asset is null)
-        {
-            var handle = reference.LoadAssetAsync<GameObject>();
-            handle.WaitForCompletion();
-
-            if (!handle.IsDone || handle.Status != AsyncOperationStatus.Succeeded)
-            {
-                throw new ArgumentException("에셋 로딩 실패");
-            }
-        }
         return CreatePooledItem(reference.Asset as GameObject, pool);
     }
 

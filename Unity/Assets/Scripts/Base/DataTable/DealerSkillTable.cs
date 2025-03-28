@@ -18,7 +18,7 @@ public class DealerSkillTable : DataTable
         public override void Set(string[] argument)
         {
             ID = argument[0];
-            Type = (SkillType)int.Parse(argument[1]);
+            Type = Enum.Parse<SkillType>(argument[1]);
             DamageRatio = float.Parse(argument[2]);
             CoolTime = float.Parse(argument[3]);
             MonsterMaxTarget = int.Parse(argument[4]);

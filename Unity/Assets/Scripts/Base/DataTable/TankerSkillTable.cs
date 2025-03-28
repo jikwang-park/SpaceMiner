@@ -20,7 +20,7 @@ public class TankerSkillTable : DataTable
         public override void Set(string[] argument)
         {
             ID = argument[0];
-            Type = (SkillType)int.Parse(argument[1]);
+            Type = Enum.Parse<SkillType> (argument[1]);
             ShieldRatio = int.Parse(argument[2]);
             Duration = int.Parse(argument[3]);
             CoolTime = int.Parse(argument[4]);

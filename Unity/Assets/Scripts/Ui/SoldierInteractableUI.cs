@@ -90,7 +90,7 @@ public class SoldierInteractableUI : MonoBehaviour
 
     public void UpdateButton()
     {
-        if(currentElementCount > requiredCount)
+        if(currentElementCount >= requiredCount * (count + 1))
         {
             plusButton.interactable = true;
         }
@@ -131,6 +131,8 @@ public class SoldierInteractableUI : MonoBehaviour
 
         UpdateCountText();
         UpdateButton();
+        currentSoldierInfo.SetCountText(currentCountText.text);
+        nextSoldierInfo.SetCountText(nextCountText.text);
     }
 
     public void OnClickEquipButton()

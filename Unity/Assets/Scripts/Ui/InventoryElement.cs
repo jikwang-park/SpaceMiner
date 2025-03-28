@@ -37,7 +37,6 @@ public class InventoryElement : MonoBehaviour
     private void Start()
     {
         button.onClick.AddListener(() => OnElementClicked());
-        SetUnEquip();
     }
     public void UnlockElement()
     {

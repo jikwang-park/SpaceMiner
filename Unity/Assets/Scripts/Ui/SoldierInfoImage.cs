@@ -22,4 +22,8 @@ public class SoldierInfoImage : MonoBehaviour
         countText.text = count;
         image.sprite = sprite;
     }
+    public void SetCountText(string countText)
+    {
+        this.countText.text = countText;
+    }
 }

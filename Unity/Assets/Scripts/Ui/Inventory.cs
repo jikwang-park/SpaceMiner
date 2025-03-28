@@ -222,9 +222,8 @@ public class Inventory : MonoBehaviour
     }
     public void Load(InventorySaveData saveData)
     {
-        if (saveData == null)
+        if (saveData.elements.Count == 0)
         {
-            Debug.Log("No inventory save data to load.");
             return;
         }
 

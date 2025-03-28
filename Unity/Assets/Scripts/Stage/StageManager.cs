@@ -229,6 +229,12 @@ public class StageManager : MonoBehaviour
     }
     private void DoLoad()
     {
+        if (SaveLoadManager.LoadedData == null)
+        {
+            Debug.Log("저장된 데이터가 없습니다. 기본 값으로 진행합니다.");
+            return;
+        }
+
         StageSaveData stageLoadData = SaveLoadManager.LoadedData.stageSaveData;
 
         if(stageLoadData != null)

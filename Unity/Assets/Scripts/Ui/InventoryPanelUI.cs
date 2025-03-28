@@ -129,6 +129,12 @@ public class InventoryPanelUI : MonoBehaviour
     }
     private void DoLoad(TotalSaveData totalSaveData)
     {
+        if (SaveLoadManager.LoadedData == null)
+        {
+            Debug.Log("저장된 데이터가 없습니다. 기본 값으로 진행합니다.");
+            return;
+        }
+
         if (totalSaveData.inventorySaveData.TryGetValue(UnitTypes.Tanker, out InventorySaveData tankerData))
         {
             tankerInventory.Load(tankerData);

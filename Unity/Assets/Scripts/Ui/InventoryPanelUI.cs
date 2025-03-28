@@ -20,6 +20,8 @@ public class InventoryPanelUI : MonoBehaviour
     private Button displayHealerInvenButton;
     [SerializeField]
     private Button BatchMergeButton;
+    [SerializeField]
+    private Button closeButton;
 
     private UnitTypes currentInventoryType;
     private int inventoriesInitializedCount = 0;
@@ -32,6 +34,12 @@ public class InventoryPanelUI : MonoBehaviour
         displayDealerInvenButton.onClick.AddListener(() => DisplayInventory(UnitTypes.Dealer));
         displayHealerInvenButton.onClick.AddListener(() => DisplayInventory(UnitTypes.Healer));
         BatchMergeButton.onClick.AddListener(() => OnClickBatchMergeButton());
+        closeButton.onClick.AddListener(() => OnClickCloseButton());
+    }
+
+    private void OnClickCloseButton()
+    {
+        gameObject.SetActive(false);
     }
 
     public void DisplayInventory(UnitTypes type)

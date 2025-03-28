@@ -9,8 +9,5 @@ public class UnitUiManager
 
 
 
-    public void SetUnitName(TextMeshProUGUI text,UnitTypes type)
-    {
-        
-    }
+
 }

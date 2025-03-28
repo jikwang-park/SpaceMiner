@@ -78,6 +78,8 @@ public class UnitPartyManager : MonoBehaviour
         }
         SetInitData();
     }
+
+
      
 
     private void OnUnitDie(DestructedDestroyEvent e)

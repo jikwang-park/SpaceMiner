@@ -268,12 +268,24 @@ public class Unit : MonoBehaviour
             {
                 var units = stageManger.UnitPartyManager.generateInstance;
 
-                targetDistance = Vector3.Dot(targetPosition.position - units[0].transform.position, Vector3.forward);
-                if (targetDistance <= unitStats.range)
+                for(int j=0; j<units.Count; ++j)
                 {
-                    targetPos = targetPosition;
-                    return targetPos;
+                    var unit = units[j];
+
+                    targetDistance = Vector3.Dot(targetPosition.position - unit.transform.position, Vector3.forward);
+                    if (targetDistance <= unitStats.range)
+                    {
+                        targetPos = targetPosition;
+                        return targetPos;
+                    }
                 }
+
+                //targetDistance = Vector3.Dot(targetPosition.position - units[0].transform.position, Vector3.forward);
+                //if (targetDistance <= unitStats.range)
+                //{
+                //    targetPos = targetPosition;
+                //    return targetPos;
+                //}
             }
         }
         return null;

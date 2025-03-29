@@ -73,6 +73,11 @@ public class GachaTable : DataTable
         return dict[key];
     }
 
+    public Dictionary<string, Data> GetDict()
+    { 
+        return dict; 
+    }
+
     public override void Set(List<string[]> data)
     {
         var dictionary = new Dictionary<string, Data>();

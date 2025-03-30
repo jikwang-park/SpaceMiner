@@ -46,6 +46,7 @@ public class UnitUpgradeTable : DataTable
     }
 
     private Dictionary<string, Data> dict = new Dictionary<string, Data>();
+    private Dictionary<UpgradeType, Data> dictByType = new Dictionary<UpgradeType, Data>();
 
     public override Type DataType => typeof(Data);
 
@@ -53,6 +54,7 @@ public class UnitUpgradeTable : DataTable
     {
         dict.Clear();
         TableData.Clear();
+        dictByType.Clear();
 
         if (string.IsNullOrEmpty(text))
         {
@@ -67,6 +69,11 @@ public class UnitUpgradeTable : DataTable
             {
                 dict.Add(item.ID, item);
                 TableData.Add(item.ID, item);
+                
+                if(!dictByType.ContainsKey(item.Type))
+                {
+                    dictByType.Add(item.Type, item);
+                }
             }
             else
             {
@@ -84,15 +91,29 @@ public class UnitUpgradeTable : DataTable
         return dict[key];
     }
 
+    public Data GetData(UpgradeType upgradeType)
+    {
+        if (!dictByType.ContainsKey(upgradeType))
+        {
+            return null;
+        }
+        return dictByType[upgradeType];
+    }
+
     public override void Set(List<string[]> data)
     {
         var dictionary = new Dictionary<string, Data>();
+        var typeData = new Dictionary<UpgradeType, Data>();
         var tableData = new Dictionary<string, DataTableData>();
         foreach (var item in data)
         {
             var datum = CreateData<Data>(item);
             dictionary.Add(datum.ID, datum);
             tableData.Add(datum.ID, datum);
+            if (!dictByType.ContainsKey(datum.Type))
+            {
+                dictByType.Add(datum.Type, datum);
+            }
         }
         dict = dictionary;
         TableData = tableData;

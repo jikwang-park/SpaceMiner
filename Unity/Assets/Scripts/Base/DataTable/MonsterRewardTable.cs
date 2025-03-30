@@ -4,6 +4,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using Random = UnityEngine.Random;
 
 public class MonsterRewardTable : DataTable
 {
@@ -28,8 +29,28 @@ public class MonsterRewardTable : DataTable
             CountArray = argument[4];
             Probability = argument[5];
         }
-    }
 
+        public int RandomReward2()
+        {
+            if (Reward2 == "0")
+            {
+                return -1;
+            }
+
+            float random = Random.value;
+
+            float currentProb = probabilities[0];
+            int index = 0;
+
+            while (currentProb < random && index - 1 < probabilities.Length)
+            {
+                ++index;
+                currentProb += probabilities[index];
+            }
+
+            return index;
+        }
+    }
 
     private Dictionary<string, Data> dict = new Dictionary<string, Data>();
 

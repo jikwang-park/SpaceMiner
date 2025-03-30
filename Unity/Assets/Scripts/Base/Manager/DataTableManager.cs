@@ -62,6 +62,9 @@ public static class DataTableManager
         dealerSkillTable.Load(DataTableIds.dealerSkillTable);
         tables.Add(DataTableIds.dealerSkillTable, dealerSkillTable);
 
+        var unitUpgradeTable = new UnitUpgradeTable();
+        unitUpgradeTable.Load(DataTableIds.unitUpgradeTable);
+        tables.Add(DataTableIds.unitUpgradeTable, unitUpgradeTable);
 
 
         var monsterTable = new MonsterTable();
@@ -151,4 +154,7 @@ public static class DataTableManager
 
     public static ItemTable ItemTable
         => GetTable<ItemTable>(DataTableIds.itemTable);
+
+    public static UnitUpgradeTable UnitUpgradeTable
+        => GetTable<UnitUpgradeTable>(DataTableIds.unitUpgradeTable);
 }

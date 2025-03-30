@@ -22,6 +22,7 @@ public class DataTableIds
     public const string tankerSkillTable = "TankerSkillTable";
     public const string healerSkillTable = "HealerSkillTable";
     public const string dealerSkillTable = "DealerSkillTable";
+    public const string unitUpgradeTable = "UnitUpgradeTable";
 
     public const string monsterTable = "MonsterTable";
     public const string monsterSkillTable = "MonsterSkillTable";

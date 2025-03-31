@@ -6,30 +6,35 @@ using UnityEngine;
 
 public class GachaGradeTable : DataTable
 {
-    public class Data : DataTableData
+    public class Data : ITableData
     {
-        public string gachaID { get; set; }
-        public int gachaLevel { get; set; }
-        public string grade { get; set; }
+        public int ID { get; set; }
+        public int gachaID { get; set; }
+        public Grade grade { get; set; }
         public float probability { get; set; }
 
-        public override void Set(string[] argument)
+        public void Set(string[] argument)
         {
-            gachaID = argument[0];
-            gachaLevel = int.Parse(argument[1]);
-            grade = argument[2];
+            ID = int.Parse(argument[0]);
+            gachaID = int.Parse(argument[1]);
+            if (int.TryParse(argument[2], out int type))
+            {
+                grade = (Grade)type;
+            }
+            else
+            {
+                grade = Enum.Parse<Grade>(argument[1]);
+            }
             probability = float.Parse(argument[3]);
         }
     }
 
-    private Dictionary<string, Data> dict = new Dictionary<string, Data>();
     private Dictionary<int, List<Data>> levelDict = new Dictionary<int, List<Data>>();
 
     public override Type DataType => typeof(Data);
 
     public override void LoadFromText(string text)
     {
-        dict.Clear();
         TableData.Clear();
         levelDict.Clear();
 
@@ -42,19 +47,18 @@ public class GachaGradeTable : DataTable
 
         foreach (var item in list)
         {
-            if (!dict.ContainsKey(item.gachaID))
+            if (!TableData.ContainsKey(item.gachaID))
             {
-                dict.Add(item.gachaID, item);
-                TableData.Add(item.gachaID, item);
-                if (!levelDict.ContainsKey(item.gachaLevel))
+                TableData.Add(item.ID, item);
+                if (!levelDict.ContainsKey(item.gachaID))
                 {
-                    levelDict.Add(item.gachaLevel, new List<Data>());
+                    levelDict.Add(item.gachaID, new List<Data>());
                 }
-                levelDict[item.gachaLevel].Add(item);
+                levelDict[item.gachaID].Add(item);
             }
             else
             {
-                Debug.Log($"Key Duplicated: {item.gachaID}");
+                Debug.Log($"Key Duplicated: {item.ID}");
             }
         }
     }
@@ -70,28 +74,32 @@ public class GachaGradeTable : DataTable
 
     public override void Set(List<string[]> data)
     {
-        var dictionary = new Dictionary<string, Data>();
-        var tableData = new Dictionary<string, DataTableData>();
+        var tableData = new Dictionary<int, ITableData>();
         var levelDict = new Dictionary<int, List<Data>>();
         foreach (var item in data)
         {
             var datum = CreateData<Data>(item);
-            dictionary.Add(datum.gachaID, datum);
-            tableData.Add(datum.gachaID, datum);
+            tableData.Add(datum.ID, datum);
 
-            if (!levelDict.ContainsKey(datum.gachaLevel))
+            if (!levelDict.ContainsKey(datum.gachaID))
             {
-                levelDict.Add(datum.gachaLevel, new List<Data>());
+                levelDict.Add(datum.gachaID, new List<Data>());
             }
-            levelDict[datum.gachaLevel].Add(datum);
+            levelDict[datum.gachaID].Add(datum);
         }
-        dict = dictionary;
         TableData = tableData;
         this.levelDict = levelDict;
     }
 
     public override string GetCsvData()
     {
-        return CreateCsv(dict.Values.ToList());
+        List<Data> list = new List<Data>();
+
+        foreach (var item in TableData)
+        {
+            list.Add((Data)item.Value);
+        }
+
+        return CreateCsv(list);
     }
 }

@@ -10,7 +10,7 @@ public class InventoryElement : MonoBehaviour
     public int Count { get; private set; } = 0;
     public int Level { get; private set; } = 0;
     public int GradeIndex { get; private set; } = 0;
-    public string soldierId;
+    public int soldierId; //250331 HKY 데이터형 변경
 
     [SerializeField]
     private Image lockImage;
@@ -50,7 +50,7 @@ public class InventoryElement : MonoBehaviour
             button.interactable = true;
         }
     }
-    public void SetID(string id)
+    public void SetID(int id) //250331 HKY 데이터형 변경
     {
         soldierId = id;
     }

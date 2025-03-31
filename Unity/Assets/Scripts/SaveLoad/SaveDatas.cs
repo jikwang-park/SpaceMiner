@@ -6,7 +6,7 @@ using JetBrains.Annotations;
 [Serializable]
 public class InventoryElementSaveData
 {
-    public string soldierId;
+    public int soldierId; //250331 HKY 데이터형 변경
     public bool IsLocked;
     public int Count;
     public int Level;
@@ -15,7 +15,7 @@ public class InventoryElementSaveData
 public class InventorySaveData
 {
     public List<InventoryElementSaveData> elements = new List<InventoryElementSaveData>();
-    public string equipElementID;
+    public int equipElementID; //250331 HKY 데이터형 변경
     public UnitTypes inventoryType;
 }
 [Serializable]

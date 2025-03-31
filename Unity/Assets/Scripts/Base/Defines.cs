@@ -41,6 +41,16 @@ public enum StageMode
     Repeat,
 }
 
+public enum Currency
+{
+    Gold = 1001,
+    Annotaion,
+    Cobalt,
+    Tungsten,
+    Titanium,
+    Spinel,
+}
+
 public enum Grade
 {
     Normal = 1,

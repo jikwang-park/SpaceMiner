@@ -105,7 +105,14 @@ public class HealerSkillTable : DataTable
 
         for (int i = 0; i < ids.Length; ++i)
         {
-            ids[i] = Enum.Parse<UnitTypes>(idstring[i]);
+            if (int.TryParse(idstring[i], out int result))
+            {
+                ids[i] = (UnitTypes)result;
+            }
+            else
+            {
+                ids[i] = Enum.Parse<UnitTypes>(idstring[i]);
+            }
         }
 
         return ids;

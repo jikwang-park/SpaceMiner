@@ -66,4 +66,9 @@ public class UnitStatsUpgradeElement : MonoBehaviour
 
 
     }
+
+    public UnitUpgradeTable.Data SetData(int id)
+    {
+        return DataTableManager.UnitUpgradeTable.GetData(id);
+    }
 }

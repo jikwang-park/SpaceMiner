@@ -27,18 +27,18 @@ RectTransform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 86120909384467571}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 5.994217}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 7335496447163288056}
-  m_Father: {fileID: 7432140025594619543}
+  m_Father: {fileID: 779541581123800869}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 0, y: 0}
+  m_AnchorMin: {x: 0, y: 1}
+  m_AnchorMax: {x: 0, y: 1}
+  m_AnchoredPosition: {x: 433.13544, y: -69.30923}
+  m_SizeDelta: {x: 186.91313, y: 170.83}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &8348375593892215018
 CanvasRenderer:
@@ -297,6 +297,38 @@ MonoBehaviour:
   m_FlexibleWidth: 60
   m_FlexibleHeight: -1
   m_LayoutPriority: 1
+--- !u!1 &3083305933237804176
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 779541581123800869}
+  m_Layer: 0
+  m_Name: Buttons
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &779541581123800869
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3083305933237804176}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: -54.309204, y: 69.309204, z: -5.994217}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children:
+  - {fileID: 3178706036892909795}
+  m_Father: {fileID: 7432140025594619543}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &5578356941707681316
 GameObject:
   m_ObjectHideFlags: 0
@@ -701,7 +733,7 @@ RectTransform:
   m_Children:
   - {fileID: 7085041561821927241}
   - {fileID: 6875366825292400941}
-  - {fileID: 3178706036892909795}
+  - {fileID: 779541581123800869}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
@@ -787,14 +819,15 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   currentType: 0
   value: 0
-  statRate: 0
-  goldRate: 0
   gold:
     currentValue: 100
   maxLevel: 0
   level: 0
+  nextLevel: 0
   addStatButton: {fileID: 3664891116767193332}
   addStartButtonText: {fileID: 1636528436586247606}
   statsInformation: {fileID: 8851846410492008734}
   unitPartyManager: {fileID: 0}
+  stageManager: {fileID: 0}
   levelText: {fileID: 9189757483121008585}
+  currentNum: 0

@@ -190,6 +190,7 @@ public class UnitPartyManager : MonoBehaviour
 
     public Unit GetCurrentTargetType(string targetString)
     {
+        //TODO: 유닛 타입에 따라 반환 변경하도록 바꿔야함 250331 HKY
         switch (targetString)
         {
             case "TankID":

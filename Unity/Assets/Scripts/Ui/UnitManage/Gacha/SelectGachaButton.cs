@@ -9,7 +9,7 @@ public class SelectGachaButton : MonoBehaviour
 {
     [SerializeField]
     private TextMeshProUGUI nameText;
-    public string gachaId { get; private set; }
+    public int gachaId { get; private set; } //250331 HKY 데이터형 변경
     private Button button;
     public GachaInteractableUI parent;
     private void Awake()
@@ -23,7 +23,7 @@ public class SelectGachaButton : MonoBehaviour
 
     public void Initialize(GachaTable.Data data)
     {
-        nameText.text = data.nameStringID;
+        nameText.text = data.nameStringID.ToString(); //250331 HKY 데이터형 변경
         gachaId = data.gachaID;
     }
     private void OnClickSelectButton()

@@ -43,14 +43,14 @@ public class GachaInteractableUI : MonoBehaviour
                 completedCount++;
                 if(totalCount == completedCount)
                 {
-                    OnClickSelectGachaButton("1");
+                    OnClickSelectGachaButton(1000); //250331 HKY 데이터형 변경
                 }
             };
         }
     }
 
-    public void OnClickSelectGachaButton(string gachaId)
+    public void OnClickSelectGachaButton(int gachaId)
     {
-        gachaDescribeUI.Initialize(DataTableManager.GachaTable.GetData(gachaId));
+        gachaDescribeUI.Initialize(DataTableManager.GachaTable.GetData(gachaId)); //250331 HKY 데이터형 변경
     }
 }

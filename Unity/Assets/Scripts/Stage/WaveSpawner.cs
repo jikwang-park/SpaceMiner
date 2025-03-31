@@ -34,7 +34,7 @@ public class WaveSpawner : MonoBehaviour
 
     public void Spawn(Vector3 frontPosition, CorpsTable.Data data)
     {
-        if (data.FrontSlots == 0 && data.BackSlots == 0 && data.BossMonsterID != "0")
+        if (data.FrontSlots == 0 && data.BackSlots == 0 && data.BossMonsterID != 0)
         {
             int lane = 1;
             SpawnMonster(lane, lane, frontPosition, data.BossMonsterID);
@@ -56,7 +56,7 @@ public class WaveSpawner : MonoBehaviour
                 }
             }
 
-            string monsterId = data.NormalMonsterIDs[index];
+            int monsterId = data.NormalMonsterIDs[index];
             int lane = i % 3;
             SpawnMonster(lane, i, frontPosition, monsterId);
             ++createdCount[index];
@@ -82,9 +82,11 @@ public class WaveSpawner : MonoBehaviour
         stageManager.MonsterLaneManager.AddMonster(lane, monsterController);
     }
 
-    private void SpawnMonster(int lane, int index, Vector3 frontPosition, string monsterId)
+    private void SpawnMonster(int lane, int index, Vector3 frontPosition, int monsterId)
     {
-        var monster = objectPoolManager.gameObjectPool[monsterId].Get();
+        var monsterData =  DataTableManager.MonsterTable.GetData(monsterId);
+
+        var monster = objectPoolManager.gameObjectPool[monsterData.PrefabId].Get();
         var monsterController = monster.GetComponent<MonsterController>();
         monsterController.SetMonsterId(monsterId);
         monster.transform.parent = null;

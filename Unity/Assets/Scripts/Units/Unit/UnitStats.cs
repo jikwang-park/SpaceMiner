@@ -105,7 +105,7 @@ public class UnitStats : CharacterStats
         //나중에 추가 해야됌
         Attack attack = new Attack();
 
-        var dealerData = DataTableManager.DealerSkillTable.GetData("노말딜러스킬Lv1");
+        var dealerData = DataTableManager.DealerSkillTable.GetData(1101); //250331 HKY 데이터형 변경
 
         BigNumber damage = this.damage;
 

@@ -4,38 +4,40 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using UnityEngine.AddressableAssets;
+using static MonsterSkillTable;
 
 public class TankerSkillTable : DataTable
 {
-    public class Data : DataTableData
+    public class Data : ITableData
     {
-        public string ID { get; set; }
+        public int ID { get; set; }
         public SkillType Type { get; set; }
         public float ShieldRatio { get; set; }
         public float Duration { get; set; }
-        public float CoolTime {  get; set; }
-        public string BuffID { get; set; }
-        public string SoilderTarget {  get; set; }
+        public float CoolTime { get; set; }
+        public int BuffID { get; set; }
+        public string SoldierTarget { get; set; }
 
-        public override void Set(string[] argument)
+        public UnitTypes[] targetPriority;
+
+        public void Set(string[] argument)
         {
-            ID = argument[0];
-            Type = Enum.Parse<SkillType> (argument[1]);
+            ID = int.Parse(argument[0]);
+            Type = Enum.Parse<SkillType>(argument[1]);
             ShieldRatio = int.Parse(argument[2]);
             Duration = int.Parse(argument[3]);
             CoolTime = int.Parse(argument[4]);
-            BuffID = argument[5];
-            SoilderTarget = argument[6];
+            BuffID = int.Parse(argument[5]);
+            SoldierTarget = argument[6];
+
+            targetPriority = SplitSoldierTarget(SoldierTarget);
         }
     }
-
-    private Dictionary<string, Data> dict = new Dictionary<string, Data>();
 
     public override Type DataType => typeof(Data);
 
     public override void LoadFromText(string text)
     {
-        dict.Clear();
         TableData.Clear();
 
         if (string.IsNullOrEmpty(text))
@@ -47,9 +49,8 @@ public class TankerSkillTable : DataTable
 
         foreach (var item in list)
         {
-            if (!dict.ContainsKey(item.ID))
+            if (!TableData.ContainsKey(item.ID))
             {
-                dict.Add(item.ID, item);
                 TableData.Add(item.ID, item);
             }
             else
@@ -59,31 +60,49 @@ public class TankerSkillTable : DataTable
         }
     }
 
-    public Data GetData(string key)
+    public Data GetData(int key)
     {
-        if(!dict.ContainsKey(key))
+        if (!TableData.ContainsKey(key))
         {
             return null;
         }
-        return dict[key];
+        return (Data)TableData[key];
     }
 
     public override void Set(List<string[]> data)
     {
-        var dictionary = new Dictionary<string, Data>();
-        var tableData = new Dictionary<string, DataTableData>();
+        var tableData = new Dictionary<int, ITableData>();
         foreach (var item in data)
         {
             var datum = CreateData<Data>(item);
-            dictionary.Add(datum.ID, datum);
             tableData.Add(datum.ID, datum);
         }
-        dict = dictionary;
         TableData = tableData;
     }
 
     public override string GetCsvData()
     {
-        return CreateCsv(dict.Values.ToList());
+        List<Data> list = new List<Data>();
+
+        foreach (var item in TableData)
+        {
+            list.Add((Data)item.Value);
+        }
+
+        return CreateCsv(list);
+    }
+
+
+    private static UnitTypes[] SplitSoldierTarget(string id)
+    {
+        string[] idstring = id.Split('_');
+        UnitTypes[] ids = new UnitTypes[idstring.Length];
+
+        for (int i = 0; i < ids.Length; ++i)
+        {
+            ids[i] = Enum.Parse<UnitTypes>(idstring[i]);
+        }
+
+        return ids;
     }
 }

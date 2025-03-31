@@ -10,18 +10,18 @@ public class UnitStats : CharacterStats
 
 
 
-    public void AddStats(UpgradeType type , BigNumber amount)
+    public void AddStats(UpgradeType type , float amount)
     {
         switch (type)
         {
             case UpgradeType.AttackPoint:
-                damage += amount;
+                damage += (int)amount;
                 break;
             case UpgradeType.HealthPoint:
-                maxHp += amount;
+                maxHp += (int)amount;
                 break;
             case UpgradeType.DefensePoint:
-                armor += amount;
+                armor += (int)amount;
                 break;
             case UpgradeType.CriticalPossibility:
                 //나중에 바꿔야함

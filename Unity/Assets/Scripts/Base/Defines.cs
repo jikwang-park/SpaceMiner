@@ -39,3 +39,13 @@ public enum StageMode
     Ascend,
     Repeat,
 }
+
+public enum Currency
+{
+    Gold = 1001,
+    Annotaion,
+    Cobalt,
+    Tungsten,
+    Titanium,
+    Spinel,
+}

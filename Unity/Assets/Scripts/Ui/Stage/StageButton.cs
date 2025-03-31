@@ -45,6 +45,7 @@ public class StageButton : MonoBehaviour, IObjectPoolGameObject
     {
         Variables.planetNumber = planet;
         Variables.stageNumber = stage;
+        SaveLoadManager.SaveGame();
         SceneManager.LoadScene(0);
         //Addressables.LoadSceneAsync("StageDevelopScene");
     }

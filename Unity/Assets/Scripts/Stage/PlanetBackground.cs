@@ -2,14 +2,12 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AddressableAssets;
+using UnityEngine.Pool;
 
-public class Stage : MonoBehaviour
+public class PlanetBackground : MonoBehaviour, IObjectPoolGameObject
 {
     private int unitCount = 0;
     private bool isNextStageSpawned = false;
-
-    [SerializeField]
-    private AssetReferenceGameObject stage;
 
     [SerializeField]
     private Transform enterPosition;
@@ -21,6 +19,13 @@ public class Stage : MonoBehaviour
     private Transform stageNextPosition;
 
     private StageManager stageManager;
+
+    public IObjectPool<GameObject> ObjectPool { get; set; }
+
+    public void Release()
+    {
+        ObjectPool.Release(gameObject);
+    }
 
     private void Start()
     {
@@ -35,17 +40,18 @@ public class Stage : MonoBehaviour
             return;
         }
 
-
         if (!isNextStageSpawned && unit.position.z > enterPosition.position.z)
         {
             isNextStageSpawned = true;
 
-            Addressables.InstantiateAsync(stage, stageNextPosition.position, stageNextPosition.rotation);
+            var nextBackground = ObjectPool.Get();
+            nextBackground.transform.position = stageNextPosition.position;
+            nextBackground.transform.rotation = stageNextPosition.rotation;
         }
 
         if (unit.position.z > exitPosition.position.z)
         {
-            Destroy(gameObject);
+            Release();
         }
     }
 }

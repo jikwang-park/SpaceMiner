@@ -9,11 +9,11 @@ public class UnitStatsUpgradeElement : MonoBehaviour
 {
     public UpgradeType currentType;
 
-    public BigNumber value;
+    public float value = 0;
 
-    public BigNumber gold;
+    public BigNumber gold = 0;
 
-    public int maxLevel;
+    public int maxLevel = 0;
     // 아직 테이블에 없음
     public int level = 0;
 
@@ -44,9 +44,13 @@ public class UnitStatsUpgradeElement : MonoBehaviour
     }
 
 
-    private void Init()
+    public void Init(UnitUpgradeTable.Data data)
     {
-        
+        currentType = data.Type;
+        level = 0;
+        value = data.Value;
+        gold = data.Gold;
+        maxLevel = data.MaxLevel;
     }
 
     private void SetStatsInfo()
@@ -74,8 +78,5 @@ public class UnitStatsUpgradeElement : MonoBehaviour
         stageManager.UnitPartyManager.AddStats(currentType, value + (value * currentNum));
     }
 
-    public UnitUpgradeTable.Data SetData(int id)
-    {
-        return DataTableManager.UnitUpgradeTable.GetData(id);
-    }
+ 
 }

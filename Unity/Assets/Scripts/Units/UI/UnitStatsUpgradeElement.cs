@@ -56,6 +56,7 @@ public class UnitStatsUpgradeElement : MonoBehaviour
     private void SetStatsInfo()
     {
         nextLevel = level + 1;
+        levelText.text = $"Level + {level}";
         statsInformation.text = $"Unit {currentType.ToString()} Increase\n +{value + (value* currentNum)}";
         addStartButtonText.text = $"Gold \n +{gold * nextLevel}";
         LevelUp();

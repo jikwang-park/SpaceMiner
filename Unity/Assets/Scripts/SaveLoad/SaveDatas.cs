@@ -32,5 +32,5 @@ public class TotalSaveData
 {
     public Dictionary<UnitTypes, InventorySaveData> inventorySaveData = new Dictionary<UnitTypes, InventorySaveData>();
     public StageSaveData stageSaveData;
-    public Dictionary<string, BigNumber> itemSaveData = new Dictionary<string, BigNumber>();
+    public Dictionary<int, BigNumber> itemSaveData = new Dictionary<int, BigNumber>();
 }

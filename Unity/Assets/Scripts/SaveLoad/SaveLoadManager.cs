@@ -59,7 +59,7 @@ public static class SaveLoadManager
             highStage = 1,
         };
 
-        defaultSaveData.itemSaveData = new Dictionary<string, BigNumber>();
+        defaultSaveData.itemSaveData = new Dictionary<int, BigNumber>();
 
         return defaultSaveData;
     }

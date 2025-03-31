@@ -4,12 +4,12 @@ using UnityEngine;
 
 public static class ItemManager
 {
-    private static Dictionary<string, BigNumber> items = new Dictionary<string, BigNumber>();
+    private static Dictionary<int, BigNumber> items = new Dictionary<int, BigNumber>();
     static ItemManager()
     {
         SaveLoadManager.onSaveRequested += DoSave;
     }
-    public static void AddItem(string itemId, BigNumber amount)
+    public static void AddItem(int itemId, BigNumber amount)
     {
         BigNumber maxStack = DataTableManager.ItemTable.GetData(itemId).MaxStack;
         if(items.ContainsKey(itemId))
@@ -26,22 +26,22 @@ public static class ItemManager
             items[itemId] = maxStack;
         }
     }
-    public static void ConsumeItem(string itemId, BigNumber amount)
+    public static void ConsumeItem(int itemId, BigNumber amount)
     {
         if(CanConsume(itemId, amount))
         {
             items[itemId] -= amount;
         }
     }
-    public static bool CanConsume(string itemId, BigNumber amount)
+    public static bool CanConsume(int itemId, BigNumber amount)
     {
         return (items.ContainsKey(itemId) && items[itemId] >= amount);
     }
     public static void ConsumeCurrency(Currency currency, BigNumber amount)
     {
-        ConsumeItem(((int)currency).ToString(), amount);
+        ConsumeItem((int)currency, amount);
     }
-    public static BigNumber GetItemAmount(string itemId)
+    public static BigNumber GetItemAmount(int itemId)
     {
         return items[itemId];
     }

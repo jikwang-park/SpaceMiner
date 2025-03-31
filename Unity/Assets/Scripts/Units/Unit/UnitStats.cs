@@ -2,10 +2,35 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEditor;
 using UnityEngine;
+using static UnitUpgradeTable;
 
 public class UnitStats : CharacterStats
 {
     BigNumber specialPoint;
+
+
+
+    public void AddStats(UpgradeType type , BigNumber amount)
+    {
+        switch (type)
+        {
+            case UpgradeType.AttackPoint:
+                damage += amount;
+                break;
+            case UpgradeType.HealthPoint:
+                maxHp += amount;
+                break;
+            case UpgradeType.DefensePoint:
+                armor += amount;
+                break;
+            case UpgradeType.CriticalPossibility:
+                //나중에 바꿔야함
+                break;
+            case UpgradeType.CriticalDamages:
+                break;
+        }
+    }
+
 
     public void SetData(SoldierTable.Data data, UnitTypes type)
     {

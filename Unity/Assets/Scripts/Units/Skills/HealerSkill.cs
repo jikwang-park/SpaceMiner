@@ -5,7 +5,7 @@ using UnityEngine;
 public class HealerSkill : UnitSkill
 {
     private float healRatio;
-    private string buffId;
+    private int buffId; //250331 HKY 데이터형 변경
 
     protected override void Awake()
     {
@@ -15,7 +15,7 @@ public class HealerSkill : UnitSkill
     }
     public override void Init()
     {
-        var healerSkillData = DataTableManager.HealerSkillTable.GetData("노말힐러스킬Lv1");
+        var healerSkillData = DataTableManager.HealerSkillTable.GetData(1301); //250331 HKY 데이터형 변경
         if (healerSkillData != null)
         {
             coolTime = healerSkillData.CoolTime;
@@ -26,8 +26,8 @@ public class HealerSkill : UnitSkill
 
     public override void GetTarget()
     {
-        var tankerSkillData = DataTableManager.HealerSkillTable.GetData("노말힐러스킬Lv1");
-        string soliderTarget = tankerSkillData.SoilderTarget;
+        var tankerSkillData = DataTableManager.HealerSkillTable.GetData(1301); //250331 HKY 데이터형 변경
+        string soliderTarget = tankerSkillData.SoldierTarget;
         string[] targetStrings = soliderTarget.Split("_");
         foreach (string target in targetStrings)
         {

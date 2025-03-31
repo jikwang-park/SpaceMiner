@@ -18,6 +18,8 @@ public class StageUiManger : MonoBehaviour
     [SerializeField]
     private TextMeshProUGUI stageEndMessageText;
     [SerializeField]
+    private TextMeshProUGUI goldText;
+    [SerializeField]
     private StageSelectWindow stageSelectWindow;
 
     public void SetTimer(float remainTime)
@@ -50,5 +52,10 @@ public class StageUiManger : MonoBehaviour
     public void UnlockStage(int planet, int stage)
     {
         stageSelectWindow.UnlockStage(planet, stage);
+    }
+
+    public void SetGoldText(BigNumber gold)
+    {
+        goldText.text = $"{gold}G";
     }
 }

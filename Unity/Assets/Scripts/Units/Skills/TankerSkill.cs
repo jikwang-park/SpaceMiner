@@ -5,7 +5,7 @@ using UnityEngine;
 public class TankerSkill : UnitSkill
 {
     private float shieldRatio;
-    private string buffId;
+    private int buffId; //250331 HKY 데이터형 변경
 
 
     protected override void Awake()
@@ -16,8 +16,8 @@ public class TankerSkill : UnitSkill
     }
     public override void Init()
     {
-        var tankerSkillData = DataTableManager.TankerSkillTable.GetData("노말탱커스킬Lv1");
-        if(tankerSkillData != null)
+        var tankerSkillData = DataTableManager.TankerSkillTable.GetData(1201); //250331 HKY 데이터형 변경
+        if (tankerSkillData != null)
         {
             coolTime = tankerSkillData.CoolTime;
             shieldRatio = tankerSkillData.ShieldRatio;
@@ -28,8 +28,8 @@ public class TankerSkill : UnitSkill
     
     public override void GetTarget()
     {
-        var tankerSkillData = DataTableManager.TankerSkillTable.GetData("노말탱커스킬Lv1");
-        string soliderTarget = tankerSkillData.SoilderTarget;
+        var tankerSkillData = DataTableManager.TankerSkillTable.GetData(1201); //250331 HKY 데이터형 변경
+        string soliderTarget = tankerSkillData.SoldierTarget;
         string[] targetStrings = soliderTarget.Split("_");
         foreach(string target in targetStrings)
         {

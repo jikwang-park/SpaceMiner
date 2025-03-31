@@ -1,7 +1,6 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.AddressableAssets;
 using UnityEngine.Pool;
@@ -9,8 +8,7 @@ using UnityEngine.ResourceManagement.AsyncOperations;
 
 public class ObjectPoolManager : MonoBehaviour
 {
-    [SerializeField]
-    private AssetReferenceGameObject[] addressableAssets;
+    private const string objectPoolIDFormat = "ObjectPoolGameObject/{0}";
 
     [SerializeField]
     private string[] addressableAssetsNames;
@@ -22,14 +20,14 @@ public class ObjectPoolManager : MonoBehaviour
 
     private void Awake()
     {
-        for (int i = 0; i < addressableAssets.Length; ++i)
+        for (int i = 0; i < addressableAssetsNames.Length; ++i)
         {
             if (!gameObjectPool.ContainsKey(addressableAssetsNames[i]))
             {
                 ObjectPool<GameObject> pool = null;
-                AssetReferenceGameObject reference = addressableAssets[i];
+                string referenceName = string.Format(objectPoolIDFormat, addressableAssetsNames[i]);
                 pool = new ObjectPool<GameObject>
-                    (() => CreatePooledItem(reference, pool), OnTakeFromPool, OnReturnedToPool, OnDestroyOnObject, true);
+                    (() => CreatePooledItem(referenceName, pool), OnTakeFromPool, OnReturnedToPool, OnDestroyOnObject, true);
                 gameObjectPool.Add(addressableAssetsNames[i], pool);
             }
         }
@@ -42,17 +40,6 @@ public class ObjectPoolManager : MonoBehaviour
                 pool = new ObjectPool<GameObject>
                     (() => CreatePooledItem(prefab, pool), OnTakeFromPool, OnReturnedToPool, OnDestroyOnObject, true);
                 gameObjectPool.Add(prefab.name, pool);
-            }
-        }
-    }
-
-    private void OnDestroy()
-    {
-        for (int i = 0; i < addressableAssets.Length; ++i)
-        {
-            if (addressableAssets[i].Asset is not null)
-            {
-                addressableAssets[i].ReleaseAsset();
             }
         }
     }
@@ -71,6 +58,27 @@ public class ObjectPoolManager : MonoBehaviour
         }
 
         return CreatePooledItem(reference.Asset as GameObject, pool);
+    }
+
+    private GameObject CreatePooledItem(string key, IObjectPool<GameObject> pool)
+    {
+        if (string.IsNullOrEmpty(key))
+        {
+            throw new ArgumentException("에셋 키 없음");
+        }
+
+        var handle = Addressables.InstantiateAsync(key, transform);
+        handle.WaitForCompletion();
+
+        if (!handle.IsDone || handle.Status != AsyncOperationStatus.Succeeded)
+        {
+            throw new ArgumentException("에셋 로딩 실패");
+        }
+
+        GameObject created = handle.Result;
+        created.GetComponent<IObjectPoolGameObject>().ObjectPool = pool;
+        created.transform.SetParent(transform);
+        return created;
     }
 
     private GameObject CreatePooledItem(GameObject prefab, IObjectPool<GameObject> pool)

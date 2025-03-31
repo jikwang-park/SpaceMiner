@@ -216,7 +216,7 @@ public class Inventory : MonoBehaviour
         }
         else
         {
-            saveData.equipElementID = "";
+            saveData.equipElementID = 0; //250331 HKY 데이터형 변경
         }
         return saveData;
     }
@@ -247,7 +247,7 @@ public class Inventory : MonoBehaviour
             }
         }
 
-        if (!string.IsNullOrEmpty(saveData.equipElementID))
+        if (saveData.equipElementID==0) //250331 HKY 데이터형 변경
         {
             InventoryElement loadedEquipElement = inventoryElements.Find(e => e.soldierId == saveData.equipElementID);
             if (loadedEquipElement != null)

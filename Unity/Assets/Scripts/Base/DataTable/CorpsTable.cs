@@ -2,42 +2,38 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using Unity.IO.LowLevel.Unsafe;
 using UnityEngine;
 using UnityEngine.AddressableAssets;
 
 public class CorpsTable : DataTable
 {
-    public class Data : DataTableData
+    public class Data : ITableData
     {
-        public string ID { get; set; }
+        public int ID { get; set; }
         public int FrontSlots { get; set; }
         public string NormalMonsterID { get; set; }
         public int BackSlots { get; set; }
-        public string RangedMonsterID { get; set; }
-        public string BossMonsterID { get; set; }
+        public int RangedMonsterID { get; set; }
+        public int BossMonsterID { get; set; }
 
-        public string[] NormalMonsterIDs;
+        public int[] NormalMonsterIDs;
 
-        public override void Set(string[] argument)
+        public void Set(string[] argument)
         {
-            ID = argument[0];
+            ID = int.Parse(argument[0]);
             FrontSlots = int.Parse(argument[1]);
             NormalMonsterID = argument[2];
-            NormalMonsterIDs = NormalMonsterID.Split('_');
+            NormalMonsterIDs = SplitMonsterId(NormalMonsterID);
             BackSlots = int.Parse(argument[3]);
-            RangedMonsterID = argument[4];
-            BossMonsterID = argument[5];
+            RangedMonsterID = int.Parse(argument[4]);
+            BossMonsterID = int.Parse(argument[5]);
         }
     }
-
-    private Dictionary<string, Data> dict = new Dictionary<string, Data>();
 
     public override Type DataType => typeof(Data);
 
     public override void LoadFromText(string text)
     {
-        dict.Clear();
         TableData.Clear();
 
         if (string.IsNullOrEmpty(text))
@@ -49,10 +45,9 @@ public class CorpsTable : DataTable
 
         foreach (var item in list)
         {
-            if (!dict.ContainsKey(item.ID))
+            if (!TableData.ContainsKey(item.ID))
             {
-                item.NormalMonsterIDs = item.NormalMonsterID.Split('_');
-                dict.Add(item.ID, item);
+                item.NormalMonsterIDs = SplitMonsterId(item.NormalMonsterID);
                 TableData.Add(item.ID, item);
             }
             else
@@ -62,31 +57,48 @@ public class CorpsTable : DataTable
         }
     }
 
-    public Data GetData(string key)
+    public Data GetData(int key)
     {
-        if (!dict.ContainsKey(key))
+        if (!TableData.ContainsKey(key))
         {
             return null;
         }
-        return dict[key];
+        return (Data)TableData[key];
     }
 
     public override void Set(List<string[]> data)
     {
-        var dictionary = new Dictionary<string, Data>();
-        var tableData = new Dictionary<string, DataTableData>();
+        var tableData = new Dictionary<int, ITableData>();
         foreach (var item in data)
         {
             var datum = CreateData<Data>(item);
-            dictionary.Add(datum.ID, datum);
             tableData.Add(datum.ID, datum);
         }
-        dict = dictionary;
         TableData = tableData;
     }
 
     public override string GetCsvData()
     {
-        return CreateCsv(dict.Values.ToList());
+        List<Data> list = new List<Data>();
+
+        foreach (var item in TableData)
+        {
+            list.Add((Data)item.Value);
+        }
+
+        return CreateCsv(list);
+    }
+
+    private static int[] SplitMonsterId(string id)
+    {
+        string[] idstring = id.Split('_');
+        int[] ids = new int[idstring.Length];
+
+        for (int i = 0; i < ids.Length; ++i)
+        {
+            ids[i] = int.Parse(idstring[i]);
+        }
+
+        return ids;
     }
 }

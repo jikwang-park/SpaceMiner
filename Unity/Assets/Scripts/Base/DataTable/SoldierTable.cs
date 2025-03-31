@@ -3,20 +3,14 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
-using UnityEngine.AddressableAssets;    
-public enum Grade
-{
-    Normal = 1,
-    Rare,
-    Epic,
-    Legend,
-}
+using UnityEngine.AddressableAssets;
+
 public class SoldierTable : DataTable
 {
-    public class Data : DataTableData
+    public class Data : ITableData
     {
-        public string ID { get; set; }
-        public string StringID { get; set; }
+        public int ID { get; set; }
+        public int StringID { get; set; }
         public UnitTypes Kind { get; set; }
         public Grade Rating { get; set; }
         public float Basic_AP { get; set; }
@@ -25,40 +19,52 @@ public class SoldierTable : DataTable
         public float Special_DR { get; set; }
         public float Special_CD { get; set; }
         public float Special_H { get; set; }
-        public string IncreaseID { get; set; }
-        public string BuildingID { get; set; }
-        public string SkillID { get; set; }
+        public int IncreaseID { get; set; }
+        public int BuildingID { get; set; }
+        public int SkillID { get; set; }
         public float Distance { get; set; }
         public float MoveSpeed { get; set; }
 
-        public override void Set(string[] argument)
+        public void Set(string[] argument)
         {
-            ID = argument[0];
-            StringID = argument[1];
-            Kind = Enum.Parse<UnitTypes>(argument[2]);
-            Rating = Enum.Parse<Grade>(argument[3]);
+            ID = int.Parse(argument[0]);
+            StringID = int.Parse(argument[1]);
+            if (int.TryParse(argument[2], out int kind))
+            {
+                Kind = (UnitTypes)kind;
+            }
+            else
+            {
+                Kind = Enum.Parse<UnitTypes>(argument[2]);
+            }
+            if (int.TryParse(argument[3], out int rating))
+            {
+                Rating = (Grade)rating;
+            }
+            else
+            {
+                Rating = Enum.Parse<Grade>(argument[3]);
+            }
             Basic_AP = float.Parse(argument[4]);
             Basic_HP = float.Parse(argument[5]);
             Basic_DP = float.Parse(argument[6]);
             Special_DR = float.Parse(argument[7]);
             Special_CD = float.Parse(argument[8]);
             Special_H = float.Parse(argument[9]);
-            IncreaseID = argument[10];
-            BuildingID = argument[11];
-            SkillID = argument[12];
+            IncreaseID = int.Parse(argument[10]);
+            BuildingID = int.Parse(argument[11]);
+            SkillID = int.Parse(argument[12]);
             Distance = float.Parse(argument[13]);
             MoveSpeed = float.Parse(argument[14]);
         }
     }
 
-    private Dictionary<string, Data> dict = new Dictionary<string, Data>();
     private Dictionary<UnitTypes, List<Data>> typeDict = new Dictionary<UnitTypes, List<Data>>();
 
     public override Type DataType => typeof(Data);
 
     public override void LoadFromText(string text)
     {
-        dict.Clear();
         typeDict.Clear();
         TableData.Clear();
 
@@ -71,45 +77,45 @@ public class SoldierTable : DataTable
 
         foreach (var item in list)
         {
-            if (!dict.ContainsKey(item.ID))
+            if (!TableData.ContainsKey(item.ID))
             {
-                dict.Add(item.ID, item);
                 TableData.Add(item.ID, item);
+
+                if (!typeDict.ContainsKey(item.Kind))
+                {
+                    typeDict[item.Kind] = new List<Data>();
+                }
+                typeDict[item.Kind].Add(item);
             }
             else
             {
                 Debug.Log($"Key Duplicated: {item.ID}");
             }
 
-            if (!typeDict.ContainsKey(item.Kind))
-            {
-                typeDict[item.Kind] = new List<Data>();
-            }
-            typeDict[item.Kind].Add(item);
         }
     }
+    
     public Dictionary<UnitTypes, List<Data>> GetTypeDictionary()
     {
         return typeDict;
     }
-    public Data GetData(string key)
+
+    public Data GetData(int key)
     {
-        if (!dict.ContainsKey(key))
+        if (!TableData.ContainsKey(key))
         {
             return null;
         }
-        return dict[key];
+        return (Data)TableData[key];
     }
 
     public override void Set(List<string[]> data)
     {
-        var dictionary = new Dictionary<string, Data>();
-        var tableData = new Dictionary<string, DataTableData>();
+        var tableData = new Dictionary<int, ITableData>();
         var typeDict = new Dictionary<UnitTypes, List<Data>>();
         foreach (var item in data)
         {
             var datum = CreateData<Data>(item);
-            dictionary.Add(datum.ID, datum);
             tableData.Add(datum.ID, datum);
 
             if (!typeDict.ContainsKey(datum.Kind))
@@ -118,14 +124,20 @@ public class SoldierTable : DataTable
             }
             typeDict[datum.Kind].Add(datum);
         }
-        dict = dictionary;
         TableData = tableData;
         this.typeDict = typeDict;
     }
 
     public override string GetCsvData()
     {
-        return CreateCsv(dict.Values.ToList());
+        List<Data> list = new List<Data>();
+
+        foreach (var item in TableData)
+        {
+            list.Add((Data)item.Value);
+        }
+
+        return CreateCsv(list);
     }
 }
 

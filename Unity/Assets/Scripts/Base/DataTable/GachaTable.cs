@@ -3,44 +3,42 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using static UnityEditor.Progress;
 
 public class GachaTable : DataTable
 {
-    public class Data : DataTableData
+    public class Data : ITableData
     {
-        public string gachaID { get; set; }
-        public string nameStringID { get; set; }
-        public string cost_ItemID { get; set; }
+        public int gachaID { get; set; }
+        public int nameStringID { get; set; }
+        public int cost_ItemID { get; set; }
         public int cost { get; set; }
-        public string cost_Item2ID { get; set; }
+        public int cost_Item2ID { get; set; }
         public int cost2 { get; set; }
         public int repeat { get; set; }
         public int repeat2 { get; set; }
         public int growRate { get; set; }
-        public string explainStringID { get; set; }
+        public int explainStringID { get; set; }
 
-        public override void Set(string[] argument)
+        public void Set(string[] argument)
         {
-            gachaID = argument[0];
-            nameStringID = argument[1];
-            cost_ItemID = argument[2];
+            gachaID = int.Parse(argument[0]);
+            nameStringID = int.Parse(argument[1]);
+            cost_ItemID = int.Parse(argument[2]);
             cost = int.Parse(argument[3]);
-            cost_Item2ID = argument[4];
+            cost_Item2ID = int.Parse(argument[4]);
             cost2 = int.Parse(argument[5]);
             repeat = int.Parse(argument[6]);
             repeat2 = int.Parse(argument[7]);
             growRate = int.Parse(argument[8]);
-            explainStringID = argument[9];
+            explainStringID = int.Parse(argument[9]);
         }
     }
-
-    private Dictionary<string, Data> dict = new Dictionary<string, Data>();
 
     public override Type DataType => typeof(Data);
 
     public override void LoadFromText(string text)
     {
-        dict.Clear();
         TableData.Clear();
 
         if (string.IsNullOrEmpty(text))
@@ -52,9 +50,8 @@ public class GachaTable : DataTable
 
         foreach (var item in list)
         {
-            if (!dict.ContainsKey(item.gachaID))
+            if (!TableData.ContainsKey(item.gachaID))
             {
-                dict.Add(item.gachaID, item);
                 TableData.Add(item.gachaID, item);
             }
             else
@@ -64,37 +61,41 @@ public class GachaTable : DataTable
         }
     }
 
-    public Data GetData(string key)
+    public Data GetData(int key)
     {
-        if (!dict.ContainsKey(key))
+        if (!TableData.ContainsKey(key))
         {
             return null;
         }
-        return dict[key];
+        return (Data)TableData[key];
     }
 
-    public Dictionary<string, Data> GetDict()
-    { 
-        return dict; 
+    public Dictionary<int, Data> GetDict()
+    {
+        return TableData.ToDictionary(item => item.Key, item => (Data)item.Value);
     }
 
     public override void Set(List<string[]> data)
     {
-        var dictionary = new Dictionary<string, Data>();
-        var tableData = new Dictionary<string, DataTableData>();
+        var tableData = new Dictionary<int, ITableData>();
         foreach (var item in data)
         {
             var datum = CreateData<Data>(item);
-            dictionary.Add(datum.gachaID, datum);
             tableData.Add(datum.gachaID, datum);
         }
-        dict = dictionary;
         TableData = tableData;
     }
 
 
     public override string GetCsvData()
     {
-        return CreateCsv(dict.Values.ToList());
+        List<Data> list = new List<Data>();
+
+        foreach (var item in TableData)
+        {
+            list.Add((Data)item.Value);
+        }
+
+        return CreateCsv(list);
     }
 }

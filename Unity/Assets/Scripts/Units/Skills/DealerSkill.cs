@@ -15,8 +15,8 @@ public class DealerSkill : UnitSkill
     }
     public override void Init()
     {
-        var delaerSkillData = DataTableManager.DealerSkillTable.GetData("노말딜러스킬Lv1");
-        if(delaerSkillData != null )
+        var delaerSkillData = DataTableManager.DealerSkillTable.GetData(1101); //250331 HKY 데이터형 변경
+        if (delaerSkillData != null )
         {
             coolTime = delaerSkillData.CoolTime;
             damageRatio = delaerSkillData.DamageRatio;

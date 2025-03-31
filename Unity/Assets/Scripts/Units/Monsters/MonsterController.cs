@@ -31,6 +31,7 @@ public class MonsterController : MonoBehaviour, IObjectPoolGameObject
     public float TargetDistance { get; private set; }
     public Transform Target { get; private set; }
     public MonsterTable.Data MonsterData { get; private set; }
+    public MonsterRewardTable.Data RewardData { get; private set; }
 
 
     public Func<int, Transform> findFrontMonster;
@@ -106,7 +107,7 @@ public class MonsterController : MonoBehaviour, IObjectPoolGameObject
 
         var rootSelector = new SelectorNode<MonsterController>(this);
 
-        if (MonsterData.MonsterSkill != "0")
+        if (MonsterData.MonsterSkill != 0)
         {
             var skillSequence = new SquenceNode<MonsterController>(this);
             skillSequence.AddChild(new IsMonsterSkillCooltimeCondition(this));
@@ -130,12 +131,13 @@ public class MonsterController : MonoBehaviour, IObjectPoolGameObject
         behaviorTree.SetRoot(rootSelector);
     }
 
-    public void SetMonsterId(string monsterId)
+    public void SetMonsterId(int monsterId)
     {
         MonsterData = DataTableManager.MonsterTable.GetData(monsterId);
         Stats.SetData(MonsterData);
+        RewardData = DataTableManager.MonsterRewardTable.GetData(MonsterData.RewardID);
         InitBehaviourTree();
-        if (MonsterData.MonsterSkill != "0")
+        if (MonsterData.MonsterSkill != 0)
         {
             GetComponent<MonsterSkill>().SetSkill(MonsterData.MonsterSkill);
         }

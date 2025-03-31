@@ -56,7 +56,7 @@ public class MonsterSkill : MonoBehaviour
         lastSkillTime = Time.time;
     }
 
-    public void SetSkill(string skillId)
+    public void SetSkill(int skillId)
     {
         skillData = DataTableManager.MonsterSkillTable.GetData(skillId);
     }

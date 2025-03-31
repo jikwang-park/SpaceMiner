@@ -1,13 +1,8 @@
 using System.Collections;
 using System.Collections.Generic;
-using TMPro;
 using UnityEngine;
 
-public class UnitUiManager 
+public interface ITableData
 {
-    
-
-
-
-
+    void Set(string[] argument);
 }

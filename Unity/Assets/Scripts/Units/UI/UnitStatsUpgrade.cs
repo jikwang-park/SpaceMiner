@@ -28,7 +28,7 @@ public class UnitStatsUpgrade : MonoBehaviour
         for(int i = 0;  i< statsUpgradeElements.Count; i++)
         {
             Instantiate(statsUpgradeElements[i],parentTransform);
-            statsUpgradeElements[i].SetData(i + 100);
+            statsUpgradeElements[i].SetData(i*1000 + 1);
         }
     }
 

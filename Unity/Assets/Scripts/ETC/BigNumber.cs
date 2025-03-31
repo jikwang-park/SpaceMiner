@@ -1,11 +1,14 @@
+using Newtonsoft.Json;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Runtime.Serialization;
 using UnityEngine;
 
 [Serializable]
 public struct BigNumber : ISerializationCallbackReceiver
 {
+    [JsonProperty]
     [SerializeField]
     private string currentValue;
     private List<int> parts;
@@ -19,7 +22,7 @@ public struct BigNumber : ISerializationCallbackReceiver
         input = input.Trim();
         currentValue = "";
 
-        if (input.Length == 0)
+        if (input.Length == 0 || input.Equals("0"))
         {
             parts.Add(0);
             currentValue = "0";
@@ -460,7 +463,16 @@ public struct BigNumber : ISerializationCallbackReceiver
             return $"{stringSign}{parts[parts.Count - 1]}";
         }
     }
-
+    [OnDeserialized]
+    private void OnDeserializedMethod(StreamingContext context)
+    {
+        if (!string.IsNullOrEmpty(currentValue))
+        {
+            BigNumber temp = new BigNumber(currentValue);
+            this.parts = temp.parts;
+            this.sign = temp.sign;
+        }
+    }
     public void OnBeforeSerialize()
     {
     }

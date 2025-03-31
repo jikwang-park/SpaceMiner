@@ -7,30 +7,28 @@ using UnityEngine.Tilemaps;
 
 public class GachaSoldierTable : DataTable
 {
-    public class Data : DataTableData
+    public class Data : ITableData
     {
-        public string gachaID { get; set; }
+        public int gachaID { get; set; }
         public string grade { get; set; }
         public string soldierID { get; set; }
         public float probability { get; set; }
 
-        public override void Set(string[] argument)
+        public void Set(string[] argument)
         {
-            gachaID = argument[0];
+            gachaID = int.Parse(argument[0]);
             grade = argument[1];
             soldierID = argument[2];
             probability = float.Parse(argument[3]);
         }
     }
 
-    private Dictionary<string, Data> dict = new Dictionary<string, Data>();
     private Dictionary<string, List<Data>> gradeDict = new Dictionary<string, List<Data>>();
 
     public override Type DataType => typeof(Data);
 
     public override void LoadFromText(string text)
     {
-        dict.Clear();
         TableData.Clear();
         gradeDict.Clear();
 
@@ -43,9 +41,8 @@ public class GachaSoldierTable : DataTable
 
         foreach (var item in list)
         {
-            if (!dict.ContainsKey(item.gachaID))
+            if (!TableData.ContainsKey(item.gachaID))
             {
-                dict.Add(item.gachaID, item);
                 TableData.Add(item.gachaID, item);
                 if (!gradeDict.ContainsKey(item.grade))
                 {
@@ -71,13 +68,11 @@ public class GachaSoldierTable : DataTable
 
     public override void Set(List<string[]> data)
     {
-        var dictionary = new Dictionary<string, Data>();
-        var tableData = new Dictionary<string, DataTableData>();
+        var tableData = new Dictionary<int, ITableData>();
         var gradeDict = new Dictionary<string, List<Data>>();
         foreach (var item in data)
         {
             var datum = CreateData<Data>(item);
-            dictionary.Add(datum.gachaID, datum);
             tableData.Add(datum.gachaID, datum);
             if (!gradeDict.ContainsKey(datum.grade))
             {
@@ -85,13 +80,19 @@ public class GachaSoldierTable : DataTable
             }
             gradeDict[datum.grade].Add(datum);
         }
-        dict = dictionary;
         TableData = tableData;
         this.gradeDict = gradeDict;
     }
 
     public override string GetCsvData()
     {
-        return CreateCsv(dict.Values.ToList());
+        List<Data> list = new List<Data>();
+
+        foreach (var item in TableData)
+        {
+            list.Add((Data)item.Value);
+        }
+
+        return CreateCsv(list);
     }
 }

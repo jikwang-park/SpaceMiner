@@ -15,7 +15,7 @@ public class UnitUpgradeTable : DataTable
         CriticalDamages,
     }
 
-    public class Data : DataTableData
+    public class Data : ITableData
     {
         public int ID { get; set; }
         public UpgradeType Type { get; set; }
@@ -25,7 +25,7 @@ public class UnitUpgradeTable : DataTable
         public int Gold { get; set; }
         public float MaxLevel { get; set; }
 
-        public override void Set(string[] argument)
+        public void Set(string[] argument)
         {
             ID = int.Parse(argument[0]);
             Type = Enum.Parse<UpgradeType>(argument[1]);
@@ -37,14 +37,12 @@ public class UnitUpgradeTable : DataTable
         }
     }
 
-    private Dictionary<int, Data> dict = new Dictionary<int, Data>();
     private Dictionary<UpgradeType, Data> dictByType = new Dictionary<UpgradeType, Data>();
 
     public override Type DataType => typeof(Data);
 
     public override void LoadFromText(string text)
     {
-        dict.Clear();
         TableData.Clear();
         dictByType.Clear();
 
@@ -57,10 +55,9 @@ public class UnitUpgradeTable : DataTable
 
         foreach (var item in list)
         {
-            if (!dict.ContainsKey(item.ID))
+            if (!TableData.ContainsKey(item.ID))
             {
-                dict.Add(item.ID, item);
-                TableData.Add(item.ID.ToString(), item);
+                TableData.Add(item.ID, item);
 
                 if (!dictByType.ContainsKey(item.Type))
                 {
@@ -76,11 +73,11 @@ public class UnitUpgradeTable : DataTable
 
     public Data GetData(int key)
     {
-        if (!dict.ContainsKey(key))
+        if (!TableData.ContainsKey(key))
         {
             return null;
         }
-        return dict[key];
+        return (Data)TableData[key];
     }
 
     public Data GetData(UpgradeType upgradeType)
@@ -94,25 +91,29 @@ public class UnitUpgradeTable : DataTable
 
     public override void Set(List<string[]> data)
     {
-        var dictionary = new Dictionary<int, Data>();
         var typeData = new Dictionary<UpgradeType, Data>();
-        var tableData = new Dictionary<string, DataTableData>();
+        var tableData = new Dictionary<int, ITableData>();
         foreach (var item in data)
         {
             var datum = CreateData<Data>(item);
-            dictionary.Add(datum.ID, datum);
-            tableData.Add(datum.ID.ToString(), datum);
+            tableData.Add(datum.ID, datum);
             if (!dictByType.ContainsKey(datum.Type))
             {
                 dictByType.Add(datum.Type, datum);
             }
         }
-        dict = dictionary;
         TableData = tableData;
     }
 
     public override string GetCsvData()
     {
-        return CreateCsv(dict.Values.ToList());
+        List<Data> list = new List<Data>();
+
+        foreach (var item in TableData)
+        {
+            list.Add((Data)item.Value);
+        }
+
+        return CreateCsv(list);
     }
 }

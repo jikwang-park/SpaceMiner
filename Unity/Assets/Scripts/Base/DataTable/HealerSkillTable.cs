@@ -7,18 +7,18 @@ using UnityEngine.AddressableAssets;
 
 public class HealerSkillTable : DataTable
 {
-    public class Data : DataTableData
+    public class Data : ITableData
     {
-        public string ID { get; set; }
+        public int ID { get; set; }
         public SkillType Type { get; set; }
         public float HealRatio { get; set; }
         public float CoolTime { get; set; }
         public string BuffID { get; set; }
         public string SoilderTarget { get; set; }
 
-        public override void Set(string[] argument)
+        public void Set(string[] argument)
         {
-            ID = argument[0];
+            ID = int.Parse(argument[0]);
             Type = Enum.Parse<SkillType>(argument[1]);
             HealRatio = float.Parse(argument[2]);
             CoolTime = float.Parse(argument[3]);
@@ -27,13 +27,10 @@ public class HealerSkillTable : DataTable
         }
     }
 
-    private Dictionary<string, Data> dict = new Dictionary<string, Data>();
-
     public override Type DataType => typeof(Data);
 
     public override void LoadFromText(string text)
     {
-        dict.Clear();
         TableData.Clear();
 
         if (string.IsNullOrEmpty(text))
@@ -45,9 +42,8 @@ public class HealerSkillTable : DataTable
 
         foreach (var item in list)
         {
-            if (!dict.ContainsKey(item.ID))
+            if (!TableData.ContainsKey(item.ID))
             {
-                dict.Add(item.ID, item);
                 TableData.Add(item.ID, item);
             }
             else
@@ -57,32 +53,36 @@ public class HealerSkillTable : DataTable
         }
     }
 
-    public Data GetData(string key)
+    public Data GetData(int key)
     {
-        if (!dict.ContainsKey(key))
+        if (!TableData.ContainsKey(key))
         {
             return null;
         }
-        return dict[key];
+        return (Data)TableData[key];
     }
 
 
     public override void Set(List<string[]> data)
     {
-        var dictionary = new Dictionary<string, Data>();
-        var tableData = new Dictionary<string, DataTableData>();
+        var tableData = new Dictionary<int, ITableData>();
         foreach (var item in data)
         {
             var datum = CreateData<Data>(item);
-            dictionary.Add(datum.ID, datum);
             tableData.Add(datum.ID, datum);
         }
-        dict = dictionary;
         TableData = tableData;
     }
 
     public override string GetCsvData()
     {
-        return CreateCsv(dict.Values.ToList());
+        List<Data> list = new List<Data>();
+
+        foreach (var item in TableData)
+        {
+            list.Add((Data)item.Value);
+        }
+
+        return CreateCsv(list);
     }
 }

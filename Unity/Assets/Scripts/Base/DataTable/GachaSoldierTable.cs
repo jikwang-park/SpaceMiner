@@ -9,21 +9,28 @@ public class GachaSoldierTable : DataTable
 {
     public class Data : ITableData
     {
-        public int gachaID { get; set; }
-        public string grade { get; set; }
-        public string soldierID { get; set; }
+        public int ID { get; set; }
+        public Grade grade { get; set; }
+        public int soldierID { get; set; }
         public float probability { get; set; }
 
         public void Set(string[] argument)
         {
-            gachaID = int.Parse(argument[0]);
-            grade = argument[1];
-            soldierID = argument[2];
+            ID = int.Parse(argument[0]);
+            if (int.TryParse(argument[1], out int type))
+            {
+                grade = (Grade)type;
+            }
+            else
+            {
+                grade = Enum.Parse<Grade>(argument[1]);
+            }
+            soldierID = int.Parse(argument[2]);
             probability = float.Parse(argument[3]);
         }
     }
 
-    private Dictionary<string, List<Data>> gradeDict = new Dictionary<string, List<Data>>();
+    private Dictionary<Grade, List<Data>> gradeDict = new Dictionary<Grade, List<Data>>();
 
     public override Type DataType => typeof(Data);
 
@@ -41,9 +48,9 @@ public class GachaSoldierTable : DataTable
 
         foreach (var item in list)
         {
-            if (!TableData.ContainsKey(item.gachaID))
+            if (!TableData.ContainsKey(item.ID))
             {
-                TableData.Add(item.gachaID, item);
+                TableData.Add(item.ID, item);
                 if (!gradeDict.ContainsKey(item.grade))
                 {
                     gradeDict.Add(item.grade, new List<Data>());
@@ -52,12 +59,12 @@ public class GachaSoldierTable : DataTable
             }
             else
             {
-                Debug.Log($"Key Duplicated: {item.gachaID}");
+                Debug.Log($"Key Duplicated: {item.ID}");
             }
         }
     }
 
-    public List<Data> GetGradeDatas(string grade)
+    public List<Data> GetGradeDatas(Grade grade)
     {
         if (gradeDict.ContainsKey(grade))
         {
@@ -69,11 +76,11 @@ public class GachaSoldierTable : DataTable
     public override void Set(List<string[]> data)
     {
         var tableData = new Dictionary<int, ITableData>();
-        var gradeDict = new Dictionary<string, List<Data>>();
+        var gradeDict = new Dictionary<Grade, List<Data>>();
         foreach (var item in data)
         {
             var datum = CreateData<Data>(item);
-            tableData.Add(datum.gachaID, datum);
+            tableData.Add(datum.ID, datum);
             if (!gradeDict.ContainsKey(datum.grade))
             {
                 gradeDict.Add(datum.grade, new List<Data>());

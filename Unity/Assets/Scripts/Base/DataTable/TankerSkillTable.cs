@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using UnityEngine.AddressableAssets;
+using static MonsterSkillTable;
 
 public class TankerSkillTable : DataTable
 {
@@ -13,19 +14,23 @@ public class TankerSkillTable : DataTable
         public SkillType Type { get; set; }
         public float ShieldRatio { get; set; }
         public float Duration { get; set; }
-        public float CoolTime {  get; set; }
-        public string BuffID { get; set; }
-        public string SoilderTarget {  get; set; }
+        public float CoolTime { get; set; }
+        public int BuffID { get; set; }
+        public string SoldierTarget { get; set; }
+
+        public UnitTypes[] targetPriority;
 
         public void Set(string[] argument)
         {
             ID = int.Parse(argument[0]);
-            Type = Enum.Parse<SkillType> (argument[1]);
+            Type = Enum.Parse<SkillType>(argument[1]);
             ShieldRatio = int.Parse(argument[2]);
             Duration = int.Parse(argument[3]);
             CoolTime = int.Parse(argument[4]);
-            BuffID = argument[5];
-            SoilderTarget = argument[6];
+            BuffID = int.Parse(argument[5]);
+            SoldierTarget = argument[6];
+
+            targetPriority = SplitSoldierTarget(SoldierTarget);
         }
     }
 
@@ -57,7 +62,7 @@ public class TankerSkillTable : DataTable
 
     public Data GetData(int key)
     {
-        if(!TableData.ContainsKey(key))
+        if (!TableData.ContainsKey(key))
         {
             return null;
         }
@@ -85,5 +90,19 @@ public class TankerSkillTable : DataTable
         }
 
         return CreateCsv(list);
+    }
+
+
+    private static UnitTypes[] SplitSoldierTarget(string id)
+    {
+        string[] idstring = id.Split('_');
+        UnitTypes[] ids = new UnitTypes[idstring.Length];
+
+        for (int i = 0; i < ids.Length; ++i)
+        {
+            ids[i] = Enum.Parse<UnitTypes>(idstring[i]);
+        }
+
+        return ids;
     }
 }

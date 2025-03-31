@@ -11,20 +11,20 @@ public class StageTable : DataTable
     public class Data : ITableData
     {
         public int ID { get; set; }
-        public string StringID { get; set; }
+        public int StringID { get; set; }
         public int Planet { get; set; }
         public int Stage { get; set; }
-        public string CorpsID { get; set; }
+        public int CorpsID { get; set; }
         public int FirstClearReward { get; set; }
         public int IdleReward { get; set; }
 
         public void Set(string[] argument)
         {
             ID = int.Parse(argument[0]);
-            StringID = argument[1];
+            StringID = int.Parse(argument[1]);
             Planet = int.Parse(argument[2]);
             Stage = int.Parse(argument[3]);
-            CorpsID = argument[4];
+            CorpsID = int.Parse(argument[4]);
             FirstClearReward = int.Parse(argument[5]);
             IdleReward = int.Parse(argument[6]);
         }

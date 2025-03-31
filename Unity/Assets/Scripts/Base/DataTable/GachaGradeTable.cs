@@ -8,16 +8,23 @@ public class GachaGradeTable : DataTable
 {
     public class Data : ITableData
     {
+        public int ID { get; set; }
         public int gachaID { get; set; }
-        public int gachaLevel { get; set; }
-        public string grade { get; set; }
+        public Grade grade { get; set; }
         public float probability { get; set; }
 
         public void Set(string[] argument)
         {
-            gachaID = int.Parse(argument[0]);
-            gachaLevel = int.Parse(argument[1]);
-            grade = argument[2];
+            ID = int.Parse(argument[0]);
+            gachaID = int.Parse(argument[1]);
+            if (int.TryParse(argument[2], out int type))
+            {
+                grade = (Grade)type;
+            }
+            else
+            {
+                grade = Enum.Parse<Grade>(argument[1]);
+            }
             probability = float.Parse(argument[3]);
         }
     }
@@ -42,16 +49,16 @@ public class GachaGradeTable : DataTable
         {
             if (!TableData.ContainsKey(item.gachaID))
             {
-                TableData.Add(item.gachaID, item);
-                if (!levelDict.ContainsKey(item.gachaLevel))
+                TableData.Add(item.ID, item);
+                if (!levelDict.ContainsKey(item.gachaID))
                 {
-                    levelDict.Add(item.gachaLevel, new List<Data>());
+                    levelDict.Add(item.gachaID, new List<Data>());
                 }
-                levelDict[item.gachaLevel].Add(item);
+                levelDict[item.gachaID].Add(item);
             }
             else
             {
-                Debug.Log($"Key Duplicated: {item.gachaID}");
+                Debug.Log($"Key Duplicated: {item.ID}");
             }
         }
     }
@@ -72,13 +79,13 @@ public class GachaGradeTable : DataTable
         foreach (var item in data)
         {
             var datum = CreateData<Data>(item);
-            tableData.Add(datum.gachaID, datum);
+            tableData.Add(datum.ID, datum);
 
-            if (!levelDict.ContainsKey(datum.gachaLevel))
+            if (!levelDict.ContainsKey(datum.gachaID))
             {
-                levelDict.Add(datum.gachaLevel, new List<Data>());
+                levelDict.Add(datum.gachaID, new List<Data>());
             }
-            levelDict[datum.gachaLevel].Add(datum);
+            levelDict[datum.gachaID].Add(datum);
         }
         TableData = tableData;
         this.levelDict = levelDict;

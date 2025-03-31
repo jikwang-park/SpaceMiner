@@ -10,7 +10,7 @@ public class DealerSkillTable : DataTable
     public class Data : ITableData
     {
         public int ID { get; set; }
-        public SkillType Type { get; set; }
+        public Grade Type { get; set; }
         public float DamageRatio { get; set; }
         public float CoolTime { get; set; }
         public int MonsterMaxTarget { get; set; }
@@ -18,7 +18,14 @@ public class DealerSkillTable : DataTable
         public void Set(string[] argument)
         {
             ID = int.Parse(argument[0]);
-            Type = Enum.Parse<SkillType>(argument[1]);
+            if (int.TryParse(argument[1], out int type))
+            {
+                Type = (Grade)type;
+            }
+            else
+            {
+                Type = Enum.Parse<Grade>(argument[1]);
+            }
             DamageRatio = float.Parse(argument[2]);
             CoolTime = float.Parse(argument[3]);
             MonsterMaxTarget = int.Parse(argument[4]);

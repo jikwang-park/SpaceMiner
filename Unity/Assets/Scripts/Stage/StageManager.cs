@@ -7,8 +7,6 @@ using UnityEngine.SceneManagement;
 
 public class StageManager : MonoBehaviour
 {
-    private const string stageIDFormat = "{0:D2}Planet-{1}";
-
     [field: SerializeField]
     public int CurrentPlanet { get; private set; }
     [field: SerializeField]
@@ -65,7 +63,8 @@ public class StageManager : MonoBehaviour
     {
         if (Input.GetKeyDown(KeyCode.Alpha1))
         {
-            var stageData = DataTableManager.StageTable.GetData(string.Format(stageIDFormat, CurrentPlanet, CurrentStage));
+            //TODO: 스테이지 테이블 ID 변경될 수 있음
+            var stageData = DataTableManager.StageTable.GetData(CurrentPlanet * 100000 + CurrentStage * 100);
             Debug.Log(stageData.CorpsID);
         }
 
@@ -168,7 +167,8 @@ public class StageManager : MonoBehaviour
         CurrentWave = 1;
         stageStartTime = Time.time;
 
-        stageData = DataTableManager.StageTable.GetData(string.Format(stageIDFormat, CurrentPlanet, CurrentStage));
+        //stageData = DataTableManager.StageTable.GetData(string.Format(stageIDFormat, CurrentPlanet, CurrentStage));
+        stageData = DataTableManager.StageTable.GetData(CurrentPlanet * 100000 + CurrentStage * 100);
         waveData = DataTableManager.WaveTable.GetData(stageData.CorpsID);
         stageUiManager.SetStageText(CurrentPlanet, CurrentStage, CurrentWave);
     }

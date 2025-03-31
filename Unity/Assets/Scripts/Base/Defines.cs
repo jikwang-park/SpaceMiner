@@ -40,3 +40,11 @@ public enum StageMode
     Ascend,
     Repeat,
 }
+
+public enum Grade
+{
+    Normal = 1,
+    Rare,
+    Epic,
+    Legend,
+}

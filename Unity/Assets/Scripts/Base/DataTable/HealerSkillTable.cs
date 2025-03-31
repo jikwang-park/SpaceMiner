@@ -10,20 +10,31 @@ public class HealerSkillTable : DataTable
     public class Data : ITableData
     {
         public int ID { get; set; }
-        public SkillType Type { get; set; }
+        public Grade Type { get; set; }
         public float HealRatio { get; set; }
         public float CoolTime { get; set; }
-        public string BuffID { get; set; }
-        public string SoilderTarget { get; set; }
+        public int BuffID { get; set; }
+        public string SoldierTarget { get; set; }
+
+        public UnitTypes[] targetPriority;
 
         public void Set(string[] argument)
         {
             ID = int.Parse(argument[0]);
-            Type = Enum.Parse<SkillType>(argument[1]);
+            if (int.TryParse(argument[1], out int type))
+            {
+                Type = (Grade)type;
+            }
+            else
+            {
+                Type = Enum.Parse<Grade>(argument[1]);
+            }
             HealRatio = float.Parse(argument[2]);
             CoolTime = float.Parse(argument[3]);
-            BuffID = argument[4];
-            SoilderTarget = argument[5];
+            BuffID = int.Parse(argument[4]);
+            SoldierTarget = argument[5];
+
+            targetPriority = SplitSoldierTarget(SoldierTarget);
         }
     }
 
@@ -44,6 +55,7 @@ public class HealerSkillTable : DataTable
         {
             if (!TableData.ContainsKey(item.ID))
             {
+                item.targetPriority = SplitSoldierTarget(item.SoldierTarget);
                 TableData.Add(item.ID, item);
             }
             else
@@ -84,5 +96,18 @@ public class HealerSkillTable : DataTable
         }
 
         return CreateCsv(list);
+    }
+
+    private static UnitTypes[] SplitSoldierTarget(string id)
+    {
+        string[] idstring = id.Split('_');
+        UnitTypes[] ids = new UnitTypes[idstring.Length];
+
+        for (int i = 0; i < ids.Length; ++i)
+        {
+            ids[i] = Enum.Parse<UnitTypes>(idstring[i]);
+        }
+
+        return ids;
     }
 }

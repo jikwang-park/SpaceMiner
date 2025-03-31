@@ -20,20 +20,23 @@ public class UnitUpgradeTable : DataTable
         public int ID { get; set; }
         public UpgradeType Type { get; set; }
         public float Value { get; set; }
-        public float StetUpRate { get; set; }
-        public float GoldUpRate { get; set; }
         public int Gold { get; set; }
-        public float MaxLevel { get; set; }
+        public int MaxLevel { get; set; }
 
         public void Set(string[] argument)
         {
             ID = int.Parse(argument[0]);
-            Type = Enum.Parse<UpgradeType>(argument[1]);
+            if (int.TryParse(argument[1], out int type))
+            {
+                Type = (UpgradeType)type;
+            }
+            else
+            {
+                Type = Enum.Parse<UpgradeType>(argument[1]);
+            }
             Value = float.Parse(argument[2]);
-            StetUpRate = float.Parse(argument[3]);
-            GoldUpRate = float.Parse(argument[4]);
-            Gold = int.Parse(argument[5]);
-            MaxLevel = float.Parse(argument[6]);
+            Gold = int.Parse(argument[3]);
+            MaxLevel = int.Parse(argument[4]);
         }
     }
 

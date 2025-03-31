@@ -9,7 +9,7 @@ public class ItemTable : DataTable
     public class Data : ITableData
     {
         public int ID { get; set; }
-        public string ItemStringID { get; set; }
+        public int ItemStringID { get; set; }
         public int ItemType { get; set; }
         public int MaxStack { get; set; }
         public string ResourcesName { get; set; }
@@ -18,7 +18,7 @@ public class ItemTable : DataTable
         public void Set(string[] argument)
         {
             ID = int.Parse(argument[0]);
-            ItemStringID = argument[1];
+            ItemStringID = int.Parse(argument[1]);
             ItemType = int.Parse(argument[2]);
             MaxStack = int.Parse(argument[3]);
             ResourcesName = argument[4];

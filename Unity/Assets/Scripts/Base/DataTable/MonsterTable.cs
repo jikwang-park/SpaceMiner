@@ -10,33 +10,33 @@ public class MonsterTable : DataTable
     public class Data : ITableData
     {
         public int ID { get; set; }
+        public string PrefabId { get; set; }
         public string Hp { get; set; }
         public string Atk { get; set; }
         public float AtkSpeed { get; set; }
         public float AtkRange { get; set; }
         public float MoveSpeed { get; set; }
-        public string MonsterSkill { get; set; }
-        public string RewardID { get; set; }
+        public int MonsterSkill { get; set; }
+        public int RewardID { get; set; }
 
         public void Set(string[] argument)
         {
             ID = int.Parse(argument[0]);
-            Hp = argument[1];
-            Atk = argument[2];
-            AtkSpeed = float.Parse(argument[3]);
-            AtkRange = float.Parse(argument[4]);
-            MoveSpeed = float.Parse(argument[5]);
-            MonsterSkill = argument[6];
-            RewardID = argument[7];
+            PrefabId = argument[1];
+            Hp = argument[2];
+            Atk = argument[3];
+            AtkSpeed = float.Parse(argument[4]);
+            AtkRange = float.Parse(argument[5]);
+            MoveSpeed = float.Parse(argument[6]);
+            MonsterSkill = int.Parse(argument[7]);
+            RewardID = int.Parse(argument[8]);
         }
     }
 
-    private Dictionary<string, Data> dict = new Dictionary<string, Data>();
     public override Type DataType => typeof(Data);
 
     public override void LoadFromText(string text)
     {
-        dict.Clear();
         TableData.Clear();
 
         if (string.IsNullOrEmpty(text))
@@ -59,13 +59,13 @@ public class MonsterTable : DataTable
         }
     }
 
-    public Data GetData(string key)
+    public Data GetData(int key)
     {
-        if (!dict.ContainsKey(key))
+        if (!TableData.ContainsKey(key))
         {
             return null;
         }
-        return dict[key];
+        return (Data)TableData[key];
     }
 
 

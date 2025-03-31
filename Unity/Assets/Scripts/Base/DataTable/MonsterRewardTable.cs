@@ -11,9 +11,9 @@ public class MonsterRewardTable : DataTable
     public class Data : ITableData
     {
         public int ID { get; set; }
-        public string Reward1 { get; set; }
+        public int Reward1 { get; set; }
         public int Count { get; set; }
-        public string Reward2 { get; set; }
+        public int Reward2 { get; set; }
         public string CountArray { get; set; }
         public string Probability { get; set; }
 
@@ -23,16 +23,16 @@ public class MonsterRewardTable : DataTable
         public void Set(string[] argument)
         {
             ID = int.Parse(argument[0]);
-            Reward1 = argument[1];
+            Reward1 = int.Parse(argument[1]);
             Count = int.Parse(argument[2]);
-            Reward2 = argument[3];
+            Reward2 = int.Parse(argument[3]);
             CountArray = argument[4];
             Probability = argument[5];
         }
 
         public int RandomReward2()
         {
-            if (Reward2 == "0")
+            if (Reward2 == 0)
             {
                 return -1;
             }

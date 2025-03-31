@@ -17,7 +17,9 @@ public class StageManager : MonoBehaviour
     public int CurrentWave { get; private set; }
 
     public MonsterLaneManager MonsterLaneManager { get; private set; }
+
     public UnitPartyManager UnitPartyManager { get; private set; }
+
     [field: SerializeField]
     public StageUiManger stageUiManager { get; private set; }
 
@@ -36,6 +38,8 @@ public class StageManager : MonoBehaviour
     private float stageStartTime;
 
     private WaitForSeconds wait1 = new WaitForSeconds(1f);
+
+    private BigNumber golds = 0;
 
 
     private void Awake()
@@ -135,6 +139,16 @@ public class StageManager : MonoBehaviour
     {
         var monsterController = sender.GetComponent<MonsterController>();
         monsters.Remove(monsterController);
+
+        golds += monsterController.RewardData.Count;
+        stageUiManager.SetGoldText(golds);
+
+        int reward2 = monsterController.RewardData.RandomReward2();
+        if (reward2 > -1)
+        {
+            Debug.LogError($"{monsterController.RewardData.Reward2}, {monsterController.RewardData.counts[reward2]}, {monsterController.RewardData.probabilities[reward2]}");
+        }
+
         if (monsters.Count == 0)
         {
             if (CurrentWave > waveData.WaveCorpsIDs.Length)

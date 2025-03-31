@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
-using UnityEngine.AddressableAssets;
+using UnityEngine.AddressableAssets;    
 public enum Grade
 {
     Normal = 1,
@@ -58,10 +58,16 @@ public class SoldierTable : DataTable
 
     public override void LoadFromText(string text)
     {
-        var list = LoadCsv<Data>(text);
         dict.Clear();
         typeDict.Clear();
         TableData.Clear();
+
+        if (string.IsNullOrEmpty(text))
+        {
+            return;
+        }
+
+        var list = LoadCsv<Data>(text);
 
         foreach (var item in list)
         {

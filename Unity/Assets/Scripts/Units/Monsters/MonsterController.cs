@@ -31,6 +31,7 @@ public class MonsterController : MonoBehaviour, IObjectPoolGameObject
     public float TargetDistance { get; private set; }
     public Transform Target { get; private set; }
     public MonsterTable.Data MonsterData { get; private set; }
+    public MonsterRewardTable.Data RewardData { get; private set; }
 
 
     public Func<int, Transform> findFrontMonster;
@@ -134,6 +135,7 @@ public class MonsterController : MonoBehaviour, IObjectPoolGameObject
     {
         MonsterData = DataTableManager.MonsterTable.GetData(monsterId);
         Stats.SetData(MonsterData);
+        RewardData = DataTableManager.MonsterRewardTable.GetData(monsterId);
         InitBehaviourTree();
         if (MonsterData.MonsterSkill != "0")
         {

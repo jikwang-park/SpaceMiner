@@ -40,9 +40,15 @@ public class GachaTable : DataTable
 
     public override void LoadFromText(string text)
     {
-        var list = LoadCsv<Data>(text);
         dict.Clear();
         TableData.Clear();
+
+        if (string.IsNullOrEmpty(text))
+        {
+            return;
+        }
+
+        var list = LoadCsv<Data>(text);
 
         foreach (var item in list)
         {
@@ -65,6 +71,11 @@ public class GachaTable : DataTable
             return null;
         }
         return dict[key];
+    }
+
+    public Dictionary<string, Data> GetDict()
+    { 
+        return dict; 
     }
 
     public override void Set(List<string[]> data)

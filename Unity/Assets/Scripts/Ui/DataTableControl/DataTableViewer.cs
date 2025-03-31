@@ -171,9 +171,9 @@ public class DataTableViewer : MonoBehaviour
 
                 tableDropdown.value = previous;
             }
-            catch
+            catch (Exception e)
             {
-                Debug.LogError("Table Set Failed");
+                Debug.LogError($"Table Set Failed \n{e}");
             }
             inputField.text = string.Empty;
             inputToggle.image.color = Color.white;

@@ -32,7 +32,7 @@ public abstract class DataTable
         using (var csv = new CsvWriter(writer, CultureInfo.InvariantCulture))
         {
             csv.WriteRecords<T>(data);
-            
+
             writer.Flush();
             result = Encoding.UTF8.GetString(memstream.ToArray());
         }
@@ -42,10 +42,14 @@ public abstract class DataTable
     public void Load(string fileName)
     {
         var path = string.Format(FormatPath, fileName);
+
         var loadHandle = Addressables.LoadAssetAsync<TextAsset>(path);
         loadHandle.WaitForCompletion();
 
-        LoadFromText(loadHandle.Result.text);
+        if (loadHandle.Result is not null)
+        {
+            LoadFromText(loadHandle.Result.text);
+        }
 
         Addressables.Release(loadHandle);
     }

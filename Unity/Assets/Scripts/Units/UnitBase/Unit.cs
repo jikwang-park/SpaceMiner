@@ -281,12 +281,7 @@ public class Unit : MonoBehaviour
                     }
                 }
 
-                //targetDistance = Vector3.Dot(targetPosition.position - units[0].transform.position, Vector3.forward);
-                //if (targetDistance <= unitStats.range)
-                //{
-                //    targetPos = targetPosition;
-                //    return targetPos;
-                //}
+          
             }
         }
         return null;

@@ -69,7 +69,7 @@ public class UnitPartyManager : MonoBehaviour
         SetInitData();
     }
 
-    public void AddStats(UpgradeType type , BigNumber amount)
+    public void AddStats(UpgradeType type , float amount)
     {
         for(int i =0; i< generateInstance.Count; ++i)
         {
@@ -193,13 +193,13 @@ public class UnitPartyManager : MonoBehaviour
         //TODO: 유닛 타입에 따라 반환 변경하도록 바꿔야함 250331 HKY
         switch (targetString)
         {
-            case "TankID":
+            case "1":
                 return generateInstance.Find((x) => x.UnitTypes == UnitTypes.Tanker);
 
-            case "DealID":
+            case "2":
                 return generateInstance.Find((x) => x.UnitTypes == UnitTypes.Dealer);
 
-            case "HealID":
+            case "3":
                 return generateInstance.Find((x) => x.UnitTypes == UnitTypes.Healer);
 
             default:

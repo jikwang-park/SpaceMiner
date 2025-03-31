@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using TMPro;
+using Unity.VisualScripting.Antlr3.Runtime.Misc;
 using UnityEngine;
 using UnityEngine.UI;
 using static UnitUpgradeTable;
@@ -9,11 +10,11 @@ public class UnitStatsUpgradeElement : MonoBehaviour
 {
     public UpgradeType currentType;
 
-    public float value = 0;
+    public float value;
 
-    public BigNumber gold = 0;
+    public BigNumber gold;
 
-    public int maxLevel = 0;
+    public int maxLevel;
     // 아직 테이블에 없음
     public int level = 0;
 
@@ -37,10 +38,8 @@ public class UnitStatsUpgradeElement : MonoBehaviour
 
     private void Awake()
     {
-        stageManager = GameObject.FindGameObjectWithTag("GameController").GetComponent<StageManager>();
-        addStartButtonText.text = $"+ {gold} ";
+        stageManager = GameObject.FindGameObjectWithTag("GameController").GetComponent<StageManager>(); 
         addStatButton.onClick.AddListener(() => OnClickAddStatsButton());
-        levelText.text = $"{level}";
     }
 
 
@@ -51,11 +50,13 @@ public class UnitStatsUpgradeElement : MonoBehaviour
         value = data.Value;
         gold = data.Gold;
         maxLevel = data.MaxLevel;
+        SetStatsInfo();
     }
 
     private void SetStatsInfo()
     {
         nextLevel = level + 1;
+        levelText.text = $"Level + {level}";
         statsInformation.text = $"Unit {currentType.ToString()} Increase\n +{value + (value* currentNum)}";
         addStartButtonText.text = $"Gold \n +{gold * nextLevel}";
         LevelUp();

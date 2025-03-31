@@ -3,26 +3,21 @@ using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
+using static UnitUpgradeTable;
 
 public class UnitStatsUpgradeElement : MonoBehaviour
 {
-    private BigNumber attackUp = 200;
+    public UpgradeType currentType;
 
-    private BigNumber healthUp;
+    public BigNumber value;
 
-    private BigNumber defenseUp;
+    public BigNumber gold;
 
-    private float criticalPrecentUp;
+    public int maxLevel;
+    // 아직 테이블에 없음
+    public int level = 0;
 
-    private float cirticalDamageUp;
-
-    private BigNumber gold = 100;
-
-    private float statsUp = 1f;
-
-    private BigNumber goldUp;
-
-    private float maxLevel;
+    public int nextLevel = 0;
 
     [SerializeField]
     private Button addStatButton;
@@ -32,39 +27,51 @@ public class UnitStatsUpgradeElement : MonoBehaviour
     private TextMeshProUGUI statsInformation;
     [SerializeField]
     private UnitPartyManager unitPartyManager;
-
-    //나중에 삭제 할것
     [SerializeField]
-    private BigNumber addValue;
+    private StageManager stageManager;
+    [SerializeField]
+    private TextMeshProUGUI levelText;
+    [SerializeField]
+    private int currentNum = 0;
+
 
     private void Awake()
     {
+        stageManager = GameObject.FindGameObjectWithTag("GameController").GetComponent<StageManager>();
         addStartButtonText.text = $"+ {gold} ";
         addStatButton.onClick.AddListener(() => OnClickAddStatsButton());
-        
+        levelText.text = $"{level}";
     }
 
 
     private void Init()
     {
-
+        
     }
 
     private void SetStatsInfo()
     {
-        addValue = attackUp * statsUp;
-        statsInformation.text = $"공격력 증가 \n + {addValue}";
-        statsUp += 1;
-        gold += 200;
+        nextLevel = level + 1;
+        statsInformation.text = $"Unit {currentType.ToString()} Increase\n +{value + (value* currentNum)}";
+        addStartButtonText.text = $"Gold \n +{gold * nextLevel}";
+        LevelUp();
     }
+  
 
+    private void LevelUp()
+    {
+        if (level > 1000)
+        {
+            return;
+        }
+
+        level++;
+        currentNum++;
+    }
     private void OnClickAddStatsButton()
     {
-        // 스텟 정보 업데이튼
         SetStatsInfo();
-
-
-
+        stageManager.UnitPartyManager.AddStats(currentType, value + (value * currentNum));
     }
 
     public UnitUpgradeTable.Data SetData(int id)

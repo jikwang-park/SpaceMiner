@@ -8,7 +8,7 @@ public class UnitUpgradeTable : DataTable
 {
     public enum UpgradeType
     {
-        AttackPoint,
+        AttackPoint = 1,
         HealthPoint,
         DefensePoint,
         CriticalPossibility,
@@ -17,35 +17,27 @@ public class UnitUpgradeTable : DataTable
 
     public class Data : DataTableData
     {
-        public string ID { get; set; }
+        public int ID { get; set; }
         public UpgradeType Type { get; set; }
-        public float AttackUP { get; set; }
-        public float HealthUP { get; set; }
-        public float DefenseUP { get; set; }
-        public float CriticalPUP {  get; set; }
-        public float CriticalDUP { get; set; }
+        public float Value { get; set; }
+        public float StetUpRate { get; set; }
+        public float GoldUpRate { get; set; }
         public int Gold { get; set; }
-        public float StetUP { get; set; }
-        public float GoldUP { get; set; }
         public float MaxLevel { get; set; }
 
         public override void Set(string[] argument)
         {
-            ID = argument[0];
+            ID = int.Parse(argument[0]);
             Type = Enum.Parse<UpgradeType>(argument[1]);
-            AttackUP = float.Parse(argument[2]);
-            HealthUP = float.Parse(argument[3]);
-            DefenseUP = float.Parse(argument[4]);
-            CriticalPUP = float.Parse(argument[5]);
-            CriticalDUP = float.Parse(argument[6]);
-            Gold = int.Parse(argument[7]);
-            StetUP = float.Parse(argument[8]);
-            GoldUP= float.Parse(argument[9]);
-            MaxLevel = float.Parse(argument[10]);
+            Value = float.Parse(argument[2]);
+            StetUpRate = float.Parse(argument[3]);
+            GoldUpRate = float.Parse(argument[4]);
+            Gold = int.Parse(argument[5]);
+            MaxLevel = float.Parse(argument[6]);
         }
     }
 
-    private Dictionary<string, Data> dict = new Dictionary<string, Data>();
+    private Dictionary<int, Data> dict = new Dictionary<int, Data>();
     private Dictionary<UpgradeType, Data> dictByType = new Dictionary<UpgradeType, Data>();
 
     public override Type DataType => typeof(Data);
@@ -68,9 +60,9 @@ public class UnitUpgradeTable : DataTable
             if (!dict.ContainsKey(item.ID))
             {
                 dict.Add(item.ID, item);
-                TableData.Add(item.ID, item);
-                
-                if(!dictByType.ContainsKey(item.Type))
+                TableData.Add(item.ID.ToString(), item);
+
+                if (!dictByType.ContainsKey(item.Type))
                 {
                     dictByType.Add(item.Type, item);
                 }
@@ -82,7 +74,7 @@ public class UnitUpgradeTable : DataTable
         }
     }
 
-    public Data GetData(string key)
+    public Data GetData(int key)
     {
         if (!dict.ContainsKey(key))
         {
@@ -102,14 +94,14 @@ public class UnitUpgradeTable : DataTable
 
     public override void Set(List<string[]> data)
     {
-        var dictionary = new Dictionary<string, Data>();
+        var dictionary = new Dictionary<int, Data>();
         var typeData = new Dictionary<UpgradeType, Data>();
         var tableData = new Dictionary<string, DataTableData>();
         foreach (var item in data)
         {
             var datum = CreateData<Data>(item);
             dictionary.Add(datum.ID, datum);
-            tableData.Add(datum.ID, datum);
+            tableData.Add(datum.ID.ToString(), datum);
             if (!dictByType.ContainsKey(datum.Type))
             {
                 dictByType.Add(datum.Type, datum);

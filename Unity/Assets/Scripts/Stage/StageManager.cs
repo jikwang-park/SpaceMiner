@@ -146,7 +146,7 @@ public class StageManager : MonoBehaviour
         int reward2 = monsterController.RewardData.RandomReward2();
         if (reward2 > -1)
         {
-            Debug.LogError($"{monsterController.RewardData.Reward2}, {monsterController.RewardData.counts[reward2]}, {monsterController.RewardData.probabilities[reward2]}");
+            Debug.Log($"{monsterController.RewardData.Reward2}, {monsterController.RewardData.counts[reward2]}, {monsterController.RewardData.probabilities[reward2]}");
         }
 
         if (monsters.Count == 0)

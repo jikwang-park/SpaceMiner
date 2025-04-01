@@ -1,7 +1,9 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AddressableAssets;
+using Random = UnityEngine.Random;
 
 public class WaveSpawner : MonoBehaviour
 {
@@ -22,12 +24,12 @@ public class WaveSpawner : MonoBehaviour
         new Vector3(3f, 0f, 14f),
     };
 
-    private StageManager stageManager;
     private ObjectPoolManager objectPoolManager;
+
+    public event Action<int, MonsterController> OnMonsterSpawn;
 
     private void Awake()
     {
-        stageManager = GetComponent<StageManager>();
         objectPoolManager = GetComponent<ObjectPoolManager>();
     }
 
@@ -77,13 +79,12 @@ public class WaveSpawner : MonoBehaviour
         {
             return;
         }
-        stageManager.AddMonster(monsterController);
-        stageManager.MonsterLaneManager.AddMonster(lane, monsterController);
+        OnMonsterSpawn.Invoke(lane, monsterController);
     }
 
     private void SpawnMonster(int lane, int index, Vector3 frontPosition, int monsterId)
     {
-        var monsterData =  DataTableManager.MonsterTable.GetData(monsterId);
+        var monsterData = DataTableManager.MonsterTable.GetData(monsterId);
 
         var monster = objectPoolManager.gameObjectPool[monsterData.PrefabId].Get();
         var monsterController = monster.GetComponent<MonsterController>();

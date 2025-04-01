@@ -93,9 +93,14 @@ public static class DataTableManager
         gachaSoldierTable.Load(DataTableIds.gachaSoldierTable);
         tables.Add(DataTableIds.gachaSoldierTable, gachaSoldierTable);
 
+
         var itemTable = new ItemTable();
         itemTable.Load(DataTableIds.itemTable);
         tables.Add(DataTableIds.itemTable, itemTable);
+
+        var shopTable = new ShopTable();
+        shopTable.Load(DataTableIds.shopTable);
+        tables.Add(DataTableIds.shopTable, shopTable);
     }
 
 
@@ -157,4 +162,7 @@ public static class DataTableManager
 
     public static UnitUpgradeTable UnitUpgradeTable
         => GetTable<UnitUpgradeTable>(DataTableIds.unitUpgradeTable);
+
+    public static ShopTable ShopTable
+        => GetTable<ShopTable>(DataTableIds.shopTable);
 }

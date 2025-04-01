@@ -6,7 +6,6 @@ using UnityEngine.Pool;
 
 public class PlanetBackground : MonoBehaviour, IObjectPoolGameObject
 {
-    private int unitCount = 0;
     private bool isNextStageSpawned = false;
 
     [SerializeField]
@@ -24,6 +23,7 @@ public class PlanetBackground : MonoBehaviour, IObjectPoolGameObject
 
     public void Release()
     {
+        isNextStageSpawned = false;
         ObjectPool.Release(gameObject);
     }
 
@@ -34,11 +34,12 @@ public class PlanetBackground : MonoBehaviour, IObjectPoolGameObject
 
     private void Update()
     {
-        Transform unit = stageManager.UnitPartyManager.GetFirstLineUnitTransform();
-        if (unit is null)
+        if(stageManager.UnitPartyManager.AliveCount ==0)
         {
             return;
         }
+
+        Transform unit = stageManager.UnitPartyManager.GetFirstLineUnitTransform();
 
         if (!isNextStageSpawned && unit.position.z > enterPosition.position.z)
         {

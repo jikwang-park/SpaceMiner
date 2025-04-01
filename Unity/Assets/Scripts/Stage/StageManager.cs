@@ -14,20 +14,16 @@ public class StageManager : MonoBehaviour
     [field: SerializeField]
     public int CurrentWave { get; private set; }
 
-    public MonsterLaneManager MonsterLaneManager { get; private set; }
+    public StageMonsterManager StageMonsterManager { get; private set; }
 
     public UnitPartyManager UnitPartyManager { get; private set; }
 
     [field: SerializeField]
-    public StageUiManger stageUiManager { get; private set; }
+    public StageUiManger StageUiManager { get; private set; }
 
     [SerializeField]
     private float spawnDistance = 10f;
-
-    private WaveSpawner waveSpawner;
-
-    private HashSet<MonsterController> monsters;
-
+    
     private StageTable.Data stageData;
     private WaveTable.Data waveData;
 
@@ -40,10 +36,11 @@ public class StageManager : MonoBehaviour
 
     private void Awake()
     {
-        waveSpawner = GetComponent<WaveSpawner>();
-        MonsterLaneManager = GetComponent<MonsterLaneManager>();
+        StageMonsterManager = GetComponent<StageMonsterManager>();
+        StageMonsterManager.OnMonsterDie += OnMonsterDie;
+        StageMonsterManager.OnMonsterCleared += OnMonsterCleared;
+        
         UnitPartyManager = GetComponent<UnitPartyManager>();
-        monsters = new HashSet<MonsterController>();
 
         SaveLoadManager.LoadGame();
         DoLoad();
@@ -51,7 +48,7 @@ public class StageManager : MonoBehaviour
 
     private void Start()
     {
-        stageUiManager.SetGoldText(ItemManager.GetItemAmount((int)Currency.Gold));
+        StageUiManager.SetGoldText();
 
         SetStageInfo();
         SaveLoadManager.onSaveRequested += DoSave;
@@ -75,20 +72,12 @@ public class StageManager : MonoBehaviour
             ResetStage(false);
         }
 
-        stageUiManager.SetTimer(remainTime);
+        StageUiManager.SetTimer(remainTime);
     }
 
-    public void AddMonster(MonsterController monsterController)
+    private void SpawnNextWave(float delay = 2f)
     {
-        monsters.Add(monsterController);
-
-        var destroyEvent = monsterController.GetComponent<DestructedDestroyEvent>();
-        destroyEvent.OnDestroyed += OnMonsterDestroy;
-    }
-
-    public void SpawnNextWave(float delay = 2f)
-    {
-        stageUiManager.SetStageText(CurrentPlanet, CurrentStage, CurrentWave);
+        StageUiManager.SetStageText(CurrentPlanet, CurrentStage, CurrentWave);
 
         StartCoroutine(coSpawnNextWave(delay));
     }
@@ -106,39 +95,32 @@ public class StageManager : MonoBehaviour
 
         Transform unit = UnitPartyManager.GetFirstLineUnitTransform();
         if (unit != null)
-            waveSpawner.Spawn(unit.position + Vector3.forward * spawnDistance, corpsData);
+        {
+            StageMonsterManager.Spawn(unit.position + Vector3.forward * spawnDistance, corpsData);
+        }
         else
-            waveSpawner.Spawn(transform.position, corpsData);
+        {
+            StageMonsterManager.Spawn(Vector3.zero, corpsData);
+        }
 
-        stageUiManager.SetStageText(CurrentPlanet, CurrentStage, CurrentWave);
+        StageUiManager.SetStageText(CurrentPlanet, CurrentStage, CurrentWave);
         ++CurrentWave;
     }
 
-    private void OnMonsterDestroy(DestructedDestroyEvent sender)
+    private void OnMonsterDie()
     {
-        var monsterController = sender.GetComponent<MonsterController>();
-        monsters.Remove(monsterController);
+        StageUiManager.SetGoldText();
+    }
 
-        ItemManager.AddItem(monsterController.RewardData.Reward1, monsterController.RewardData.Count);
-
-        stageUiManager.SetGoldText(ItemManager.GetItemAmount(monsterController.RewardData.Reward1));
-
-        int reward2index = monsterController.RewardData.RandomReward2();
-        if (reward2index > -1)
+    private void OnMonsterCleared()
+    {
+        if (CurrentWave > waveData.WaveCorpsIDs.Length)
         {
-            ItemManager.AddItem(monsterController.RewardData.Reward2, monsterController.RewardData.counts[reward2index]);
+            ResetStage(true);
+            return;
         }
 
-        if (monsters.Count == 0)
-        {
-            if (CurrentWave > waveData.WaveCorpsIDs.Length)
-            {
-                ResetStage(true);
-                return;
-            }
-
-            SpawnNextWave();
-        }
+        SpawnNextWave();
     }
 
     private void SetStageInfo()
@@ -151,7 +133,7 @@ public class StageManager : MonoBehaviour
         //stageData = DataTableManager.StageTable.GetData(string.Format(stageIDFormat, CurrentPlanet, CurrentStage));
         stageData = DataTableManager.StageTable.GetData(CurrentPlanet * 100000 + CurrentStage * 100);
         waveData = DataTableManager.WaveTable.GetData(stageData.CorpsID);
-        stageUiManager.SetStageText(CurrentPlanet, CurrentStage, CurrentWave);
+        StageUiManager.SetStageText(CurrentPlanet, CurrentStage, CurrentWave);
     }
 
     private IEnumerator coStageLoad()
@@ -162,8 +144,8 @@ public class StageManager : MonoBehaviour
         }
 
         Variables.stageMode = StageMode.Repeat;
-        stageUiManager.SetStageMessage(false);
-        stageUiManager.SetActiveStageMessage(true);
+        StageUiManager.SetStageMessage(false);
+        StageUiManager.SetActiveStageMessage(true);
         SaveLoadManager.SaveGame();
 
         yield return wait1;
@@ -185,14 +167,17 @@ public class StageManager : MonoBehaviour
 
     private IEnumerator coClearStage()
     {
-        stageUiManager.SetStageMessage(true);
-        stageUiManager.SetActiveStageMessage(true);
+        StageUiManager.SetStageMessage(true);
+        StageUiManager.SetActiveStageMessage(true);
 
         if (CurrentPlanet == Variables.maxPlanetNumber
             && CurrentStage == Variables.maxStageNumber)
         {
-            ItemManager.AddItem((int)Currency.Gold, stageData.FirstClearReward);
-            stageUiManager.SetGoldText(ItemManager.GetItemAmount((int)Currency.Gold));
+            if (stageData.FirstClearRewardID != 0)
+            {
+                ItemManager.AddItem(stageData.FirstClearRewardID, stageData.FirstClearRewardCount);
+            }
+            StageUiManager.SetGoldText();
 
             if (DataTableManager.StageTable.IsExistStage(CurrentPlanet, CurrentStage + 1))
             {
@@ -204,7 +189,7 @@ public class StageManager : MonoBehaviour
                 Variables.maxStageNumber = 1;
             }
 
-            stageUiManager.UnlockStage(Variables.maxPlanetNumber, Variables.maxStageNumber);
+            StageUiManager.UnlockStage(Variables.maxPlanetNumber, Variables.maxStageNumber);
         }
 
         yield return wait1;
@@ -231,7 +216,7 @@ public class StageManager : MonoBehaviour
 
         SaveLoadManager.SaveGame();
 
-        stageUiManager.SetActiveStageMessage(false);
+        StageUiManager.SetActiveStageMessage(false);
     }
 
     private void DoSave(TotalSaveData totalSaveData)

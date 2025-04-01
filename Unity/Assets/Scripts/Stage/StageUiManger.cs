@@ -54,8 +54,8 @@ public class StageUiManger : MonoBehaviour
         stageSelectWindow.UnlockStage(planet, stage);
     }
 
-    public void SetGoldText(BigNumber gold)
+    public void SetGoldText()
     {
-        goldText.text = $"{gold}G";
+        goldText.text = $"{ItemManager.GetItemAmount((int)Currency.Gold)}G";
     }
 }

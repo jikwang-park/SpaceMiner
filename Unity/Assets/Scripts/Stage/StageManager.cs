@@ -22,8 +22,6 @@ public class StageManager : MonoBehaviour
     public StageUiManger stageUiManager { get; private set; }
 
     [SerializeField]
-    private AssetReferenceGameObject stage;
-    [SerializeField]
     private float spawnDistance = 10f;
 
     private WaveSpawner waveSpawner;
@@ -33,7 +31,7 @@ public class StageManager : MonoBehaviour
     private StageTable.Data stageData;
     private WaveTable.Data waveData;
 
-    private float stageStartTime;
+    private float stageEndTime;
 
     private WaitForSeconds wait1 = new WaitForSeconds(1f);
 
@@ -53,41 +51,23 @@ public class StageManager : MonoBehaviour
 
     private void Start()
     {
+        stageUiManager.SetGoldText(ItemManager.GetItemAmount((int)Currency.Gold));
+
         SetStageInfo();
         SaveLoadManager.onSaveRequested += DoSave;
-        Addressables.InstantiateAsync(stage, Vector3.back * 30f, Quaternion.identity);
+
+        var background = GetComponent<ObjectPoolManager>().gameObjectPool[stageData.PrefabId].Get();
+        background.transform.parent = null;
+        background.transform.position = Vector3.back * 30f;
+        background.transform.rotation = Quaternion.identity;
+
+        //Addressables.InstantiateAsync(stage, Vector3.back * 30f, Quaternion.identity);
         SpawnNextWave();
     }
 
     private void Update()
     {
-        if (Input.GetKeyDown(KeyCode.Alpha1))
-        {
-            //TODO: ½ºÅ×ÀÌÁö Å×ÀÌºí ID º¯°æµÉ ¼ö ÀÖÀ½
-            var stageData = DataTableManager.StageTable.GetData(CurrentPlanet * 100000 + CurrentStage * 100);
-            Debug.Log(stageData.CorpsID);
-        }
-
-        if (Input.GetKeyDown(KeyCode.Alpha2))
-        {
-            var handle = Addressables.InstantiateAsync(stage);
-            handle.WaitForCompletion();
-        }
-
-        if (Input.GetKeyDown(KeyCode.Alpha3))
-        {
-            SpawnNextWave();
-        }
-
-        if (Input.GetKeyDown(KeyCode.Alpha5))
-        {
-            for (int i = 0; i < 3; ++i)
-            {
-                Debug.Log(this.MonsterLaneManager.GetFirstMonster(i));
-            }
-        }
-
-        float remainTime = 60f + stageStartTime - Time.time;
+        float remainTime = stageEndTime - Time.time;
 
         if (remainTime <= 0f)
         {
@@ -139,13 +119,14 @@ public class StageManager : MonoBehaviour
         var monsterController = sender.GetComponent<MonsterController>();
         monsters.Remove(monsterController);
 
-        golds += monsterController.RewardData.Count;
-        stageUiManager.SetGoldText(golds);
+        ItemManager.AddItem(monsterController.RewardData.Reward1, monsterController.RewardData.Count);
 
-        int reward2 = monsterController.RewardData.RandomReward2();
-        if (reward2 > -1)
+        stageUiManager.SetGoldText(ItemManager.GetItemAmount(monsterController.RewardData.Reward1));
+
+        int reward2index = monsterController.RewardData.RandomReward2();
+        if (reward2index > -1)
         {
-            Debug.Log($"{monsterController.RewardData.Reward2}, {monsterController.RewardData.counts[reward2]}, {monsterController.RewardData.probabilities[reward2]}");
+            ItemManager.AddItem(monsterController.RewardData.Reward2, monsterController.RewardData.counts[reward2index]);
         }
 
         if (monsters.Count == 0)
@@ -165,7 +146,7 @@ public class StageManager : MonoBehaviour
         CurrentPlanet = Variables.planetNumber;
         CurrentStage = Variables.stageNumber;
         CurrentWave = 1;
-        stageStartTime = Time.time;
+        stageEndTime = Time.time + 60f;
 
         //stageData = DataTableManager.StageTable.GetData(string.Format(stageIDFormat, CurrentPlanet, CurrentStage));
         stageData = DataTableManager.StageTable.GetData(CurrentPlanet * 100000 + CurrentStage * 100);
@@ -183,6 +164,7 @@ public class StageManager : MonoBehaviour
         Variables.stageMode = StageMode.Repeat;
         stageUiManager.SetStageMessage(false);
         stageUiManager.SetActiveStageMessage(true);
+        SaveLoadManager.SaveGame();
 
         yield return wait1;
 
@@ -206,21 +188,22 @@ public class StageManager : MonoBehaviour
         stageUiManager.SetStageMessage(true);
         stageUiManager.SetActiveStageMessage(true);
 
-        if (DataTableManager.StageTable.IsExistStage(CurrentPlanet, CurrentStage + 1))
+        if (CurrentPlanet == Variables.maxPlanetNumber
+            && CurrentStage == Variables.maxStageNumber)
         {
-            if (Variables.maxPlanetNumber == CurrentPlanet
-            && Variables.maxStageNumber < CurrentStage + 1)
+            ItemManager.AddItem((int)Currency.Gold, stageData.FirstClearReward);
+            stageUiManager.SetGoldText(ItemManager.GetItemAmount((int)Currency.Gold));
+
+            if (DataTableManager.StageTable.IsExistStage(CurrentPlanet, CurrentStage + 1))
             {
                 Variables.maxStageNumber = CurrentStage + 1;
-
-                stageUiManager.UnlockStage(Variables.maxPlanetNumber, Variables.maxStageNumber);
             }
-        }
-        else if (DataTableManager.StageTable.IsExistPlanet(CurrentPlanet + 1)
-                  && Variables.maxPlanetNumber == CurrentPlanet)
-        {
-            Variables.maxPlanetNumber = CurrentPlanet + 1;
-            Variables.maxStageNumber = 1;
+            else if (DataTableManager.StageTable.IsExistPlanet(CurrentPlanet + 1))
+            {
+                Variables.maxPlanetNumber = CurrentPlanet + 1;
+                Variables.maxStageNumber = 1;
+            }
+
             stageUiManager.UnlockStage(Variables.maxPlanetNumber, Variables.maxStageNumber);
         }
 
@@ -237,11 +220,16 @@ public class StageManager : MonoBehaviour
             {
                 ++Variables.planetNumber;
                 Variables.stageNumber = 1;
+
+                SaveLoadManager.SaveGame();
+                SceneManager.LoadScene(0);
             }
         }
 
         SetStageInfo();
         SpawnNextWave();
+
+        SaveLoadManager.SaveGame();
 
         stageUiManager.SetActiveStageMessage(false);
     }
@@ -250,10 +238,10 @@ public class StageManager : MonoBehaviour
     {
         StageSaveData stageSaveData = new StageSaveData
         {
-            currentPlanet = CurrentPlanet,
-            currentStage = CurrentStage,
-            highPlanet = CurrentPlanet,
-            highStage = CurrentStage,
+            currentPlanet = Variables.planetNumber,
+            currentStage = Variables.stageNumber,
+            highPlanet = Variables.maxPlanetNumber,
+            highStage = Variables.maxStageNumber,
         };
         totalSaveData.stageSaveData = stageSaveData;
     }
@@ -271,6 +259,8 @@ public class StageManager : MonoBehaviour
         {
             Variables.planetNumber = stageLoadData.currentPlanet;
             Variables.stageNumber = stageLoadData.currentStage;
+            Variables.maxPlanetNumber = stageLoadData.highPlanet;
+            Variables.maxStageNumber = stageLoadData.highStage;
             // ï¿½Ö°ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½à¼º ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ò·ï¿½ï¿½ï¿½ï¿½ï¿½
             // ï¿½Ö°ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ò·ï¿½ï¿½ï¿½ï¿½ï¿½
         }

@@ -37,9 +37,9 @@ public class PlanetSelectScroll : MonoBehaviour
 
             int index = planets[i];
             planetButton.Button.onClick.AddListener(() => OnPlanetSelected?.Invoke(index));
-            if (i >= Variables.maxPlanetNumber)
+            if (i < Variables.maxPlanetNumber)
             {
-                planetButton.Button.interactable = false;
+                planetButton.Button.interactable = true;
             }
         }
     }

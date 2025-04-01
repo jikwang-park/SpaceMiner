@@ -17,6 +17,7 @@ public class StageTable : DataTable
         public int CorpsID { get; set; }
         public int FirstClearReward { get; set; }
         public int IdleReward { get; set; }
+        public string PrefabId { get; set; }
 
         public void Set(string[] argument)
         {
@@ -27,6 +28,7 @@ public class StageTable : DataTable
             CorpsID = int.Parse(argument[4]);
             FirstClearReward = int.Parse(argument[5]);
             IdleReward = int.Parse(argument[6]);
+            PrefabId = argument[7];
         }
     }
 

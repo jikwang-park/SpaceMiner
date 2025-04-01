@@ -4,7 +4,6 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using UnityEngine.AddressableAssets;
-using static MonsterSkillTable;
 
 public class TankerSkillTable : DataTable
 {
@@ -100,7 +99,14 @@ public class TankerSkillTable : DataTable
 
         for (int i = 0; i < ids.Length; ++i)
         {
-            ids[i] = Enum.Parse<UnitTypes>(idstring[i]);
+            if (int.TryParse(idstring[i], out int result))
+            {
+                ids[i] = (UnitTypes)result;
+            }
+            else
+            {
+                ids[i] = Enum.Parse<UnitTypes>(idstring[i]);
+            }
         }
 
         return ids;

@@ -25,7 +25,7 @@ public class PlanetButton : MonoBehaviour, IObjectPoolGameObject
     public void Release()
     {
         Button.onClick.RemoveAllListeners();
-        Button.interactable = true;
+        Button.interactable = false;
         ObjectPool.Release(gameObject);
     }
 

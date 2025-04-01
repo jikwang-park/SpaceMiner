@@ -66,7 +66,6 @@ public class Unit : MonoBehaviour
 
     public float targetDistance;
 
-    public float skillCoolTime = 10f;
 
     public BehaviorTree<Unit> behaviorTree;
 
@@ -108,7 +107,26 @@ public class Unit : MonoBehaviour
             return false;
                        }
     }
+    
+    public float RemainSkillCoolTime
+    {
+        get
+        {
+            switch (UnitTypes)
+            {
+                case UnitTypes.Tanker:
+                    return (Time.time - lastTankerSkillUsedTime) / unitSkill.coolTime;
 
+                case UnitTypes.Dealer:
+                    return (Time.time - lastDealerSkillUsedTime) / unitSkill.coolTime;
+
+                case UnitTypes.Healer:
+                    return (Time.time - lastHealerSkillUsedTime) / unitSkill.coolTime;
+                default:
+                    return 0;
+            }
+        }
+    }
 
 
 
@@ -192,7 +210,7 @@ public class Unit : MonoBehaviour
     {
         get
         {
-            if (Time.time > lastAttackTime + skillCoolTime)
+            if (Time.time > lastAttackTime + unitSkill.coolTime)
                 return true;
 
             return false;

@@ -28,7 +28,7 @@ public class DealerSkill : UnitSkill
     public override void ExecuteSkill()
     {
         List<Transform> targetTransforms = new List<Transform>();
-        targetTransforms = stageManager.MonsterLaneManager.GetMonsters(targetCount);
+        targetTransforms = stageManager.StageMonsterManager.GetMonsters(targetCount);
         for(int i = 0; i < targetTransforms.Count; ++i)
         {
             unit.unitStats.SkillExecute(targetTransforms[i].gameObject);

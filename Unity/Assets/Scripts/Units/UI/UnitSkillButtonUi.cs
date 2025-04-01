@@ -14,9 +14,6 @@ public class UnitSkillButtonUi : MonoBehaviour
     [SerializeField]
     private Unit unit;
 
-
-
-
     private StageManager stageManager;
     
     private void Start()
@@ -27,6 +24,15 @@ public class UnitSkillButtonUi : MonoBehaviour
     private void Update()
     {
         ShowCooltime();
+        ButtonUpdate();
+    }
+    private void ButtonUpdate()
+    {
+        if ((!unit.isAutoSkillMode&&!unit.isAutoSkillMode) || !unit.IsSkillCoolTimeOn)
+        {
+            SkillButton.interactable = false;
+        }
+            SkillButton.interactable = true;
     }
     private void ShowCooltime()
     {
@@ -41,13 +47,11 @@ public class UnitSkillButtonUi : MonoBehaviour
     }
     private void OnClickSkill()
     {
-        if(!unit.IsSkillCoolTimeOn)
+        if(!unit.isAutoSkillMode && unit.IsSkillCoolTimeOn)
         {
-            Debug.Log("스킬 쿨타임중입니다");
-            return;
+            Debug.Log("수동 스킬 사용!");
+            unit.UseSkill();
         }
-
-        unit.UseSkill();
     }
 
     public void SetUnit(Unit unit)

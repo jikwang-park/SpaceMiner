@@ -80,6 +80,13 @@ public class StageMonsterManager : MonoBehaviour
             ItemManager.AddItem(monsterController.RewardData.Reward2, monsterController.RewardData.counts[reward2index]);
         }
 
+        OnMonsterDie?.Invoke();
+
+        if (monsterCount == 0)
+        {
+            OnMonsterCleared?.Invoke();
+        }
+
         monsterLines[createdLine].Remove(lane);
         --laneMonsterCounts[lane];
         if (monsterLines[createdLine].Count == 0)
@@ -94,13 +101,6 @@ public class StageMonsterManager : MonoBehaviour
             {
                 nextMonster.Value.frontLine = -1;
             }
-        }
-
-        OnMonsterDie?.Invoke();
-
-        if(monsterCount==0)
-        {
-            OnMonsterCleared?.Invoke();
         }
     }
 

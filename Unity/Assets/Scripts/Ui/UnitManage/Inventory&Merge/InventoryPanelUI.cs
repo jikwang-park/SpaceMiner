@@ -26,7 +26,7 @@ public class InventoryPanelUI : MonoBehaviour
     private UnitTypes currentInventoryType;
     private int inventoriesInitializedCount = 0;
     private const int totalInventories = 3;
-    private void Start()
+    public void Initialize()
     {
         InitializeInventories();
         SaveLoadManager.LoadGame();
@@ -35,6 +35,11 @@ public class InventoryPanelUI : MonoBehaviour
         displayHealerInvenButton.onClick.AddListener(() => DisplayInventory(UnitTypes.Healer));
         BatchMergeButton.onClick.AddListener(() => OnClickBatchMergeButton());
         closeButton.onClick.AddListener(() => OnClickCloseButton());
+
+        tankerInventory.OnInitialized += InventoryInitialized;
+        dealerInventory.OnInitialized += InventoryInitialized;
+        healerInventory.OnInitialized += InventoryInitialized;
+        SaveLoadManager.onSaveRequested += DoSave;
     }
 
     private void OnClickCloseButton()
@@ -109,22 +114,6 @@ public class InventoryPanelUI : MonoBehaviour
                 break;
         }
     }
-
-    private void OnEnable()
-    {
-        tankerInventory.OnInitialized += InventoryInitialized;
-        dealerInventory.OnInitialized += InventoryInitialized;
-        healerInventory.OnInitialized += InventoryInitialized;
-        SaveLoadManager.onSaveRequested += DoSave;
-    }
-
-    private void OnDisable()
-    {
-        tankerInventory.OnInitialized -= InventoryInitialized;
-        dealerInventory.OnInitialized -= InventoryInitialized;
-        healerInventory.OnInitialized -= InventoryInitialized;
-        SaveLoadManager.onSaveRequested -= DoSave;
-    }
     private void DoSave(TotalSaveData totalSaveData)
     {
         totalSaveData.inventorySaveData[UnitTypes.Tanker] = tankerInventory.Save();
@@ -150,6 +139,28 @@ public class InventoryPanelUI : MonoBehaviour
         if (totalSaveData.inventorySaveData.TryGetValue(UnitTypes.Healer, out InventorySaveData healerData))
         {
             healerInventory.Load(healerData);
+        }
+    }
+    private void AddToInventory(SoldierTable.Data data)
+    {
+        switch (data.Kind)
+        {
+            case UnitTypes.Tanker:
+                tankerInventory.Add(data);
+                break;
+            case UnitTypes.Dealer:
+                dealerInventory.Add(data);
+                break;
+            case UnitTypes.Healer:
+                healerInventory.Add(data);
+                break;
+        }
+    }
+    public void ApplyGachaToInventory(List<SoldierTable.Data> datas)
+    {
+        foreach(var data in datas)
+        {
+            AddToInventory(data);
         }
     }
 }

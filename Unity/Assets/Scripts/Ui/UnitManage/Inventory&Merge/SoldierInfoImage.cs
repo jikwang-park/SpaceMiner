@@ -20,6 +20,10 @@ public class SoldierInfoImage : MonoBehaviour
     {
         gradeText.text = $"Grade {grade}";
         countText.text = count;
+        if(image == null)
+        {
+            image = GetComponent<Image>();
+        }
         image.sprite = sprite;
     }
     public void SetCountText(string countText)

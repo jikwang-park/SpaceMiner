@@ -8,17 +8,22 @@ using UnityEngine.UI;
 public class GachaInteractableUI : MonoBehaviour
 {
     [SerializeField]
+    private Button closeButton;
+
+    [SerializeField]
     private GachaDescribeUI gachaDescribeUI;
+    [SerializeField]
+    private GachaPurchaseUI gachaPurchaseUI;
     [SerializeField]
     private Transform contentParent;
     private const string prefabFormat = "Prefabs/UI/SelectGachaButton";
     // Start is called before the first frame update
-    void Start()
+    void Awake()
     {
-        Initialize();
+        closeButton.onClick.AddListener(() => gameObject.SetActive(false));
     }
 
-    private void Initialize()
+    public void Initialize()
     {
         var gachas = DataTableManager.GachaTable.GetDict();
 
@@ -51,6 +56,7 @@ public class GachaInteractableUI : MonoBehaviour
 
     public void OnClickSelectGachaButton(int gachaId)
     {
+        gachaPurchaseUI.Initialize(DataTableManager.GachaTable.GetData(gachaId));
         gachaDescribeUI.Initialize(DataTableManager.GachaTable.GetData(gachaId)); //250331 HKY 데이터형 변경
     }
 }

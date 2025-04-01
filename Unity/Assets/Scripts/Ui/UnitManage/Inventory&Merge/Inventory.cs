@@ -26,19 +26,17 @@ public class Inventory : MonoBehaviour
     private UnitPartyManager unitPartyManager;
     private SoldierInteractableUI soldierInteractableUI;
     public event Action OnInitialized;
-    private void Awake()
+    public void Initialize(List<SoldierTable.Data> dataList, UnitTypes type)
     {
+        UpdateGridCellSize();
         unitPartyManager = FindObjectOfType<UnitPartyManager>();
         soldierInteractableUI = GetComponentInChildren<SoldierInteractableUI>();
         soldierInteractableUI.mergeAction += DoMerge;
         soldierInteractableUI.equipAction += Equip;
-    }
-    private void Start()
-    {
-        UpdateGridCellSize();
+        InitializeInventory(dataList, type);
     }
 
-    public void Initialize(List<SoldierTable.Data> dataList, UnitTypes type)
+    private void InitializeInventory(List<SoldierTable.Data> dataList, UnitTypes type)
     {
         foreach (Transform child in contentParent)
         {
@@ -95,7 +93,7 @@ public class Inventory : MonoBehaviour
                 if (instantiatedCount == totalCount && inventoryElements.Count > 0)
                 {
                     inventoryElements[0].UnlockElement();
-                    inventoryElements[0].UpdateCount(9999);
+                    inventoryElements[0].UpdateCount(1);
                     OnElementSelected(inventoryElements[0]);
                     Equip();
                     OnInitialized?.Invoke();
@@ -107,7 +105,10 @@ public class Inventory : MonoBehaviour
     {
         selectedElement = element;
         var currentIndex = inventoryElements.IndexOf(selectedElement);
-        infoMergePanelUI.Initialize(inventoryElements[currentIndex], inventoryElements[currentIndex + 1]);
+        if(currentIndex < inventoryElements.Count)
+        {
+            infoMergePanelUI.Initialize(inventoryElements[currentIndex], inventoryElements[currentIndex + 1]);
+        }
         selectedElement.Select();
     }
     public void UpdateGridCellSize()
@@ -260,6 +261,22 @@ public class Inventory : MonoBehaviour
         else
         {
             UnEquip();
+        }
+    }
+    public void Add(SoldierTable.Data data)
+    {
+        InventoryElement element = inventoryElements.Find(e => e.soldierId == data.ID);
+        if (element != null)
+        {
+            if(element.IsLocked)
+            {
+                element.UnlockElement();
+                element.UpdateCount(1);
+            }
+            else
+            {
+                element.UpdateCount(element.Count + 1);
+            }
         }
     }
 }

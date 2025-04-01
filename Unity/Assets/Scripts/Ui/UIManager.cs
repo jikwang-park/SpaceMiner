@@ -8,23 +8,25 @@ public class UIManager : MonoBehaviour
     [SerializeField]
     private Button openSoldierManagePanelButton;
     [SerializeField]
-    private GameObject soldierManagePanel;
+    private InventoryPanelUI soldierManagePanel;
 
     [SerializeField]
     private Button openUnitStatsManagePanelButton;
     [SerializeField]
     private GameObject unitStatsManagePanel;
+
+    [SerializeField]
+    private Button openGachaPanelButton;
+    [SerializeField]
+    private GachaInteractableUI gachaPanel;
     // Start is called before the first frame update
     void Start()
     {
-        openSoldierManagePanelButton.onClick.AddListener(() => soldierManagePanel.SetActive(true));
+        soldierManagePanel.Initialize();
+        gachaPanel.Initialize();
+        openSoldierManagePanelButton.onClick.AddListener(() => soldierManagePanel.gameObject.SetActive(true));
         
         openUnitStatsManagePanelButton.onClick.AddListener(()=> unitStatsManagePanel.SetActive(true));
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        
+        openGachaPanelButton.onClick.AddListener(() =>  gachaPanel.gameObject.SetActive(true));
     }
 }

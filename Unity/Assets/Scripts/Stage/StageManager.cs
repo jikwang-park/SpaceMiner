@@ -252,8 +252,8 @@ public class StageManager : MonoBehaviour
         {
             currentPlanet = CurrentPlanet,
             currentStage = CurrentStage,
-            HighPlanet = CurrentPlanet,
-            HighStage = CurrentStage,
+            highPlanet = CurrentPlanet,
+            highStage = CurrentStage,
         };
         totalSaveData.stageSaveData = stageSaveData;
     }

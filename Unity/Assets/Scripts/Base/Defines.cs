@@ -33,6 +33,7 @@ public class DataTableIds
     public const string gachaSoldierTable = "GachaSoldierTable";
 
     public const string itemTable = "ItemTable";
+    public const string shopTable = "ShopTable";
 }
 
 public enum StageMode

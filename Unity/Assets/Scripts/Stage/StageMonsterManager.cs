@@ -3,10 +3,13 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class MonsterLaneManager : MonoBehaviour
+public class StageMonsterManager : MonoBehaviour
 {
     [SerializeField]
     private int laneCount = 3;
+
+    public event Action OnMonsterCleared;
+    public event Action OnMonsterDie;
 
     private Dictionary<int, Dictionary<int, MonsterController>> monsterLines;
 
@@ -15,15 +18,22 @@ public class MonsterLaneManager : MonoBehaviour
 
     private int[] laneMonsterCounts;
     public int LaneCount => laneCount;
+    private int monsterCount = 0;
+
+    private WaveSpawner waveSpawner;
 
     private void Awake()
     {
+        waveSpawner = GetComponent<WaveSpawner>();
+        waveSpawner.OnMonsterSpawn += AddMonster;
+
         monsterLines = new Dictionary<int, Dictionary<int, MonsterController>>();
         laneMonsterCounts = new int[laneCount];
     }
 
     public void AddMonster(int lane, MonsterController monster)
     {
+        ++monsterCount;
         var destructedEvent = monster.GetComponent<DestructedDestroyEvent>();
         if (destructedEvent != null)
         {
@@ -59,6 +69,17 @@ public class MonsterLaneManager : MonoBehaviour
             return;
         }
 
+        --monsterCount;
+
+        var monsterController = sender.GetComponent<MonsterController>();
+        ItemManager.AddItem(monsterController.RewardData.Reward1, monsterController.RewardData.Count);
+
+        int reward2index = monsterController.RewardData.RandomReward2();
+        if (reward2index > -1)
+        {
+            ItemManager.AddItem(monsterController.RewardData.Reward2, monsterController.RewardData.counts[reward2index]);
+        }
+
         monsterLines[createdLine].Remove(lane);
         --laneMonsterCounts[lane];
         if (monsterLines[createdLine].Count == 0)
@@ -73,6 +94,13 @@ public class MonsterLaneManager : MonoBehaviour
             {
                 nextMonster.Value.frontLine = -1;
             }
+        }
+
+        OnMonsterDie?.Invoke();
+
+        if(monsterCount==0)
+        {
+            OnMonsterCleared?.Invoke();
         }
     }
 
@@ -116,13 +144,8 @@ public class MonsterLaneManager : MonoBehaviour
 
         while (line <= currentLastLine && monsters.Count < count)
         {
-            if (!monsterLines.ContainsKey(line))
-            {
-                ++line;
-                continue;
-            }
-
-            if (monsterLines[line].Count == 0)
+            if (!monsterLines.ContainsKey(line)
+                || monsterLines[line].Count == 0)
             {
                 ++line;
                 continue;
@@ -166,5 +189,10 @@ public class MonsterLaneManager : MonoBehaviour
         }
 
         return null;
+    }
+
+    public void Spawn(Vector3 position, CorpsTable.Data data)
+    {
+        waveSpawner.Spawn(position, data);
     }
 }

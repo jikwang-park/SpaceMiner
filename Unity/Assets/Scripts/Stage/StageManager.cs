@@ -51,11 +51,8 @@ public class StageManager : MonoBehaviour
 
     private void Start()
     {
+        stageUiManager.SetGoldText(ItemManager.GetItemAmount((int)Currency.Gold));
 
-        if (SaveLoadManager.LoadedData.itemSaveData.ContainsKey((int)Currency.Gold))
-        {
-            stageUiManager.SetGoldText(SaveLoadManager.LoadedData.itemSaveData[(int)Currency.Gold]);
-        }
         SetStageInfo();
         SaveLoadManager.onSaveRequested += DoSave;
 
@@ -122,14 +119,14 @@ public class StageManager : MonoBehaviour
         var monsterController = sender.GetComponent<MonsterController>();
         monsters.Remove(monsterController);
 
-        AddReward(monsterController.RewardData.Reward1, monsterController.RewardData.Count);
+        ItemManager.AddItem(monsterController.RewardData.Reward1, monsterController.RewardData.Count);
 
-        stageUiManager.SetGoldText(SaveLoadManager.LoadedData.itemSaveData[monsterController.RewardData.Reward1]);
+        stageUiManager.SetGoldText(ItemManager.GetItemAmount(monsterController.RewardData.Reward1));
 
         int reward2index = monsterController.RewardData.RandomReward2();
         if (reward2index > -1)
         {
-            AddReward(monsterController.RewardData.Reward2, monsterController.RewardData.counts[reward2index]);
+            ItemManager.AddItem(monsterController.RewardData.Reward2, monsterController.RewardData.counts[reward2index]);
         }
 
         if (monsters.Count == 0)
@@ -194,8 +191,8 @@ public class StageManager : MonoBehaviour
         if (CurrentPlanet == Variables.maxPlanetNumber
             && CurrentStage == Variables.maxStageNumber)
         {
-            AddReward((int)Currency.Gold, stageData.FirstClearReward);
-            stageUiManager.SetGoldText(SaveLoadManager.LoadedData.itemSaveData[(int)Currency.Gold]);
+            ItemManager.AddItem((int)Currency.Gold, stageData.FirstClearReward);
+            stageUiManager.SetGoldText(ItemManager.GetItemAmount((int)Currency.Gold));
 
             if (DataTableManager.StageTable.IsExistStage(CurrentPlanet, CurrentStage + 1))
             {
@@ -266,20 +263,6 @@ public class StageManager : MonoBehaviour
             Variables.maxStageNumber = stageLoadData.highStage;
             // �ְ��� �� �༺ ������ �ҷ�����
             // �ְ��� �� �������� ������ �ҷ�����
-        }
-    }
-
-    private void AddReward(int currencyType, BigNumber value)
-    {
-        var itemData = SaveLoadManager.LoadedData.itemSaveData;
-
-        if (itemData.ContainsKey(currencyType))
-        {
-            itemData[currencyType] += value;
-        }
-        else
-        {
-            itemData.Add(currencyType, value);
         }
     }
 }

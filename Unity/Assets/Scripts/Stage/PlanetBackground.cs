@@ -45,6 +45,7 @@ public class PlanetBackground : MonoBehaviour, IObjectPoolGameObject
             isNextStageSpawned = true;
 
             var nextBackground = ObjectPool.Get();
+            nextBackground.transform.parent = null;
             nextBackground.transform.position = stageNextPosition.position;
             nextBackground.transform.rotation = stageNextPosition.rotation;
         }

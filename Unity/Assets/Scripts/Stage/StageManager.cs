@@ -46,11 +46,11 @@ public class StageManager : MonoBehaviour
         monsters = new HashSet<MonsterController>();
 
         SaveLoadManager.LoadGame();
+        DoLoad();
     }
 
     private void Start()
     {
-        DoLoad();
 
         if (SaveLoadManager.LoadedData.itemSaveData.ContainsKey((int)Currency.Gold))
         {
@@ -60,7 +60,7 @@ public class StageManager : MonoBehaviour
         SaveLoadManager.onSaveRequested += DoSave;
 
         var background = GetComponent<ObjectPoolManager>().gameObjectPool[stageData.PrefabId].Get();
-
+        background.transform.parent = null;
         background.transform.position = Vector3.back * 30f;
         background.transform.rotation = Quaternion.identity;
 

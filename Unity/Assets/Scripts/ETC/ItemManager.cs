@@ -43,7 +43,7 @@ public static class ItemManager
     }
     public static BigNumber GetItemAmount(int itemId)
     {
-        return items[itemId];
+        return items.ContainsKey(itemId)? items[itemId] : 0;
     }
     public static void DoSave(TotalSaveData totalSaveData)
     {

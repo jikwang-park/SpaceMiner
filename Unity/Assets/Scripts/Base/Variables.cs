@@ -14,4 +14,5 @@ public class Variables
 
     public static bool isDungeonEnd = false;
     public static StageMode stageMode = StageMode.Ascend;
+    public static DungeonMode dungeonMode = DungeonMode.End;
 }

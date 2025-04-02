@@ -42,7 +42,7 @@ public class DungeonStageStatusMachine : StageStatusMachine
             remainTime = 0f;
             if (!cleared)
             {
-                stageManager.StartCoroutine(OnTimeOver());
+                OnTimeOver();
             }
         }
 
@@ -104,12 +104,15 @@ public class DungeonStageStatusMachine : StageStatusMachine
         SceneManager.LoadScene(0);
     }
 
-    protected IEnumerator OnTimeOver()
+    protected void OnTimeOver()
     {
         stageManager.StageUiManager.SetStageMessage(false);
         stageManager.StageUiManager.SetActiveStageMessage(true);
-        yield return new WaitForSeconds(2f);
-        Exit();
+
+        var endWindow = stageManager.StageUiManager.stageEndMessageWindow.GetComponent<DungeonEndWindow>();
+        endWindow.Set(false);
+
+        stageManager.StageUiManager.SetActiveStageMessage(true);
     }
 
     protected void OnMonsterCleared()
@@ -117,21 +120,21 @@ public class DungeonStageStatusMachine : StageStatusMachine
         if (currentWave > waveData.WaveCorpsIDs.Length)
         {
             cleared = true;
-            stageManager.StartCoroutine(OnStageClear());
+            OnStageClear();
             return;
         }
 
         stageManager.StartCoroutine(CoSpawnNextWave());
     }
 
-    protected IEnumerator OnStageClear()
+    protected void OnStageClear()
     {
         ItemManager.AddItem(dungeonData.ItemID, dungeonData.ClearReward);
         ItemManager.ConsumeItem(dungeonData.DungeonKeyID, dungeonData.KeyCount);
-        stageManager.StageUiManager.SetStageMessage(true);
+        var endWindow = stageManager.StageUiManager.stageEndMessageWindow.GetComponent<DungeonEndWindow>();
+        endWindow.Set(true);
+
         stageManager.StageUiManager.SetActiveStageMessage(true);
-        yield return new WaitForSeconds(1f);
-        Exit();
     }
 
     protected void InitStage()

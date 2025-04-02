@@ -43,15 +43,12 @@ public abstract class DataTable
     {
         var path = string.Format(FormatPath, fileName);
 
-        var loadHandle = Addressables.LoadAssetAsync<TextAsset>(path);
-        loadHandle.WaitForCompletion();
+        var textAsset = Addressables.LoadAssetAsync<TextAsset>(path).WaitForCompletion();
 
-        if (loadHandle.Result is not null)
+        if (textAsset is not null)
         {
-            LoadFromText(loadHandle.Result.text);
+            LoadFromText(textAsset.text);
         }
-
-        Addressables.Release(loadHandle);
     }
 
     public abstract void LoadFromText(string text);

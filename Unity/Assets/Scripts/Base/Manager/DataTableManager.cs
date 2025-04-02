@@ -44,6 +44,10 @@ public static class DataTableManager
         waveTable.Load(DataTableIds.waveTable);
         tables.Add(DataTableIds.waveTable, waveTable);
 
+        var dungeonTable = new DungeonTable();
+        dungeonTable.Load(DataTableIds.dungeonTable);
+        tables.Add(DataTableIds.dungeonTable, dungeonTable);
+
 
 
         var soldierTable = new SoldierTable();
@@ -165,4 +169,7 @@ public static class DataTableManager
 
     public static ShopTable ShopTable
         => GetTable<ShopTable>(DataTableIds.shopTable);
+
+    public static DungeonTable DungeonTable
+        => GetTable<DungeonTable>(DataTableIds.dungeonTable);
 }

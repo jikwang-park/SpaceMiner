@@ -22,7 +22,7 @@ public class UIManager : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        soldierManagePanel.Initialize();
+        // soldierManagePanel.Initialize();
         gachaPanel.Initialize();
         openSoldierManagePanelButton.onClick.AddListener(() => soldierManagePanel.gameObject.SetActive(true));
         

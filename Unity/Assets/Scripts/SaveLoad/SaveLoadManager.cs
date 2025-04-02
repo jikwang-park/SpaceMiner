@@ -40,6 +40,7 @@ public static class SaveLoadManager
         {
             LoadedData = loadedSaveData;
             ItemManager.DoLoad();
+            InventoryManager.DoLoad();
         }
     }
     public static TotalSaveData GetDefaultData()
@@ -48,7 +49,7 @@ public static class SaveLoadManager
 
         for(int i = (int)UnitTypes.Tanker; i < (int)UnitTypes.Healer + 1; i++)
         {
-            defaultSaveData.inventorySaveData[(UnitTypes)i] = new InventorySaveData();
+            defaultSaveData.inventorySaveData[(UnitTypes)i] = InventoryManager.GetInventoryData((UnitTypes)i);
         }
 
         defaultSaveData.stageSaveData = new StageSaveData

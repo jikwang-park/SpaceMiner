@@ -12,37 +12,15 @@ public class InventoryPanelUI : MonoBehaviour
     private Inventory dealerInventory;
     [SerializeField]
     private Inventory healerInventory;
-    [SerializeField]
-    private Button displayTankerInvenButton;
-    [SerializeField]
-    private Button displayDealerInvenButton;
-    [SerializeField]
-    private Button displayHealerInvenButton;
-    [SerializeField]
-    private Button BatchMergeButton;
-    [SerializeField]
-    private Button closeButton;
 
     private UnitTypes currentInventoryType;
-    private int inventoriesInitializedCount = 0;
-    private const int totalInventories = 3;
-    public void Initialize()
+    public void Awake()
     {
         InitializeInventories();
-        SaveLoadManager.LoadGame();
-        displayTankerInvenButton.onClick.AddListener(() => DisplayInventory(UnitTypes.Tanker));
-        displayDealerInvenButton.onClick.AddListener(() => DisplayInventory(UnitTypes.Dealer));
-        displayHealerInvenButton.onClick.AddListener(() => DisplayInventory(UnitTypes.Healer));
-        BatchMergeButton.onClick.AddListener(() => OnClickBatchMergeButton());
-        closeButton.onClick.AddListener(() => OnClickCloseButton());
-
-        tankerInventory.OnInitialized += InventoryInitialized;
-        dealerInventory.OnInitialized += InventoryInitialized;
-        healerInventory.OnInitialized += InventoryInitialized;
-        SaveLoadManager.onSaveRequested += DoSave;
+        InventoryManager.onChangedInventory += ApplyChangesInventorys;
     }
 
-    private void OnClickCloseButton()
+    public void OnClickCloseButton()
     {
         gameObject.SetActive(false);
     }
@@ -75,31 +53,11 @@ public class InventoryPanelUI : MonoBehaviour
 
     private void InitializeInventories()
     {
-        Dictionary<UnitTypes, List<SoldierTable.Data>> typeDict = DataTableManager.SoldierTable.GetTypeDictionary();
-
-        if (typeDict.ContainsKey(UnitTypes.Tanker))
-        {
-            tankerInventory.Initialize(typeDict[UnitTypes.Tanker], UnitTypes.Tanker);
-        }
-        if (typeDict.ContainsKey(UnitTypes.Dealer))
-        {
-            dealerInventory.Initialize(typeDict[UnitTypes.Dealer], UnitTypes.Dealer);
-        }
-        if (typeDict.ContainsKey(UnitTypes.Healer))
-        {
-            healerInventory.Initialize(typeDict[UnitTypes.Healer], UnitTypes.Healer);
-        }
+        tankerInventory.Initialize(UnitTypes.Tanker);
+        dealerInventory.Initialize(UnitTypes.Dealer);
+        healerInventory.Initialize(UnitTypes.Healer);
     }
-    private void InventoryInitialized()
-    {
-        inventoriesInitializedCount++;
-        if (inventoriesInitializedCount >= totalInventories)
-        {
-            DoLoad(SaveLoadManager.LoadedData);
-            DisplayInventory(UnitTypes.Tanker);
-        }
-    }
-    private void OnClickBatchMergeButton()
+    public void OnClickBatchMergeButton()
     {
         switch (currentInventoryType)
         {
@@ -114,53 +72,34 @@ public class InventoryPanelUI : MonoBehaviour
                 break;
         }
     }
-    private void DoSave(TotalSaveData totalSaveData)
+    public void ApplyChangesInventorys()
     {
-        totalSaveData.inventorySaveData[UnitTypes.Tanker] = tankerInventory.Save();
-        totalSaveData.inventorySaveData[UnitTypes.Dealer] = dealerInventory.Save();
-        totalSaveData.inventorySaveData[UnitTypes.Healer] = healerInventory.Save();
+        tankerInventory.ApplyChangesInventory();
+        dealerInventory.ApplyChangesInventory();
+        healerInventory.ApplyChangesInventory();
     }
-    private void DoLoad(TotalSaveData totalSaveData)
+    public void OnClickDisplayTankerInventoryButton()
     {
-        if (SaveLoadManager.LoadedData == null)
+        if(currentInventoryType == UnitTypes.Tanker)
         {
-            Debug.Log("저장된 데이터가 없습니다. 기본 값으로 진행합니다.");
             return;
         }
-
-        if (totalSaveData.inventorySaveData.TryGetValue(UnitTypes.Tanker, out InventorySaveData tankerData))
-        {
-            tankerInventory.Load(tankerData);
-        }
-        if (totalSaveData.inventorySaveData.TryGetValue(UnitTypes.Dealer, out InventorySaveData dealerData))
-        {
-            dealerInventory.Load(dealerData);
-        }
-        if (totalSaveData.inventorySaveData.TryGetValue(UnitTypes.Healer, out InventorySaveData healerData))
-        {
-            healerInventory.Load(healerData);
-        }
+        DisplayInventory(UnitTypes.Tanker);
     }
-    private void AddToInventory(SoldierTable.Data data)
+    public void OnClickDisplayDealerInventoryButton()
     {
-        switch (data.Kind)
+        if (currentInventoryType == UnitTypes.Dealer)
         {
-            case UnitTypes.Tanker:
-                tankerInventory.Add(data);
-                break;
-            case UnitTypes.Dealer:
-                dealerInventory.Add(data);
-                break;
-            case UnitTypes.Healer:
-                healerInventory.Add(data);
-                break;
+            return;
         }
+        DisplayInventory(UnitTypes.Dealer);
     }
-    public void ApplyGachaToInventory(List<SoldierTable.Data> datas)
+    public void OnClickDisplayHealerInventoryButton()
     {
-        foreach(var data in datas)
+        if (currentInventoryType == UnitTypes.Healer)
         {
-            AddToInventory(data);
+            return;
         }
+        DisplayInventory(UnitTypes.Healer);
     }
 }

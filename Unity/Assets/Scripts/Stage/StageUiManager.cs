@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 
-public class StageUiManger : MonoBehaviour
+public class StageUiManager : MonoBehaviour
 {
     private const string stageTextFormat = "{0}-{1}\n{2} Wave";
     private const string fail = "Fail";
@@ -14,13 +14,20 @@ public class StageUiManger : MonoBehaviour
     [SerializeField]
     private TextMeshProUGUI timerText;
     [SerializeField]
+    private TextMeshProUGUI goldText;
+    [SerializeField]
     private GameObject stageEndMessageWindow;
     [SerializeField]
     private TextMeshProUGUI stageEndMessageText;
     [SerializeField]
-    private TextMeshProUGUI goldText;
-    [SerializeField]
     private StageSelectWindow stageSelectWindow;
+
+    public ObjectPoolManager objectPoolManager { get; private set; }
+
+    private void Awake()
+    {
+        objectPoolManager = GetComponent<ObjectPoolManager>();
+    }
 
     public void SetTimer(float remainTime)
     {

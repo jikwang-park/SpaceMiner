@@ -14,6 +14,7 @@ public class PlanetSelectScroll : MonoBehaviour
 
     public event Action<int> OnPlanetSelected;
     private List<PlanetButton> buttons = new List<PlanetButton>();
+    private ObjectPoolManager objectPoolManager;
 
 #if UNITY_EDITOR
     private bool debugMode = false;
@@ -26,12 +27,12 @@ public class PlanetSelectScroll : MonoBehaviour
 
     private void SetPlanetButtons()
     {
-        var objectpoolManager = GameObject.FindGameObjectWithTag("GameController").GetComponent<StageManager>().StageUiManager.GetComponent<ObjectPoolManager>();
+        objectPoolManager = GameObject.FindGameObjectWithTag("GameController").GetComponent<StageManager>().StageUiManager.objectPoolManager;
         var planets = DataTableManager.StageTable.GetPlanetKeys();
 
         for (int i = 0; i < planets.Count; ++i)
         {
-            var button = objectpoolManager.gameObjectPool[buttonReference].Get();
+            var button = objectPoolManager.gameObjectPool[buttonReference].Get();
             button.transform.SetParent(contents);
             button.transform.localScale = Vector3.one;
 

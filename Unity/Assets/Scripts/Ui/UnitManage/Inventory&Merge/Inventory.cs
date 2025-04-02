@@ -19,24 +19,21 @@ public class Inventory : MonoBehaviour
     [SerializeField]
     private InfoMergePanelUI infoMergePanelUI;
 
-    private int requireMergeCount = 5;
     private UnitTypes type;
     private InventoryElement selectedElement;
     private InventoryElement equipElement;
     private UnitPartyManager unitPartyManager;
     private SoldierInteractableUI soldierInteractableUI;
-    public event Action OnInitialized;
-    public void Initialize(List<SoldierTable.Data> dataList, UnitTypes type)
+    public void Initialize(UnitTypes type)
     {
         UpdateGridCellSize();
         unitPartyManager = FindObjectOfType<UnitPartyManager>();
         soldierInteractableUI = GetComponentInChildren<SoldierInteractableUI>();
-        soldierInteractableUI.mergeAction += DoMerge;
         soldierInteractableUI.equipAction += Equip;
-        InitializeInventory(dataList, type);
+        InitializeInventory(type);
     }
 
-    private void InitializeInventory(List<SoldierTable.Data> dataList, UnitTypes type)
+    private void InitializeInventory(UnitTypes type)
     {
         foreach (Transform child in contentParent)
         {
@@ -44,22 +41,23 @@ public class Inventory : MonoBehaviour
         }
 
         this.type = type;
+        var datas = InventoryManager.GetInventoryData(this.type);
         inventoryElements.Clear();
         Dictionary<Grade, int> gradeCounters = new Dictionary<Grade, int>();
-        int totalCount = dataList.Count;
+        int totalCount = datas.elements.Count;
         int instantiatedCount = 0;
 
-        foreach (var data in dataList)
+        foreach (var data in datas.elements)
         {
             int subIndex = 1;
-            if (gradeCounters.ContainsKey(data.Rating))
+            if (gradeCounters.ContainsKey(data.grade))
             {
-                subIndex = gradeCounters[data.Rating] + 1;
-                gradeCounters[data.Rating] = subIndex;
+                subIndex = gradeCounters[data.grade] + 1;
+                gradeCounters[data.grade] = subIndex;
             }
             else
             {
-                gradeCounters[data.Rating] = 1;
+                gradeCounters[data.grade] = 1;
             }
 
             var soldierData = data;
@@ -75,11 +73,15 @@ public class Inventory : MonoBehaviour
                     inventoryElement.parentInventory = this;
                     if (inventoryElement != null)
                     {
-                        inventoryElement.SetID(soldierData.ID);
-                        inventoryElement.SetGrade(currentSubIndex);
-                        inventoryElement.UpdateCount(0);
-                        inventoryElement.SetLevel(0);
-                        buttonElement.image.sprite = gradeSprites[(int)soldierData.Rating - 1];
+                        if(!soldierData.isLocked)
+                        {
+                            inventoryElement.UnlockElement();
+                        }
+                        inventoryElement.SetID(soldierData.soldierId);
+                        inventoryElement.SetGrade(soldierData.grade);
+                        inventoryElement.UpdateCount(soldierData.count);
+                        inventoryElement.SetLevel(currentSubIndex);
+                        buttonElement.image.sprite = gradeSprites[(int)soldierData.grade - 1];
                         inventoryElements.Add(inventoryElement);
                     }
                 }
@@ -92,11 +94,10 @@ public class Inventory : MonoBehaviour
 
                 if (instantiatedCount == totalCount && inventoryElements.Count > 0)
                 {
-                    inventoryElements[0].UnlockElement();
-                    inventoryElements[0].UpdateCount(1);
-                    OnElementSelected(inventoryElements[0]);
+                    var equipElement = inventoryElements.Find((e) => e.soldierId == datas.equipElementID);
+                    OnElementSelected(equipElement);
                     Equip();
-                    OnInitialized?.Invoke();
+                    OnElementSelected(inventoryElements[0]);
                 }
             };
         }
@@ -145,39 +146,6 @@ public class Inventory : MonoBehaviour
         equipElement.SetUnEquip();
         equipElement = null;
     }
-    private void Merge(InventoryElement element)
-    {
-        if(element.IsLocked || element.Count < requireMergeCount)
-        {
-            Debug.Log("합성 조건에 충족하지 못합니다.");
-            return;
-        }
-
-        var currentIndex = inventoryElements.IndexOf(element);
-        if(currentIndex >= 0 && currentIndex < inventoryElements.Count - 1)
-        {
-            var newCount = element.Count - requireMergeCount;
-            element.UpdateCount(newCount);
-
-            var nextIndex = currentIndex + 1;
-            if (inventoryElements[nextIndex].IsLocked)
-            {
-                inventoryElements[nextIndex].UnlockElement();
-                inventoryElements[nextIndex].UpdateCount(1);
-            }
-            else
-            {
-                inventoryElements[nextIndex].UpdateCount(inventoryElements[nextIndex].Count + 1);
-            }
-        }
-    }
-    public void DoMerge(int count)
-    {
-        for(int i = 0; i < count; i++)
-        {
-            Merge(selectedElement);
-        }
-    }
     public void BatchMerge()
     {
         bool isMerged = true;
@@ -188,9 +156,9 @@ public class Inventory : MonoBehaviour
 
             foreach (var element in inventoryElements.ToList())
             {
-                while (!element.IsLocked && element.Count >= requireMergeCount)
+                while (!element.IsLocked && element.Count >= InventoryManager.requireMergeCount)
                 {
-                    Merge(element);
+                    InventoryManager.Merge(element.soldierId);
                     isMerged = true;
                 }
             }
@@ -198,85 +166,17 @@ public class Inventory : MonoBehaviour
         OnElementSelected(selectedElement);
         SaveLoadManager.SaveGame();
     }
-    public InventorySaveData Save()
+    public void ApplyChangesInventory()
     {
-        InventorySaveData saveData = new InventorySaveData();
-        saveData.inventoryType = this.type;
-        foreach (var element in inventoryElements)
-        {
-            InventoryElementSaveData data = new InventoryElementSaveData();
-            data.IsLocked = element.IsLocked;
-            data.soldierId = element.soldierId;
-            data.Count = element.Count;
-            data.Level = element.Level;
-            saveData.elements.Add(data);
-        }
-        if (equipElement != null)
-        {
-            saveData.equipElementID = equipElement.soldierId;
-        }
-        else
-        {
-            saveData.equipElementID = 0; //250331 HKY 데이터형 변경
-        }
-        return saveData;
-    }
-    public void Load(InventorySaveData saveData)
-    {
-        if (saveData.elements.Count == 0)
-        {
-            return;
-        }
+        var datas = InventoryManager.GetInventoryData(this.type).elements;
 
-        if (saveData.inventoryType != this.type)
+        for(int i = 0; i < datas.Count; i++)
         {
-            Debug.Log("저장된 인벤토리 타입과 현재 인벤토리 타입이 다릅니다.");
-        }
-
-        foreach (var elementData in saveData.elements)
-        {
-            InventoryElement element = inventoryElements.Find(e => e.soldierId == elementData.soldierId);
-            if (element != null)
+            if (inventoryElements[i].IsLocked && !datas[i].isLocked)
             {
-                if (!elementData.IsLocked)
-                {
-                    element.UnlockElement();
-                    element.UpdateCount(elementData.Count);
-                    element.SetLevel(elementData.Level);
-                    element.soldierId = elementData.soldierId;
-                }
+                inventoryElements[i].UnlockElement();
             }
-        }
-
-        if (saveData.equipElementID==0) //250331 HKY 데이터형 변경
-        {
-            InventoryElement loadedEquipElement = inventoryElements.Find(e => e.soldierId == saveData.equipElementID);
-            if (loadedEquipElement != null)
-            {
-                selectedElement = loadedEquipElement;
-                Equip();
-                OnElementSelected(inventoryElements[0]);
-            }
-        }
-        else
-        {
-            UnEquip();
-        }
-    }
-    public void Add(SoldierTable.Data data)
-    {
-        InventoryElement element = inventoryElements.Find(e => e.soldierId == data.ID);
-        if (element != null)
-        {
-            if(element.IsLocked)
-            {
-                element.UnlockElement();
-                element.UpdateCount(1);
-            }
-            else
-            {
-                element.UpdateCount(element.Count + 1);
-            }
+            inventoryElements[i].UpdateCount(datas[i].count);
         }
     }
 }

@@ -7,9 +7,10 @@ using JetBrains.Annotations;
 public class InventoryElementSaveData
 {
     public int soldierId; //250331 HKY 데이터형 변경
-    public bool IsLocked;
-    public int Count;
-    public int Level;
+    public bool isLocked;
+    public Grade grade;
+    public int count;
+    public int level;
 }
 [Serializable]
 public class InventorySaveData

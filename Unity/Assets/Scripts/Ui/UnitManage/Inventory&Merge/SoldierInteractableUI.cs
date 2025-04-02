@@ -30,12 +30,12 @@ public class SoldierInteractableUI : MonoBehaviour
     [SerializeField]
     private Button equipButton;
 
-    private static int requiredCount = 5;
+    private int requiredMergeCount = 0;
     private int currentElementCount = 0;
     private int nextElementCount = 0;
     private int count = 0;
+    private int currentElementId;
 
-    public Action<int> mergeAction;
     public Action equipAction;
     private void Start()
     {
@@ -49,8 +49,8 @@ public class SoldierInteractableUI : MonoBehaviour
         var currentElementSprite = currentElement.GetComponent<Image>().sprite;
         var nextElementSprite = nextElement.GetComponent<Image>().sprite;
 
-        currentSoldierInfo.Initialize(currentElement.GradeIndex.ToString(), currentElement.Count.ToString(), currentElementSprite);
-        nextSoldierInfo.Initialize(nextElement.GradeIndex.ToString(), nextElement.Count.ToString(), nextElementSprite);
+        currentSoldierInfo.Initialize(currentElement.Level.ToString(), currentElement.Count.ToString(), currentElementSprite);
+        nextSoldierInfo.Initialize(nextElement.Level.ToString(), nextElement.Count.ToString(), nextElementSprite);
 
         currentElementCount = currentElement.Count;
         nextElementCount = nextElement.Count;
@@ -60,12 +60,14 @@ public class SoldierInteractableUI : MonoBehaviour
         nextCountText.text = nextElementCount.ToString();
 
         countText.text = count.ToString();
+        requiredMergeCount = 5;
+        currentElementId = currentElement.soldierId;
         UpdateButton();
     }
 
     public void OnClickPlusButton()
     {
-        if(currentElementCount < requiredCount)
+        if(currentElementCount < requiredMergeCount)
         {
             return;
         }
@@ -91,7 +93,7 @@ public class SoldierInteractableUI : MonoBehaviour
 
     public void UpdateButton()
     {
-        if(currentElementCount >= requiredCount * (count + 1))
+        if(currentElementCount >= requiredMergeCount * (count + 1))
         {
             plusButton.interactable = true;
         }
@@ -122,14 +124,14 @@ public class SoldierInteractableUI : MonoBehaviour
         }
         else
         {
-            currentCountText.text = $"{currentElementCount}({-count * requiredCount})";
+            currentCountText.text = $"{currentElementCount}({-count * requiredMergeCount})";
             nextCountText.text = $"{nextElementCount}(+{count})";
         }
     }
     public void OnClickMergeButton()
     {
-        mergeAction?.Invoke(count);
-        currentElementCount -= count * requiredCount;
+        InventoryManager.Merge(currentElementId, count);
+        currentElementCount -= count * requiredMergeCount;
         nextElementCount += count;
         count = 0;
 

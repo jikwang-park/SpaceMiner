@@ -18,6 +18,8 @@ public class DataTableIds
     public const string stageTable = "StageTable";
     public const string waveTable = "WaveTable";
 
+    public const string dungeonTable = "DungeonTable";
+
     public const string soldierTable = "SoldierTable";
     public const string tankerSkillTable = "TankerSkillTable";
     public const string healerSkillTable = "HealerSkillTable";
@@ -58,4 +60,10 @@ public enum Grade
     Rare,
     Epic,
     Legend,
+}
+
+public enum IngameStatus
+{
+    Planet,
+    Dungeon,
 }

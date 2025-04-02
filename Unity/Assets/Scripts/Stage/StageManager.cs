@@ -41,15 +41,11 @@ public class StageManager : MonoBehaviour
 
         UnitPartyManager = GetComponent<UnitPartyManager>();
         
-        SaveLoadManager.LoadGame();
         DoLoad();
     }
 
     private void Start()
     {
-        SaveLoadManager.onSaveRequested += DoSave;
-
-
         StageUiManager.SetGoldText();
 
         SetStageInfo();
@@ -229,28 +225,15 @@ public class StageManager : MonoBehaviour
     {
         ResetStage(false);
     }
-
-    private void DoSave(TotalSaveData totalSaveData)
-    {
-        StageSaveData stageSaveData = new StageSaveData
-        {
-            currentPlanet = Variables.planetNumber,
-            currentStage = Variables.stageNumber,
-            highPlanet = Variables.maxPlanetNumber,
-            highStage = Variables.maxStageNumber,
-        };
-        totalSaveData.stageSaveData = stageSaveData;
-    }
-
     private void DoLoad()
     {
-        if (SaveLoadManager.LoadedData == null)
+        if (SaveLoadManager.Data == null)
         {
             Debug.Log("저장된 데이터가 없습니다. 기본 값으로 진행합니다.");
             return;
         }
 
-        StageSaveData stageLoadData = SaveLoadManager.LoadedData.stageSaveData;
+        StageSaveData stageLoadData = SaveLoadManager.Data.stageSaveData;
 
         if (stageLoadData != null)
         {

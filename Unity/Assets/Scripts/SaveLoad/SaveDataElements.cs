@@ -27,11 +27,3 @@ public class StageSaveData
     public int highPlanet;
     public int highStage;
 }
-
-[Serializable]
-public class TotalSaveData
-{
-    public Dictionary<UnitTypes, InventorySaveData> inventorySaveData = new Dictionary<UnitTypes, InventorySaveData>();
-    public StageSaveData stageSaveData;
-    public Dictionary<int, BigNumber> itemSaveData = new Dictionary<int, BigNumber>();
-}

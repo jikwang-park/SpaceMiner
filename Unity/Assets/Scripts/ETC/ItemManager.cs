@@ -1,13 +1,14 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-
 public static class ItemManager
 {
-    private static Dictionary<int, BigNumber> items = new Dictionary<int, BigNumber>();
-    static ItemManager()
+    private static Dictionary<int, BigNumber> items
     {
-        SaveLoadManager.onSaveRequested += DoSave;
+        get
+        {
+            return SaveLoadManager.Data.itemSaveData;
+        }
     }
     public static void AddItem(int itemId, BigNumber amount)
     {
@@ -44,19 +45,5 @@ public static class ItemManager
     public static BigNumber GetItemAmount(int itemId)
     {
         return items.ContainsKey(itemId)? items[itemId] : 0;
-    }
-    public static void DoSave(TotalSaveData totalSaveData)
-    {
-        totalSaveData.itemSaveData = items;
-    }
-    public static void DoLoad()
-    {
-        var loadedItemDatas = SaveLoadManager.LoadedData.itemSaveData;
-        items.Clear();
-
-        foreach (var loadedItem in loadedItemDatas)
-        {
-            AddItem(loadedItem.Key, loadedItem.Value);
-        }
     }
 }

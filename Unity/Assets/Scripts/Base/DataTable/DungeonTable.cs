@@ -38,8 +38,8 @@ public class DungeonTable : DataTable
 
     public override Type DataType => typeof(Data);
 
-    public Dictionary<int, List<Data>> typeDict = new Dictionary<int, List<Data>>();
-    public List<int> types = new List<int>();
+    private Dictionary<int, List<Data>> typeDict = new Dictionary<int, List<Data>>();
+    private List<int> types = new List<int>();
 
     public override void LoadFromText(string text)
     {
@@ -105,6 +105,8 @@ public class DungeonTable : DataTable
         }
         return (Data)TableData[key];
     }
+
+    public List<int> DungeonTypes => types;
 
     public List<Data> GetDungeonList(int type)
     {

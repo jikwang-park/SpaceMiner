@@ -36,7 +36,6 @@ public class UnitPartyManager : MonoBehaviour
     // HKY 250328 Awake에서 스폰시 WaitForCompletion 발생하여 Start로 변경
     private void Start()
     {
-        UnitSpwan();
     }
     private void Update()
     {
@@ -103,6 +102,36 @@ public class UnitPartyManager : MonoBehaviour
             return unit.unitAliveCount;
         }
         return 0;
+    }
+    public void UnitSpawn(Vector3 pos)
+    {
+        for(int i = 0; i<generateInstance.Count; ++i)
+        {
+            var unit = generateInstance[i];
+            if(unit.UnitTypes == UnitTypes.Tanker)
+            {
+                pos = unit.transform.position;
+            }
+            else
+            {
+                Debug.LogError("탱커 타입이 없습니다");
+                return;
+            }
+        }
+    }
+
+    
+
+    public void UnitDespawn()
+    {
+        for(int i = 0; i<generateInstance.Count; ++i)
+        {
+            if (generateInstance[i].unitAliveCount >= 1)
+            {
+                var unit = generateInstance[i];
+                Destroy(unit.gameObject);
+            }
+        }
     }
     public Unit GetFirstLineUnitGo()
     {

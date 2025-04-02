@@ -21,4 +21,9 @@ public class UnitSkillUpgradeBoard : MonoBehaviour
     {
        
     }
+
+    public void SetInfo(UnitTypes type, Grade grade)
+    {
+
+    }
 }

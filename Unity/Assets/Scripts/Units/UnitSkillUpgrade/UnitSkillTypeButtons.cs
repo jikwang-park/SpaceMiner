@@ -12,14 +12,13 @@ public class UnitSkillTypeButtons : MonoBehaviour
     [SerializeField]
     public Button healerButton;
     [SerializeField]
-    private StageManager stageManager;
+    private UnitSkillUpgradeManager manager;
+    
     private void Awake()
     {
-        stageManager = GameObject.FindGameObjectWithTag("GameController").GetComponent<StageManager>();
     }
     private void Start()
     {
-
         tankerButton.onClick.AddListener(() => OnClickTankerButton());
         dealerButton.onClick.AddListener(() => OnClickDealerButton());
         healerButton.onClick.AddListener(() => OnClickHealerButton());
@@ -30,31 +29,19 @@ public class UnitSkillTypeButtons : MonoBehaviour
 
     }
 
-    private void SetSkillUpgradeData(UnitTypes type)
-    {
-        switch (type)
-        {
-            case UnitTypes.Tanker:
-                break;
-            case UnitTypes.Dealer:
-                break;
-            case UnitTypes.Healer:
-                break;
-        }
-    }
 
 
     private void OnClickTankerButton()
     {
-
+        manager.SetType(UnitTypes.Tanker);
     }
     
     private void OnClickDealerButton()
     {
-
+        manager.SetType(UnitTypes.Dealer);
     }
     private void OnClickHealerButton()
     {
-
+        manager.SetType(UnitTypes.Healer);
     }
 }

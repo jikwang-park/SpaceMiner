@@ -79,5 +79,6 @@ public class UnitStatsUpgradeElement : MonoBehaviour
         stageManager.UnitPartyManager.AddStats(currentType, value + (value * currentNum));
     }
 
+
  
 }

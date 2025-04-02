@@ -29,7 +29,6 @@ public class UnitSkill : MonoBehaviour
 
     public List<Unit> targetList;
 
-    public List<Transform> dealerTargetList;
 
 
     public bool CanSaerchTarget;
@@ -43,7 +42,6 @@ public class UnitSkill : MonoBehaviour
     {
         stageManager = GameObject.FindGameObjectWithTag("GameController").GetComponent<StageManager>();
         targetList = new List<Unit>();
-        dealerTargetList = new List<Transform>();
     }
     public virtual void GetTarget()
     {

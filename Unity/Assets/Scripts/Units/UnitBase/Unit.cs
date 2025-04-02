@@ -31,9 +31,7 @@ public class Unit : MonoBehaviour
     }
     private UnitTypes currentUnitType;
 
-
     public BigNumber barrier;
-
     public bool HasBarrier
     {
         get
@@ -48,7 +46,6 @@ public class Unit : MonoBehaviour
     public StageManager stageManger;
 
     public UnitStats unitStats;
-
     public bool IsInAttackRange
     {
         get
@@ -59,25 +56,14 @@ public class Unit : MonoBehaviour
            return false;
         }
     }
-
-
-
-
-
     public float targetDistance;
-
-    public float skillCoolTime = 10f;
 
     public BehaviorTree<Unit> behaviorTree;
 
-    public float skillUsingTime = 2.0f;
     public float attackUsingTime = 0.4f;
-
 
     public int unitAliveCount = 0;
 
-    [SerializeField]
-    private SoldierTable.Data soldierData;
     [SerializeField]
     public UnitSkill unitSkill;
 
@@ -90,10 +76,15 @@ public class Unit : MonoBehaviour
     private int currentUnitNum = 0;
 
 
+    public float lastSkillUsedTime;
+
+
+    public bool isAutoSkillMode;
     private void Awake()
     {
         unitStats = GetComponent<UnitStats>();
         stageManger = GameObject.FindGameObjectWithTag("GameController").GetComponent<StageManager>();
+        isAutoSkillMode = true;
     }
 
     public bool IsDead 
@@ -106,15 +97,32 @@ public class Unit : MonoBehaviour
                 return true;
             }
             return false;
+                       }
+    }
+    
+    public float RemainSkillCoolTime
+    {
+        get
+        {
+            switch (UnitTypes)
+            {
+                case UnitTypes.Tanker:
+                    return (Time.time - lastSkillUsedTime) / unitSkill.coolTime;
+
+                case UnitTypes.Dealer:
+                    return (Time.time - lastSkillUsedTime) / unitSkill.coolTime;
+
+                case UnitTypes.Healer:
+                    return (Time.time - lastSkillUsedTime) / unitSkill.coolTime;
+                default:
+                    return 0;
+            }
         }
     }
 
 
 
-
-    public float lastDealerSkillUsedTime;
-    public float lastTankerSkillUsedTime;
-    public float lastHealerSkillUsedTime;
+ 
 
     public bool IsTankerCanUseSkill
     {
@@ -123,7 +131,7 @@ public class Unit : MonoBehaviour
             
             if (currentUnitType == UnitTypes.Tanker)
             {
-                if (Time.time < unitSkill.coolTime + lastTankerSkillUsedTime)
+                if (Time.time < unitSkill.coolTime + lastSkillUsedTime)
                     return false;
 
                 return true;
@@ -139,7 +147,7 @@ public class Unit : MonoBehaviour
             if (currentUnitType == UnitTypes.Dealer)
             {
                 if (targetDistance > unitStats.range ||
-                        Time.time < unitSkill.coolTime + lastDealerSkillUsedTime)
+                        Time.time < unitSkill.coolTime + lastSkillUsedTime)
                     return false;
                 
                 return true;
@@ -155,7 +163,7 @@ public class Unit : MonoBehaviour
             if (currentUnitType == UnitTypes.Healer)
             {
                 if (unitSkill.targetList == null ||
-                    Time.time < unitSkill.coolTime + lastHealerSkillUsedTime)
+                    Time.time < unitSkill.coolTime + lastSkillUsedTime)
                     return false;
                 
                 return true;
@@ -163,11 +171,6 @@ public class Unit : MonoBehaviour
             return false;
         }
     }
-
-   
-
-
-
     public bool IsUnitCanAttack 
     {
         get
@@ -182,17 +185,14 @@ public class Unit : MonoBehaviour
             return false;
         }
     }
-
-    //�Ϲ� �������̴�?
     public bool IsNormalAttacking;
-    //1�� �¾Ҵ�?
+
     public bool IsUnitHit;
-    //��ų��Ÿ�� ���Ҵ�?
     public bool IsSkillCoolTimeOn
     {
         get
         {
-            if (Time.time > lastAttackTime + skillCoolTime)
+            if (Time.time > lastSkillUsedTime + unitSkill.coolTime)
                 return true;
 
             return false;
@@ -209,7 +209,7 @@ public class Unit : MonoBehaviour
         }
     }
     public float lastAttackTime;
-    public float lastSkillAttackTime;
+    
 
     private bool isMonsterSpawn;
 
@@ -233,17 +233,13 @@ public class Unit : MonoBehaviour
         }
         behaviorTree = UnitBTManager.SetBehaviorTree(this, currentUnitType);
     }
-
-
-
-
     public bool IsMonsterExist()
     {
-        var lane = stageManger.MonsterLaneManager.LaneCount;
+        var lane = stageManger.StageMonsterManager.LaneCount;
 
         for (int i = 0; i < lane; ++i)
         {
-            var target = stageManger.MonsterLaneManager.GetMonsterCount(i);
+            var target = stageManger.StageMonsterManager.GetMonsterCount(i);
 
             if (target > 0)
             {
@@ -253,16 +249,14 @@ public class Unit : MonoBehaviour
         }
         return false;
     }
-
-
     private Transform GetTargetPosition()
     {
-        var lane = stageManger.MonsterLaneManager.LaneCount;
+        var lane = stageManger.StageMonsterManager.LaneCount;
 
         for (int i = 0; i < lane; ++i)
         {
-            var target = stageManger.MonsterLaneManager.GetMonsterCount(i);
-            var targetPosition = stageManger.MonsterLaneManager.GetFirstMonster(i);
+            var target = stageManger.StageMonsterManager.GetMonsterCount(i);
+            var targetPosition = stageManger.StageMonsterManager.GetFirstMonster(i);
 
             if (target > 0)
             {
@@ -286,8 +280,6 @@ public class Unit : MonoBehaviour
         }
         return null;
     }
-
-
     public void Move()
     {
         transform.position += Vector3.forward * Time.deltaTime * unitStats.moveSpeed;
@@ -308,15 +300,15 @@ public class Unit : MonoBehaviour
         {
             case UnitTypes.Tanker:
                 StartCoroutine(TankerSkillTimer());
-                lastTankerSkillUsedTime = Time.time;
+                lastSkillUsedTime = Time.time;
                 break;
             case UnitTypes.Dealer:
                 StartCoroutine(DealerSkillTimer());
-                lastDealerSkillUsedTime = Time.time;
+                lastSkillUsedTime = Time.time;
                 break;
             case UnitTypes.Healer:
                 StartCoroutine(HealerSkillTimer());
-                lastHealerSkillUsedTime = Time.time;
+                lastSkillUsedTime = Time.time;
                 break;
         }
     }
@@ -365,11 +357,6 @@ public class Unit : MonoBehaviour
 
     }
 
-
-  
-
-
-
     private void Update()
     {
         if (HasBarrier)
@@ -379,8 +366,6 @@ public class Unit : MonoBehaviour
                 barrier = 0;
             }
         }
-
-
 
         GetTargetPosition();
         behaviorTree.Update();

@@ -21,7 +21,6 @@ public class UnitPartyManager : MonoBehaviour
                 return true;
             
             return false;
-            
         }
     }
 
@@ -91,20 +90,8 @@ public class UnitPartyManager : MonoBehaviour
         for(int i = 0; i < generateInstance.Count; ++i)
         {
             generateInstance[i].SetData(data[(UnitTypes)i + 1][0], (UnitTypes)i + 1);
-            
-            
         }
     }
-  
-
-    //private void SetInitData(UnitTypes type)
-    //{
-    //    var data = DataTableManager.SoldierTable.GetTypeDictionary();
-    //    var UnitData = data[type][0];
-    //    unitDic[type].SetData(UnitData, type);
-    //}
-
-
     public int GetAliveUnitCount()
     {
         foreach (var unit in unitprefabs)
@@ -117,8 +104,6 @@ public class UnitPartyManager : MonoBehaviour
         }
         return 0;
     }
-
-
     public Unit GetFirstLineUnitGo()
     {
         if (generateInstance.Count == 0)
@@ -126,7 +111,6 @@ public class UnitPartyManager : MonoBehaviour
             Debug.Log("Unit is Empty");
             return null;
         }
-
         for (int i = 0; i < generateInstance.Count; i++)
         {
             if (generateInstance[i].IsDead)
@@ -135,22 +119,15 @@ public class UnitPartyManager : MonoBehaviour
             }
             return generateInstance[i];
         }
-
         return null;
     }
-
-
-
     public Transform GetFirstLineUnitTransform()
     {
-  
-
         if(generateInstance.Count == 0)
         {
-            Debug.Log("Unit is Empty");
+            Debug.LogError("Unit is Empty");
             return null;
         }
-
         for(int i =0; i< generateInstance.Count; i++)
         {
             if (generateInstance[i].IsDead)
@@ -159,8 +136,6 @@ public class UnitPartyManager : MonoBehaviour
             }
             return generateInstance[i].transform;
         }
-        
-
         return null;
     }
     public void SetUnitData(SoldierTable.Data data, UnitTypes type)
@@ -177,16 +152,25 @@ public class UnitPartyManager : MonoBehaviour
         return null;
     }
 
-    public Unit GetCurrentUnitGo(UnitTypes type)
-    {
-        for(int i = 0; i< generateInstance.Count; i++)
-        {
-            if (type == generateInstance[i].UnitTypes)
-                return generateInstance[i];
-        }
-        return null;
-    }
- 
+  
+    
+    //public List<Unit> ChangeUnit()
+    //{
+    //    UnitTypes type;
+    //    for(int i = 0; i< generateInstance.Count; i++)
+    //    {
+    //        type = generateInstance[i].UnitTypes;
+    //    }
+    //    switch (type)
+    //    {
+    //        case UnitTypes.Tanker:
+    //            break;
+    //        case UnitTypes.Dealer:
+    //            break;
+    //        case UnitTypes.Healer:
+    //            break;
+    //    }
+    //}
 
     public Unit GetCurrentTargetType(string targetString)
     {

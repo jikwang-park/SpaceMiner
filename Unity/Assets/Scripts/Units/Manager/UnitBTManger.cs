@@ -75,6 +75,7 @@ public static class UnitBTManager
         var attackSelectorNode = new SelectorNode<Unit>(context);
 
         var skillAttackSequence = new SquenceNode<Unit>(context);
+        skillAttackSequence.AddChild(new IsAutoSkillModeCondition(context));
         skillAttackSequence.AddChild(new IsTankerCanUseSkillCondition(context));
         skillAttackSequence.AddChild(new SkillAttackAction(context));
 
@@ -117,6 +118,7 @@ public static class UnitBTManager
         var attackSelectorNode = new SelectorNode<Unit>(context);
 
         var skillAttackSequence = new SquenceNode<Unit>(context);
+        skillAttackSequence.AddChild(new IsAutoSkillModeCondition(context));
         skillAttackSequence.AddChild(new IsDealerCanUseSkill(context));
         skillAttackSequence.AddChild(new SkillAttackAction(context));
 
@@ -159,6 +161,7 @@ public static class UnitBTManager
         var attackSelectorNode = new SelectorNode<Unit>(context);
 
         var skillAttackSequence = new SquenceNode<Unit>(context);
+        skillAttackSequence.AddChild(new IsAutoSkillModeCondition(context));
         skillAttackSequence.AddChild(new IsHealerCanUseSkillCondition(context));
         skillAttackSequence.AddChild(new SkillAttackAction(context));
 

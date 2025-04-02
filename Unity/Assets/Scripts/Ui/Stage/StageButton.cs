@@ -28,7 +28,6 @@ public class StageButton : MonoBehaviour, IObjectPoolGameObject
 
     public void Release()
     {
-        Button.onClick.RemoveAllListeners();
         Button.interactable = false;
         ObjectPool.Release(gameObject);
     }
@@ -38,10 +37,9 @@ public class StageButton : MonoBehaviour, IObjectPoolGameObject
         this.planet = planet;
         this.stage = stage;
         text.text = $"{planet}-{stage}";
-        Button.onClick.AddListener(MoveStage);
     }
 
-    private void MoveStage()
+    public void MoveStage()
     {
         Variables.planetNumber = planet;
         Variables.stageNumber = stage;

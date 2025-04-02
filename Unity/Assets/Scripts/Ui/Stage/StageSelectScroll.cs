@@ -21,7 +21,7 @@ public class StageSelectScroll : MonoBehaviour
 
     private void Start()
     {
-        objectpoolManager = GameObject.FindGameObjectWithTag("GameController").GetComponent<StageManager>().StageUiManager.GetComponent<ObjectPoolManager>();
+        objectpoolManager = GameObject.FindGameObjectWithTag("GameController").GetComponent<StageManager>().StageUiManager.objectPoolManager;
 
         SetButtons(Variables.planetNumber);
     }

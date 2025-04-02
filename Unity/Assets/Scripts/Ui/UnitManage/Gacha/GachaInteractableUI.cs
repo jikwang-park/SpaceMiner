@@ -21,6 +21,7 @@ public class GachaInteractableUI : MonoBehaviour
     void Awake()
     {
         closeButton.onClick.AddListener(() => gameObject.SetActive(false));
+        Initialize();
     }
 
     public void Initialize()

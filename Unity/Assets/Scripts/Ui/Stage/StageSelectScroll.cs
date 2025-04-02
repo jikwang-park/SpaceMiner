@@ -15,13 +15,30 @@ public class StageSelectScroll : MonoBehaviour
 
     private ObjectPoolManager objectpoolManager;
 
+#if UNITY_EDITOR
+    private bool debugMode = false;
+#endif
+
     private void Start()
     {
-        objectpoolManager = GameObject.FindGameObjectWithTag("GameController").GetComponent<StageManager>().stageUiManager.GetComponent<ObjectPoolManager>();
-
+        objectpoolManager = GameObject.FindGameObjectWithTag("GameController").GetComponent<StageManager>().StageUiManager.objectPoolManager;
 
         SetButtons(Variables.planetNumber);
     }
+
+#if UNITY_EDITOR
+    private void Update()
+    {
+        if (Input.GetKeyDown(KeyCode.F2))
+        {
+            debugMode = !debugMode;
+            foreach (var button in buttons)
+            {
+                button.Button.interactable = true;
+            }
+        }
+    }
+#endif
 
     public void SetButtons(int planet)
     {
@@ -40,10 +57,16 @@ public class StageSelectScroll : MonoBehaviour
             var button = buttonGo.GetComponent<StageButton>();
             button.Set(planet, planetDatas[i].Stage);
             buttons.Add(button);
-            if (planet >= Variables.maxPlanetNumber && i >= Variables.maxStageNumber)
+            if (planet < Variables.maxPlanetNumber || (planet == Variables.maxPlanetNumber && i < Variables.maxStageNumber))
             {
-                button.Button.interactable = false;
+                button.Button.interactable = true;
             }
+#if UNITY_EDITOR
+            else if(debugMode)
+            {
+                button.Button.interactable = true;
+            }
+#endif
         }
     }
 

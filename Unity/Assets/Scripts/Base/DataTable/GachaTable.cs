@@ -3,7 +3,6 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
-using static UnityEditor.Progress;
 
 public class GachaTable : DataTable
 {
@@ -35,11 +34,14 @@ public class GachaTable : DataTable
         }
     }
 
+    private Dictionary<int, Data> dict = new Dictionary<int, Data>();
+
     public override Type DataType => typeof(Data);
 
     public override void LoadFromText(string text)
     {
         TableData.Clear();
+        dict.Clear();
 
         if (string.IsNullOrEmpty(text))
         {
@@ -53,6 +55,7 @@ public class GachaTable : DataTable
             if (!TableData.ContainsKey(item.gachaID))
             {
                 TableData.Add(item.gachaID, item);
+                dict.Add(item.gachaID, item);
             }
             else
             {
@@ -72,18 +75,21 @@ public class GachaTable : DataTable
 
     public Dictionary<int, Data> GetDict()
     {
-        return TableData.ToDictionary(item => item.Key, item => (Data)item.Value);
+        return dict;
     }
 
     public override void Set(List<string[]> data)
     {
         var tableData = new Dictionary<int, ITableData>();
+        var dict = new Dictionary<int, Data>();
         foreach (var item in data)
         {
             var datum = CreateData<Data>(item);
             tableData.Add(datum.gachaID, datum);
+            dict.Add(datum.gachaID, datum);
         }
         TableData = tableData;
+        this.dict = dict;
     }
 
 

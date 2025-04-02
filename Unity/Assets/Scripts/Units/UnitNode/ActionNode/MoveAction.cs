@@ -15,7 +15,7 @@ public class MoveAction : ActionNode<Unit>
 
     protected override NodeStatus OnUpdate()
     {
-        if (context.targetPos != null || context.targetDistance < context.unitStats.range)
+        if (context.targetPos != null )
         {
 
             Debug.Log("이동종료");

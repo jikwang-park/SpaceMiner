@@ -14,6 +14,11 @@ public class PlanetSelectScroll : MonoBehaviour
 
     public event Action<int> OnPlanetSelected;
     private List<PlanetButton> buttons = new List<PlanetButton>();
+    private ObjectPoolManager objectPoolManager;
+
+#if UNITY_EDITOR
+    private bool debugMode = false;
+#endif
 
     private void Start()
     {
@@ -22,12 +27,12 @@ public class PlanetSelectScroll : MonoBehaviour
 
     private void SetPlanetButtons()
     {
-        var objectpoolManager = GameObject.FindGameObjectWithTag("GameController").GetComponent<StageManager>().stageUiManager.GetComponent<ObjectPoolManager>();
+        objectPoolManager = GameObject.FindGameObjectWithTag("GameController").GetComponent<StageManager>().StageUiManager.objectPoolManager;
         var planets = DataTableManager.StageTable.GetPlanetKeys();
 
         for (int i = 0; i < planets.Count; ++i)
         {
-            var button = objectpoolManager.gameObjectPool[buttonReference].Get();
+            var button = objectPoolManager.gameObjectPool[buttonReference].Get();
             button.transform.SetParent(contents);
             button.transform.localScale = Vector3.one;
 
@@ -37,12 +42,33 @@ public class PlanetSelectScroll : MonoBehaviour
 
             int index = planets[i];
             planetButton.Button.onClick.AddListener(() => OnPlanetSelected?.Invoke(index));
-            if (i >= Variables.maxPlanetNumber)
+            if (i < Variables.maxPlanetNumber)
             {
-                planetButton.Button.interactable = false;
+                planetButton.Button.interactable = true;
+            }
+#if UNITY_EDITOR
+            else if (debugMode)
+            {
+                planetButton.Button.interactable = true;
+            }
+#endif
+        }
+    }
+
+
+#if UNITY_EDITOR
+    private void Update()
+    {
+        if (Input.GetKeyDown(KeyCode.F2))
+        {
+            debugMode = !debugMode;
+            foreach (var button in buttons)
+            {
+                button.Button.interactable = true;
             }
         }
     }
+#endif
 
     public void UnlockPlanet(int planet)
     {

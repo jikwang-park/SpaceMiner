@@ -15,8 +15,11 @@ public class StageTable : DataTable
         public int Planet { get; set; }
         public int Stage { get; set; }
         public int CorpsID { get; set; }
-        public int FirstClearReward { get; set; }
-        public int IdleReward { get; set; }
+        public int FirstClearRewardID { get; set; }
+        public string FirstClearRewardCount { get; set; }
+        public int IdleRewardID { get; set; }
+        public string IdleRewardCount { get; set; }
+        public string PrefabId { get; set; }
 
         public void Set(string[] argument)
         {
@@ -25,8 +28,11 @@ public class StageTable : DataTable
             Planet = int.Parse(argument[2]);
             Stage = int.Parse(argument[3]);
             CorpsID = int.Parse(argument[4]);
-            FirstClearReward = int.Parse(argument[5]);
-            IdleReward = int.Parse(argument[6]);
+            FirstClearRewardID = int.Parse(argument[5]);
+            FirstClearRewardCount = argument[6];
+            IdleRewardID = int.Parse(argument[7]);
+            IdleRewardCount = argument[8];
+            PrefabId = argument[9];
         }
     }
 

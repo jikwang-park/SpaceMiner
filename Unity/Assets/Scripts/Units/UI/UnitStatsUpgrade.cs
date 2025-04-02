@@ -3,6 +3,9 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AddressableAssets;
 
+
+
+
 public class UnitStatsUpgrade : MonoBehaviour
 {
     public List<UnitStatsUpgradeElement> statsUpgradeElements = new List<UnitStatsUpgradeElement>();
@@ -24,9 +27,13 @@ public class UnitStatsUpgrade : MonoBehaviour
     {
         for(int i = 0;  i< statsUpgradeElements.Count; i++)
         {
-            Instantiate(statsUpgradeElements[i],parentTransform);
+            var stats = Instantiate(statsUpgradeElements[i],parentTransform);
+            stats.Init(DataTableManager.UnitUpgradeTable.GetData(1000*(1+i) +1));
         }
     }
+
+
+
 
     private void Update()
     {

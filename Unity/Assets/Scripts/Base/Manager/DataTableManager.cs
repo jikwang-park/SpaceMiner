@@ -44,6 +44,10 @@ public static class DataTableManager
         waveTable.Load(DataTableIds.waveTable);
         tables.Add(DataTableIds.waveTable, waveTable);
 
+        var dungeonTable = new DungeonTable();
+        dungeonTable.Load(DataTableIds.dungeonTable);
+        tables.Add(DataTableIds.dungeonTable, dungeonTable);
+
 
 
         var soldierTable = new SoldierTable();
@@ -93,9 +97,14 @@ public static class DataTableManager
         gachaSoldierTable.Load(DataTableIds.gachaSoldierTable);
         tables.Add(DataTableIds.gachaSoldierTable, gachaSoldierTable);
 
+
         var itemTable = new ItemTable();
         itemTable.Load(DataTableIds.itemTable);
         tables.Add(DataTableIds.itemTable, itemTable);
+
+        var shopTable = new ShopTable();
+        shopTable.Load(DataTableIds.shopTable);
+        tables.Add(DataTableIds.shopTable, shopTable);
     }
 
 
@@ -157,4 +166,10 @@ public static class DataTableManager
 
     public static UnitUpgradeTable UnitUpgradeTable
         => GetTable<UnitUpgradeTable>(DataTableIds.unitUpgradeTable);
+
+    public static ShopTable ShopTable
+        => GetTable<ShopTable>(DataTableIds.shopTable);
+
+    public static DungeonTable DungeonTable
+        => GetTable<DungeonTable>(DataTableIds.dungeonTable);
 }

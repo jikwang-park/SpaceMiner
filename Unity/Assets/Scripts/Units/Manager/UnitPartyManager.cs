@@ -5,13 +5,13 @@ using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.AddressableAssets;
 using UnityEngine.Video;
+using static UnitUpgradeTable;
 
 public class UnitPartyManager : MonoBehaviour
 {
     public List<Unit> unitprefabs = new List<Unit>();
 
     public List<Unit> generateInstance = new List<Unit>();
-    public Dictionary<UnitTypes, Unit> units = new Dictionary<UnitTypes, Unit>();
 
     public bool IsUnitAllDead
     {
@@ -44,17 +44,7 @@ public class UnitPartyManager : MonoBehaviour
         
     }
 
-    //public Unit SearchNextUnit()
-    //{
-    //    for(int i = 0; i< generateInstance.Count; i++)
-    //    {
-    //        var firstUnit = generateInstance[0];
-    //        if (generateInstance[i].IsDead)
-    //        {
-                
-    //        }
-    //    }
-    //}
+
 
     public void UnitSpwan()
     {           
@@ -79,7 +69,13 @@ public class UnitPartyManager : MonoBehaviour
         SetInitData();
     }
 
-
+    public void AddStats(UpgradeType type , float amount)
+    {
+        for(int i =0; i< generateInstance.Count; ++i)
+        {
+            generateInstance[i].unitStats.AddStats(type, amount);
+        }
+    }
      
 
     private void OnUnitDie(DestructedDestroyEvent e)
@@ -197,13 +193,13 @@ public class UnitPartyManager : MonoBehaviour
         //TODO: 유닛 타입에 따라 반환 변경하도록 바꿔야함 250331 HKY
         switch (targetString)
         {
-            case "TankID":
+            case "1":
                 return generateInstance.Find((x) => x.UnitTypes == UnitTypes.Tanker);
 
-            case "DealID":
+            case "2":
                 return generateInstance.Find((x) => x.UnitTypes == UnitTypes.Dealer);
 
-            case "HealID":
+            case "3":
                 return generateInstance.Find((x) => x.UnitTypes == UnitTypes.Healer);
 
             default:

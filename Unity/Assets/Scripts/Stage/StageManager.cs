@@ -8,110 +8,88 @@ using UnityEngine.SceneManagement;
 public class StageManager : MonoBehaviour
 {
     [field: SerializeField]
-    public int CurrentPlanet { get; private set; }
+    private int CurrentPlanet { get; set; }
     [field: SerializeField]
-    public int CurrentStage { get; private set; }
+    private int CurrentStage { get; set; }
     [field: SerializeField]
-    public int CurrentWave { get; private set; }
+    private int CurrentWave { get; set; }
 
-    public MonsterLaneManager MonsterLaneManager { get; private set; }
+    public StageMonsterManager StageMonsterManager { get; private set; }
 
     public UnitPartyManager UnitPartyManager { get; private set; }
 
     [field: SerializeField]
-    public StageUiManger stageUiManager { get; private set; }
+    public StageUiManager StageUiManager { get; private set; }
 
-    [SerializeField]
-    private AssetReferenceGameObject stage;
+    private WaveTable.Data waveData;
+
+    private float stageEndTime;
+
     [SerializeField]
     private float spawnDistance = 10f;
 
-    private WaveSpawner waveSpawner;
-
-    private HashSet<MonsterController> monsters;
 
     private StageTable.Data stageData;
-    private WaveTable.Data waveData;
-
-    private float stageStartTime;
 
     private WaitForSeconds wait1 = new WaitForSeconds(1f);
 
-    private BigNumber golds = 0;
-
-
     private void Awake()
     {
-        waveSpawner = GetComponent<WaveSpawner>();
-        MonsterLaneManager = GetComponent<MonsterLaneManager>();
-        UnitPartyManager = GetComponent<UnitPartyManager>();
-        monsters = new HashSet<MonsterController>();
+        StageMonsterManager = GetComponent<StageMonsterManager>();
+        StageMonsterManager.OnMonsterDie += OnMonsterDie;
+        StageMonsterManager.OnMonsterCleared += OnMonsterCleared;
 
+        UnitPartyManager = GetComponent<UnitPartyManager>();
+        
         SaveLoadManager.LoadGame();
         DoLoad();
     }
 
     private void Start()
     {
-        SetStageInfo();
         SaveLoadManager.onSaveRequested += DoSave;
-        Addressables.InstantiateAsync(stage, Vector3.back * 30f, Quaternion.identity);
+
+
+        StageUiManager.SetGoldText();
+
+        SetStageInfo();
+
+        var background = GetComponent<ObjectPoolManager>().gameObjectPool[stageData.PrefabId].Get();
+        background.transform.parent = null;
+        background.transform.position = Vector3.back * 30f;
+        background.transform.rotation = Quaternion.identity;
+
+        //Addressables.InstantiateAsync(stage, Vector3.back * 30f, Quaternion.identity);
         SpawnNextWave();
     }
 
     private void Update()
     {
-        if (Input.GetKeyDown(KeyCode.Alpha1))
-        {
-            //TODO: ½ºÅ×ÀÌÁö Å×ÀÌºí ID º¯°æµÉ ¼ö ÀÖÀ½
-            var stageData = DataTableManager.StageTable.GetData(CurrentPlanet * 100000 + CurrentStage * 100);
-            Debug.Log(stageData.CorpsID);
-        }
-
-        if (Input.GetKeyDown(KeyCode.Alpha2))
-        {
-            var handle = Addressables.InstantiateAsync(stage);
-            handle.WaitForCompletion();
-        }
-
-        if (Input.GetKeyDown(KeyCode.Alpha3))
-        {
-            SpawnNextWave();
-        }
-
-        if (Input.GetKeyDown(KeyCode.Alpha5))
-        {
-            for (int i = 0; i < 3; ++i)
-            {
-                Debug.Log(this.MonsterLaneManager.GetFirstMonster(i));
-            }
-        }
-
-        float remainTime = 60f + stageStartTime - Time.time;
+        float remainTime = stageEndTime - Time.time;
 
         if (remainTime <= 0f)
         {
             remainTime = 0f;
-            ResetStage(false);
+            OnTimeOver();
         }
 
-        stageUiManager.SetTimer(remainTime);
+        StageUiManager.SetTimer(remainTime);
     }
 
-    public void AddMonster(MonsterController monsterController)
-    {
-        monsters.Add(monsterController);
 
-        var destroyEvent = monsterController.GetComponent<DestructedDestroyEvent>();
-        destroyEvent.OnDestroyed += OnMonsterDestroy;
-    }
-
-    public void SpawnNextWave(float delay = 2f)
+    private void SpawnNextWave(float delay = 2f)
     {
-        stageUiManager.SetStageText(CurrentPlanet, CurrentStage, CurrentWave);
+        StageUiManager.SetStageText(CurrentPlanet, CurrentStage, CurrentWave);
 
         StartCoroutine(coSpawnNextWave(delay));
     }
+
+
+    private void OnMonsterDie()
+    {
+        StageUiManager.SetGoldText();
+    }
+
 
     private IEnumerator coSpawnNextWave(float delay)
     {
@@ -126,102 +104,80 @@ public class StageManager : MonoBehaviour
 
         Transform unit = UnitPartyManager.GetFirstLineUnitTransform();
         if (unit != null)
-            waveSpawner.Spawn(unit.position + Vector3.forward * spawnDistance, corpsData);
+        {
+            StageMonsterManager.Spawn(unit.position + Vector3.forward * spawnDistance, corpsData);
+        }
         else
-            waveSpawner.Spawn(transform.position, corpsData);
+        {
+            StageMonsterManager.Spawn(Vector3.zero, corpsData);
+        }
 
-        stageUiManager.SetStageText(CurrentPlanet, CurrentStage, CurrentWave);
+        StageUiManager.SetStageText(CurrentPlanet, CurrentStage, CurrentWave);
         ++CurrentWave;
     }
 
-    private void OnMonsterDestroy(DestructedDestroyEvent sender)
-    {
-        var monsterController = sender.GetComponent<MonsterController>();
-        monsters.Remove(monsterController);
 
-        golds += monsterController.RewardData.Count;
-        stageUiManager.SetGoldText(golds);
 
-        int reward2 = monsterController.RewardData.RandomReward2();
-        if (reward2 > -1)
-        {
-            Debug.Log($"{monsterController.RewardData.Reward2}, {monsterController.RewardData.counts[reward2]}, {monsterController.RewardData.probabilities[reward2]}");
-        }
-
-        if (monsters.Count == 0)
-        {
-            if (CurrentWave > waveData.WaveCorpsIDs.Length)
-            {
-                ResetStage(true);
-                return;
-            }
-
-            SpawnNextWave();
-        }
-    }
 
     private void SetStageInfo()
     {
         CurrentPlanet = Variables.planetNumber;
         CurrentStage = Variables.stageNumber;
         CurrentWave = 1;
-        stageStartTime = Time.time;
+        stageEndTime = Time.time + 60f;
 
         //stageData = DataTableManager.StageTable.GetData(string.Format(stageIDFormat, CurrentPlanet, CurrentStage));
         stageData = DataTableManager.StageTable.GetData(CurrentPlanet * 100000 + CurrentStage * 100);
         waveData = DataTableManager.WaveTable.GetData(stageData.CorpsID);
-        stageUiManager.SetStageText(CurrentPlanet, CurrentStage, CurrentWave);
+        StageUiManager.SetStageText(CurrentPlanet, CurrentStage, CurrentWave);
     }
 
-    private IEnumerator coStageLoad()
+
+    private void OnMonsterCleared()
     {
-        if (Variables.stageNumber > 1)
+        if (CurrentWave > waveData.WaveCorpsIDs.Length)
         {
-            --Variables.stageNumber;
+            ResetStage(true);
+            return;
         }
 
-        Variables.stageMode = StageMode.Repeat;
-        stageUiManager.SetStageMessage(false);
-        stageUiManager.SetActiveStageMessage(true);
-
-        yield return wait1;
-
-        SceneManager.LoadScene(0);
-        //Addressables.LoadSceneAsync("StageDevelopScene");
+        SpawnNextWave();
     }
-
     private void ResetStage(bool cleared)
     {
         if (!cleared)
         {
-            StartCoroutine(coStageLoad());
+            StartCoroutine(CoStageLoad());
             return;
         }
 
-        StartCoroutine(coClearStage());
+        StartCoroutine(CoClearStage());
     }
-
-    private IEnumerator coClearStage()
+    private IEnumerator CoClearStage()
     {
-        stageUiManager.SetStageMessage(true);
-        stageUiManager.SetActiveStageMessage(true);
+        StageUiManager.SetStageMessage(true);
+        StageUiManager.SetActiveStageMessage(true);
 
-        if (DataTableManager.StageTable.IsExistStage(CurrentPlanet, CurrentStage + 1))
+        if (CurrentPlanet == Variables.maxPlanetNumber
+            && CurrentStage == Variables.maxStageNumber)
         {
-            if (Variables.maxPlanetNumber == CurrentPlanet
-            && Variables.maxStageNumber < CurrentStage + 1)
+            if (stageData.FirstClearRewardID != 0)
+            {
+                ItemManager.AddItem(stageData.FirstClearRewardID, stageData.FirstClearRewardCount);
+            }
+            StageUiManager.SetGoldText();
+
+            if (DataTableManager.StageTable.IsExistStage(CurrentPlanet, CurrentStage + 1))
             {
                 Variables.maxStageNumber = CurrentStage + 1;
-
-                stageUiManager.UnlockStage(Variables.maxPlanetNumber, Variables.maxStageNumber);
             }
-        }
-        else if (DataTableManager.StageTable.IsExistPlanet(CurrentPlanet + 1)
-                  && Variables.maxPlanetNumber == CurrentPlanet)
-        {
-            Variables.maxPlanetNumber = CurrentPlanet + 1;
-            Variables.maxStageNumber = 1;
-            stageUiManager.UnlockStage(Variables.maxPlanetNumber, Variables.maxStageNumber);
+            else if (DataTableManager.StageTable.IsExistPlanet(CurrentPlanet + 1))
+            {
+                Variables.maxPlanetNumber = CurrentPlanet + 1;
+                Variables.maxStageNumber = 1;
+            }
+
+            StageUiManager.UnlockStage(Variables.maxPlanetNumber, Variables.maxStageNumber);
         }
 
         yield return wait1;
@@ -237,26 +193,55 @@ public class StageManager : MonoBehaviour
             {
                 ++Variables.planetNumber;
                 Variables.stageNumber = 1;
+
+                SaveLoadManager.SaveGame();
+                SceneManager.LoadScene(0);
             }
         }
 
         SetStageInfo();
         SpawnNextWave();
 
-        stageUiManager.SetActiveStageMessage(false);
+        SaveLoadManager.SaveGame();
+
+        StageUiManager.SetActiveStageMessage(false);
+    }
+
+    private IEnumerator CoStageLoad()
+    {
+        if (Variables.stageNumber > 1)
+        {
+            --Variables.stageNumber;
+        }
+
+        Variables.stageMode = StageMode.Repeat;
+        StageUiManager.SetStageMessage(false);
+        StageUiManager.SetActiveStageMessage(true);
+        SaveLoadManager.SaveGame();
+
+        yield return wait1;
+
+        SceneManager.LoadScene(0);
+        //Addressables.LoadSceneAsync("StageDevelopScene");
+    }
+
+    private void OnTimeOver()
+    {
+        ResetStage(false);
     }
 
     private void DoSave(TotalSaveData totalSaveData)
     {
         StageSaveData stageSaveData = new StageSaveData
         {
-            currentPlanet = CurrentPlanet,
-            currentStage = CurrentStage,
-            highPlanet = CurrentPlanet,
-            highStage = CurrentStage,
+            currentPlanet = Variables.planetNumber,
+            currentStage = Variables.stageNumber,
+            highPlanet = Variables.maxPlanetNumber,
+            highStage = Variables.maxStageNumber,
         };
         totalSaveData.stageSaveData = stageSaveData;
     }
+
     private void DoLoad()
     {
         if (SaveLoadManager.LoadedData == null)
@@ -271,6 +256,8 @@ public class StageManager : MonoBehaviour
         {
             Variables.planetNumber = stageLoadData.currentPlanet;
             Variables.stageNumber = stageLoadData.currentStage;
+            Variables.maxPlanetNumber = stageLoadData.highPlanet;
+            Variables.maxStageNumber = stageLoadData.highStage;
             // ï¿½Ö°ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½à¼º ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ò·ï¿½ï¿½ï¿½ï¿½ï¿½
             // ï¿½Ö°ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ò·ï¿½ï¿½ï¿½ï¿½ï¿½
         }

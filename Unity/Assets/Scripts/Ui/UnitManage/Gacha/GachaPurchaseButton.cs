@@ -16,14 +16,8 @@ public class GachaPurchaseButton : MonoBehaviour
 
     private BigNumber cost;
     private int count;
-    private Button button;
 
     public event Action<int> onClickGachaButton;
-    private void Awake()
-    {
-        button = GetComponent<Button>();
-        button.onClick.AddListener(() => OnClickGachaButton());
-    }
 
     public void Initialize(int count, BigNumber cost, Sprite sprite = null)
     {
@@ -35,7 +29,7 @@ public class GachaPurchaseButton : MonoBehaviour
         costText.text = $"{this.cost}";
     }
 
-    private void OnClickGachaButton()
+    public void OnClickGachaButton()
     {
         onClickGachaButton?.Invoke(count);
     }

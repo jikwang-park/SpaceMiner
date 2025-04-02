@@ -6,8 +6,6 @@ using UnityEngine.UI;
 public class GachaPurchaseUI : MonoBehaviour
 {
     [SerializeField]
-    private InventoryPanelUI inventoryPanelUI;
-    [SerializeField]
     private GachaResultPanelUI gachaResultPanelUI;
     [SerializeField]
     private GachaPurchaseButton gachaOneButton;

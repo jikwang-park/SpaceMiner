@@ -31,6 +31,28 @@ public class StageMonsterManager : MonoBehaviour
         laneMonsterCounts = new int[laneCount];
     }
 
+    public void ClearMonster()
+    {
+        monsterCount = 0;
+        for (int i = 0; i < laneMonsterCounts.Length; ++i)
+        {
+            laneMonsterCounts[i] = 0;
+        }
+        foreach (var line in monsterLines)
+        {
+            foreach (var monster in line.Value)
+            {
+                Destroy(monster.Value.gameObject);
+            }
+            if (!monsterLines.ContainsKey(currentFrontLine + 1))
+            {
+                break;
+            }
+            ++currentFrontLine;
+        }
+        monsterLines.Clear();
+    }
+
     public void AddMonster(int lane, MonsterController monster)
     {
         ++monsterCount;

@@ -8,6 +8,7 @@ using System.Linq;
 using System.Text;
 using UnityEngine.AddressableAssets;
 using System;
+using CsvHelper.Configuration;
 
 public abstract class DataTable
 {

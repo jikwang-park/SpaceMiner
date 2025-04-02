@@ -8,50 +8,51 @@ using UnityEngine.SceneManagement;
 public class StageManager : MonoBehaviour
 {
     [field: SerializeField]
-    public int CurrentPlanet { get; private set; }
+    private int CurrentPlanet { get; set; }
     [field: SerializeField]
-    public int CurrentStage { get; private set; }
+    private int CurrentStage { get; set; }
     [field: SerializeField]
-    public int CurrentWave { get; private set; }
+    private int CurrentWave { get; set; }
 
     public StageMonsterManager StageMonsterManager { get; private set; }
 
     public UnitPartyManager UnitPartyManager { get; private set; }
 
     [field: SerializeField]
-    public StageUiManger StageUiManager { get; private set; }
+    public StageUiManager StageUiManager { get; private set; }
 
-    [SerializeField]
-    private float spawnDistance = 10f;
-    
-    private StageTable.Data stageData;
     private WaveTable.Data waveData;
 
     private float stageEndTime;
 
+    [SerializeField]
+    private float spawnDistance = 10f;
+
+
+    private StageTable.Data stageData;
+
     private WaitForSeconds wait1 = new WaitForSeconds(1f);
-
-    private BigNumber golds = 0;
-
 
     private void Awake()
     {
         StageMonsterManager = GetComponent<StageMonsterManager>();
         StageMonsterManager.OnMonsterDie += OnMonsterDie;
         StageMonsterManager.OnMonsterCleared += OnMonsterCleared;
-        
-        UnitPartyManager = GetComponent<UnitPartyManager>();
 
+        UnitPartyManager = GetComponent<UnitPartyManager>();
+        
         SaveLoadManager.LoadGame();
         DoLoad();
     }
 
     private void Start()
     {
+        SaveLoadManager.onSaveRequested += DoSave;
+
+
         StageUiManager.SetGoldText();
 
         SetStageInfo();
-        SaveLoadManager.onSaveRequested += DoSave;
 
         var background = GetComponent<ObjectPoolManager>().gameObjectPool[stageData.PrefabId].Get();
         background.transform.parent = null;
@@ -69,11 +70,12 @@ public class StageManager : MonoBehaviour
         if (remainTime <= 0f)
         {
             remainTime = 0f;
-            ResetStage(false);
+            OnTimeOver();
         }
 
         StageUiManager.SetTimer(remainTime);
     }
+
 
     private void SpawnNextWave(float delay = 2f)
     {
@@ -81,6 +83,13 @@ public class StageManager : MonoBehaviour
 
         StartCoroutine(coSpawnNextWave(delay));
     }
+
+
+    private void OnMonsterDie()
+    {
+        StageUiManager.SetGoldText();
+    }
+
 
     private IEnumerator coSpawnNextWave(float delay)
     {
@@ -107,21 +116,8 @@ public class StageManager : MonoBehaviour
         ++CurrentWave;
     }
 
-    private void OnMonsterDie()
-    {
-        StageUiManager.SetGoldText();
-    }
 
-    private void OnMonsterCleared()
-    {
-        if (CurrentWave > waveData.WaveCorpsIDs.Length)
-        {
-            ResetStage(true);
-            return;
-        }
 
-        SpawnNextWave();
-    }
 
     private void SetStageInfo()
     {
@@ -136,36 +132,28 @@ public class StageManager : MonoBehaviour
         StageUiManager.SetStageText(CurrentPlanet, CurrentStage, CurrentWave);
     }
 
-    private IEnumerator coStageLoad()
+
+    private void OnMonsterCleared()
     {
-        if (Variables.stageNumber > 1)
+        if (CurrentWave > waveData.WaveCorpsIDs.Length)
         {
-            --Variables.stageNumber;
+            ResetStage(true);
+            return;
         }
 
-        Variables.stageMode = StageMode.Repeat;
-        StageUiManager.SetStageMessage(false);
-        StageUiManager.SetActiveStageMessage(true);
-        SaveLoadManager.SaveGame();
-
-        yield return wait1;
-
-        SceneManager.LoadScene(0);
-        //Addressables.LoadSceneAsync("StageDevelopScene");
+        SpawnNextWave();
     }
-
     private void ResetStage(bool cleared)
     {
         if (!cleared)
         {
-            StartCoroutine(coStageLoad());
+            StartCoroutine(CoStageLoad());
             return;
         }
 
-        StartCoroutine(coClearStage());
+        StartCoroutine(CoClearStage());
     }
-
-    private IEnumerator coClearStage()
+    private IEnumerator CoClearStage()
     {
         StageUiManager.SetStageMessage(true);
         StageUiManager.SetActiveStageMessage(true);
@@ -219,6 +207,29 @@ public class StageManager : MonoBehaviour
         StageUiManager.SetActiveStageMessage(false);
     }
 
+    private IEnumerator CoStageLoad()
+    {
+        if (Variables.stageNumber > 1)
+        {
+            --Variables.stageNumber;
+        }
+
+        Variables.stageMode = StageMode.Repeat;
+        StageUiManager.SetStageMessage(false);
+        StageUiManager.SetActiveStageMessage(true);
+        SaveLoadManager.SaveGame();
+
+        yield return wait1;
+
+        SceneManager.LoadScene(0);
+        //Addressables.LoadSceneAsync("StageDevelopScene");
+    }
+
+    private void OnTimeOver()
+    {
+        ResetStage(false);
+    }
+
     private void DoSave(TotalSaveData totalSaveData)
     {
         StageSaveData stageSaveData = new StageSaveData
@@ -230,6 +241,7 @@ public class StageManager : MonoBehaviour
         };
         totalSaveData.stageSaveData = stageSaveData;
     }
+
     private void DoLoad()
     {
         if (SaveLoadManager.LoadedData == null)

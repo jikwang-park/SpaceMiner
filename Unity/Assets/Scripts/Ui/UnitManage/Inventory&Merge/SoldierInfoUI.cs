@@ -13,17 +13,14 @@ public class SoldierInfoUI : MonoBehaviour
     [SerializeField]
     private TextMeshProUGUI nameText;
     [SerializeField]
-    private TextMeshProUGUI levelText;
-    [SerializeField]
     private Button equipButton;
 
     public void Initialize(InventoryElement element)
     {
         var sprite = element.GetComponent<Image>().sprite;
         var data = DataTableManager.SoldierTable.GetData(element.soldierId);
-        soldierInfo.Initialize(element.GradeIndex.ToString(), element.Count.ToString(), sprite);
+        soldierInfo.Initialize(element.Level.ToString(), element.Count.ToString(), sprite);
         gradeText.text = data.Rating.ToString();
         nameText.text = data.StringID.ToString();
-        levelText.text = $"Lv. {element.Level}";
     }
 }

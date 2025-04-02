@@ -9,7 +9,7 @@ public class InventoryElement : MonoBehaviour
     public bool IsLocked { get; private set; } = true;
     public int Count { get; private set; } = 0;
     public int Level { get; private set; } = 0;
-    public int GradeIndex { get; private set; } = 0;
+    public Grade Grade { get; private set; } = 0;
     public int soldierId; //250331 HKY 데이터형 변경
 
     [SerializeField]
@@ -54,13 +54,9 @@ public class InventoryElement : MonoBehaviour
     {
         soldierId = id;
     }
-    public void SetGrade(int grade)
+    public void SetGrade(Grade grade)
     {
-        GradeIndex = grade;
-        if (gradeText != null)
-        {
-            gradeText.text = $"{grade} Grade";
-        }
+        this.Grade = grade;
     }
 
     public void SetLevel(int level)

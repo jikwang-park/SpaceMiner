@@ -105,9 +105,9 @@ public class UnitPartyManager : MonoBehaviour
     }
     public void UnitSpawn(Vector3 pos)
     {
-        for(int i = 0; i<generateInstance.Count; ++i)
+        for(int i = 0; i<unitprefabs.Count; ++i)
         {
-            var unit = generateInstance[i];
+            var unit = unitprefabs[i];
             if(unit.UnitTypes == UnitTypes.Tanker)
             {
                 pos = unit.transform.position;

@@ -25,4 +25,12 @@ public class UnitSkillUpgradeElement : MonoBehaviour
     {
 
     }
+    public void SetBoardText()
+    {
+
+    }
+    public void SetImage()
+    {
+
+    }
 }

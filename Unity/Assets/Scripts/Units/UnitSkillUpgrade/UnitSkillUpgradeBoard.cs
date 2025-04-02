@@ -19,6 +19,6 @@ public class UnitSkillUpgradeBoard : MonoBehaviour
     }
     public void ShowBoard()
     {
-        upgradeElement.SetData();
+       
     }
 }

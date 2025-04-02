@@ -633,7 +633,7 @@ GameObject:
   - component: {fileID: 2549774563303903527}
   - component: {fileID: 5600800013877770243}
   m_Layer: 5
-  m_Name: ConditionPlanet
+  m_Name: ConditionStage
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -875,7 +875,19 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 6117324580449067985}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 6845771368442060933}
+        m_TargetAssemblyTypeName: DungeonPopup, Assembly-CSharp
+        m_MethodName: OnClickStage
+        m_Mode: 6
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!1 &4480889998164767143
 GameObject:
   m_ObjectHideFlags: 0
@@ -1532,7 +1544,19 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 8016288507841967341}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 6845771368442060933}
+        m_TargetAssemblyTypeName: DungeonPopup, Assembly-CSharp
+        m_MethodName: OnClickStage
+        m_Mode: 6
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 1
+        m_CallState: 2
 --- !u!1 &8290520030645576828
 GameObject:
   m_ObjectHideFlags: 0
@@ -1910,7 +1934,19 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 4121225129290296927}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 6845771368442060933}
+        m_TargetAssemblyTypeName: DungeonPopup, Assembly-CSharp
+        m_MethodName: OnClickEnter
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!1 &8988042710154416373
 GameObject:
   m_ObjectHideFlags: 0
@@ -2057,14 +2093,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f3f8816e8ea777f4a83c656836347bb3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  nameText: {fileID: 0}
-  difficultyText: {fileID: 0}
-  selectedDifficulty: {fileID: 0}
-  conditionStageText: {fileID: 0}
-  conditionPowerText: {fileID: 0}
-  clearRewardText: {fileID: 0}
-  nextDifficultyButton: {fileID: 0}
-  previousDifficultyButton: {fileID: 0}
+  nameText: {fileID: 2075677832646333794}
+  difficultyText: {fileID: 5803461389331333761}
+  selectedDifficulty: {fileID: 4417204306892301355}
+  conditionStageText: {fileID: 5600800013877770243}
+  conditionPowerText: {fileID: 8644146474922349727}
+  clearRewardText: {fileID: 1034376807530677961}
+  nextDifficultyButton: {fileID: 9038903541575105152}
+  previousDifficultyButton: {fileID: 1495763604805865052}
 --- !u!1 &9062295210321619328
 GameObject:
   m_ObjectHideFlags: 0

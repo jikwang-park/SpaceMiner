@@ -10,6 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1181366133848322711}
   - component: {fileID: 7149126086526843196}
+  - component: {fileID: 4004876687242717253}
   - component: {fileID: 5459253944340646252}
   - component: {fileID: 2783601912933395742}
   - component: {fileID: 4185081511514637580}
@@ -48,11 +49,24 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 576efe7cd30ded8479bd4ac26ced0023, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  <CurrentPlanet>k__BackingField: 0
-  <CurrentStage>k__BackingField: 0
-  <CurrentWave>k__BackingField: 0
   <StageUiManager>k__BackingField: {fileID: 0}
-  spawnDistance: 10
+  ingameStatus: 0
+--- !u!114 &4004876687242717253
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8551117843900428423}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 55f883ef3516a4f4380c6513045ada44, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  offset: {x: 28, y: 20, z: -23}
+  unit: {fileID: 0}
+  worldCamera: {fileID: 0}
+  followingSpeed: 10
 --- !u!114 &5459253944340646252
 MonoBehaviour:
   m_ObjectHideFlags: 0

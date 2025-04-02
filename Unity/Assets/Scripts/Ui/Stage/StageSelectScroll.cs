@@ -51,7 +51,7 @@ public class StageSelectScroll : MonoBehaviour
         var planetDatas = DataTableManager.StageTable.GetPlanetData(planet);
         for (int i = 0; i < planetDatas.Count; ++i)
         {
-            var buttonGo = objectpoolManager.gameObjectPool[buttonReference].Get();
+            var buttonGo = objectpoolManager.Get(buttonReference);
             buttonGo.transform.SetParent(contents);
             buttonGo.transform.localScale = Vector3.one;
             var button = buttonGo.GetComponent<StageButton>();

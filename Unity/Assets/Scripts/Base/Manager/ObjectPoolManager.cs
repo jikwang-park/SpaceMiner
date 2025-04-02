@@ -16,32 +16,55 @@ public class ObjectPoolManager : MonoBehaviour
     [SerializeField]
     private GameObject[] prefabs;
 
-    public Dictionary<string, IObjectPool<GameObject>> gameObjectPool { get; private set; } = new Dictionary<string, IObjectPool<GameObject>>();
+    private Dictionary<string, IObjectPool<GameObject>> gameObjectPools = new Dictionary<string, IObjectPool<GameObject>>();
 
     private void Awake()
     {
         for (int i = 0; i < addressableAssetsNames.Length; ++i)
         {
-            if (!gameObjectPool.ContainsKey(addressableAssetsNames[i]))
+            if (!gameObjectPools.ContainsKey(addressableAssetsNames[i]))
             {
-                ObjectPool<GameObject> pool = null;
-                string referenceName = string.Format(objectPoolIDFormat, addressableAssetsNames[i]);
-                pool = new ObjectPool<GameObject>
-                    (() => CreatePooledItem(referenceName, pool), OnTakeFromPool, OnReturnedToPool, OnDestroyOnObject, true);
-                gameObjectPool.Add(addressableAssetsNames[i], pool);
+                CreateAddressableObjectPool(addressableAssetsNames[i]);
             }
         }
         for (int i = 0; i < prefabs.Length; ++i)
         {
-            if (!gameObjectPool.ContainsKey(prefabs[i].name))
+            if (!gameObjectPools.ContainsKey(prefabs[i].name))
             {
                 ObjectPool<GameObject> pool = null;
                 GameObject prefab = prefabs[i];
                 pool = new ObjectPool<GameObject>
                     (() => CreatePooledItem(prefab, pool), OnTakeFromPool, OnReturnedToPool, OnDestroyOnObject, true);
-                gameObjectPool.Add(prefab.name, pool);
+                gameObjectPools.Add(prefab.name, pool);
             }
         }
+    }
+
+    public GameObject Get(string prefabId)
+    {
+        if (!gameObjectPools.ContainsKey(prefabId))
+        {
+            CreateAddressableObjectPool(prefabId);
+        }
+        return gameObjectPools[prefabId].Get();
+    }
+
+    public void Clear()
+    {
+        foreach (var gameObjectPool in gameObjectPools)
+        {
+            gameObjectPool.Value.Clear();
+        }
+        gameObjectPools.Clear();
+    }
+
+    private void CreateAddressableObjectPool(string prefabId)
+    {
+        ObjectPool<GameObject> pool = null;
+        string referenceName = string.Format(objectPoolIDFormat, prefabId);
+        pool = new ObjectPool<GameObject>
+            (() => CreatePooledItem(referenceName, pool), OnTakeFromPool, OnReturnedToPool, OnDestroyOnObject, true);
+        gameObjectPools.Add(prefabId, pool);
     }
 
     private GameObject CreatePooledItem(AssetReferenceGameObject reference, IObjectPool<GameObject> pool)

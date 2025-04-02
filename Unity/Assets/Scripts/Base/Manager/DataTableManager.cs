@@ -70,6 +70,10 @@ public static class DataTableManager
         unitUpgradeTable.Load(DataTableIds.unitUpgradeTable);
         tables.Add(DataTableIds.unitUpgradeTable, unitUpgradeTable);
 
+        var skillUpgradeTable = new SkillUpgradeTable();
+        skillUpgradeTable.Load(DataTableIds.skillUpgradeTable);
+        tables.Add(DataTableIds.skillUpgradeTable, skillUpgradeTable);
+
 
         var monsterTable = new MonsterTable();
         monsterTable.Load(DataTableIds.monsterTable);
@@ -172,4 +176,7 @@ public static class DataTableManager
 
     public static DungeonTable DungeonTable
         => GetTable<DungeonTable>(DataTableIds.dungeonTable);
+
+    public static SkillUpgradeTable SkillUpgradeTable
+        => GetTable<SkillUpgradeTable>(DataTableIds.skillUpgradeTable);
 }

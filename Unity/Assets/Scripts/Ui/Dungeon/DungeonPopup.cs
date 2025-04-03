@@ -13,7 +13,6 @@ public class DungeonPopup : MonoBehaviour
 
     private int index;
 
-
     [SerializeField]
     private TextMeshProUGUI nameText;
 
@@ -30,6 +29,9 @@ public class DungeonPopup : MonoBehaviour
     private TextMeshProUGUI conditionPowerText;
 
     [SerializeField]
+    private TextMeshProUGUI keyText;
+
+    [SerializeField]
     private TextMeshProUGUI clearRewardText;
 
     [SerializeField]
@@ -37,6 +39,11 @@ public class DungeonPopup : MonoBehaviour
 
     [SerializeField]
     private Button previousDifficultyButton;
+
+    [SerializeField]
+    private Button enterButton;
+
+    private int maxStage;
 
 
     private void Start()
@@ -48,13 +55,36 @@ public class DungeonPopup : MonoBehaviour
     {
         subStages = DataTableManager.DungeonTable.GetDungeonList(dungeonType);
         Variables.currentDungeonType = dungeonType;
-        index = Variables.currentDungeonStage - 1;
-        ShowData(subStages[index]);
+        maxStage = SaveLoadManager.Data.stageSaveData.highestDungeon[dungeonType];
+        SetIndex(maxStage - 1);
     }
 
-    private void ShowData(DungeonTable.Data data)
+    private void ShowData(int index)
     {
-        selectedDifficulty.text = data.Stage.ToString();
+        var curStage = subStages[index];
+
+        selectedDifficulty.text = $"Stage : {curStage.Stage}";
+        keyText.text = $"{curStage.KeyCount} / {ItemManager.GetItemAmount(curStage.DungeonKeyID)}";
+        conditionPowerText.text = $"Currrent Power : {Variables.powerLevel}\nNeed : {curStage.ConditionPower}";
+        conditionStageText.text = $"Currrent Planet : {SaveLoadManager.Data.stageSaveData.highPlanet - 1}\nNeed : {subStages[index].ConditionPlanet}";
+        clearRewardText.text = $"Reward : {curStage.ItemID}/{curStage.ClearReward}";
+
+
+        previousDifficultyButton.interactable = index > 0;
+        nextDifficultyButton.interactable = index + 1 < maxStage && index < subStages.Count - 1;
+
+        bool powerCondition = Variables.powerLevel > curStage.ConditionPower;
+        bool planetCondition = SaveLoadManager.Data.stageSaveData.highPlanet > curStage.ConditionPlanet;
+        bool keyCondition = ItemManager.GetItemAmount(curStage.DungeonKeyID) >= curStage.KeyCount;
+
+        enterButton.interactable = powerCondition && planetCondition && keyCondition;
+    }
+
+    private void SetIndex(int index)
+    {
+        this.index = index;
+
+        ShowData(this.index);
     }
 
     //TODO: 인스펙터에서 스테이지 뒤로, 앞으로 버튼과 연결
@@ -62,7 +92,7 @@ public class DungeonPopup : MonoBehaviour
     {
         bool changed = false;
 
-        if (isNext && index < subStages.Count - 1)
+        if (isNext && index + 1 < maxStage && index < subStages.Count - 1)
         {
             ++index;
             changed = true;
@@ -75,14 +105,20 @@ public class DungeonPopup : MonoBehaviour
 
         if (changed)
         {
-            Variables.currentDungeonStage = index + 1;
-            ShowData(subStages[index]);
+            ShowData(index);
         }
     }
 
     //TODO: 인스펙터에서 엔터 버튼과 연결
     public void OnClickEnter()
     {
+        Variables.currentDungeonStage = index + 1;
         stageManager.SetStatus(IngameStatus.Dungeon);
+    }
+
+    public void OnClickKeyGet()
+    {
+        ItemManager.AddItem(subStages[index].DungeonKeyID, 1);
+        ShowData(index);
     }
 }

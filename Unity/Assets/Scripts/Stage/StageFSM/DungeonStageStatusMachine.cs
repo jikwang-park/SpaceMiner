@@ -139,8 +139,8 @@ public class DungeonStageStatusMachine : StageStatusMachine
 
     protected void InitStage()
     {
-        currentType = Variables.selectedDungeonType;
-        currentStage = Variables.selectedDungeonStage;
+        currentType = Variables.currentDungeonType;
+        currentStage = Variables.currentDungeonStage;
         currentWave = 1;
 
         dungeonData = DataTableManager.DungeonTable.GetData(currentType, currentStage);

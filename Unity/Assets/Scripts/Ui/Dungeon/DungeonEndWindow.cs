@@ -18,6 +18,10 @@ public class DungeonEndWindow : MonoBehaviour
     public void Set(bool isCleared)
     {
         this.isCleared = isCleared;
+    }
+
+    private void OnEnable()
+    {
         if (isCleared)
         {
             nextText.text = "Next";
@@ -47,7 +51,7 @@ public class DungeonEndWindow : MonoBehaviour
 
     public void Lift()
     {
-        ++Variables.selectedDungeonStage;
+        ++Variables.currentDungeonStage;
         Retry();
     }
 

@@ -21,9 +21,12 @@ public class StageButton : MonoBehaviour, IObjectPoolGameObject
     public Button Button { get; private set; }
     private StageManager stageManager;
 
+    private StageSaveData stageLoadData;
+
     private void Awake()
     {
         Button = GetComponent<Button>();
+        stageLoadData = SaveLoadManager.Data.stageSaveData;
     }
 
     public void Release()
@@ -41,8 +44,8 @@ public class StageButton : MonoBehaviour, IObjectPoolGameObject
 
     public void MoveStage()
     {
-        Variables.planetNumber = planet;
-        Variables.stageNumber = stage;
+        stageLoadData.currentPlanet= planet;
+        stageLoadData.currentStage = stage;
         SaveLoadManager.SaveGame();
         SceneManager.LoadScene(0);
         //Addressables.LoadSceneAsync("StageDevelopScene");

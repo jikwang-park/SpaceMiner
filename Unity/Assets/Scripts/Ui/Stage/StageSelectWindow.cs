@@ -12,10 +12,14 @@ public class StageSelectWindow : MonoBehaviour
 
     private int currentPlanet = 1;
 
+    private StageSaveData stageLoadData;
+
+
     private void Start()
     {
         planetScroll.OnPlanetSelected += OnPlanetSelected;
-        OnPlanetSelected(Variables.planetNumber);
+        stageLoadData = SaveLoadManager.Data.stageSaveData;
+        OnPlanetSelected(stageLoadData.currentPlanet);
     }
 
     public void UnlockStage(int planet, int stage)

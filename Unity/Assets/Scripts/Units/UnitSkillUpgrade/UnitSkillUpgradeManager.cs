@@ -9,7 +9,7 @@ public class UnitSkillUpgradeManager : MonoBehaviour
 
     public Grade currentGrade;
 
-    public int id;
+    private int id;
 
     public Dictionary<UnitTypes, Dictionary<Grade, int>> unitSkillDictionary = new Dictionary<UnitTypes, Dictionary<Grade, int>>();
     [SerializeField]
@@ -27,6 +27,7 @@ public class UnitSkillUpgradeManager : MonoBehaviour
                 {
                     unitSkillDictionary.Add(type, new Dictionary<Grade, int>());
                 }
+
                 unitSkillDictionary[type].Add(grade, (int)grade * 1000 + (int)type * 100 + 1);
             }
         }
@@ -34,9 +35,10 @@ public class UnitSkillUpgradeManager : MonoBehaviour
 
 
 
-    private void Initialize()
+    public int GetCurrentId()
     {
-        
+        id = unitSkillDictionary[currentType][currentGrade];
+        return id;
     }
 
 
@@ -47,7 +49,7 @@ public class UnitSkillUpgradeManager : MonoBehaviour
 
         currentType = type;
         SetGrade(Grade.Normal);
-        board.SetInfo(currentType, currentGrade);
+        board.SetInfo(GetCurrentId());
     }
     public void SetGrade(Grade grade)
     {
@@ -55,7 +57,7 @@ public class UnitSkillUpgradeManager : MonoBehaviour
             return;
 
         currentGrade = grade;
-        board.SetInfo(currentType, currentGrade);
+        board.SetInfo(GetCurrentId());
 
     }
 }

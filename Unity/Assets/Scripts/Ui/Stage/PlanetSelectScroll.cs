@@ -32,7 +32,7 @@ public class PlanetSelectScroll : MonoBehaviour
 
         for (int i = 0; i < planets.Count; ++i)
         {
-            var button = objectPoolManager.gameObjectPool[buttonReference].Get();
+            var button = objectPoolManager.Get(buttonReference);
             button.transform.SetParent(contents);
             button.transform.localScale = Vector3.one;
 

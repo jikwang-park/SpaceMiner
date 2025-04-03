@@ -1,11 +1,13 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Numerics;
 using TMPro;
 using UnityEngine;
 
 public class StageUiManager : MonoBehaviour
 {
     private const string stageTextFormat = "{0}-{1}\n{2} Wave";
+    private const string dungeonTextFormat = "Dungeon {0}-{1}\n{2} Wave";
     private const string fail = "Fail";
     private const string clear = "Clear";
 
@@ -15,8 +17,8 @@ public class StageUiManager : MonoBehaviour
     private TextMeshProUGUI timerText;
     [SerializeField]
     private TextMeshProUGUI goldText;
-    [SerializeField]
-    private GameObject stageEndMessageWindow;
+    [field:SerializeField]
+    public GameObject stageEndMessageWindow { get; private set; }
     [SerializeField]
     private TextMeshProUGUI stageEndMessageText;
     [SerializeField]
@@ -37,6 +39,11 @@ public class StageUiManager : MonoBehaviour
     public void SetStageText(int planet, int stage, int wave)
     {
         stageText.text = string.Format(stageTextFormat, planet, stage, wave);
+    }
+
+    public void SetStageTextDungeon(int dungeonId, int stage, int wave)
+    {
+        stageText.text = string.Format(dungeonTextFormat, dungeonId, stage, wave);
     }
 
     public void SetStageMessage(bool isCleared)
@@ -64,5 +71,18 @@ public class StageUiManager : MonoBehaviour
     public void SetGoldText()
     {
         goldText.text = $"{ItemManager.GetItemAmount((int)Currency.Gold)}G";
+    }
+
+    public void SetIngameStatus(IngameStatus status)
+    {
+        switch (status)
+        {
+            case IngameStatus.Planet:
+                goldText.gameObject.SetActive(true);
+                break;
+            case IngameStatus.Dungeon:
+                goldText.gameObject.SetActive(false);
+                break;
+        }
     }
 }

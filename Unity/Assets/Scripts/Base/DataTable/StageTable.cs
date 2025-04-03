@@ -99,6 +99,11 @@ public class StageTable : DataTable
         return planetDict[planet].Values.ToList();
     }
 
+    public Data GetStageData(int planet,int stage)
+    {
+        return planetDict[planet][stage];
+    }
+
     public List<int> GetPlanetKeys()
     {
         return planetDict.Keys.ToList();

@@ -2,19 +2,18 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-
 public static class InventoryManager
 {
-    private static Dictionary<UnitTypes, InventorySaveData> inventories = new Dictionary<UnitTypes, InventorySaveData>();
+    private static Dictionary<UnitTypes, InventorySaveData> Inventories
+    {
+        get
+        {
+            return SaveLoadManager.Data.inventorySaveData;
+        }
+    }
     public static readonly int requireMergeCount = 5;
     public static event Action onChangedInventory;
-    static InventoryManager()
-    {
-        inventories.Clear();
-        Initialize();
-        SaveLoadManager.onSaveRequested += DoSave;
-    }
-    private static void Initialize()
+    public static void Initialize()
     {
         var datasByType = DataTableManager.SoldierTable.GetTypeDictionary();
 
@@ -38,17 +37,16 @@ public static class InventoryManager
             inventoryData.elements[0].isLocked = false;
             inventoryData.elements[0].count = 1;
             inventoryData.equipElementID = inventoryData.elements[0].soldierId;
-            inventories[type] = inventoryData;
+            if(!Inventories.ContainsKey(type))
+            {
+                Inventories[type] = inventoryData;
+            }
         }
         onChangedInventory?.Invoke();
     }
     public static InventorySaveData GetInventoryData(UnitTypes type)
     {
-        if (inventories.ContainsKey(type))
-        {
-            return inventories[type];
-        }
-        return null;
+        return Inventories.ContainsKey(type) ? Inventories[type] : null;
     }
     public static void Add(List<SoldierTable.Data> datas)
     {
@@ -59,12 +57,12 @@ public static class InventoryManager
     }
     public static void Add(SoldierTable.Data data)
     {
-        if (!inventories.ContainsKey(data.Kind))
+        if (!Inventories.ContainsKey(data.Kind))
         {
             return;
         }
 
-        InventorySaveData inventoryData = inventories[data.Kind];
+        InventorySaveData inventoryData = Inventories[data.Kind];
 
         InventoryElementSaveData element = inventoryData.elements.Find(e => e.soldierId == data.ID);
 
@@ -116,14 +114,5 @@ public static class InventoryManager
             nextElement.count += count;
         }
         onChangedInventory?.Invoke();
-    }
-
-    private static void DoSave(TotalSaveData totalSaveData)
-    {
-        totalSaveData.inventorySaveData = inventories;
-    }
-    public static void DoLoad()
-    {
-        inventories = new Dictionary<UnitTypes, InventorySaveData>(SaveLoadManager.LoadedData.inventorySaveData);
     }
 }

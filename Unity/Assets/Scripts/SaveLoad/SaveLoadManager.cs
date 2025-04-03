@@ -4,53 +4,69 @@ using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using UnityEngine;
+using SaveDataVC = SaveDataV1;
 
 public static class SaveLoadManager
 {
+    public static int SaveDataVersion { get; private set; } = 1;
+    public static SaveDataVC Data { get; set; }
+
     public static string fileName = "SaveData.json";
-    public static TotalSaveData LoadedData { get; private set; }
-    public static event Action<TotalSaveData> onSaveRequested;
-    
+    public static event Action onSaveRequested;
+    private static string SaveDirectory
+    {
+        get
+        {
+            return $"{Application.persistentDataPath}/Save";
+        }
+    }
+    private static JsonSerializerSettings settings = new JsonSerializerSettings
+    {
+        Formatting = Formatting.Indented,
+        TypeNameHandling = TypeNameHandling.All,
+    };
+    static SaveLoadManager()
+    {
+        if(!LoadGame())
+        {
+            Data = GetDefaultData();
+            SaveGame();
+        }
+    }
     public static void SaveGame()
     {
-        TotalSaveData data = new TotalSaveData();
+        if (!Directory.Exists(SaveDirectory))
+        {
+            Directory.CreateDirectory(SaveDirectory);
+        }
 
-        onSaveRequested?.Invoke(data);
+        onSaveRequested?.Invoke();
 
-        string json = JsonConvert.SerializeObject(data, Formatting.Indented);
-        string filePath = Path.Combine(Application.persistentDataPath, fileName);
+        string json = JsonConvert.SerializeObject(Data, settings);
+        string filePath = Path.Combine(SaveDirectory, fileName);
         File.WriteAllText(filePath, json);
         Debug.Log("Game saved to: " + filePath);
     }
-    public static void LoadGame()
+    public static bool LoadGame()
     {
-        string filePath = Path.Combine(Application.persistentDataPath, fileName);
+        string filePath = Path.Combine(SaveDirectory, fileName);
         if (!File.Exists(filePath))
         {
-            TotalSaveData defaultData = GetDefaultData();
-            LoadedData = defaultData;
-            string defaultJson = JsonConvert.SerializeObject(defaultData, Formatting.Indented);
-            File.WriteAllText(filePath, defaultJson);
-            return;
+            return false;
         }
         string json = File.ReadAllText(filePath);
-        TotalSaveData loadedSaveData = JsonConvert.DeserializeObject<TotalSaveData>(json);
+        var saveData = JsonConvert.DeserializeObject<SaveData>(json, settings);
 
-        if(loadedSaveData != null)
+        while(saveData.Version < SaveDataVersion)
         {
-            LoadedData = loadedSaveData;
-            ItemManager.DoLoad();
-            InventoryManager.DoLoad();
+            saveData = saveData.VersionUp();
         }
+        Data = saveData as SaveDataVC;
+        return true;
     }
-    public static TotalSaveData GetDefaultData()
+    public static SaveDataVC GetDefaultData()
     {
-        TotalSaveData defaultSaveData = new TotalSaveData();
-
-        for(int i = (int)UnitTypes.Tanker; i < (int)UnitTypes.Healer + 1; i++)
-        {
-            defaultSaveData.inventorySaveData[(UnitTypes)i] = InventoryManager.GetInventoryData((UnitTypes)i);
-        }
+        SaveDataVC defaultSaveData = new SaveDataVC();
 
         defaultSaveData.stageSaveData = new StageSaveData
         {
@@ -61,6 +77,32 @@ public static class SaveLoadManager
         };
 
         defaultSaveData.itemSaveData = new Dictionary<int, BigNumber>();
+
+        defaultSaveData.inventorySaveData = new Dictionary<UnitTypes, InventorySaveData>();
+        var datasByType = DataTableManager.SoldierTable.GetTypeDictionary();
+
+        foreach (var type in datasByType.Keys)
+        {
+            InventorySaveData inventoryData = new InventorySaveData();
+            inventoryData.inventoryType = type;
+
+            foreach (var soldierData in datasByType[type])
+            {
+                InventoryElementSaveData elementData = new InventoryElementSaveData()
+                {
+                    soldierId = soldierData.ID,
+                    isLocked = true,
+                    grade = soldierData.Rating,
+                    count = 0,
+                    level = 0
+                };
+                inventoryData.elements.Add(elementData);
+            }
+            inventoryData.elements[0].isLocked = false;
+            inventoryData.elements[0].count = 1;
+            inventoryData.equipElementID = inventoryData.elements[0].soldierId;
+            defaultSaveData.inventorySaveData[type] = inventoryData;
+        }
 
         return defaultSaveData;
     }

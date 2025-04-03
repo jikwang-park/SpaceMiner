@@ -86,7 +86,7 @@ public class WaveSpawner : MonoBehaviour
     {
         var monsterData = DataTableManager.MonsterTable.GetData(monsterId);
 
-        var monster = objectPoolManager.gameObjectPool[monsterData.PrefabId].Get();
+        var monster = objectPoolManager.Get(monsterData.PrefabId);
         var monsterController = monster.GetComponent<MonsterController>();
         monsterController.SetMonsterId(monsterId);
         monster.transform.parent = null;

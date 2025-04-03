@@ -7,10 +7,18 @@ using UnityEngine;
 
 public class ShopTable : DataTable
 {
+    public enum ShopType
+    {
+        DungeonKey=1,
+        MiningRobot,
+        Gold
+    }
+
     public class Data : ITableData
     {
         public int ID { get; set; }
         public int StringID { get; set; }
+        public ShopType Type { get; set; }
         public int NeedItemID { get; set; }
         public int NeedCount { get; set; }
         public int PaymentItemID { get; set; }
@@ -22,22 +30,34 @@ public class ShopTable : DataTable
         {
             ID = int.Parse(argument[0]);
             StringID = int.Parse(argument[1]);
-            NeedItemID = int.Parse(argument[2]);
-            NeedCount = int.Parse(argument[3]);
-            PaymentItemID = int.Parse(argument[4]);
-            PayCount = int.Parse(argument[5]);
-            DailyPurchaseLimit = int.Parse(argument[6]);
-            ResetTime = int.Parse(argument[7]);
+            if (int.TryParse(argument[2], out int type))
+            {
+                Type = (ShopType)type;
+            }
+            else
+            {
+                Type = Enum.Parse<ShopType>(argument[2]);
+            }
+            NeedItemID = int.Parse(argument[3]);
+            NeedCount = int.Parse(argument[4]);
+            PaymentItemID = int.Parse(argument[5]);
+            PayCount = int.Parse(argument[6]);
+            DailyPurchaseLimit = int.Parse(argument[7]);
+            ResetTime = int.Parse(argument[8]);
         }
     }
 
     private Dictionary<int, Data> dict = new Dictionary<int, Data>();
 
+    private Dictionary<ShopType, List<Data>> typeDict = new Dictionary<ShopType, List<Data>>();
+
     public override Type DataType => typeof(Data);
 
     public override void LoadFromText(string text)
     {
+        dict.Clear();
         TableData.Clear();
+        typeDict.Clear();
 
         if (string.IsNullOrEmpty(text))
         {
@@ -51,6 +71,12 @@ public class ShopTable : DataTable
             if (!TableData.ContainsKey(item.ID))
             {
                 TableData.Add(item.ID, item);
+                dict.Add(item.ID, item);
+                if (!typeDict.ContainsKey(item.Type))
+                {
+                    typeDict.Add(item.Type, new List<Data>());
+                }
+                typeDict[item.Type].Add(item);
             }
             else
             {
@@ -66,6 +92,15 @@ public class ShopTable : DataTable
             return null;
         }
         return (Data)TableData[key];
+    }
+
+    public List<Data> GetList(ShopType type)
+    {
+        if (typeDict.ContainsKey(type))
+        {
+            return typeDict[type];
+        }
+        return null;
     }
 
     public Dictionary<int, Data> GetDict()

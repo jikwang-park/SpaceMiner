@@ -47,8 +47,8 @@ public class DungeonPopup : MonoBehaviour
     public void ShowPopup(int dungeonType)
     {
         subStages = DataTableManager.DungeonTable.GetDungeonList(dungeonType);
-        Variables.selectedDungeonType = dungeonType;
-        index = Variables.selectedDungeonStage - 1;
+        Variables.currentDungeonType = dungeonType;
+        index = Variables.currentDungeonStage - 1;
         ShowData(subStages[index]);
     }
 
@@ -75,7 +75,7 @@ public class DungeonPopup : MonoBehaviour
 
         if (changed)
         {
-            Variables.selectedDungeonStage = index + 1;
+            Variables.currentDungeonStage = index + 1;
             ShowData(subStages[index]);
         }
     }

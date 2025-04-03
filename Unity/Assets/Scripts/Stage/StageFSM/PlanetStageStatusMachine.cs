@@ -21,6 +21,8 @@ public class PlanetStageStatusMachine : StageStatusMachine
 
     protected bool cleared = false;
 
+    private StageSaveData stageLoadData = SaveLoadManager.Data.stageSaveData;
+
     public PlanetStageStatusMachine(StageManager stageManager) : base(stageManager)
     {
 
@@ -33,7 +35,7 @@ public class PlanetStageStatusMachine : StageStatusMachine
         InitStage();
         InstantiateBackground();
 
-        stageManager.UnitPartyManager.UnitSpwan();
+        stageManager.UnitPartyManager.UnitSpawn();
         stageManager.StartCoroutine(CoSpawnNextWave());
         stageManager.StageMonsterManager.OnMonsterDie += OnMonsterDie;
         stageManager.StageMonsterManager.OnMonsterCleared += OnMonsterCleared;
@@ -139,8 +141,8 @@ public class PlanetStageStatusMachine : StageStatusMachine
         stageManager.StageUiManager.SetStageMessage(true);
         stageManager.StageUiManager.SetActiveStageMessage(true);
 
-        if (CurrentPlanet == Variables.maxPlanetNumber
-            && CurrentStage == Variables.maxStageNumber)
+        if (CurrentPlanet == stageLoadData.highPlanet
+            && CurrentStage == stageLoadData.highStage)
         {
             if (stageData.FirstClearRewardID != 0)
             {
@@ -150,15 +152,15 @@ public class PlanetStageStatusMachine : StageStatusMachine
 
             if (DataTableManager.StageTable.IsExistStage(CurrentPlanet, CurrentStage + 1))
             {
-                Variables.maxStageNumber = CurrentStage + 1;
+                stageLoadData.highStage = CurrentStage + 1;
             }
             else if (DataTableManager.StageTable.IsExistPlanet(CurrentPlanet + 1))
             {
-                Variables.maxPlanetNumber = CurrentPlanet + 1;
-                Variables.maxStageNumber = 1;
+                stageLoadData.highPlanet = CurrentPlanet + 1;
+                stageLoadData.highStage = 1;
             }
 
-            stageManager.StageUiManager.UnlockStage(Variables.maxPlanetNumber, Variables.maxStageNumber);
+            stageManager.StageUiManager.UnlockStage(stageLoadData.highPlanet, stageLoadData.highStage);
         }
 
         yield return wait1s;
@@ -168,12 +170,12 @@ public class PlanetStageStatusMachine : StageStatusMachine
         {
             if (DataTableManager.StageTable.IsExistStage(CurrentPlanet, CurrentStage + 1))
             {
-                ++Variables.stageNumber;
+                ++stageLoadData.currentStage;
             }
             else if (DataTableManager.StageTable.IsExistPlanet(CurrentPlanet + 1))
             {
-                ++Variables.planetNumber;
-                Variables.stageNumber = 1;
+                ++stageLoadData.currentPlanet;
+                stageLoadData.currentStage = 1;
 
                 SaveLoadManager.SaveGame();
                 SceneManager.LoadScene(0);
@@ -190,9 +192,9 @@ public class PlanetStageStatusMachine : StageStatusMachine
 
     private IEnumerator CoStageLoad()
     {
-        if (Variables.stageNumber > 1)
+        if (stageLoadData.currentStage > 1)
         {
-            --Variables.stageNumber;
+            --stageLoadData.currentStage;
         }
 
         Variables.stageMode = StageMode.Repeat;
@@ -208,8 +210,8 @@ public class PlanetStageStatusMachine : StageStatusMachine
 
     protected void InitStage()
     {
-        CurrentPlanet = Variables.planetNumber;
-        CurrentStage = Variables.stageNumber;
+        CurrentPlanet = stageLoadData.currentPlanet;
+        CurrentStage = stageLoadData.currentStage;
         CurrentWave = 1;
         stageEndTime = Time.time + 60f;
         cleared = false;

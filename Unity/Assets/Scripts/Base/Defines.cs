@@ -45,6 +45,12 @@ public enum StageMode
     Repeat,
 }
 
+public enum DungeonMode
+{
+    Ascend,
+    End,
+}
+
 public enum Currency
 {
     Gold = 1001,

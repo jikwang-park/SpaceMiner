@@ -17,8 +17,8 @@ public class StageUiManager : MonoBehaviour
     private TextMeshProUGUI timerText;
     [SerializeField]
     private TextMeshProUGUI goldText;
-    [SerializeField]
-    private GameObject stageEndMessageWindow;
+    [field:SerializeField]
+    public GameObject stageEndMessageWindow { get; private set; }
     [SerializeField]
     private TextMeshProUGUI stageEndMessageText;
     [SerializeField]

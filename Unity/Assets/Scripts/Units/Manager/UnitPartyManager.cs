@@ -1,222 +1,175 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.AddressableAssets;
-using UnityEngine.Video;
-using static UnitUpgradeTable;
 
 public class UnitPartyManager : MonoBehaviour
 {
-    public List<Unit> unitprefabs = new List<Unit>();
+    [SerializeField]
+    private Unit tankerPrefab;
+    [SerializeField]
+    private Unit dealerPrefab;
+    [SerializeField]
+    private Unit healerPrefab;
 
-    public List<Unit> generateInstance = new List<Unit>();
+    private Dictionary<UnitTypes, Unit> prefabs = new Dictionary<UnitTypes, Unit>();
+    private Dictionary<UnitTypes, Unit> party = new Dictionary<UnitTypes, Unit>();
 
-    public bool IsUnitAllDead
+    public event System.Action OnUnitAllDead;
+
+    [SerializeField]
+    private Vector3 unitOffset = Vector3.back * 5f;
+
+    public int UnitCount => party.Count;
+
+    private void Awake()
     {
-        get
+        if (tankerPrefab is not null)
         {
-            if(AliveCount ==  3)
-                return true;
-            
-            return false;
+            prefabs.Add(UnitTypes.Tanker, tankerPrefab);
+        }
+        if (dealerPrefab is not null)
+        {
+            prefabs.Add(UnitTypes.Dealer, dealerPrefab);
+        }
+        if (healerPrefab is not null)
+        {
+            prefabs.Add(UnitTypes.Healer, healerPrefab);
         }
     }
 
-    public int AliveCount
-    { 
-        get
-        {
-            return generateInstance.Where(x => !x.IsDead).Count();
-        }     
-    }
-
-
-    // HKY 250328 Awake에서 스폰시 WaitForCompletion 발생하여 Start로 변경
-    private void Start()
+    public void UnitSpawn()
     {
+        UnitSpawn(Vector3.zero);
     }
-    private void Update()
+
+    public void UnitSpawn(Vector3 startPos)
     {
-        
+        UnitDespawn();
+        ResetUnits(startPos);
     }
 
-
-
-    public void UnitSpwan()
-    {           
-        if (unitprefabs.Count <= 0)
-        {
-            Debug.Log("유닛 프리팹 존재하지않음");
-            return;
-        }
-        if(unitprefabs.Count >= 4)
-        {
-            Debug.Log("넘쳐서 소환이 안됩니다");
-            return;
-        }
-        for (int i =0; i< unitprefabs.Count; ++i)
-        {
-            var go = Instantiate(unitprefabs[i], Vector3.zero ,Quaternion.identity);
-            go.GetComponent<DestructedDestroyEvent>().OnDestroyed += OnUnitDie;
-            // 나중에 비동기로드로 바꿈
-            go.transform.position += new Vector3(0, 0, -5 * i);
-            generateInstance.Add(go);
-        }
-        SetInitData();
-    }
-
-    public void AddStats(UpgradeType type , float amount)
+    public void SetUnitData(SoldierTable.Data data, UnitTypes type)
     {
-        for(int i =0; i< generateInstance.Count; ++i)
+        if (party.ContainsKey(type))
         {
-            generateInstance[i].unitStats.AddStats(type, amount);
-        }
-    }
-     
-
-    private void OnUnitDie(DestructedDestroyEvent e)
-    {
-        var gameobejct = e.GetComponent<Unit>();
-        generateInstance.Remove(gameobejct);
-    }
-
-
-    private void SetInitData()
-    {
-        var data = DataTableManager.SoldierTable.GetTypeDictionary();
-        for(int i = 0; i < generateInstance.Count; ++i)
-        {
-            generateInstance[i].SetData(data[(UnitTypes)i + 1][0], (UnitTypes)i + 1);
-        }
-    }
-    public int GetAliveUnitCount()
-    {
-        foreach (var unit in unitprefabs)
-        {
-            if (!unit.IsDead)
-            {
-                unit.unitAliveCount++;
-            }
-            return unit.unitAliveCount;
-        }
-        return 0;
-    }
-    public void UnitSpawn(Vector3 pos)
-    {
-        for(int i = 0; i<generateInstance.Count; ++i)
-        {
-            var unit = generateInstance[i];
-            if(unit.UnitTypes == UnitTypes.Tanker)
-            {
-                pos = unit.transform.position;
-            }
-            else
-            {
-                Debug.LogError("탱커 타입이 없습니다");
-                return;
-            }
+            party[type].SetData(data, type);
         }
     }
 
-    
+    private void OnUnitDie(DestructedDestroyEvent sender)
+    {
+        var unit = sender.GetComponent<Unit>();
+        party.Remove(unit.UnitTypes);
+
+        if (party.Count == 0)
+        {
+            OnUnitAllDead?.Invoke();
+        }
+    }
+
+    public void AddStats(UnitUpgradeTable.UpgradeType type, float amount)
+    {
+        foreach (var unit in party)
+        {
+            unit.Value.unitStats.AddStats(type, amount);
+        }
+    }
 
     public void UnitDespawn()
     {
-        for(int i = 0; i<generateInstance.Count; ++i)
+        foreach (var unit in party)
         {
-            if (generateInstance[i].unitAliveCount >= 1)
-            {
-                var unit = generateInstance[i];
-                Destroy(unit.gameObject);
-            }
+            Destroy(unit.Value.gameObject);
         }
+        party.Clear();
     }
-    public Unit GetFirstLineUnitGo()
-    {
-        if (generateInstance.Count == 0)
-        {
-            Debug.Log("Unit is Empty");
-            return null;
-        }
-        for (int i = 0; i < generateInstance.Count; i++)
-        {
-            if (generateInstance[i].IsDead)
-            {
-                continue;
-            }
-            return generateInstance[i];
-        }
-        return null;
-    }
+
     public Transform GetFirstLineUnitTransform()
     {
-        if(generateInstance.Count == 0)
+        if (party.Count == 0)
         {
             Debug.LogError("Unit is Empty");
             return null;
         }
-        for(int i =0; i< generateInstance.Count; i++)
+
+        for (int i = (int)UnitTypes.Tanker; i <= (int)UnitTypes.Healer; ++i)
         {
-            if (generateInstance[i].IsDead)
+            if (party.ContainsKey((UnitTypes)i))
             {
-                continue;
+                return party[(UnitTypes)i].transform;
             }
-            return generateInstance[i].transform;
         }
+
         return null;
-    }
-    public void SetUnitData(SoldierTable.Data data, UnitTypes type)
-    {
     }
 
     public Transform GetUnit(UnitTypes type)
     {
-        for(int i= 0; i< generateInstance.Count; i++)
+        if (party.ContainsKey(type))
         {
-            if(type == generateInstance[i].UnitTypes)
-                return generateInstance[i].transform;
+            return party[type].transform;
         }
         return null;
     }
 
-  
-    
-    //public List<Unit> ChangeUnit()
-    //{
-    //    UnitTypes type;
-    //    for(int i = 0; i< generateInstance.Count; i++)
-    //    {
-    //        type = generateInstance[i].UnitTypes;
-    //    }
-    //    switch (type)
-    //    {
-    //        case UnitTypes.Tanker:
-    //            break;
-    //        case UnitTypes.Dealer:
-    //            break;
-    //        case UnitTypes.Healer:
-    //            break;
-    //    }
-    //}
-
     public Unit GetCurrentTargetType(string targetString)
     {
-        //TODO: 유닛 타입에 따라 반환 변경하도록 바꿔야함 250331 HKY
-        switch (targetString)
+        int target = int.Parse(targetString);
+        if (party.ContainsKey((UnitTypes)target))
         {
-            case "1":
-                return generateInstance.Find((x) => x.UnitTypes == UnitTypes.Tanker);
+            return party[(UnitTypes)target];
+        }
+        return null;
+    }
 
-            case "2":
-                return generateInstance.Find((x) => x.UnitTypes == UnitTypes.Dealer);
+    // 250403 HKY 현재 유닛 타입을 넣으면 앞의 유닛 유무를 반환해주는 메소드 추가
+    public bool IsUnitExistFront(UnitTypes myType)
+    {
+        for (int i = (int)myType - 1; i >= (int)UnitTypes.Tanker; --i)
+        {
+            if (party.ContainsKey((UnitTypes)i))
+            {
+                return true;
+            }
+        }
+        return false;
+    }
 
-            case "3":
-                return generateInstance.Find((x) => x.UnitTypes == UnitTypes.Healer);
+    // 250403 HKY 현재 유닛 타입을 넣으면 내 앞의 유닛을 반환해주는 메소드 추가
+    public Unit GetFrontUnit(UnitTypes myType)
+    {
+        for (int i = (int)myType - 1; i >= (int)UnitTypes.Tanker; --i)
+        {
+            if (party.ContainsKey((UnitTypes)i))
+            {
+                return party[(UnitTypes)i];
+            }
+        }
+        return null;
+    }
 
-            default:
-                return null;
+    public void ResetUnits(Vector3 startPos)
+    {
+        Vector3 position = startPos;
+
+        var typeData = DataTableManager.SoldierTable.GetTypeDictionary();
+
+        for (int i = (int)UnitTypes.Tanker; i <= (int)UnitTypes.Healer; ++i)
+        {
+            if (!prefabs.ContainsKey((UnitTypes)i))
+            {
+                position += unitOffset;
+                continue;
+            }
+
+            var go = Instantiate(prefabs[(UnitTypes)i], position, Quaternion.identity);
+            go.GetComponent<DestructedDestroyEvent>().OnDestroyed += OnUnitDie;
+            position += unitOffset;
+            // 나중에 비동기로드로 바꿈
+            go.SetData(typeData[(UnitTypes)i][0], (UnitTypes)i);
+            party.Add(go.UnitTypes, go);
         }
     }
 }

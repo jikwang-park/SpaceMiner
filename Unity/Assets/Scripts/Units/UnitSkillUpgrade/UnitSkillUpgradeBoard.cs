@@ -14,7 +14,7 @@ public class UnitSkillUpgradeBoard : MonoBehaviour
     public void ShowFirstOpened()
     {
         var data = DataTableManager.SkillUpgradeTable.GetData(1);
-        // Ã³À½ ½ºÅ³ ¾÷±×·¹ÀÌµå ¹öÆ° Å¬¸¯ÇßÀ»½Ã¿¡ ÅÊÄ¿ -> ³ë¸» ±âÁØÀ¸·Î ¶ß°Ô ¿©±â¼­ ¼³Á¤ÇØ¾ß‰Î
+        // Ã³ï¿½ï¿½ ï¿½ï¿½Å³ ï¿½ï¿½ï¿½×·ï¿½ï¿½Ìµï¿½ ï¿½ï¿½Æ° Å¬ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ã¿ï¿½ ï¿½ï¿½Ä¿ -> ï¿½ë¸» ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ß°ï¿½ ï¿½ï¿½ï¿½â¼­ ï¿½ï¿½ï¿½ï¿½ï¿½Ø¾ß‰ï¿½
 
     }
     public void ShowBoard()

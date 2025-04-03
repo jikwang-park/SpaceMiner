@@ -33,8 +33,6 @@ public class StageManager : MonoBehaviour
                 stageStatusMachine = new DungeonStageStatusMachine(this);
                 break;
         }
-        SaveLoadManager.LoadGame();
-        DoLoad();
     }
 
     private void Start()
@@ -69,25 +67,5 @@ public class StageManager : MonoBehaviour
     public void OnExitClicked()
     {
         stageStatusMachine.Exit();
-    }
-    private void DoLoad()
-    {
-        if (SaveLoadManager.Data == null)
-        {
-            Debug.Log("����� �����Ͱ� �����ϴ�. �⺻ ������ �����մϴ�.");
-            return;
-        }
-
-        StageSaveData stageLoadData = SaveLoadManager.Data.stageSaveData;
-
-        if (stageLoadData != null)
-        {
-            Variables.planetNumber = stageLoadData.currentPlanet;
-            Variables.stageNumber = stageLoadData.currentStage;
-            Variables.maxPlanetNumber = stageLoadData.highPlanet;
-            Variables.maxStageNumber = stageLoadData.highStage;
-            // �ְ��� �� �༺ ������ �ҷ�����
-            // �ְ��� �� �������� ������ �ҷ�����
-        }
     }
 }

@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using UnityEngine.AddressableAssets;
-using UnityEngine.UIElements;
 
 public class UnitPartyManager : MonoBehaviour
 {
@@ -128,7 +127,7 @@ public class UnitPartyManager : MonoBehaviour
     // 250403 HKY 현재 유닛 타입을 넣으면 앞의 유닛 유무를 반환해주는 메소드 추가
     public bool IsUnitExistFront(UnitTypes myType)
     {
-        for (int i = (int)myType - 1; i >= (int)UnitTypes.Tanker; ++i)
+        for (int i = (int)myType - 1; i >= (int)UnitTypes.Tanker; --i)
         {
             if (party.ContainsKey((UnitTypes)i))
             {
@@ -141,7 +140,7 @@ public class UnitPartyManager : MonoBehaviour
     // 250403 HKY 현재 유닛 타입을 넣으면 내 앞의 유닛을 반환해주는 메소드 추가
     public Unit GetFrontUnit(UnitTypes myType)
     {
-        for (int i = (int)myType - 1; i >= (int)UnitTypes.Tanker; ++i)
+        for (int i = (int)myType - 1; i >= (int)UnitTypes.Tanker; --i)
         {
             if (party.ContainsKey((UnitTypes)i))
             {

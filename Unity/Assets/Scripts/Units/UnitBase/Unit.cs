@@ -209,9 +209,27 @@ public class Unit : MonoBehaviour
         }
     }
 
-    
+    public bool IsUnitOnMaintaindistance
+    {
+        get
+        {
+            var units = stageManger.UnitPartyManager.generateInstance;
+            float targetDistance = 5f;
 
+            Vector3 tankerPos = units[0].transform.position;
+            Vector3 dealerPos = units[1].transform.position;
+            Vector3 healerPos = units[2].transform.position;
 
+            float tankerdelaerDistance = Vector3.Distance(tankerPos, dealerPos);
+            float dealerhealerDistance = Vector3.Distance(dealerPos, healerPos);
+
+            if(Mathf.Abs(tankerdelaerDistance - targetDistance) > 0.1f || Mathf.Abs(dealerhealerDistance - targetDistance) > 0.1f)
+            {
+                return false;
+            }
+            return true;
+        }
+    }
 
     public float lastAttackTime;
     

@@ -10,6 +10,6 @@ public class IsUnitExistCondition : ConditionNode<MonsterController>
 
     protected override NodeStatus OnUpdate()
     {
-        return context.Target != null ? NodeStatus.Success : NodeStatus.Failure;
+        return context.TargetAcquired ? NodeStatus.Success : NodeStatus.Failure;
     }
 }

@@ -35,7 +35,7 @@ public class PlanetStageStatusMachine : StageStatusMachine
         InitStage();
         InstantiateBackground();
 
-        stageManager.UnitPartyManager.UnitSpwan();
+        stageManager.UnitPartyManager.UnitSpawn();
         stageManager.StartCoroutine(CoSpawnNextWave());
         stageManager.StageMonsterManager.OnMonsterDie += OnMonsterDie;
         stageManager.StageMonsterManager.OnMonsterCleared += OnMonsterCleared;

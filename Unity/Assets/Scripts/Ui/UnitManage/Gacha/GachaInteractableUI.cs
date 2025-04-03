@@ -9,7 +9,8 @@ public class GachaInteractableUI : MonoBehaviour
 {
     [SerializeField]
     private Button closeButton;
-
+    [SerializeField]
+    private GachaResultPanelUI gachaResultPanel;
     [SerializeField]
     private GachaDescribeUI gachaDescribeUI;
     [SerializeField]
@@ -23,7 +24,10 @@ public class GachaInteractableUI : MonoBehaviour
         closeButton.onClick.AddListener(() => gameObject.SetActive(false));
         Initialize();
     }
-
+    private void OnDisable()
+    {
+        gachaResultPanel.gameObject.SetActive(false);
+    }
     public void Initialize()
     {
         var gachas = DataTableManager.GachaTable.GetDict();

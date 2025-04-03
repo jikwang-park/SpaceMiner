@@ -10,6 +10,6 @@ public class GachaDescribeUI : MonoBehaviour
 
     public void Initialize(GachaTable.Data data)
     {
-        describeText.text = data.explainStringID.ToString(); //250331 HKY 데이터형 변경
+        describeText.text = DataTableManager.StringTable.GetData(data.explainStringID); //250331 HKY 데이터형 변경
     }
 }

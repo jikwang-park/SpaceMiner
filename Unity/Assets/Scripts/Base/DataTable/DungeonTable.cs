@@ -128,6 +128,15 @@ public class DungeonTable : DataTable
 
     public List<int> DungeonTypes => types;
 
+    public int CountOfStage(int type)
+    {
+        if(typeDict.ContainsKey(type))
+        {
+            return typeDict[type].Count;
+        }
+        return 0;
+    }
+
     public List<Data> GetDungeonList(int type)
     {
         if (typeDict.ContainsKey(type))

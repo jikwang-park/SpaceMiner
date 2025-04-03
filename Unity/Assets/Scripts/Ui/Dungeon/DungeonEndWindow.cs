@@ -24,6 +24,11 @@ public class DungeonEndWindow : MonoBehaviour
     {
         if (isCleared)
         {
+            if(Variables.currentDungeonStage == DataTableManager.DungeonTable.CountOfStage(Variables.currentDungeonType))
+            {
+                nextText.text = "Retry";
+                return;
+            }
             nextText.text = "Next";
         }
         else
@@ -39,7 +44,8 @@ public class DungeonEndWindow : MonoBehaviour
 
     public void RightButton()
     {
-        if (isCleared)
+        if (isCleared
+            && Variables.currentDungeonStage < DataTableManager.DungeonTable.CountOfStage(Variables.currentDungeonType))
         {
             Lift();
         }

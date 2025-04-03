@@ -33,7 +33,14 @@ public class GoldShopPanelUI : MonoBehaviour
         }
     }
     private string prefabFormat = "Prefabs/UI/GoldShopElement";
-
+    private void OnEnable()
+    {
+        ItemManager.OnItemChanged += DoItemChanged;
+    }
+    private void OnDisable()
+    {
+        ItemManager.OnItemChanged -= DoItemChanged;
+    }
     private void Awake()
     {
         Initialize();
@@ -94,5 +101,12 @@ public class GoldShopPanelUI : MonoBehaviour
         ItemManager.ConsumeCurrency(currentCurrency, SellAmount);
         ItemManager.AddItem((int)Currency.Gold, TotalPrice);
         sellAmountSlider.value = 0f;
+    }
+    private void DoItemChanged(int itemId, BigNumber amount)
+    {
+        if((int)currentCurrency == itemId)
+        {
+            UpdateTexts();
+        }
     }
 }

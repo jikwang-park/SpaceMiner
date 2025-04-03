@@ -31,7 +31,14 @@ public class GoldShopElement : MonoBehaviour
 
         UpdateUI();
     }
-
+    private void OnEnable()
+    {
+        ItemManager.OnItemChanged += DoItemChange;
+    }
+    private void OnDisable()
+    {
+        ItemManager.OnItemChanged -= DoItemChange;
+    }
     private void UpdateUI()
     {
         mineralNameText.text = currencyType.ToString();
@@ -43,15 +50,11 @@ public class GoldShopElement : MonoBehaviour
     {
         onClickGoldShopElement?.Invoke(shopId);
     }
-
-
-    public void AddListener(int itemid, Action action)
+    private void DoItemChange(int itemId, BigNumber amount)
     {
-        Dictionary<int, Action> a = new Dictionary<int, Action>();
-        if(!a.ContainsKey(itemid))
+        if((int)currencyType == itemId)
         {
-            a.Add(itemid, null);
+            NeedAmountText.text = $"{amount}";
         }
-        a[itemid] += action;
     }
 }

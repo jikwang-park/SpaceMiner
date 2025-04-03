@@ -29,6 +29,9 @@ public class DungeonPopup : MonoBehaviour
     private TextMeshProUGUI conditionPowerText;
 
     [SerializeField]
+    private TextMeshProUGUI keyText;
+
+    [SerializeField]
     private TextMeshProUGUI clearRewardText;
 
     [SerializeField]
@@ -36,6 +39,9 @@ public class DungeonPopup : MonoBehaviour
 
     [SerializeField]
     private Button previousDifficultyButton;
+
+    [SerializeField]
+    private Button enterButton;
 
     private int maxStage;
 
@@ -55,10 +61,23 @@ public class DungeonPopup : MonoBehaviour
 
     private void ShowData(int index)
     {
-        selectedDifficulty.text = subStages[index].Stage.ToString();
+        var curStage = subStages[index];
+
+        selectedDifficulty.text = $"Stage : {curStage.Stage}";
+        keyText.text = $"{curStage.KeyCount} / {ItemManager.GetItemAmount(curStage.DungeonKeyID)}";
+        conditionPowerText.text = $"Currrent Power : {Variables.powerLevel}\nNeed : {curStage.ConditionPower}";
+        conditionStageText.text = $"Currrent Planet : {SaveLoadManager.Data.stageSaveData.highPlanet - 1}\nNeed : {subStages[index].ConditionPlanet}";
+        clearRewardText.text = $"Reward : {curStage.ItemID}/{curStage.ClearReward}";
+
 
         previousDifficultyButton.interactable = index > 0;
         nextDifficultyButton.interactable = index + 1 < maxStage && index < subStages.Count - 1;
+
+        bool powerCondition = Variables.powerLevel > curStage.ConditionPower;
+        bool planetCondition = SaveLoadManager.Data.stageSaveData.highPlanet > curStage.ConditionPlanet;
+        bool keyCondition = ItemManager.GetItemAmount(curStage.DungeonKeyID) >= curStage.KeyCount;
+
+        enterButton.interactable = powerCondition && planetCondition && keyCondition;
     }
 
     private void SetIndex(int index)
@@ -95,5 +114,11 @@ public class DungeonPopup : MonoBehaviour
     {
         Variables.currentDungeonStage = index + 1;
         stageManager.SetStatus(IngameStatus.Dungeon);
+    }
+
+    public void OnClickKeyGet()
+    {
+        ItemManager.AddItem(subStages[index].DungeonKeyID, 1);
+        ShowData(index);
     }
 }

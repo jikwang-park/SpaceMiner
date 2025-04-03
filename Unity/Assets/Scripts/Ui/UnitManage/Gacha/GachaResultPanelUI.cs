@@ -17,12 +17,23 @@ public class GachaResultPanelUI : MonoBehaviour
     private GachaPurchaseUI gachaPurchaseUI;
 
     private const string prefabFormat = "Prefabs/UI/SoldierInfoImage";
+    private WaitForSeconds waitSecondsToNextResult = new WaitForSeconds(0.05f);
+    private Coroutine coDisplayResult;
     private void Awake()
     {
         closeButton.onClick.AddListener(() => gameObject.SetActive(false));
         UpdateGridCellSize();
     }
     public void SetResult(List<SoldierTable.Data> datas, int gachaId)
+    {
+        if(coDisplayResult != null)
+        {
+            StopCoroutine(coDisplayResult);
+        }
+        coDisplayResult = StartCoroutine(DisplayResult(datas));
+        gachaPurchaseUI.Initialize(DataTableManager.GachaTable.GetData(gachaId));
+    }
+    private IEnumerator DisplayResult(List<SoldierTable.Data> datas)
     {
         foreach (Transform child in contentParent)
         {
@@ -49,8 +60,8 @@ public class GachaResultPanelUI : MonoBehaviour
                     Debug.LogError("Failed to instantiate prefab with key: " + prefabFormat);
                 }
             };
+            yield return waitSecondsToNextResult;
         }
-        gachaPurchaseUI.Initialize(DataTableManager.GachaTable.GetData(gachaId));
     }
 
     public void UpdateGridCellSize()

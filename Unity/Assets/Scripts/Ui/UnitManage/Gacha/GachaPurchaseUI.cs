@@ -47,7 +47,7 @@ public class GachaPurchaseUI : MonoBehaviour
     private void DoGacha(int count)
     {
         ItemManager.AddItem((int)Currency.Gold, 100000000);
-
+        ItemManager.AddItem(1002, 30);
         var gachaResults = GachaManager.Gacha(currentGachaId, count, useTicket);
         if(gachaResults != null)
         {

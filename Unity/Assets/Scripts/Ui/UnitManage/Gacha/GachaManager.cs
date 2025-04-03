@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
@@ -68,6 +69,8 @@ public static class GachaManager
                 gachaResults.Add(gachaResult);
             }
         }
+
+        gachaResults = gachaResults.OrderByDescending((e) => e.Rating).ToList();
 
         return gachaResults;
     }

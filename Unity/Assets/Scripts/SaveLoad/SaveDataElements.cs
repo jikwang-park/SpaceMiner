@@ -26,4 +26,6 @@ public class StageSaveData
     public int currentStage;
     public int highPlanet;
     public int highStage;
+    public List<int> highestDungeon = new List<int>();
+    public List<int> selectedDungeon = new List<int>();
 }

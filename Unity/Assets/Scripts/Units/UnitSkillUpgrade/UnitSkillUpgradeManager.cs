@@ -5,9 +5,9 @@ using UnityEngine;
 
 public class UnitSkillUpgradeManager : MonoBehaviour
 {
-    public UnitTypes currentType;
+    private UnitTypes currentType = UnitTypes.Tanker;
 
-    public Grade currentGrade;
+    private Grade currentGrade = Grade.Normal;
 
     private int id;
 
@@ -27,13 +27,26 @@ public class UnitSkillUpgradeManager : MonoBehaviour
                 {
                     unitSkillDictionary.Add(type, new Dictionary<Grade, int>());
                 }
-
-                unitSkillDictionary[type].Add(grade, (int)grade * 1000 + (int)type * 100 + 1);
+                //테이블 수정 요구사항
+                switch (type)
+                {
+                    case UnitTypes.Tanker:
+                        unitSkillDictionary[type].Add(grade, (int)grade * 1000 + (int)type * 200 + 1);
+                        break;
+                    case UnitTypes.Dealer:
+                        unitSkillDictionary[type].Add(grade, (int)grade * 1000 + (int)type * 50 + 1);
+                        break;
+                    case UnitTypes.Healer:
+                        unitSkillDictionary[type].Add(grade, (int)grade * 1000 + (int)type * 100 + 1);
+                        break;
+                }
             }
         }
+       
+        board.SetInfo(GetCurrentId(),currentType);
     }
 
-
+    
 
     public int GetCurrentId()
     {
@@ -49,7 +62,7 @@ public class UnitSkillUpgradeManager : MonoBehaviour
 
         currentType = type;
         SetGrade(Grade.Normal);
-        board.SetInfo(GetCurrentId());
+        board.SetInfo(GetCurrentId(),currentType);
     }
     public void SetGrade(Grade grade)
     {
@@ -57,7 +70,7 @@ public class UnitSkillUpgradeManager : MonoBehaviour
             return;
 
         currentGrade = grade;
-        board.SetInfo(GetCurrentId());
+        board.SetInfo(GetCurrentId(), currentType);
 
     }
 }

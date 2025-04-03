@@ -19,34 +19,71 @@ public class UnitSkillUpgradeBoard : MonoBehaviour
     private Image nextImage;
     [SerializeField]
     private TextMeshProUGUI nextText;
+    [SerializeField]
+    private Button upgradeButton;
 
 
-    private int id;
+    private int currentId = 1201;
+    private int nextId;
+    private UnitTypes currentType = UnitTypes.Tanker;
+    [SerializeField]
+    public Grade currentGrade = Grade.Normal;
     private void Start()
     {
+        upgradeButton.onClick.AddListener(() => OnClickUpgradeButton());
+        SetInfo(currentId, currentType);
     }
     public void ShowFirstOpened()
     {
-        var data = DataTableManager.SkillUpgradeTable.GetData(1);
-        // 처음 스킬 업그레이드 버튼 클릭했을시에 탱커 -> 노말 기준으로 뜨게 여기서 설정해야됌
-
+        SetBoardText(currentId, currentType);
     }
     public void ShowBoard()
     {
 
     }
 
-    public void SetInfo(int id)
+    public void SetInfo(int id , UnitTypes type)
     {
-        var data = DataTableManager.SkillUpgradeTable.GetData(id);
+        currentId = id;
+        currentType = type;
+        SetBoardText(id, type);
     }
 
-    public void SetBoardText(int id)
+    public void SetBoardText(int id, UnitTypes type)
     {
-        var data = DataTableManager.SkillUpgradeTable.GetData(id);
+        currentId = id;
+        currentType = type;
+         var data = DataTableManager.SkillUpgradeTable.GetData(id);
+        nextId = data.NextSkillUpgrade;
+        switch (type)
+        {
+            case UnitTypes.Tanker:
+                   var tankerData = DataTableManager.TankerSkillTable.GetData(id);
+                currentText.text = $"쉴드량 : {tankerData.ShieldRatio}% 쿨타임 : {tankerData.CoolTime}초 지속시간: {tankerData.Duration}초";
+                var nextTankerData = DataTableManager.TankerSkillTable.GetData(nextId);
+                nextText.text = $"쉴드량 : {nextTankerData.ShieldRatio}% 쿨타임 : {nextTankerData.CoolTime}초 지속시간 : {nextTankerData.Duration}초";
+                break;
+            case UnitTypes.Dealer:
+                var delaerData = DataTableManager.DealerSkillTable.GetData(id);
+                currentText.text = $"쿨타임 : {delaerData.CoolTime}초 몬스터 타겟수: {delaerData.MonsterMaxTarget}초";
+                var nextDealerData = DataTableManager.DealerSkillTable.GetData(nextId);
+                nextText.text = $"쿨타임 :  {nextDealerData.CoolTime} 초 몬스터 타겟수:  {nextDealerData.MonsterMaxTarget}초";
+                break;
+            case UnitTypes.Healer:
+                var healerData = DataTableManager.HealerSkillTable.GetData(id);
+                currentText.text = $"쿨타임 : {healerData.CoolTime}초";
+                var nextHealerData = DataTableManager.HealerSkillTable.GetData(nextId);
+                nextText.text = $"쿨타임 : {nextHealerData.CoolTime}초";
+                break;
+        }
 
-        currentText.text = $"";
         
+
+    }
+    private void OnClickUpgradeButton()
+    {
+        currentId = nextId;
+        SetBoardText(currentId, currentType);
     }
 
     public void SetImage()

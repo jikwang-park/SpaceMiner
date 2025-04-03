@@ -1,6 +1,9 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class ShopPanelUI : MonoBehaviour
 {
@@ -9,17 +12,28 @@ public class ShopPanelUI : MonoBehaviour
     private int currentIndex;
     private void Awake()
     {
-        currentIndex = 0;
-        DisplayPanel(currentIndex);
+        DisplayPanel((int)ShopTable.ShopType.DungeonKey);
     }
-
     private void DisplayPanel(int index)
     {
+        if(index <= 0 || index > shopPanels.Count || currentIndex == index)
+        {
+            return;
+        }
         shopPanels[currentIndex].SetActive(false);
-        currentIndex = index;
+        currentIndex = index - 1;
         shopPanels[currentIndex].SetActive(true);
     }
-    public void OnClickOpenKeyShop()
+    public void OnClickOpenDungeonKeyShop()
     {
+        DisplayPanel((int)ShopTable.ShopType.DungeonKey);
+    }
+    public void OnClickOpenGoldShop()
+    {
+        DisplayPanel((int)ShopTable.ShopType.Gold);
+    }
+    public void OnClickOpenMiningRobotShop()
+    {
+        DisplayPanel((int)ShopTable.ShopType.MiningRobot);
     }
 }

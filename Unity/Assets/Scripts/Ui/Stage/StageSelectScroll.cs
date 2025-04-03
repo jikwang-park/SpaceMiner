@@ -15,6 +15,8 @@ public class StageSelectScroll : MonoBehaviour
 
     private ObjectPoolManager objectpoolManager;
 
+    private StageSaveData stageLoadData;
+
 #if UNITY_EDITOR
     private bool debugMode = false;
 #endif
@@ -23,7 +25,8 @@ public class StageSelectScroll : MonoBehaviour
     {
         objectpoolManager = GameObject.FindGameObjectWithTag("GameController").GetComponent<StageManager>().StageUiManager.objectPoolManager;
 
-        SetButtons(Variables.planetNumber);
+        stageLoadData = SaveLoadManager.Data.stageSaveData;
+        SetButtons(stageLoadData.currentPlanet);
     }
 
 #if UNITY_EDITOR
@@ -57,7 +60,7 @@ public class StageSelectScroll : MonoBehaviour
             var button = buttonGo.GetComponent<StageButton>();
             button.Set(planet, planetDatas[i].Stage);
             buttons.Add(button);
-            if (planet < Variables.maxPlanetNumber || (planet == Variables.maxPlanetNumber && i < Variables.maxStageNumber))
+            if (planet < stageLoadData.highPlanet || (planet == stageLoadData.highPlanet && i < stageLoadData.highStage))
             {
                 button.Button.interactable = true;
             }

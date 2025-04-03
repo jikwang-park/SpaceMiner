@@ -16,12 +16,15 @@ public class PlanetSelectScroll : MonoBehaviour
     private List<PlanetButton> buttons = new List<PlanetButton>();
     private ObjectPoolManager objectPoolManager;
 
+    private StageSaveData stageLoadData;
+
 #if UNITY_EDITOR
     private bool debugMode = false;
 #endif
 
     private void Start()
     {
+        stageLoadData = SaveLoadManager.Data.stageSaveData;
         SetPlanetButtons();
     }
 
@@ -42,7 +45,7 @@ public class PlanetSelectScroll : MonoBehaviour
 
             int index = planets[i];
             planetButton.Button.onClick.AddListener(() => OnPlanetSelected?.Invoke(index));
-            if (i < Variables.maxPlanetNumber)
+            if (i < stageLoadData.highPlanet)
             {
                 planetButton.Button.interactable = true;
             }

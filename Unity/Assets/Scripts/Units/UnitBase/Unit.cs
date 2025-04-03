@@ -50,10 +50,10 @@ public class Unit : MonoBehaviour
     {
         get
         {
-           if(targetDistance <= unitStats.range)
+            if (targetDistance <= unitStats.range)
                 return true;
 
-           return false;
+            return false;
         }
     }
     public float targetDistance;
@@ -87,7 +87,7 @@ public class Unit : MonoBehaviour
         isAutoSkillMode = true;
     }
 
-    public bool IsDead 
+    public bool IsDead
     {
         get
         {
@@ -97,9 +97,9 @@ public class Unit : MonoBehaviour
                 return true;
             }
             return false;
-                       }
+        }
     }
-    
+
     public float RemainSkillCoolTime
     {
         get
@@ -122,13 +122,13 @@ public class Unit : MonoBehaviour
 
 
 
- 
+
 
     public bool IsTankerCanUseSkill
     {
         get
         {
-            
+
             if (currentUnitType == UnitTypes.Tanker)
             {
                 if (Time.time < unitSkill.coolTime + lastSkillUsedTime)
@@ -149,7 +149,7 @@ public class Unit : MonoBehaviour
                 if (targetDistance > unitStats.range ||
                         Time.time < unitSkill.coolTime + lastSkillUsedTime)
                     return false;
-                
+
                 return true;
             }
             return false;
@@ -165,13 +165,13 @@ public class Unit : MonoBehaviour
                 if (unitSkill.targetList == null ||
                     Time.time < unitSkill.coolTime + lastSkillUsedTime)
                     return false;
-                
+
                 return true;
             }
             return false;
         }
     }
-    public bool IsUnitCanAttack 
+    public bool IsUnitCanAttack
     {
         get
         {
@@ -232,7 +232,7 @@ public class Unit : MonoBehaviour
     }
 
     public float lastAttackTime;
-    
+
 
     private bool isMonsterSpawn;
 
@@ -283,22 +283,16 @@ public class Unit : MonoBehaviour
 
             if (target > 0)
             {
-                var units = stageManger.UnitPartyManager.generateInstance;
+                // 250403 HKY - 한 유닛에서 전체 유닛 순회하지 않도록 수정
 
-                for(int j=0; j<units.Count; ++j)
+                targetDistance = targetPosition.position.z - transform.position.z;
+
+                if (targetDistance <= unitStats.range)
                 {
-                    var unit = units[j];
-
-                    targetDistance = Vector3.Dot(targetPosition.position - unit.transform.position, Vector3.forward);
-                    if (targetDistance <= unitStats.range)
-                    {
-                        targetPos = targetPosition;
-                        targetPos.gameObject.GetComponent<DestructedDestroyEvent>().OnDestroyed += (_) => targetPos = null;
-                        return targetPos;
-                    }
+                    targetPos = targetPosition;
+                    targetPos.GetComponent<DestructedDestroyEvent>().OnDestroyed += (_) => targetPos = null;
+                    return targetPos;
                 }
-
-          
             }
         }
         return null;
@@ -316,7 +310,7 @@ public class Unit : MonoBehaviour
     }
     public void UseSkill()
     {
-        
+
         currentStatus = UnitStatus.UsingSkill;
 
         switch (currentUnitType)

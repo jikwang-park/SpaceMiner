@@ -28,7 +28,7 @@ public class DungeonStageStatusMachine : StageStatusMachine
         InitStage();
         InstantiateBackground();
 
-        stageManager.UnitPartyManager.UnitSpwan();
+        stageManager.UnitPartyManager.UnitSpawn();
         stageManager.StartCoroutine(CoSpawnNextWave());
         stageManager.StageMonsterManager.OnMonsterCleared += OnMonsterCleared;
     }

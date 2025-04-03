@@ -30,6 +30,8 @@ public class MonsterController : MonoBehaviour, IObjectPoolGameObject
 
     public float TargetDistance { get; private set; }
     public Transform Target { get; private set; }
+
+    public bool TargetAcquired = false;
     public MonsterTable.Data MonsterData { get; private set; }
     public MonsterRewardTable.Data RewardData { get; private set; }
 
@@ -81,9 +83,14 @@ public class MonsterController : MonoBehaviour, IObjectPoolGameObject
 
     private void Update()
     {
-        Target = StageManager.UnitPartyManager.GetFirstLineUnitTransform();
+        if (!TargetAcquired && StageManager.UnitPartyManager.UnitCount > 0)
+        {
+            Target = StageManager.UnitPartyManager.GetFirstLineUnitTransform();
+            Target.GetComponent<DestructedDestroyEvent>().OnDestroyed += OnTargetDie;
+            TargetAcquired = true;
+        }
 
-        if (Target is not null)
+        if (TargetAcquired)
         {
             TargetDistance = -(Target.position.z - transform.position.z);
         }
@@ -158,6 +165,12 @@ public class MonsterController : MonoBehaviour, IObjectPoolGameObject
             Stats.Execute(Target.gameObject);
         yield return new WaitForSeconds(0.25f);
         status = Status.Wait;
+    }
+
+    private void OnTargetDie(DestructedDestroyEvent sender)
+    {
+        Target = null;
+        TargetAcquired = false;
     }
 
     void OnDrawGizmos()

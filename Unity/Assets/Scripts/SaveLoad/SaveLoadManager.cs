@@ -27,7 +27,7 @@ public static class SaveLoadManager
     };
     static SaveLoadManager()
     {
-        if(!LoadGame())
+        if (!LoadGame())
         {
             Data = GetDefaultData();
             SaveGame();
@@ -55,13 +55,20 @@ public static class SaveLoadManager
             return false;
         }
         string json = File.ReadAllText(filePath);
-        var saveData = JsonConvert.DeserializeObject<SaveData>(json, settings);
-
-        while(saveData.Version < SaveDataVersion)
+        try
         {
-            saveData = saveData.VersionUp();
+            var saveData = JsonConvert.DeserializeObject<SaveData>(json, settings);
+            while (saveData.Version < SaveDataVersion)
+            {
+                saveData = saveData.VersionUp();
+            }
+            Data = saveData as SaveDataVC;
         }
-        Data = saveData as SaveDataVC;
+        catch
+        {
+            Data = GetDefaultData();
+        }
+
         return true;
     }
     public static SaveDataVC GetDefaultData()

@@ -23,7 +23,7 @@ public class SelectGachaButton : MonoBehaviour
 
     public void Initialize(GachaTable.Data data)
     {
-        nameText.text = data.nameStringID.ToString(); //250331 HKY 데이터형 변경
+        nameText.text = DataTableManager.StringTable.GetData(data.nameStringID); //250331 HKY 데이터형 변경
         gachaId = data.gachaID;
     }
     private void OnClickSelectButton()

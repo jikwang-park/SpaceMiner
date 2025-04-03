@@ -160,13 +160,14 @@ public class UnitPartyManager : MonoBehaviour
         {
             if (!prefabs.ContainsKey((UnitTypes)i))
             {
+                position += unitOffset;
                 continue;
             }
 
             var go = Instantiate(prefabs[(UnitTypes)i], position, Quaternion.identity);
             go.GetComponent<DestructedDestroyEvent>().OnDestroyed += OnUnitDie;
-            // 나중에 비동기로드로 바꿈
             position += unitOffset;
+            // 나중에 비동기로드로 바꿈
             go.SetData(typeData[(UnitTypes)i][0], (UnitTypes)i);
             party.Add(go.UnitTypes, go);
         }

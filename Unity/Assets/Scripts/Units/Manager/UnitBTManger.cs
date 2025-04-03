@@ -67,6 +67,8 @@ public static class UnitBTManager
         var tankBehaviortree = new BehaviorTree<Unit>(context);
 
         var rootSelectorNode = new SelectorNode<Unit>(context);
+         
+        
 
         var attackSequence = new SquenceNode<Unit>(context);
         attackSequence.AddChild(new IsUnitAliveCondition(context));
@@ -82,10 +84,19 @@ public static class UnitBTManager
         var normalAttackSequence = new SquenceNode<Unit>(context);
         normalAttackSequence.AddChild(new IsUnitCanNormalAttackCondition(context));
         normalAttackSequence.AddChild(new NormalAttackAction(context));
+        //
+        var moveSelector = new SelectorNode<Unit>(context);
 
-        var moveSequence = new SquenceNode<Unit>(context);
-        moveSequence.AddChild(new IsUnitCanSearchTarget(context));
-        moveSequence.AddChild(new MoveAction(context));
+        var frontUnitMoveSequence = new SquenceNode<Unit>(context);
+
+        frontUnitMoveSequence.AddChild(new IsUnitFrontLineCondition(context));
+        frontUnitMoveSequence.AddChild(new IsUnitInSafeDistanceCondition(context));
+        frontUnitMoveSequence.AddChild(new MoveAction(context));
+
+        var notFrontUnitMoveSequence = new SquenceNode<Unit>(context);
+
+        notFrontUnitMoveSequence.AddChild(new IsUnitInSafeDistanceCondition(context));
+        notFrontUnitMoveSequence.AddChild(new MoveAction(context));
 
         var idleSequence = new SquenceNode<Unit>(context);
         idleSequence.AddChild(new IsUnitCanIdleCondition(context));
@@ -99,7 +110,11 @@ public static class UnitBTManager
         attackSelectorNode.AddChild(skillAttackSequence);
         attackSelectorNode.AddChild(normalAttackSequence);
 
-        rootSelectorNode.AddChild(moveSequence);
+        rootSelectorNode.AddChild(moveSelector);
+        moveSelector.AddChild(frontUnitMoveSequence);
+        moveSelector.AddChild(notFrontUnitMoveSequence);
+
+
         rootSelectorNode.AddChild(idleSequence);
 
         return tankBehaviortree;
@@ -107,9 +122,11 @@ public static class UnitBTManager
 
     public static BehaviorTree<Unit> InitDelarBehaviorTree(Unit context)
     {
-        var dealerBehaviorTree = new BehaviorTree<Unit>(context);
+        var tankBehaviortree = new BehaviorTree<Unit>(context);
 
         var rootSelectorNode = new SelectorNode<Unit>(context);
+
+
 
         var attackSequence = new SquenceNode<Unit>(context);
         attackSequence.AddChild(new IsUnitAliveCondition(context));
@@ -125,16 +142,25 @@ public static class UnitBTManager
         var normalAttackSequence = new SquenceNode<Unit>(context);
         normalAttackSequence.AddChild(new IsUnitCanNormalAttackCondition(context));
         normalAttackSequence.AddChild(new NormalAttackAction(context));
+        //
+        var moveSelector = new SelectorNode<Unit>(context);
 
-        var moveSequence = new SquenceNode<Unit>(context);
-        moveSequence.AddChild(new IsUnitCanSearchTarget(context));
-        moveSequence.AddChild(new MoveAction(context));
+        var frontUnitMoveSequence = new SquenceNode<Unit>(context);
+
+        frontUnitMoveSequence.AddChild(new IsUnitFrontLineCondition(context));
+        frontUnitMoveSequence.AddChild(new IsUnitInSafeDistanceCondition(context));
+        frontUnitMoveSequence.AddChild(new MoveAction(context));
+
+        var notFrontUnitMoveSequence = new SquenceNode<Unit>(context);
+
+        notFrontUnitMoveSequence.AddChild(new IsUnitInSafeDistanceCondition(context));
+        notFrontUnitMoveSequence.AddChild(new MoveAction(context));
 
         var idleSequence = new SquenceNode<Unit>(context);
         idleSequence.AddChild(new IsUnitCanIdleCondition(context));
         idleSequence.AddChild(new IdleAction(context));
 
-        dealerBehaviorTree.SetRoot(rootSelectorNode);
+        tankBehaviortree.SetRoot(rootSelectorNode);
 
         rootSelectorNode.AddChild(attackSequence);
 
@@ -142,17 +168,23 @@ public static class UnitBTManager
         attackSelectorNode.AddChild(skillAttackSequence);
         attackSelectorNode.AddChild(normalAttackSequence);
 
-        rootSelectorNode.AddChild(moveSequence);
+        rootSelectorNode.AddChild(moveSelector);
+        moveSelector.AddChild(frontUnitMoveSequence);
+        moveSelector.AddChild(notFrontUnitMoveSequence);
+
+
         rootSelectorNode.AddChild(idleSequence);
 
-        return dealerBehaviorTree;
+        return tankBehaviortree;
 
     }
     public static BehaviorTree<Unit> InitHealerBehaviorTree(Unit context)
     {
-        var healerBehaviorTree = new BehaviorTree<Unit>(context);
+        var tankBehaviortree = new BehaviorTree<Unit>(context);
 
         var rootSelectorNode = new SelectorNode<Unit>(context);
+
+
 
         var attackSequence = new SquenceNode<Unit>(context);
         attackSequence.AddChild(new IsUnitAliveCondition(context));
@@ -168,16 +200,24 @@ public static class UnitBTManager
         var normalAttackSequence = new SquenceNode<Unit>(context);
         normalAttackSequence.AddChild(new IsUnitCanNormalAttackCondition(context));
         normalAttackSequence.AddChild(new NormalAttackAction(context));
+        //
+        var moveSelector = new SelectorNode<Unit>(context);
 
-        var moveSequence = new SquenceNode<Unit>(context);
-        moveSequence.AddChild(new IsUnitCanSearchTarget(context));
-        moveSequence.AddChild(new MoveAction(context));
+        var frontUnitMoveSequence = new SquenceNode<Unit>(context);
+
+        frontUnitMoveSequence.AddChild(new IsUnitFrontLineCondition(context));
+        frontUnitMoveSequence.AddChild(new MoveAction(context));
+
+        var notFrontUnitMoveSequence = new SquenceNode<Unit>(context);
+
+        notFrontUnitMoveSequence.AddChild(new IsUnitInSafeDistanceCondition(context));
+        notFrontUnitMoveSequence.AddChild(new MoveAction(context));
 
         var idleSequence = new SquenceNode<Unit>(context);
         idleSequence.AddChild(new IsUnitCanIdleCondition(context));
         idleSequence.AddChild(new IdleAction(context));
 
-        healerBehaviorTree.SetRoot(rootSelectorNode);
+        tankBehaviortree.SetRoot(rootSelectorNode);
 
         rootSelectorNode.AddChild(attackSequence);
 
@@ -185,10 +225,14 @@ public static class UnitBTManager
         attackSelectorNode.AddChild(skillAttackSequence);
         attackSelectorNode.AddChild(normalAttackSequence);
 
-        rootSelectorNode.AddChild(moveSequence);
+        rootSelectorNode.AddChild(moveSelector);
+        moveSelector.AddChild(frontUnitMoveSequence);
+        moveSelector.AddChild(notFrontUnitMoveSequence);
+
+
         rootSelectorNode.AddChild(idleSequence);
 
-        return healerBehaviorTree;
+        return tankBehaviortree;
     }
 
 }

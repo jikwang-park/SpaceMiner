@@ -31,7 +31,7 @@ public class UnitSkillUpgradeBoard : MonoBehaviour
     private void Start()
     {
         upgradeButton.onClick.AddListener(() => OnClickUpgradeButton());
-        SetInfo(currentId, currentType);
+        
     }
     public void ShowFirstOpened()
     {

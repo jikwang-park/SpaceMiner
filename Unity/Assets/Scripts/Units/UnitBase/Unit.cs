@@ -99,9 +99,21 @@ public class Unit : MonoBehaviour
     {
         get
         {
-            if (unitStats.Hp <= 0 || (targetPos == null || !targetPos.gameObject.activeSelf))
+            if (unitStats.Hp <= 0)
             {
                 currentUnitNum++;
+                return true;
+            }
+            return false;
+        }
+    }
+
+    public bool IsTargetDead
+    {
+        get
+        {
+            if((targetPos == null || !targetPos.gameObject.activeSelf))
+            {
                 return true;
             }
             return false;

@@ -51,11 +51,11 @@ public class UnitStats : CharacterStats
                 break;
             case UnitTypes.Dealer:
                 specialPoint = (int)data.Special_CD;
-                range = 3f;
+                range = 5.5f;
                 break;
             case UnitTypes.Healer:
                 specialPoint = (int)data.Special_H;
-                range = 5f;
+                range = 10f;
                 break;
         }
     }

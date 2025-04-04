@@ -35,11 +35,11 @@ public class GoldShopPanelUI : MonoBehaviour
     private string prefabFormat = "Prefabs/UI/GoldShopElement";
     private void OnEnable()
     {
-        ItemManager.OnItemChanged += DoItemChanged;
+        ItemManager.OnItemAmountChanged += DoItemChanged;
     }
     private void OnDisable()
     {
-        ItemManager.OnItemChanged -= DoItemChanged;
+        ItemManager.OnItemAmountChanged -= DoItemChanged;
     }
     private void Awake()
     {

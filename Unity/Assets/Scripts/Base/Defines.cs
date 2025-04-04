@@ -37,6 +37,8 @@ public class DataTableIds
 
     public const string itemTable = "ItemTable";
     public const string shopTable = "ShopTable";
+
+    public const string defaultDataTable = "DefaultDataTable";
 }
 
 public enum StageMode

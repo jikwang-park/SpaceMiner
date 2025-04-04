@@ -26,15 +26,15 @@ public class KeyShopElement : MonoBehaviour
     private string needItemCountFormat = "Need {0} item : {1}";
     private string dailyPurchaseFormat = "Buy\n({0}/{1})";
 
-    private int paymentItemAmount;
-    private int needItemAmount;
+    private BigNumber paymentItemAmount;
+    private BigNumber needItemAmount;
     private int dailyPurchaseCount = 0;
     private int dailyPurchaseLimitCount;
     private bool CanPurchase
     {
         get
         {
-            return (dailyPurchaseCount >= dailyPurchaseLimitCount && ItemManager.CanConsume(needItemId, needItemAmount));
+            return (dailyPurchaseCount < dailyPurchaseLimitCount && ItemManager.CanConsume(needItemId, needItemAmount));
         }
     }
 

@@ -8,8 +8,6 @@ using UnityEngine.UI;
 public class GachaInteractableUI : MonoBehaviour
 {
     [SerializeField]
-    private Button closeButton;
-    [SerializeField]
     private GachaResultPanelUI gachaResultPanel;
     [SerializeField]
     private GachaDescribeUI gachaDescribeUI;
@@ -21,7 +19,6 @@ public class GachaInteractableUI : MonoBehaviour
     // Start is called before the first frame update
     void Awake()
     {
-        closeButton.onClick.AddListener(() => gameObject.SetActive(false));
         Initialize();
     }
     private void OnDisable()

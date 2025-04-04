@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using UnityEngine;
 public static class ItemManager
 {
-    public static event Action<int, BigNumber> OnItemChanged;
+    public static event Action<int, BigNumber> OnItemAmountChanged;
     private static Dictionary<int, BigNumber> items
     {
         get
@@ -28,14 +28,14 @@ public static class ItemManager
         {
             items[itemId] = maxStack;
         }
-        OnItemChanged?.Invoke(itemId, items[itemId]);
+        OnItemAmountChanged?.Invoke(itemId, items[itemId]);
     }
     public static void ConsumeItem(int itemId, BigNumber amount)
     {
         if(CanConsume(itemId, amount))
         {
             items[itemId] -= amount;
-            OnItemChanged?.Invoke(itemId, items[itemId]);
+            OnItemAmountChanged?.Invoke(itemId, items[itemId]);
         }
     }
     public static bool CanConsume(int itemId, BigNumber amount)

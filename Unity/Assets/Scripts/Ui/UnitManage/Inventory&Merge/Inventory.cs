@@ -32,7 +32,10 @@ public class Inventory : MonoBehaviour
         soldierInteractableUI.equipAction += Equip;
         InitializeInventory(type);
     }
-
+    private void OnDisable()
+    {
+        OnElementSelected(equipElement);
+    }
     private void InitializeInventory(UnitTypes type)
     {
         foreach (Transform child in contentParent)

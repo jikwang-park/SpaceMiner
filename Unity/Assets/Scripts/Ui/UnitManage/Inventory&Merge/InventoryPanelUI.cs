@@ -19,7 +19,10 @@ public class InventoryPanelUI : MonoBehaviour
         InitializeInventories();
         InventoryManager.onChangedInventory += ApplyChangesInventorys;
     }
-
+    public void OnEnable()
+    {
+        DisplayInventory(UnitTypes.Tanker);
+    }
     public void OnClickCloseButton()
     {
         gameObject.SetActive(false);

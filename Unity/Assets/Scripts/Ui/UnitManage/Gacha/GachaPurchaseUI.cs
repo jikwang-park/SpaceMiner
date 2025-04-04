@@ -46,8 +46,7 @@ public class GachaPurchaseUI : MonoBehaviour
     }
     private void DoGacha(int count)
     {
-        ItemManager.AddItem((int)Currency.Gold, 100000000);
-        ItemManager.AddItem(1002, 30);
+        ItemManager.AddItem(1002, 30); // 250404 SHG - 가챠 테스트용 재화 추가 
         var gachaResults = GachaManager.Gacha(currentGachaId, count, useTicket);
         if(gachaResults != null)
         {

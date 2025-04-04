@@ -1,18 +1,47 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class UnitSkillTypeButtons : MonoBehaviour
 {
-    // Start is called before the first frame update
-    void Start()
+    [SerializeField]
+    public Button tankerButton;
+    [SerializeField]
+    public Button dealerButton;
+    [SerializeField]
+    public Button healerButton;
+    [SerializeField]
+    private UnitSkillUpgradeManager manager;
+    
+    private void Awake()
     {
-        
+    }
+    private void Start()
+    {
+        tankerButton.onClick.AddListener(() => OnClickTankerButton());
+        dealerButton.onClick.AddListener(() => OnClickDealerButton());
+        healerButton.onClick.AddListener(() => OnClickHealerButton());
     }
 
-    // Update is called once per frame
-    void Update()
+    private void SetButton()
     {
-        
+
+    }
+
+
+
+    private void OnClickTankerButton()
+    {
+        manager.SetType(UnitTypes.Tanker);
+    }
+    
+    private void OnClickDealerButton()
+    {
+        manager.SetType(UnitTypes.Dealer);
+    }
+    private void OnClickHealerButton()
+    {
+        manager.SetType(UnitTypes.Healer);
     }
 }

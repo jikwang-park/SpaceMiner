@@ -75,6 +75,9 @@ public class Unit : MonoBehaviour
 
     private int currentUnitNum = 0;
 
+    public float maxDis = 6.0f;
+    public float minDis = 4.0f;
+
 
     public float lastSkillUsedTime;
 
@@ -87,6 +90,11 @@ public class Unit : MonoBehaviour
         isAutoSkillMode = true;
     }
 
+    private void Start()
+    {
+        Debug.Log($"현재 타입 : {currentUnitType}, 현재 공격사거리 : {unitStats.range}");
+    }
+
     public bool IsDead
     {
         get
@@ -94,6 +102,18 @@ public class Unit : MonoBehaviour
             if (unitStats.Hp <= 0)
             {
                 currentUnitNum++;
+                return true;
+            }
+            return false;
+        }
+    }
+
+    public bool IsTargetDead
+    {
+        get
+        {
+            if((targetPos == null || !targetPos.gameObject.activeSelf))
+            {
                 return true;
             }
             return false;
@@ -120,8 +140,30 @@ public class Unit : MonoBehaviour
         }
     }
 
+    public bool IsUnitAliveFront
+    {
+        get
+        {
+            if (stageManger.UnitPartyManager.IsUnitExistFront(currentUnitType))
+            {
+                return true;
+            }
+            return false;
+        }
+    }
+    float thisAndFrontUnitDistance;
+    public bool IsUnitFar
+    {
+        get
+        {
+            var frontUnit = stageManger.UnitPartyManager.GetFrontUnit(currentUnitType);
+            thisAndFrontUnitDistance = frontUnit.transform.position.z - transform.position.z;
+            if (thisAndFrontUnitDistance > 5f)
+                return true;
 
-
+            return false;
+        }
+    }
 
 
     public bool IsTankerCanUseSkill
@@ -208,6 +250,53 @@ public class Unit : MonoBehaviour
             return false;
         }
     }
+    //
+    public bool IsFrontLine
+    {
+        get
+        {
+            return !stageManger.UnitPartyManager.IsUnitExistFront(currentUnitType);
+        }
+    }
+    public bool IsSafeDistance
+    {
+        get
+        {
+            bool isFront = !stageManger.UnitPartyManager.IsUnitExistFront(currentUnitType);
+            bool isBack = !stageManger.UnitPartyManager.IsUnitExistBack(currentUnitType);
+
+            if (isFront && isBack)
+                return true;
+
+            bool isBackSafe = true;
+            bool isFrontSafe = true;
+
+            if (!isBack)
+            {
+                var backUnit = stageManger.UnitPartyManager.GetBackUnit(currentUnitType);
+                float distance = (transform.position.z - backUnit.transform.position.z);
+
+                isBackSafe = distance <= (maxDis * ((int)backUnit.currentUnitType - (int)currentUnitType));
+
+            }
+
+            if (!isFront)
+            {
+                var frontUnit = stageManger.UnitPartyManager.GetFrontUnit(currentUnitType);
+                float distance = (frontUnit.transform.position.z - transform.position.z);
+
+                isFrontSafe = (distance >= minDis * (((int)currentUnitType) - (int)frontUnit.currentUnitType));
+
+            }
+
+
+            return (isBackSafe && isFrontSafe);
+
+        }
+    }
+
+
+
     public float lastAttackTime;
 
 
@@ -277,6 +366,18 @@ public class Unit : MonoBehaviour
     public void Move()
     {
         transform.position += Vector3.forward * Time.deltaTime * unitStats.moveSpeed;
+    }
+    public void BackToMyPos()
+    {
+        var frontUnit = stageManger.UnitPartyManager.GetFrontUnit(currentUnitType);
+        if (thisAndFrontUnitDistance - 5f > 0)
+        {
+            transform.position += Vector3.forward * Time.deltaTime * (unitStats.moveSpeed * 10);
+        }
+        else if (thisAndFrontUnitDistance - 5f < 0)
+        {
+            transform.position -= Vector3.forward * Time.deltaTime * (unitStats.moveSpeed * 10);
+        }
     }
 
     public void AttackCorutine()

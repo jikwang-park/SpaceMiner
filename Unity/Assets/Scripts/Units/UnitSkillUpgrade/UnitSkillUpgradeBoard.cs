@@ -1,24 +1,93 @@
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
+using UnityEngine.UI;
+
 
 public class UnitSkillUpgradeBoard : MonoBehaviour
 {
-    private UnitSkillUpgradeElement upgradeElement;
+    private UnitSkillUpgradeManager manager;
+
+    private UnitSkillUpgradeElement element;
+
+    [SerializeField]
+    private Image currentImage;
+    [SerializeField]
+    private TextMeshProUGUI currentText;
+    [SerializeField]
+    private Image nextImage;
+    [SerializeField]
+    private TextMeshProUGUI nextText;
+    [SerializeField]
+    private Button upgradeButton;
 
 
+    private int currentId = 1201;
+    private int nextId;
+    private UnitTypes currentType = UnitTypes.Tanker;
+    [SerializeField]
+    public Grade currentGrade = Grade.Normal;
     private void Start()
     {
+        upgradeButton.onClick.AddListener(() => OnClickUpgradeButton());
         
     }
     public void ShowFirstOpened()
     {
-        var data = DataTableManager.SkillUpgradeTable.GetData(1);
-        // Ã³ï¿½ï¿½ ï¿½ï¿½Å³ ï¿½ï¿½ï¿½×·ï¿½ï¿½Ìµï¿½ ï¿½ï¿½Æ° Å¬ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ã¿ï¿½ ï¿½ï¿½Ä¿ -> ï¿½ë¸» ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ß°ï¿½ ï¿½ï¿½ï¿½â¼­ ï¿½ï¿½ï¿½ï¿½ï¿½Ø¾ß‰ï¿½
-
+        SetBoardText(currentId, currentType);
     }
     public void ShowBoard()
     {
-        // upgradeElement.SetData();
+
+    }
+
+    public void SetInfo(int id , UnitTypes type)
+    {
+        currentId = id;
+        currentType = type;
+        SetBoardText(id, type);
+    }
+
+    public void SetBoardText(int id, UnitTypes type)
+    {
+        currentId = id;
+        currentType = type;
+         var data = DataTableManager.SkillUpgradeTable.GetData(id);
+        nextId = data.NextSkillUpgrade;
+        switch (type)
+        {
+            case UnitTypes.Tanker:
+                   var tankerData = DataTableManager.TankerSkillTable.GetData(id);
+                currentText.text = $"½¯µå·® : {tankerData.ShieldRatio}% ÄðÅ¸ÀÓ : {tankerData.CoolTime}ÃÊ Áö¼Ó½Ã°£: {tankerData.Duration}ÃÊ";
+                var nextTankerData = DataTableManager.TankerSkillTable.GetData(nextId);
+                nextText.text = $"½¯µå·® : {nextTankerData.ShieldRatio}% ÄðÅ¸ÀÓ : {nextTankerData.CoolTime}ÃÊ Áö¼Ó½Ã°£ : {nextTankerData.Duration}ÃÊ";
+                break;
+            case UnitTypes.Dealer:
+                var delaerData = DataTableManager.DealerSkillTable.GetData(id);
+                currentText.text = $"ÄðÅ¸ÀÓ : {delaerData.CoolTime}ÃÊ ¸ó½ºÅÍ Å¸°Ù¼ö: {delaerData.MonsterMaxTarget}ÃÊ";
+                var nextDealerData = DataTableManager.DealerSkillTable.GetData(nextId);
+                nextText.text = $"ÄðÅ¸ÀÓ :  {nextDealerData.CoolTime} ÃÊ ¸ó½ºÅÍ Å¸°Ù¼ö:  {nextDealerData.MonsterMaxTarget}ÃÊ";
+                break;
+            case UnitTypes.Healer:
+                var healerData = DataTableManager.HealerSkillTable.GetData(id);
+                currentText.text = $"ÄðÅ¸ÀÓ : {healerData.CoolTime}ÃÊ";
+                var nextHealerData = DataTableManager.HealerSkillTable.GetData(nextId);
+                nextText.text = $"ÄðÅ¸ÀÓ : {nextHealerData.CoolTime}ÃÊ";
+                break;
+        }
+
+        
+
+    }
+    private void OnClickUpgradeButton()
+    {
+        currentId = nextId;
+        SetBoardText(currentId, currentType);
+    }
+
+    public void SetImage()
+    {
+
     }
 }

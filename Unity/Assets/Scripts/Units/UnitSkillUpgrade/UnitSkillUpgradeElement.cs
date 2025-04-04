@@ -21,7 +21,13 @@ public class UnitSkillUpgradeElement : MonoBehaviour
 
     }
 
-    public void SetData(SkillUpgradeTable.Data data)
+    
+
+    public void SetBoardText()
+    {
+
+    }
+    public void SetImage()
     {
 
     }

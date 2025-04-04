@@ -41,18 +41,21 @@ public class UnitStats : CharacterStats
         coolDown = 1;
         armor = (int)data.Basic_DP;
         damage = (int)data.Basic_AP;
-        range = (int)data.Distance;
+        //range = (int)data.Distance;
 
         switch (type)
         {
             case UnitTypes.Tanker:
                 specialPoint = (int)data.Special_DR;
+                range = 1f;
                 break;
             case UnitTypes.Dealer:
                 specialPoint = (int)data.Special_CD;
+                range = 5.5f;
                 break;
             case UnitTypes.Healer:
                 specialPoint = (int)data.Special_H;
+                range = 10f;
                 break;
         }
     }

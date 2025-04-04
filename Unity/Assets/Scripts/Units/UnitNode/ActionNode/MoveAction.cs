@@ -15,15 +15,7 @@ public class MoveAction : ActionNode<Unit>
 
     protected override NodeStatus OnUpdate()
     {
-        if (context.targetPos != null )
-        {
-
-            Debug.Log("이동종료");
-            return NodeStatus.Success;
-        }
-        Debug.Log("이동중");
         context.Move();
-
-        return NodeStatus.Running;
+        return NodeStatus.Success;
     }
 }

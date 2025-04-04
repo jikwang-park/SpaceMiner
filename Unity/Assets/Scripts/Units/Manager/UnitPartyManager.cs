@@ -39,6 +39,11 @@ public class UnitPartyManager : MonoBehaviour
         }
     }
 
+    public Dictionary<UnitTypes,Unit> GetCurrentParty()
+    {
+        return party;
+    }
+
     public void UnitSpawn()
     {
         UnitSpawn(Vector3.zero);
@@ -137,10 +142,34 @@ public class UnitPartyManager : MonoBehaviour
         return false;
     }
 
+    public bool IsUnitExistBack(UnitTypes myType)
+    {
+        for (int i = (int)myType + 1; i <= (int)UnitTypes.Healer; ++i)
+        {
+            if (party.ContainsKey((UnitTypes)i))
+            {
+                return true;
+            }
+        }
+        return false;
+    }
+
     // 250403 HKY 현재 유닛 타입을 넣으면 내 앞의 유닛을 반환해주는 메소드 추가
     public Unit GetFrontUnit(UnitTypes myType)
     {
         for (int i = (int)myType - 1; i >= (int)UnitTypes.Tanker; --i)
+        {
+            if (party.ContainsKey((UnitTypes)i))
+            {
+                return party[(UnitTypes)i];
+            }
+        }
+        return null;
+    }
+
+    public Unit GetBackUnit(UnitTypes myType)
+    {
+        for (int i = (int)myType + 1; i <= (int)UnitTypes.Healer; ++i)
         {
             if (party.ContainsKey((UnitTypes)i))
             {

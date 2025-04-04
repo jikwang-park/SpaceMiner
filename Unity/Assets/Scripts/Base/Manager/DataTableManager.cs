@@ -120,8 +120,8 @@ public static class DataTableManager
             Debug.Assert(isContainsKey, "Table Not Exists");
             return null;
         }
-        return tables[tableId] as T;
-    }
+         return tables[tableId] as T;
+     }
 
     public static StringTable StringTable
         => GetTable<StringTable>(DataTableIds.stringTables[(int)Variables.currentLanguage]);
@@ -139,7 +139,7 @@ public static class DataTableManager
         => GetTable<SoldierTable>(DataTableIds.soldierTable);
 
     public static TankerSkillTable TankerSkillTable
-        => GetTable<TankerSkillTable>(DataTableIds.tankerSkillTable);
+         => GetTable<TankerSkillTable>(DataTableIds.tankerSkillTable);
 
     public static HealerSkillTable HealerSkillTable
         => GetTable<HealerSkillTable>(DataTableIds.healerSkillTable);

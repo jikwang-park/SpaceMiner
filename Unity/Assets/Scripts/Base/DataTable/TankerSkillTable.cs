@@ -60,7 +60,7 @@ public class TankerSkillTable : DataTable
     }
 
     public Data GetData(int key)
-    {
+          {
         if (!TableData.ContainsKey(key))
         {
             return null;

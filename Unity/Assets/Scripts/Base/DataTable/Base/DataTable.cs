@@ -14,7 +14,7 @@ public abstract class DataTable
 {
     public static readonly string FormatPath = "DataTables/{0}";
 
-    public Dictionary<int, ITableData> TableData { get; protected set; } = new Dictionary<int, ITableData>();
+     public Dictionary<int, ITableData> TableData { get; protected set; } = new Dictionary<int, ITableData>();
 
     protected static List<T> LoadCsv<T>(string csv)
     {

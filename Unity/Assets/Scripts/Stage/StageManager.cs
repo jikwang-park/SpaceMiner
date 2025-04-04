@@ -24,7 +24,9 @@ public class StageManager : MonoBehaviour
         UnitPartyManager = GetComponent<UnitPartyManager>();
         objectPoolManager = GetComponent<ObjectPoolManager>();
 
-        switch(ingameStatus)
+        Init();
+
+        switch (ingameStatus)
         {
             case IngameStatus.Planet:
                 stageStatusMachine = new PlanetStageStatusMachine(this);
@@ -60,6 +62,29 @@ public class StageManager : MonoBehaviour
             case IngameStatus.Dungeon:
                 Addressables.LoadSceneAsync("Scenes/DungeonScene").WaitForCompletion();
                 break;
+        }
+    }
+
+    public void Init()
+    {
+        var saveData = SaveLoadManager.Data.stageSaveData;
+
+        List<int> dungeons = DataTableManager.DungeonTable.DungeonTypes;
+
+        bool changed = false;
+
+        foreach (var type in dungeons)
+        {
+            if (!saveData.highestDungeon.ContainsKey(type))
+            {
+                changed = true;
+                saveData.highestDungeon.Add(type, 1);
+            }
+        }
+
+        if (changed)
+        {
+            SaveLoadManager.SaveGame();
         }
     }
 

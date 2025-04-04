@@ -129,8 +129,14 @@ public class DungeonStageStatusMachine : StageStatusMachine
 
     protected void OnStageClear()
     {
+        if (SaveLoadManager.Data.stageSaveData.highestDungeon[currentType] == currentStage
+            && DataTableManager.DungeonTable.CountOfStage(currentType) > currentStage)
+        {
+            ++SaveLoadManager.Data.stageSaveData.highestDungeon[currentType];
+        }
         ItemManager.AddItem(dungeonData.ItemID, dungeonData.ClearReward);
         ItemManager.ConsumeItem(dungeonData.DungeonKeyID, dungeonData.KeyCount);
+        SaveLoadManager.SaveGame();
         var endWindow = stageManager.StageUiManager.stageEndMessageWindow.GetComponent<DungeonEndWindow>();
         endWindow.Set(true);
 

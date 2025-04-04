@@ -12,4 +12,5 @@ public class IsAutoSkillModeCondition : ConditionNode<Unit>
     {
         return context.isAutoSkillMode ? NodeStatus.Success : NodeStatus.Failure;
     }
+
 }

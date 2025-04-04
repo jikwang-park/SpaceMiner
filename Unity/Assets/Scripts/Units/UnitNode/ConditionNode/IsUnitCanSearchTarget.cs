@@ -10,6 +10,10 @@ public class IsUnitCanSearchTarget : ConditionNode<Unit>
 
     protected override NodeStatus OnUpdate()
     {
-        return context.targetPos == null ? NodeStatus.Success : NodeStatus.Failure;
+        if(context.targetPos == null)
+        {
+            return NodeStatus.Success;
+        }
+        return NodeStatus.Failure;
     }
 }

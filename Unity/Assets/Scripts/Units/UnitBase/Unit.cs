@@ -415,7 +415,7 @@ public class Unit : MonoBehaviour
     {
         unitSkill.GetTarget();
         unitSkill.ExecuteSkill();
-        yield return new WaitForSeconds(2f);
+        yield return new WaitForSeconds(2.0f);
         currentStatus = UnitStatus.Wait;
     }
 

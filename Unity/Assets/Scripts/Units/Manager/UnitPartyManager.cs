@@ -43,7 +43,29 @@ public class UnitPartyManager : MonoBehaviour
     {
         return party;
     }
+    public void ResetSkillCoolTime()
+    {
+        foreach(var unit in party.Values)
+        {
+           unit.lastSkillUsedTime = Time.time;
+        }
+    }
 
+    public void ResetUnitHealth()
+    {
+        foreach ( var unit in party.Values)
+        {
+            unit.unitStats.Hp = unit.unitStats.maxHp;
+        }
+    }
+
+    public void ResetBehaviorTree()
+    {
+        foreach ( var unit in party.Values)
+        {
+            unit.behaviorTree.Reset();
+        }
+    }
     public void UnitSpawn()
     {
         UnitSpawn(Vector3.zero);

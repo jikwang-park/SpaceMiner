@@ -216,6 +216,10 @@ public class PlanetStageStatusMachine : StageStatusMachine
         stageEndTime = Time.time + 60f;
         cleared = false;
 
+        stageManager.UnitPartyManager.ResetUnitHealth();
+        stageManager.UnitPartyManager.ResetSkillCoolTime();
+        stageManager.UnitPartyManager.ResetBehaviorTree();
+
         //stageData = DataTableManager.StageTable.GetData(string.Format(stageIDFormat, CurrentPlanet, CurrentStage));
         stageData = DataTableManager.StageTable.GetStageData(CurrentPlanet, CurrentStage);
         waveData = DataTableManager.WaveTable.GetData(stageData.CorpsID);

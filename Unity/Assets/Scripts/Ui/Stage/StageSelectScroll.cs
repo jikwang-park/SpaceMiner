@@ -23,6 +23,8 @@ public class StageSelectScroll : MonoBehaviour
 
     private void Start()
     {
+        stageLoadData = SaveLoadManager.Data.stageSaveData;
+
         SetButtons(stageLoadData.currentPlanet);
     }
 

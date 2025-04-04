@@ -33,11 +33,11 @@ public class GoldShopElement : MonoBehaviour
     }
     private void OnEnable()
     {
-        ItemManager.OnItemChanged += DoItemChange;
+        ItemManager.OnItemAmountChanged += DoItemChange;
     }
     private void OnDisable()
     {
-        ItemManager.OnItemChanged -= DoItemChange;
+        ItemManager.OnItemAmountChanged -= DoItemChange;
     }
     private void UpdateUI()
     {

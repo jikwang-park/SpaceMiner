@@ -47,7 +47,7 @@ public class UnitPartyManager : MonoBehaviour
     {
         foreach(var unit in party.Values)
         {
-           unit.lastSkillUsedTime = Time.time;
+            unit.lastSkillUsedTime = -unit.unitSkill.coolTime;
         }
     }
 

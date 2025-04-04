@@ -6,7 +6,6 @@ using static UnitUpgradeTable;
 
 public class UnitStats : CharacterStats
 {
-    BigNumber specialPoint;
 
 
 
@@ -46,15 +45,12 @@ public class UnitStats : CharacterStats
         switch (type)
         {
             case UnitTypes.Tanker:
-                specialPoint = (int)data.Special_DR;
                 range = 1f;
                 break;
             case UnitTypes.Dealer:
-                specialPoint = (int)data.Special_CD;
                 range = 5.5f;
                 break;
             case UnitTypes.Healer:
-                specialPoint = (int)data.Special_H;
                 range = 10f;
                 break;
         }

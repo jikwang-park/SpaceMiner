@@ -10,8 +10,8 @@ public class ShopTable : DataTable
     public enum ShopType
     {
         DungeonKey=1,
+        Gold,
         MiningRobot,
-        Gold
     }
 
     public class Data : ITableData

@@ -13,15 +13,10 @@ public class SoldierTable : DataTable
         public int StringID { get; set; }
         public UnitTypes Kind { get; set; }
         public Grade Rating { get; set; }
+        public int Level { get; set; }
         public float Basic_AP { get; set; }
         public float Basic_HP { get; set; }
         public float Basic_DP { get; set; }
-        public float Special_DR { get; set; }
-        public float Special_CD { get; set; }
-        public float Special_H { get; set; }
-        public int IncreaseID { get; set; }
-        public int BuildingID { get; set; }
-        public int SkillID { get; set; }
         public float Distance { get; set; }
         public float MoveSpeed { get; set; }
 
@@ -45,17 +40,12 @@ public class SoldierTable : DataTable
             {
                 Rating = Enum.Parse<Grade>(argument[3]);
             }
-            Basic_AP = float.Parse(argument[4]);
-            Basic_HP = float.Parse(argument[5]);
-            Basic_DP = float.Parse(argument[6]);
-            Special_DR = float.Parse(argument[7]);
-            Special_CD = float.Parse(argument[8]);
-            Special_H = float.Parse(argument[9]);
-            IncreaseID = int.Parse(argument[10]);
-            BuildingID = int.Parse(argument[11]);
-            SkillID = int.Parse(argument[12]);
-            Distance = float.Parse(argument[13]);
-            MoveSpeed = float.Parse(argument[14]);
+            Level = int.Parse(argument[4]);
+            Basic_AP = float.Parse(argument[5]);
+            Basic_HP = float.Parse(argument[6]);
+            Basic_DP = float.Parse(argument[7]);
+            Distance = float.Parse(argument[8]);
+            MoveSpeed = float.Parse(argument[9]);
         }
     }
 

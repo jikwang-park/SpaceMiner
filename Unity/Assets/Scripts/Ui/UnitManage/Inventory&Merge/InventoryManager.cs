@@ -4,11 +4,11 @@ using System.Collections.Generic;
 using UnityEngine;
 public static class InventoryManager
 {
-    private static Dictionary<UnitTypes, InventorySaveData> Inventories
+    private static Dictionary<UnitTypes, SoldierInventoryData> Inventories
     {
         get
         {
-            return SaveLoadManager.Data.inventorySaveData;
+            return SaveLoadManager.Data.SoldierInventorySaveData;
         }
     }
     public static readonly int requireMergeCount = 5;
@@ -19,12 +19,12 @@ public static class InventoryManager
 
         foreach (var type in datasByType.Keys) 
         {
-            InventorySaveData inventoryData = new InventorySaveData();
+            SoldierInventoryData inventoryData = new SoldierInventoryData();
             inventoryData.inventoryType = type;
 
             foreach(var soldierData in datasByType[type])
             {
-                InventoryElementSaveData elementData = new InventoryElementSaveData()
+                SoldierInventoryElementData elementData = new SoldierInventoryElementData()
                 {
                     soldierId = soldierData.ID,
                     isLocked = true,
@@ -44,7 +44,7 @@ public static class InventoryManager
         }
         onChangedInventory?.Invoke();
     }
-    public static InventorySaveData GetInventoryData(UnitTypes type)
+    public static SoldierInventoryData GetInventoryData(UnitTypes type)
     {
         return Inventories.ContainsKey(type) ? Inventories[type] : null;
     }
@@ -62,9 +62,9 @@ public static class InventoryManager
             return;
         }
 
-        InventorySaveData inventoryData = Inventories[data.Kind];
+        SoldierInventoryData inventoryData = Inventories[data.Kind];
 
-        InventoryElementSaveData element = inventoryData.elements.Find(e => e.soldierId == data.ID);
+        SoldierInventoryElementData element = inventoryData.elements.Find(e => e.soldierId == data.ID);
 
         if (element != null)
         {
@@ -83,7 +83,7 @@ public static class InventoryManager
     public static void Merge(int soldierId, int count = 1)
     {
         SoldierTable.Data data = DataTableManager.SoldierTable.GetData(soldierId);
-        InventorySaveData inventoryData = GetInventoryData(data.Kind);
+        SoldierInventoryData inventoryData = GetInventoryData(data.Kind);
         if(inventoryData == null) 
         {
             return;
@@ -95,7 +95,7 @@ public static class InventoryManager
             return;
         }
 
-        InventoryElementSaveData currentElement = inventoryData.elements[index];
+        SoldierInventoryElementData currentElement = inventoryData.elements[index];
         if (currentElement.count < requireMergeCount * count)
         {
             return;
@@ -103,7 +103,7 @@ public static class InventoryManager
 
         currentElement.count -= requireMergeCount * count;
 
-        InventoryElementSaveData nextElement = inventoryData.elements[index + 1];
+        SoldierInventoryElementData nextElement = inventoryData.elements[index + 1];
         if (nextElement.isLocked)
         {
             nextElement.isLocked = false;

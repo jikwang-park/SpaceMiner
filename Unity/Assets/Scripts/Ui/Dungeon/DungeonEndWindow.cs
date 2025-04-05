@@ -20,14 +20,13 @@ public class DungeonEndWindow : MonoBehaviour
     private Button nextButton;
     private bool isCleared;
 
-    public void Set(bool isCleared)
+    public void Open(string message,bool isCleared)
     {
         this.isCleared = isCleared;
-    }
 
-    private void OnEnable()
-    {
-        if (isCleared)
+        gameObject.SetActive(true);
+
+        if (this.isCleared)
         {
             messageText.text = "Cleared";
             bool lastStageCondition = Variables.currentDungeonStage == DataTableManager.DungeonTable.CountOfStage(Variables.currentDungeonType);
@@ -37,7 +36,7 @@ public class DungeonEndWindow : MonoBehaviour
             if (lastStageCondition)
             {
                 nextButton.interactable = ItemManager.GetItemAmount(curStage.DungeonKeyID) >= curStage.KeyCount;
-                
+
                 nextText.text = "Retry";
             }
             else
@@ -56,6 +55,11 @@ public class DungeonEndWindow : MonoBehaviour
             messageText.text = "Failed";
             nextText.text = "Retry";
         }
+    }
+
+    public void Close()
+    {
+        gameObject.SetActive(false);
     }
 
     public void Exit()

@@ -81,8 +81,18 @@ public class StageSelectScroll : MonoBehaviour
         }
     }
 
+    public void UnlockStage()
+    {
+        UnlockStage(buttons.Count);
+    }
+
     public void UnlockStage(int stage)
     {
+        if (stage > buttons.Count)
+        {
+            return;
+        }
+
         for (int i = 0; i < stage; ++i)
         {
             buttons[i].Button.interactable = true;

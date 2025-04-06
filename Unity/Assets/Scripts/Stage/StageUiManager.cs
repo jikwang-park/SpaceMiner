@@ -6,19 +6,19 @@ using UnityEngine;
 
 public class StageUiManager : MonoBehaviour
 {
-    public ObjectPoolManager objectPoolManager { get; private set; }
+    public ObjectPoolManager ObjectPoolManager { get; private set; }
 
     [field: SerializeField]
-    public InGameUIManager ingameUIManager { get; private set; }
+    public IngameUIManager IngameUIManager { get; private set; }
 
     [field: SerializeField]
-    public InteractableUIManager interactableUIManager { get; private set; }
+    public UIGroupStatusManager UIGroupStatusManager { get; private set; }
 
     [field: SerializeField]
     public ScreenCurtain curtain { get; private set; }
 
     private void Awake()
     {
-        objectPoolManager = GetComponent<ObjectPoolManager>();
+        ObjectPoolManager = GetComponent<ObjectPoolManager>();
     }
 }

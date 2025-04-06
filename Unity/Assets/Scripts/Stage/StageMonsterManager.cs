@@ -42,7 +42,7 @@ public class StageMonsterManager : MonoBehaviour
         {
             foreach (var monster in line.Value)
             {
-                Destroy(monster.Value.gameObject);
+                monster.Value.Release();
             }
             if (!monsterLines.ContainsKey(currentFrontLine + 1))
             {
@@ -69,15 +69,9 @@ public class StageMonsterManager : MonoBehaviour
                 monsterLines.Add(currentLastLine, new Dictionary<int, MonsterController>());
             }
             monsterLines[currentLastLine].Add(lane, monster);
-            if (monsterLines.ContainsKey(currentLastLine - 1))
-            {
-                monster.frontLine = currentLastLine - 1;
-            }
-            else
-            {
-                monster.frontLine = -1;
-            }
-            monster.findFrontMonster = GetLineMonster;
+            monster.currentLine = currentLastLine;
+            monster.isFrontMonster = IsFrontLine;
+            monster.findFrontMonster = GetFrontLineMonster;
             ++laneMonsterCounts[lane];
             int createdLine = currentLastLine;
             destructedEvent.OnDestroyed += (sender) => RemoveMonster(sender, createdLine, lane, monster);
@@ -121,7 +115,7 @@ public class StageMonsterManager : MonoBehaviour
             ++currentFrontLine;
             foreach (var nextMonster in monsterLines[currentFrontLine])
             {
-                nextMonster.Value.frontLine = -1;
+                nextMonster.Value.currentLine = -1;
             }
         }
     }
@@ -211,6 +205,36 @@ public class StageMonsterManager : MonoBehaviour
         }
 
         return null;
+    }
+
+    public Transform GetFrontLineMonster(int line)
+    {
+        int front = line - 1;
+
+        if (!monsterLines.ContainsKey(front))
+        {
+            return null;
+        }
+
+        if (monsterLines[front].Count == 0)
+        {
+            return null;
+        }
+
+        for (int i = 0; i < laneCount; ++i)
+        {
+            if (monsterLines[front].ContainsKey(i))
+            {
+                return monsterLines[front][i].transform;
+            }
+        }
+
+        return null;
+    }
+
+    public bool IsFrontLine(int line)
+    {
+        return !monsterLines.ContainsKey(line - 1);
     }
 
     public void Spawn(Vector3 position, CorpsTable.Data data)

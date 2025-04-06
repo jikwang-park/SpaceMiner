@@ -20,7 +20,14 @@ public class DungeonEndWindow : MonoBehaviour
     private Button nextButton;
     private bool isCleared;
 
-    public void Open(string message,bool isCleared)
+    private StageManager stageManager;
+
+    private void Awake()
+    {
+        stageManager = GameObject.FindGameObjectWithTag("GameController").GetComponent<StageManager>();
+    }
+
+    public void Open(string message, bool isCleared)
     {
         this.isCleared = isCleared;
 
@@ -64,7 +71,9 @@ public class DungeonEndWindow : MonoBehaviour
 
     public void Exit()
     {
-        SceneManager.LoadScene(0);
+        stageManager.SetStatus(IngameStatus.Planet);
+
+        gameObject.SetActive(false);
     }
 
     public void RightButton()
@@ -78,6 +87,8 @@ public class DungeonEndWindow : MonoBehaviour
         {
             Retry();
         }
+
+        gameObject.SetActive(false);
     }
 
     public void Lift()
@@ -88,6 +99,6 @@ public class DungeonEndWindow : MonoBehaviour
 
     public void Retry()
     {
-        Addressables.LoadSceneAsync("Scenes/DungeonScene").WaitForCompletion();
+        stageManager.ResetStage();
     }
 }

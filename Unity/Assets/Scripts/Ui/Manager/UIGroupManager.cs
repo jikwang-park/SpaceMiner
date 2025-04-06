@@ -1,3 +1,4 @@
+using AYellowpaper.SerializedCollections;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -51,4 +52,5 @@ public class UIGroupManager : MonoBehaviour
             Time.timeScale = 0f;
         }
     }
+
 }

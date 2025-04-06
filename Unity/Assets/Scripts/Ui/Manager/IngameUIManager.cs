@@ -1,9 +1,10 @@
+using AYellowpaper.SerializedCollections;
 using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 
-public class InGameUIManager : MonoBehaviour
+public class IngameUIManager : MonoBehaviour
 {
     private const string stageTextFormat = "{0}-{1}";
     private const string waveTextFormat = "{0} Wave";
@@ -21,6 +22,11 @@ public class InGameUIManager : MonoBehaviour
     private StageEndWindow stageEndWindow;
     [SerializeField]
     private DungeonEndWindow dungeonEndWindow;
+
+    [SerializeField]
+    private SerializedDictionary<IngameStatus, List<GameObject>> statusObjectLists;
+
+    private IngameStatus ingameStatus;
 
     public void SetTimer(float remainTime)
     {
@@ -54,7 +60,7 @@ public class InGameUIManager : MonoBehaviour
 
     public void OpenDungeonEndWindow(string message, bool isCleared)
     {
-        dungeonEndWindow.Open(message,isCleared);
+        dungeonEndWindow.Open(message, isCleared);
     }
 
     public void CloseDungeonEndWindow()
@@ -67,16 +73,28 @@ public class InGameUIManager : MonoBehaviour
         goldText.text = $"{ItemManager.GetItemAmount((int)Currency.Gold)}G";
     }
 
-    public void SetIngameStatus(IngameStatus status)
+    public void SetStatus(IngameStatus status)
     {
-        switch (status)
+        if (ingameStatus == status)
         {
-            case IngameStatus.Planet:
-                goldText.gameObject.SetActive(true);
-                break;
-            case IngameStatus.Dungeon:
-                goldText.gameObject.SetActive(false);
-                break;
+            return;
         }
+
+        if (statusObjectLists.ContainsKey(ingameStatus))
+        {
+            foreach (var gameobject in statusObjectLists[ingameStatus])
+            {
+                gameobject.SetActive(false);
+            }
+        }
+
+        if (statusObjectLists.ContainsKey(status))
+        {
+            foreach (var gameobject in statusObjectLists[status])
+            {
+                gameobject.SetActive(true);
+            }
+        }
+        ingameStatus = status;
     }
 }

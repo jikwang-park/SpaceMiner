@@ -9,42 +9,52 @@ public class StageManager : MonoBehaviour
 {
     public StageMonsterManager StageMonsterManager { get; private set; }
     public UnitPartyManager UnitPartyManager { get; private set; }
-    public ObjectPoolManager objectPoolManager { get; private set; }
+    public ObjectPoolManager ObjectPoolManager { get; private set; }
     [field: SerializeField]
     public StageUiManager StageUiManager { get; private set; }
+    public CameraManager CameraManager { get; private set; }
 
     [SerializeField]
     private IngameStatus ingameStatus;
 
-    private StageStatusMachine stageStatusMachine;
+
+    private Dictionary<IngameStatus, StageStatusMachine> machines = new Dictionary<IngameStatus, StageStatusMachine>();
+    //private StageStatusMachine stageStatusMachine;
 
     private void Awake()
     {
         StageMonsterManager = GetComponent<StageMonsterManager>();
         UnitPartyManager = GetComponent<UnitPartyManager>();
-        objectPoolManager = GetComponent<ObjectPoolManager>();
+        ObjectPoolManager = GetComponent<ObjectPoolManager>();
+        CameraManager = GetComponent<CameraManager>();
 
         Init();
 
-        switch (ingameStatus)
-        {
-            case IngameStatus.Planet:
-                stageStatusMachine = new PlanetStageStatusMachine(this);
-                break;
-            case IngameStatus.Dungeon:
-                stageStatusMachine = new DungeonStageStatusMachine(this);
-                break;
-        }
+        machines.Add(IngameStatus.Planet, new PlanetStageStatusMachine(this));
+        machines.Add(IngameStatus.Dungeon, new DungeonStageStatusMachine(this));
+
+        //switch (ingameStatus)
+        //{
+        //    case IngameStatus.Planet:
+        //        stageStatusMachine = new PlanetStageStatusMachine(this);
+        //        break;
+        //    case IngameStatus.Dungeon:
+        //        stageStatusMachine = new DungeonStageStatusMachine(this);
+        //        break;
+        //}
     }
 
     private void Start()
     {
-        stageStatusMachine.Start();
+        machines[ingameStatus].Start();
+        //stageStatusMachine.Start();
     }
 
     private void Update()
     {
-        stageStatusMachine.Update();
+        //stageStatusMachine.Update();
+
+        machines[ingameStatus].Update();
     }
 
     public void SetStatus(IngameStatus status)
@@ -54,15 +64,28 @@ public class StageManager : MonoBehaviour
             return;
         }
 
-        switch (status)
-        {
-            case IngameStatus.Planet:
-                SceneManager.LoadScene(0);
-                break;
-            case IngameStatus.Dungeon:
-                Addressables.LoadSceneAsync("Scenes/DungeonScene").WaitForCompletion();
-                break;
-        }
+        StageUiManager.curtain.SetFade(true);
+        StageUiManager.UIGroupStatusManager.SetStatus(status);
+
+        machines[ingameStatus].SetActive(false);
+
+        StageUiManager.IngameUIManager.SetStatus(status);
+
+        machines[status].SetActive(true);
+
+        StageUiManager.curtain.SetFade(false);
+
+        ingameStatus = status;
+
+        //switch (status)
+        //{
+        //    case IngameStatus.Planet:
+        //        SceneManager.LoadScene(0);
+        //        break;
+        //    case IngameStatus.Dungeon:
+        //        Addressables.LoadSceneAsync("Scenes/DungeonScene").WaitForCompletion();
+        //        break;
+        //}
     }
 
     public void Init()
@@ -88,9 +111,14 @@ public class StageManager : MonoBehaviour
         }
     }
 
+    public void ResetStage()
+    {
+        machines[ingameStatus].Start();
+    }
+
     //TODO: �ν����Ϳ��� ������ ��ư�� ����
     public void OnExitClicked()
     {
-        stageStatusMachine.Exit();
+        //stageStatusMachine.Exit();
     }
 }

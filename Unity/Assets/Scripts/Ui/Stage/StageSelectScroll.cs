@@ -46,7 +46,7 @@ public class StageSelectScroll : MonoBehaviour
     {
         if (objectpoolManager is null)
         {
-            objectpoolManager = GameObject.FindGameObjectWithTag("GameController").GetComponent<StageManager>().StageUiManager.objectPoolManager;
+            objectpoolManager = GameObject.FindGameObjectWithTag("GameController").GetComponent<StageManager>().StageUiManager.ObjectPoolManager;
         }
         if (stageLoadData is null)
         {

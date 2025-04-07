@@ -30,7 +30,7 @@ public class PlanetSelectScroll : MonoBehaviour
 
     private void SetPlanetButtons()
     {
-        objectPoolManager = GameObject.FindGameObjectWithTag("GameController").GetComponent<StageManager>().StageUiManager.objectPoolManager;
+        objectPoolManager = GameObject.FindGameObjectWithTag("GameController").GetComponent<StageManager>().StageUiManager.ObjectPoolManager;
         var planets = DataTableManager.StageTable.GetPlanetKeys();
 
         for (int i = 0; i < planets.Count; ++i)
@@ -75,11 +75,9 @@ public class PlanetSelectScroll : MonoBehaviour
 
     public void UnlockPlanet(int planet)
     {
-        if (buttons.Count < planet)
+        for (int i = 0; i < planet; ++i)
         {
-            return;
+            buttons[i].Button.interactable = true;
         }
-
-        buttons[planet - 1].Button.interactable = true;
     }
 }

@@ -17,10 +17,7 @@ public abstract class StageStatusMachine
 
     public abstract void Start();
     public abstract void Update();
-    public virtual void Exit()
-    {
-
-    }
+    public abstract void Exit();
 
     public virtual void SetActive(bool isActive)
     {

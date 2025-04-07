@@ -36,4 +36,15 @@ public class CameraManager : MonoBehaviour
         }
         worldCamera.position = Vector3.Lerp(worldCamera.position, unit.position + offset, Time.deltaTime * followingSpeed);
     }
+
+    public void ResetCameraPosition()
+    {
+        unit = unitPartyManager.GetFirstLineUnitTransform();
+        if (unit is null)
+        {
+            worldCamera.position = offset;
+            return;
+        }
+        worldCamera.position = unit.position + offset;
+    }
 }

@@ -37,8 +37,9 @@ public class MonsterController : MonoBehaviour, IObjectPoolGameObject
 
 
     public Func<int, Transform> findFrontMonster;
+    public Func<int, bool> isFrontMonster;
 
-    public int frontLine = -1;
+    public int currentLine = -1;
 
     public float LastAttackTime { get; private set; }
 
@@ -56,7 +57,7 @@ public class MonsterController : MonoBehaviour, IObjectPoolGameObject
     {
         get
         {
-            return frontLine < 0 || -(findFrontMonster(frontLine).position.z - transform.position.z) > minDistanceInMonster;
+            return isFrontMonster(currentLine) || -(findFrontMonster(currentLine).position.z - transform.position.z) > minDistanceInMonster;
         }
     }
 
@@ -71,13 +72,15 @@ public class MonsterController : MonoBehaviour, IObjectPoolGameObject
     private void OnEnable()
     {
         isDrawRegion = true;
-
+        TargetDistance = float.PositiveInfinity;
         StageManager = GameObject.FindGameObjectWithTag("GameController").GetComponent<StageManager>();
     }
 
     private void OnDisable()
     {
         isDrawRegion = false;
+        TargetAcquired = false;
+        currentLine = -1;
         StageManager = null;
     }
 

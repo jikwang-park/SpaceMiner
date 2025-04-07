@@ -33,15 +33,24 @@ public class SaveDataV1 : SaveData
 }
 public class SaveDataV2 : SaveDataV1
 {
+    [JsonProperty(ObjectCreationHandling = ObjectCreationHandling.Replace)]
     public MiningRobotInventoryData miningRobotInventorySaveData;
     public SaveDataV2() : base()
     {
-        miningRobotInventorySaveData = new MiningRobotInventoryData(60);
         Version = 2;
+        miningRobotInventorySaveData = MiningRobotInventoryData.CreateDefault(60);
     }
+
     public SaveDataV2(SaveDataV1 oldData) : base(oldData)
     {
-        miningRobotInventorySaveData = new MiningRobotInventoryData(60);
+        if (oldData is SaveDataV2 oldV2 && oldV2.miningRobotInventorySaveData != null && oldV2.miningRobotInventorySaveData.slots.Count > 0)
+        {
+            miningRobotInventorySaveData = oldV2.miningRobotInventorySaveData;
+        }
+        else
+        {
+            miningRobotInventorySaveData = MiningRobotInventoryData.CreateDefault(60);
+        }
         Version = 2;
     }
     public override SaveData VersionUp()
@@ -53,16 +62,19 @@ public class SaveDataV3 : SaveDataV2
 {
     public UnitStatUpgradeData unitStatUpgradeData;
     public UnitSkillUpgradeData unitSkillUpgradeData;
+    public QuestProgressData questProgressData;
     public SaveDataV3() : base()
     {
-        unitStatUpgradeData = new UnitStatUpgradeData();
-        unitSkillUpgradeData = new UnitSkillUpgradeData();
+        unitStatUpgradeData = UnitStatUpgradeData.CreateDefault();
+        unitSkillUpgradeData = UnitSkillUpgradeData.CreateDefault();
+        questProgressData = QuestProgressData.CreateDefault();
         Version = 3;
     }
     public SaveDataV3(SaveDataV2 oldData) : base(oldData)
     {
-        unitStatUpgradeData = new UnitStatUpgradeData();
-        unitSkillUpgradeData = new UnitSkillUpgradeData();
+        unitStatUpgradeData = UnitStatUpgradeData.CreateDefault();
+        unitSkillUpgradeData = UnitSkillUpgradeData.CreateDefault();
+        questProgressData = QuestProgressData.CreateDefault();
         Version = 3;
     }
     public override SaveData VersionUp()

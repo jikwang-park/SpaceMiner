@@ -18,6 +18,7 @@ public class GoldShopPanelUI : MonoBehaviour
     private Currency currentCurrency;
     private int currentSellPrice;
     private int currentGoldShopElementId;
+    private int defaultElementId;
     public BigNumber SellAmount
     {
         get
@@ -35,6 +36,8 @@ public class GoldShopPanelUI : MonoBehaviour
     private string prefabFormat = "Prefabs/UI/GoldShopElement";
     private void OnEnable()
     {
+        SetGoldShopElement(defaultElementId);
+        UpdateTexts();
         ItemManager.OnItemAmountChanged += DoItemChanged;
     }
     private void OnDisable()
@@ -53,7 +56,7 @@ public class GoldShopPanelUI : MonoBehaviour
         }
 
         var datas = DataTableManager.ShopTable.GetList(ShopTable.ShopType.Gold);
-
+        defaultElementId = datas[0].ID;
         foreach (var data in datas)
         {
             Addressables.InstantiateAsync(prefabFormat, contentParent).Completed += (AsyncOperationHandle<GameObject> handle) =>

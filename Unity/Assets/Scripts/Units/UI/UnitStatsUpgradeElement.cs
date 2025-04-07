@@ -61,7 +61,8 @@ public class UnitStatsUpgradeElement : MonoBehaviour
         addStartButtonText.text = $"Gold \n +{gold * nextLevel}";
         LevelUp();
     }
-  
+    
+    
 
     private void LevelUp()
     {

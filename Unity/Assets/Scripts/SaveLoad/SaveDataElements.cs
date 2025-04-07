@@ -47,4 +47,38 @@ public class MiningRobotInventoryData
         }
     }
 }
+[Serializable]
+public class UnitStatUpgradeData
+{
+    public Dictionary<UnitUpgradeTable.UpgradeType, int> upgradeLevels = new Dictionary<UnitUpgradeTable.UpgradeType, int>();
+    public UnitStatUpgradeData()
+    {
+        foreach(var type in Enum.GetValues(typeof(UnitUpgradeTable.UpgradeType)))
+        {
+            if(!upgradeLevels.ContainsKey((UnitUpgradeTable.UpgradeType)type))
+            {
+                upgradeLevels.Add((UnitUpgradeTable.UpgradeType)type, 1);
+            }
+        }
+    }
+}
+[Serializable]
+public class UnitSkillUpgradeData
+{
+    public Dictionary<UnitTypes, Dictionary<Grade, int>> skillUpgradeId = new Dictionary<UnitTypes, Dictionary<Grade, int>>();
+    public UnitSkillUpgradeData()
+    {
+        foreach (UnitTypes type in Enum.GetValues(typeof(UnitTypes)))
+        {
+            Dictionary<Grade, int> gradeDict = new Dictionary<Grade, int>();
+            foreach (Grade grade in Enum.GetValues(typeof(Grade)))
+            {
+                string name = type.ToString() + grade.ToString();
+                int defaultId = DataTableManager.DefaultDataTable.GetID(name);
+                gradeDict.Add(grade, defaultId);
+            }
+            skillUpgradeId.Add(type, gradeDict);
+        }
+    }
+}
 

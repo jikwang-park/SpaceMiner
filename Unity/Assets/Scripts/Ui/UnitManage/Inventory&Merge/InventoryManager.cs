@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 public static class InventoryManager
 {
@@ -8,7 +9,7 @@ public static class InventoryManager
     {
         get
         {
-            return SaveLoadManager.Data.SoldierInventorySaveData;
+            return SaveLoadManager.Data.soldierInventorySaveData;
         }
     }
     public static readonly int requireMergeCount = 5;
@@ -114,5 +115,9 @@ public static class InventoryManager
             nextElement.count += count;
         }
         onChangedInventory?.Invoke();
+    }
+    public static bool IsExist(UnitTypes type, Grade grade)
+    {
+         return Inventories[type].elements.Where((e) => e.grade == grade).Count() > 0;
     }
 }

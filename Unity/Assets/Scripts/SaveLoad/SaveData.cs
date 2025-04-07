@@ -11,7 +11,8 @@ public abstract class SaveData
 
 public class SaveDataV1 : SaveData
 {
-    public Dictionary<UnitTypes, SoldierInventoryData> SoldierInventorySaveData = new Dictionary<UnitTypes, SoldierInventoryData>();
+    [JsonProperty("inventorySaveData")]
+    public Dictionary<UnitTypes, SoldierInventoryData> soldierInventorySaveData = new Dictionary<UnitTypes, SoldierInventoryData>();
     public StageSaveData stageSaveData;
     public Dictionary<int, BigNumber> itemSaveData = new Dictionary<int, BigNumber>();
     public SaveDataV1()
@@ -33,7 +34,7 @@ public class SaveDataV2 : SaveDataV1
     }
     public SaveDataV2(SaveDataV1 oldData)
     {
-        this.SoldierInventorySaveData = oldData.SoldierInventorySaveData;
+        this.soldierInventorySaveData = oldData.soldierInventorySaveData;
         this.stageSaveData = oldData.stageSaveData;
         this.itemSaveData = oldData.itemSaveData;
 

@@ -85,7 +85,7 @@ public static class SaveLoadManager
 
         defaultSaveData.itemSaveData = new Dictionary<int, BigNumber>();
 
-        defaultSaveData.SoldierInventorySaveData = new Dictionary<UnitTypes, SoldierInventoryData>();
+        defaultSaveData.soldierInventorySaveData = new Dictionary<UnitTypes, SoldierInventoryData>();
         var datasByType = DataTableManager.SoldierTable.GetTypeDictionary();
 
         foreach (var type in datasByType.Keys)
@@ -108,7 +108,7 @@ public static class SaveLoadManager
             inventoryData.elements[0].isLocked = false;
             inventoryData.elements[0].count = 1;
             inventoryData.equipElementID = inventoryData.elements[0].soldierId;
-            defaultSaveData.SoldierInventorySaveData[type] = inventoryData;
+            defaultSaveData.soldierInventorySaveData[type] = inventoryData;
         }
         defaultSaveData.miningRobotInventorySaveData = new MiningRobotInventoryData(60);
         return defaultSaveData;

@@ -58,6 +58,14 @@ public class ObjectPoolManager : MonoBehaviour
         gameObjectPools.Clear();
     }
 
+    public void Clear(string prefabId)
+    {
+        if (gameObjectPools.ContainsKey(prefabId))
+        {
+            gameObjectPools[prefabId].Clear();
+        }
+    }
+
     private void CreateAddressableObjectPool(string prefabId)
     {
         ObjectPool<GameObject> pool = null;

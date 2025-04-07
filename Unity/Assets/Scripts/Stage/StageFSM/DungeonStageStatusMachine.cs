@@ -24,11 +24,11 @@ public class DungeonStageStatusMachine : StageStatusMachine
 
     public override void Start()
     {
-        Variables.isDungeonEnd = true;
         InitStage();
         InstantiateBackground();
 
         stageManager.UnitPartyManager.UnitSpawn();
+        stageManager.CameraManager.ResetCameraPosition();
         stageManager.StartCoroutine(CoSpawnNextWave());
         stageManager.StageMonsterManager.OnMonsterCleared += OnMonsterCleared;
     }
@@ -46,7 +46,7 @@ public class DungeonStageStatusMachine : StageStatusMachine
             }
         }
 
-        stageManager.StageUiManager.SetTimer(remainTime);
+        stageManager.StageUiManager.IngameUIManager.SetTimer(remainTime);
     }
 
     public override void SetActive(bool isActive)
@@ -58,15 +58,18 @@ public class DungeonStageStatusMachine : StageStatusMachine
         }
         else
         {
+            stageManager.StopAllCoroutines();
+
             stageManager.StageMonsterManager.OnMonsterCleared -= OnMonsterCleared;
             stageManager.UnitPartyManager.UnitDespawn();
             stageManager.StageMonsterManager.ClearMonster();
+            stageManager.ObjectPoolManager.Clear(dungeonData.PrefabID);
         }
     }
 
-    protected IEnumerator CoSpawnNextWave(float delay = 2f)
+    protected IEnumerator CoSpawnNextWave(float delay = 0.5f)
     {
-        stageManager.StageUiManager.SetStageTextDungeon(dungeonData.Type, dungeonData.Stage, currentWave);
+        stageManager.StageUiManager.IngameUIManager.SetWaveText(currentWave);
         yield return new WaitForSeconds(delay);
 
         var corpsData = DataTableManager.CorpsTable.GetData(waveData.WaveCorpsIDs[currentWave - 1]);
@@ -74,6 +77,7 @@ public class DungeonStageStatusMachine : StageStatusMachine
         if (corpsData is null)
         {
             Exit();
+            yield break;
         }
 
         Transform unit = stageManager.UnitPartyManager.GetFirstLineUnitTransform();
@@ -86,13 +90,13 @@ public class DungeonStageStatusMachine : StageStatusMachine
             stageManager.StageMonsterManager.Spawn(Vector3.zero, corpsData);
         }
 
-        stageManager.StageUiManager.SetStageTextDungeon(dungeonData.Type, dungeonData.Stage, currentWave);
+        stageManager.StageUiManager.IngameUIManager.SetWaveText(currentWave);
         ++currentWave;
     }
 
     protected void InstantiateBackground()
     {
-        var background = stageManager.objectPoolManager.Get(dungeonData.PrefabID);
+        var background = stageManager.ObjectPoolManager.Get(dungeonData.PrefabID);
         background.transform.parent = null;
         background.transform.position = Vector3.back * 30f;
         background.transform.rotation = Quaternion.identity;
@@ -100,19 +104,12 @@ public class DungeonStageStatusMachine : StageStatusMachine
 
     public override void Exit()
     {
-        //TODO: 수정 필요 HKY 250402
-        SceneManager.LoadScene(0);
+        stageManager.SetStatus(IngameStatus.Planet);
     }
 
     protected void OnTimeOver()
     {
-        stageManager.StageUiManager.SetStageMessage(false);
-        stageManager.StageUiManager.SetActiveStageMessage(true);
-
-        var endWindow = stageManager.StageUiManager.stageEndMessageWindow.GetComponent<DungeonEndWindow>();
-        endWindow.Set(false);
-
-        stageManager.StageUiManager.SetActiveStageMessage(true);
+        stageManager.StageUiManager.IngameUIManager.OpenStageEndWindow("Fail");
     }
 
     protected void OnMonsterCleared()
@@ -137,10 +134,8 @@ public class DungeonStageStatusMachine : StageStatusMachine
         ItemManager.AddItem(dungeonData.ItemID, dungeonData.ClearReward);
         ItemManager.ConsumeItem(dungeonData.DungeonKeyID, dungeonData.KeyCount);
         SaveLoadManager.SaveGame();
-        var endWindow = stageManager.StageUiManager.stageEndMessageWindow.GetComponent<DungeonEndWindow>();
-        endWindow.Set(true);
 
-        stageManager.StageUiManager.SetActiveStageMessage(true);
+        stageManager.StageUiManager.IngameUIManager.OpenDungeonEndWindow("Clear", true);
     }
 
     protected void InitStage()
@@ -154,6 +149,7 @@ public class DungeonStageStatusMachine : StageStatusMachine
 
         stageEndTime = Time.time + dungeonData.LimitTime;
 
-        stageManager.StageUiManager.SetStageTextDungeon(dungeonData.Type, dungeonData.Stage, currentWave);
+        stageManager.StageUiManager.IngameUIManager.SetDungeonStageText(dungeonData.Type, dungeonData.Stage);
+        stageManager.StageUiManager.IngameUIManager.SetWaveText(currentWave);
     }
 }

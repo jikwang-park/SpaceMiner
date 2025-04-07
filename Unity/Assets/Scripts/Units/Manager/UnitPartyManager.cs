@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -39,11 +40,30 @@ public class UnitPartyManager : MonoBehaviour
         }
     }
 
-    public Dictionary<UnitTypes,Unit> GetCurrentParty()
+   
+    public void ResetSkillCoolTime()
     {
-        return party;
+        foreach (var unit in party.Values)
+        {
+            unit.lastSkillUsedTime = -unit.unitSkill.coolTime;
+        }
     }
 
+    public void ResetUnitHealth()
+    {
+        foreach (var unit in party.Values)
+        {
+            unit.unitStats.Hp = unit.unitStats.maxHp;
+        }
+    }
+
+    public void ResetBehaviorTree()
+    {
+        foreach (var unit in party.Values)
+        {
+            unit.behaviorTree.Reset();
+        }
+    }
     public void UnitSpawn()
     {
         UnitSpawn(Vector3.zero);
@@ -80,6 +100,12 @@ public class UnitPartyManager : MonoBehaviour
         {
             unit.Value.unitStats.AddStats(type, amount);
         }
+    }
+
+    public void UpgradeSkillStats(int id, UnitTypes type)
+    {
+        var unit = party[type];
+        unit.unitSkill.UpgradeUnitSkillStats(id);
     }
 
     public void UnitDespawn()
@@ -201,4 +227,6 @@ public class UnitPartyManager : MonoBehaviour
             party.Add(go.UnitTypes, go);
         }
     }
+
+  
 }

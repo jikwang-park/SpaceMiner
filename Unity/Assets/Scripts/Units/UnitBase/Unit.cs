@@ -31,6 +31,7 @@ public class Unit : MonoBehaviour
     }
     private UnitTypes currentUnitType;
 
+    [SerializeField]
     public BigNumber barrier;
     public bool HasBarrier
     {
@@ -112,7 +113,7 @@ public class Unit : MonoBehaviour
     {
         get
         {
-            if((targetPos == null || !targetPos.gameObject.activeSelf))
+            if ((targetPos == null || !targetPos.gameObject.activeSelf))
             {
                 return true;
             }
@@ -170,15 +171,10 @@ public class Unit : MonoBehaviour
     {
         get
         {
+            if (Time.time < unitSkill.coolTime + lastSkillUsedTime)
+                return false;
 
-            if (currentUnitType == UnitTypes.Tanker)
-            {
-                if (Time.time < unitSkill.coolTime + lastSkillUsedTime)
-                    return false;
-
-                return true;
-            }
-            return false;
+            return true;
         }
     }
 
@@ -186,15 +182,11 @@ public class Unit : MonoBehaviour
     {
         get
         {
-            if (currentUnitType == UnitTypes.Dealer)
-            {
-                if (targetDistance > unitStats.range ||
-                        Time.time < unitSkill.coolTime + lastSkillUsedTime)
-                    return false;
+            if (targetDistance > unitStats.range ||
+                    Time.time < unitSkill.coolTime + lastSkillUsedTime)
+                return false;
 
-                return true;
-            }
-            return false;
+            return true;
         }
     }
 
@@ -202,15 +194,11 @@ public class Unit : MonoBehaviour
     {
         get
         {
-            if (currentUnitType == UnitTypes.Healer)
-            {
-                if (unitSkill.targetList == null ||
-                    Time.time < unitSkill.coolTime + lastSkillUsedTime)
-                    return false;
+            if (unitSkill.targetList == null ||
+                Time.time < unitSkill.coolTime + lastSkillUsedTime)
+                return false;
 
-                return true;
-            }
-            return false;
+            return true;
         }
     }
     public bool IsUnitCanAttack
@@ -367,18 +355,7 @@ public class Unit : MonoBehaviour
     {
         transform.position += Vector3.forward * Time.deltaTime * unitStats.moveSpeed;
     }
-    public void BackToMyPos()
-    {
-        var frontUnit = stageManger.UnitPartyManager.GetFrontUnit(currentUnitType);
-        if (thisAndFrontUnitDistance - 5f > 0)
-        {
-            transform.position += Vector3.forward * Time.deltaTime * (unitStats.moveSpeed * 10);
-        }
-        else if (thisAndFrontUnitDistance - 5f < 0)
-        {
-            transform.position -= Vector3.forward * Time.deltaTime * (unitStats.moveSpeed * 10);
-        }
-    }
+
 
     public void AttackCorutine()
     {
@@ -439,7 +416,7 @@ public class Unit : MonoBehaviour
     {
         unitSkill.GetTarget();
         unitSkill.ExecuteSkill();
-        yield return new WaitForSeconds(2f);
+        yield return new WaitForSeconds(2.0f);
         currentStatus = UnitStatus.Wait;
     }
 

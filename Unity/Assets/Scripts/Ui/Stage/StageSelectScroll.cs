@@ -23,6 +23,8 @@ public class StageSelectScroll : MonoBehaviour
 
     private void Start()
     {
+        stageLoadData = SaveLoadManager.Data.stageSaveData;
+
         SetButtons(stageLoadData.currentPlanet);
     }
 
@@ -44,7 +46,7 @@ public class StageSelectScroll : MonoBehaviour
     {
         if (objectpoolManager is null)
         {
-            objectpoolManager = GameObject.FindGameObjectWithTag("GameController").GetComponent<StageManager>().StageUiManager.objectPoolManager;
+            objectpoolManager = GameObject.FindGameObjectWithTag("GameController").GetComponent<StageManager>().StageUiManager.ObjectPoolManager;
         }
         if (stageLoadData is null)
         {
@@ -79,8 +81,18 @@ public class StageSelectScroll : MonoBehaviour
         }
     }
 
+    public void UnlockStage()
+    {
+        UnlockStage(buttons.Count);
+    }
+
     public void UnlockStage(int stage)
     {
+        if (stage > buttons.Count)
+        {
+            return;
+        }
+
         for (int i = 0; i < stage; ++i)
         {
             buttons[i].Button.interactable = true;

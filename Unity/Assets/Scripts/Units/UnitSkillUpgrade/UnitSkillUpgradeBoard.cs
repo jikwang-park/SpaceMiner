@@ -21,6 +21,8 @@ public class UnitSkillUpgradeBoard : MonoBehaviour
     private TextMeshProUGUI nextText;
     [SerializeField]
     private Button upgradeButton;
+    [SerializeField]
+    private StageManager stageManager;
 
 
     private int currentId = 1201;
@@ -28,6 +30,11 @@ public class UnitSkillUpgradeBoard : MonoBehaviour
     private UnitTypes currentType = UnitTypes.Tanker;
     [SerializeField]
     public Grade currentGrade = Grade.Normal;
+
+    private void Awake()
+    {
+        stageManager = GameObject.FindGameObjectWithTag("GameController").GetComponent<StageManager>();
+    }
     private void Start()
     {
         upgradeButton.onClick.AddListener(() => OnClickUpgradeButton());
@@ -54,7 +61,7 @@ public class UnitSkillUpgradeBoard : MonoBehaviour
         currentId = id;
         currentType = type;
          var data = DataTableManager.SkillUpgradeTable.GetData(id);
-        nextId = data.NextSkillUpgrade;
+        nextId = data.SkillPaymentID;
         switch (type)
         {
             case UnitTypes.Tanker:
@@ -76,14 +83,12 @@ public class UnitSkillUpgradeBoard : MonoBehaviour
                 nextText.text = $"ÄðÅ¸ÀÓ : {nextHealerData.CoolTime}ÃÊ";
                 break;
         }
-
-        
-
     }
     private void OnClickUpgradeButton()
     {
         currentId = nextId;
         SetBoardText(currentId, currentType);
+        stageManager.UnitPartyManager.UpgradeSkillStats(nextId, currentType);
     }
 
     public void SetImage()

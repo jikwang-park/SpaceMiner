@@ -34,7 +34,7 @@ public class PlanetBackground : MonoBehaviour, IObjectPoolGameObject
 
     private void Update()
     {
-        if(stageManager.UnitPartyManager.UnitCount ==0)
+        if (stageManager.UnitPartyManager.UnitCount == 0)
         {
             return;
         }

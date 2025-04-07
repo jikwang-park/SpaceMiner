@@ -50,5 +50,14 @@ public class TankerSkill : UnitSkill
             target.SetBarrier(duration, amount);
         }
     }
-    
+
+    public override void UpgradeUnitSkillStats(int id)
+    {
+        var data = DataTableManager.TankerSkillTable.GetData(id);
+        coolTime = data.CoolTime;
+        shieldRatio = data.ShieldRatio;
+        duration = data.Duration;
+        buffId = data.BuffID;
+    }
+
 }

@@ -20,14 +20,20 @@ public class DungeonEndWindow : MonoBehaviour
     private Button nextButton;
     private bool isCleared;
 
-    public void Set(bool isCleared)
+    private StageManager stageManager;
+
+    private void Awake()
     {
-        this.isCleared = isCleared;
+        stageManager = GameObject.FindGameObjectWithTag("GameController").GetComponent<StageManager>();
     }
 
-    private void OnEnable()
+    public void Open(string message, bool isCleared)
     {
-        if (isCleared)
+        this.isCleared = isCleared;
+
+        gameObject.SetActive(true);
+
+        if (this.isCleared)
         {
             messageText.text = "Cleared";
             bool lastStageCondition = Variables.currentDungeonStage == DataTableManager.DungeonTable.CountOfStage(Variables.currentDungeonType);
@@ -37,7 +43,7 @@ public class DungeonEndWindow : MonoBehaviour
             if (lastStageCondition)
             {
                 nextButton.interactable = ItemManager.GetItemAmount(curStage.DungeonKeyID) >= curStage.KeyCount;
-                
+
                 nextText.text = "Retry";
             }
             else
@@ -58,9 +64,16 @@ public class DungeonEndWindow : MonoBehaviour
         }
     }
 
+    public void Close()
+    {
+        gameObject.SetActive(false);
+    }
+
     public void Exit()
     {
-        SceneManager.LoadScene(0);
+        stageManager.SetStatus(IngameStatus.Planet);
+
+        gameObject.SetActive(false);
     }
 
     public void RightButton()
@@ -74,6 +87,8 @@ public class DungeonEndWindow : MonoBehaviour
         {
             Retry();
         }
+
+        gameObject.SetActive(false);
     }
 
     public void Lift()
@@ -84,6 +99,6 @@ public class DungeonEndWindow : MonoBehaviour
 
     public void Retry()
     {
-        Addressables.LoadSceneAsync("Scenes/DungeonScene").WaitForCompletion();
+        stageManager.ResetStage();
     }
 }

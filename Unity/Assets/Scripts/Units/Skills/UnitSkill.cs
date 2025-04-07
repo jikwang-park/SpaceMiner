@@ -56,5 +56,10 @@ public class UnitSkill : MonoBehaviour
     {
 
     }
+
+    public virtual void UpgradeUnitSkillStats(int id)
+    {
+        
+    }
     
 }

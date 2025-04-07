@@ -109,6 +109,10 @@ public static class DataTableManager
         var shopTable = new ShopTable();
         shopTable.Load(DataTableIds.shopTable);
         tables.Add(DataTableIds.shopTable, shopTable);
+
+        var defaultDataTable = new DefaultDataTable();
+        defaultDataTable.Load(DataTableIds.defaultDataTable);
+        tables.Add(DataTableIds.defaultDataTable, defaultDataTable);
     }
 
 
@@ -179,4 +183,7 @@ public static class DataTableManager
 
     public static SkillUpgradeTable SkillUpgradeTable
         => GetTable<SkillUpgradeTable>(DataTableIds.skillUpgradeTable);
+
+    public static DefaultDataTable DefaultDataTable
+        => GetTable<DefaultDataTable>(DataTableIds.defaultDataTable);
 }

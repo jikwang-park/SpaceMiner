@@ -16,12 +16,23 @@ public class ShopPanelUI : MonoBehaviour
     }
     private void DisplayPanel(int index)
     {
-        if(index <= 0 || index > shopPanels.Count || currentIndex == index)
+        int newIndex = index - 1;
+        if (index <= 0 || index > shopPanels.Count)
         {
             return;
         }
+
+        if (shopPanels[newIndex].activeSelf)
+        {
+            return;
+        }
+
+        if (currentIndex < shopPanels.Count)
+        {
+            shopPanels[currentIndex].SetActive(false);
+        }
         shopPanels[currentIndex].SetActive(false);
-        currentIndex = index - 1;
+        currentIndex = newIndex;
         shopPanels[currentIndex].SetActive(true);
     }
     public void OnClickOpenDungeonKeyShop()

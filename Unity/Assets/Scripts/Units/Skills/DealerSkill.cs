@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -35,5 +36,13 @@ public class DealerSkill : UnitSkill
         }
     }
 
- 
+    public override void UpgradeUnitSkillStats(int id)
+    {
+        var data = DataTableManager.DealerSkillTable.GetData(id);
+        coolTime = data.CoolTime;
+        damageRatio = data.DamageRatio;
+        targetCount = data.MonsterMaxTarget;
+    }
+
+
 }

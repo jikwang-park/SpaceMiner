@@ -31,6 +31,7 @@ public class Unit : MonoBehaviour
     }
     private UnitTypes currentUnitType;
 
+    [SerializeField]
     public BigNumber barrier;
     public bool HasBarrier
     {

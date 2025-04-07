@@ -15,7 +15,7 @@ public class UnitSkillUpgradeManager : MonoBehaviour
     [SerializeField]
     private UnitSkillUpgradeBoard board;
 
-    private UnitUpgradeTable.Data unitData;
+   
 
     private void Start()
     {

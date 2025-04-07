@@ -4,7 +4,7 @@ using System;
 using JetBrains.Annotations;
 
 [Serializable]
-public class InventoryElementSaveData
+public class SoldierInventoryElementData
 {
     public int soldierId; //250331 HKY 데이터형 변경
     public bool isLocked;
@@ -13,9 +13,9 @@ public class InventoryElementSaveData
     public int level;
 }
 [Serializable]
-public class InventorySaveData
+public class SoldierInventoryData
 {
-    public List<InventoryElementSaveData> elements = new List<InventoryElementSaveData>();
+    public List<SoldierInventoryElementData> elements = new List<SoldierInventoryElementData>();
     public int equipElementID; //250331 HKY 데이터형 변경
     public UnitTypes inventoryType;
 }
@@ -28,3 +28,23 @@ public class StageSaveData
     public int highStage;
     public Dictionary<int, int> highestDungeon = new Dictionary<int, int>();
 }
+[Serializable]
+public class MiningRobotInventorySlotData
+{
+    public bool isEmpty = true;
+    public int miningRobotId;
+}
+[Serializable]
+public class MiningRobotInventoryData
+{
+    public List<MiningRobotInventorySlotData> slots = new List<MiningRobotInventorySlotData>();
+
+    public MiningRobotInventoryData(int totalSlots = 60)
+    {
+        for (int i = 0; i < totalSlots; i++)
+        {
+            slots.Add(new MiningRobotInventorySlotData());
+        }
+    }
+}
+

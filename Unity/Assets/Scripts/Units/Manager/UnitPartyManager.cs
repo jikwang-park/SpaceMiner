@@ -39,13 +39,13 @@ public class UnitPartyManager : MonoBehaviour
         }
     }
 
-    public Dictionary<UnitTypes,Unit> GetCurrentParty()
+    public Dictionary<UnitTypes, Unit> GetCurrentParty()
     {
         return party;
     }
     public void ResetSkillCoolTime()
     {
-        foreach(var unit in party.Values)
+        foreach (var unit in party.Values)
         {
             unit.lastSkillUsedTime = -unit.unitSkill.coolTime;
         }
@@ -53,7 +53,7 @@ public class UnitPartyManager : MonoBehaviour
 
     public void ResetUnitHealth()
     {
-        foreach ( var unit in party.Values)
+        foreach (var unit in party.Values)
         {
             unit.unitStats.Hp = unit.unitStats.maxHp;
         }
@@ -61,7 +61,7 @@ public class UnitPartyManager : MonoBehaviour
 
     public void ResetBehaviorTree()
     {
-        foreach ( var unit in party.Values)
+        foreach (var unit in party.Values)
         {
             unit.behaviorTree.Reset();
         }
@@ -102,6 +102,12 @@ public class UnitPartyManager : MonoBehaviour
         {
             unit.Value.unitStats.AddStats(type, amount);
         }
+    }
+
+    public void UpgradeSkillStats(int id, UnitTypes type)
+    {
+        var unit = party[type];
+        unit.unitSkill.UpgradeUnitSkillStats(id);
     }
 
     public void UnitDespawn()

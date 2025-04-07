@@ -45,5 +45,13 @@ public class HealerSkill : UnitSkill
         }
     }
 
-   
+    public override void UpgradeUnitSkillStats(int id)
+    {
+        var data = DataTableManager.HealerSkillTable.GetData(id);
+        coolTime = data.CoolTime;
+        healRatio = data.HealRatio;
+        buffId = data.BuffID;
+    }
+
+
 }

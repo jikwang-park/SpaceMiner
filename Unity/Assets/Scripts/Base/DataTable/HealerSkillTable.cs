@@ -15,6 +15,7 @@ public class HealerSkillTable : DataTable
         public float CoolTime { get; set; }
         public int BuffID { get; set; }
         public string SoldierTarget { get; set; }
+        public int Level { get; set; }
 
         public UnitTypes[] targetPriority;
 
@@ -33,6 +34,7 @@ public class HealerSkillTable : DataTable
             CoolTime = float.Parse(argument[3]);
             BuffID = int.Parse(argument[4]);
             SoldierTarget = argument[5];
+            Level = int.Parse(argument[6]);
 
             targetPriority = SplitSoldierTarget(SoldierTarget);
         }

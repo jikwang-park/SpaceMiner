@@ -14,6 +14,7 @@ public class DealerSkillTable : DataTable
         public float DamageRatio { get; set; }
         public float CoolTime { get; set; }
         public int MonsterMaxTarget { get; set; }
+        public int Level { get; set; }
 
         public void Set(string[] argument)
         {
@@ -29,6 +30,7 @@ public class DealerSkillTable : DataTable
             DamageRatio = float.Parse(argument[2]);
             CoolTime = float.Parse(argument[3]);
             MonsterMaxTarget = int.Parse(argument[4]);
+            Level = int.Parse(argument[5]);
         }
     }
 

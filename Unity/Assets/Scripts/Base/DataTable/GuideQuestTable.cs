@@ -22,6 +22,7 @@ public class GuideQuestTable : DataTable
         public int Turn { get; set; }
         public MissionType MissionClearType { get; set; }
         public int Target { get; set; }
+        public int TargetCount { get; set; }
         public int RewardID { get; set; }
         public int RewardCount { get; set; }
         public string Prefab { get; set; }
@@ -40,12 +41,12 @@ public class GuideQuestTable : DataTable
                 MissionClearType = System.Enum.Parse<MissionType>(argument[3]);
             }
             Target = int.Parse(argument[4]);
-            RewardID = int.Parse(argument[5]);
-            RewardCount = int.Parse(argument[6]);
-            Prefab = argument[7];
+            TargetCount = int.Parse(argument[5]);
+            RewardID = int.Parse(argument[6]);
+            RewardCount = int.Parse(argument[7]);
+            Prefab = argument[8];
         }
     }
-
 
     public override System.Type DataType => typeof(Data);
 

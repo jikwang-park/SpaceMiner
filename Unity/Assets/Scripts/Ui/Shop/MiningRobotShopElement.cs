@@ -61,6 +61,7 @@ public class MiningRobotShopElement : MonoBehaviour
         {
             ItemManager.ConsumeItem(needItemId, needAmount);
             ItemManager.AddItem(paymentItemId, paymentItemAmount);
+            MiningRobotInventoryManager.AddRobot(paymentItemId);
             UpdateUI();
         }
     }

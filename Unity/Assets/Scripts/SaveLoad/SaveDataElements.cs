@@ -47,4 +47,19 @@ public class MiningRobotInventoryData
         }
     }
 }
+[Serializable]
+public class UnitStatUpgradeData
+{
+    public Dictionary<UnitUpgradeTable.UpgradeType, int> upgradeLevels = new Dictionary<UnitUpgradeTable.UpgradeType, int>();
+    public UnitStatUpgradeData()
+    {
+        foreach(var type in Enum.GetValues(typeof(UnitUpgradeTable.UpgradeType)))
+        {
+            if(!upgradeLevels.ContainsKey((UnitUpgradeTable.UpgradeType)type))
+            {
+                upgradeLevels.Add((UnitUpgradeTable.UpgradeType)type, 1);
+            }
+        }
+    }
+}
 

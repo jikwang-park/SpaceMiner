@@ -40,10 +40,7 @@ public class UnitPartyManager : MonoBehaviour
         }
     }
 
-    public Dictionary<UnitTypes, Unit> GetCurrentParty()
-    {
-        return party;
-    }
+   
     public void ResetSkillCoolTime()
     {
         foreach (var unit in party.Values)

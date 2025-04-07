@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class UnitSkillUpgradeManager : MonoBehaviour
@@ -15,8 +16,18 @@ public class UnitSkillUpgradeManager : MonoBehaviour
     [SerializeField]
     private UnitSkillUpgradeBoard board;
 
-   
 
+    public UnitSkillGradeButtons gradeButtons;
+
+    public void SetGradeButtons()
+    {
+
+        for(int i = (int)Grade.Normal; i<=(int)Grade.Legend; ++i)
+        {
+            var results = InventoryManager.IsExist(currentType, (Grade)i);
+            gradeButtons.SetButton((Grade)i , results);
+        }
+    }
     private void Start()
     {
         foreach (UnitTypes type in Enum.GetValues(typeof(UnitTypes)))
@@ -45,24 +56,24 @@ public class UnitSkillUpgradeManager : MonoBehaviour
        
         board.SetInfo(GetCurrentId(),currentType);
     }
-
-    
-
     public int GetCurrentId()
     {
         id = unitSkillDictionary[currentType][currentGrade];
         return id;
     }
-
-
     public void SetType(UnitTypes type)
     {
         if (currentType == type)
             return;
-
+        SetGradeButtons();
         currentType = type;
         SetGrade(Grade.Normal);
         board.SetInfo(GetCurrentId(),currentType);
+    }
+
+    private void OnEnable()
+    {
+        SetType(currentType);
     }
     public void SetGrade(Grade grade)
     {
@@ -71,6 +82,5 @@ public class UnitSkillUpgradeManager : MonoBehaviour
 
         currentGrade = grade;
         board.SetInfo(GetCurrentId(), currentType);
-
     }
 }

@@ -83,9 +83,6 @@ public class UnitSkillUpgradeBoard : MonoBehaviour
                 nextText.text = $"ÄðÅ¸ÀÓ : {nextHealerData.CoolTime}ÃÊ";
                 break;
         }
-
-        
-
     }
     private void OnClickUpgradeButton()
     {

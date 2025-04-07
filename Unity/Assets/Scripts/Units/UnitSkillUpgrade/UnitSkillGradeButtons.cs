@@ -16,6 +16,7 @@ public class UnitSkillGradeButtons : MonoBehaviour
     [SerializeField]
     private UnitSkillUpgradeManager manager;
 
+    public Dictionary<Grade,Button> buttonDictionary = new Dictionary<Grade,Button>();
 
     private void Start()
     {
@@ -23,6 +24,15 @@ public class UnitSkillGradeButtons : MonoBehaviour
         rareButton.onClick.AddListener(() => OnClickRareButton());
         epicButton.onClick.AddListener(() => OnClickEpicButton());
         legendButton.onClick.AddListener(() => OnClickLegendButton());
+        buttonDictionary[Grade.Normal] = normalButton;
+        buttonDictionary[Grade.Rare] = rareButton;
+        buttonDictionary[Grade.Epic] = epicButton;
+        buttonDictionary[Grade.Legend] = legendButton;
+    }
+
+    public void SetButton(Grade grade, bool result)
+     {
+        buttonDictionary[grade].interactable = result;
     }
 
     private void OnClickNormalButton()

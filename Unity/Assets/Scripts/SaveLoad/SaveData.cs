@@ -11,12 +11,20 @@ public abstract class SaveData
 
 public class SaveDataV1 : SaveData
 {
-    public Dictionary<UnitTypes, SoldierInventoryData> SoldierInventorySaveData = new Dictionary<UnitTypes, SoldierInventoryData>();
+    [JsonProperty("inventorySaveData")]
+    public Dictionary<UnitTypes, SoldierInventoryData> soldierInventorySaveData = new Dictionary<UnitTypes, SoldierInventoryData>();
     public StageSaveData stageSaveData;
     public Dictionary<int, BigNumber> itemSaveData = new Dictionary<int, BigNumber>();
     public SaveDataV1()
     {
         Version = 1;
+    }
+    public SaveDataV1(SaveDataV1 oldData)
+    {
+        this.soldierInventorySaveData = oldData.soldierInventorySaveData;
+        this.stageSaveData = oldData.stageSaveData;
+        this.itemSaveData = oldData.itemSaveData;
+        Version = oldData.Version;
     }
     public override SaveData VersionUp()
     {
@@ -25,20 +33,49 @@ public class SaveDataV1 : SaveData
 }
 public class SaveDataV2 : SaveDataV1
 {
+    [JsonProperty(ObjectCreationHandling = ObjectCreationHandling.Replace)]
     public MiningRobotInventoryData miningRobotInventorySaveData;
-    public SaveDataV2()
+    public SaveDataV2() : base()
     {
         Version = 2;
-        miningRobotInventorySaveData = new MiningRobotInventoryData(60);
+        miningRobotInventorySaveData = MiningRobotInventoryData.CreateDefault(60);
     }
-    public SaveDataV2(SaveDataV1 oldData)
-    {
-        this.SoldierInventorySaveData = oldData.SoldierInventorySaveData;
-        this.stageSaveData = oldData.stageSaveData;
-        this.itemSaveData = oldData.itemSaveData;
 
-        miningRobotInventorySaveData = new MiningRobotInventoryData(60);
+    public SaveDataV2(SaveDataV1 oldData) : base(oldData)
+    {
+        if (oldData is SaveDataV2 oldV2 && oldV2.miningRobotInventorySaveData != null && oldV2.miningRobotInventorySaveData.slots.Count > 0)
+        {
+            miningRobotInventorySaveData = oldV2.miningRobotInventorySaveData;
+        }
+        else
+        {
+            miningRobotInventorySaveData = MiningRobotInventoryData.CreateDefault(60);
+        }
         Version = 2;
+    }
+    public override SaveData VersionUp()
+    {
+        return new SaveDataV3(this);
+    }
+}
+public class SaveDataV3 : SaveDataV2
+{
+    public UnitStatUpgradeData unitStatUpgradeData;
+    public UnitSkillUpgradeData unitSkillUpgradeData;
+    public QuestProgressData questProgressData;
+    public SaveDataV3() : base()
+    {
+        unitStatUpgradeData = UnitStatUpgradeData.CreateDefault();
+        unitSkillUpgradeData = UnitSkillUpgradeData.CreateDefault();
+        questProgressData = QuestProgressData.CreateDefault();
+        Version = 3;
+    }
+    public SaveDataV3(SaveDataV2 oldData) : base(oldData)
+    {
+        unitStatUpgradeData = UnitStatUpgradeData.CreateDefault();
+        unitSkillUpgradeData = UnitSkillUpgradeData.CreateDefault();
+        questProgressData = QuestProgressData.CreateDefault();
+        Version = 3;
     }
     public override SaveData VersionUp()
     {

@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -39,10 +40,7 @@ public class UnitPartyManager : MonoBehaviour
         }
     }
 
-    public Dictionary<UnitTypes, Unit> GetCurrentParty()
-    {
-        return party;
-    }
+   
     public void ResetSkillCoolTime()
     {
         foreach (var unit in party.Values)
@@ -229,4 +227,6 @@ public class UnitPartyManager : MonoBehaviour
             party.Add(go.UnitTypes, go);
         }
     }
+
+  
 }

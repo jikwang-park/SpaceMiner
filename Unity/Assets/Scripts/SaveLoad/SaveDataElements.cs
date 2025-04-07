@@ -26,7 +26,10 @@ public class StageSaveData
     public int currentStage;
     public int highPlanet;
     public int highStage;
+    public int clearedPlanet;
+    public int clearedStage;
     public Dictionary<int, int> highestDungeon = new Dictionary<int, int>();
+    public Dictionary<int, int> clearedDungeon = new Dictionary<int, int>();
 }
 [Serializable]
 public class MiningRobotInventorySlotData
@@ -38,13 +41,67 @@ public class MiningRobotInventorySlotData
 public class MiningRobotInventoryData
 {
     public List<MiningRobotInventorySlotData> slots = new List<MiningRobotInventorySlotData>();
-
-    public MiningRobotInventoryData(int totalSlots = 60)
+    public MiningRobotInventoryData() { }
+    public static MiningRobotInventoryData CreateDefault(int totalSlots = 60)
     {
+        var data = new MiningRobotInventoryData();
         for (int i = 0; i < totalSlots; i++)
         {
-            slots.Add(new MiningRobotInventorySlotData());
+            data.slots.Add(new MiningRobotInventorySlotData());
         }
+        return data;
+    }
+}
+[Serializable]
+public class UnitStatUpgradeData
+{
+    public Dictionary<UnitUpgradeTable.UpgradeType, int> upgradeLevels = new Dictionary<UnitUpgradeTable.UpgradeType, int>();
+    public UnitStatUpgradeData() { }
+
+    public static UnitStatUpgradeData CreateDefault()
+    {
+        var data = new UnitStatUpgradeData();
+        foreach (var type in Enum.GetValues(typeof(UnitUpgradeTable.UpgradeType)))
+        {
+            data.upgradeLevels.Add((UnitUpgradeTable.UpgradeType)type, 1);
+        }
+        return data;
+    }
+}
+[Serializable]
+public class UnitSkillUpgradeData
+{
+    public Dictionary<UnitTypes, Dictionary<Grade, int>> skillUpgradeId = new Dictionary<UnitTypes, Dictionary<Grade, int>>();
+    public UnitSkillUpgradeData() { }
+    public static UnitSkillUpgradeData CreateDefault()
+    {
+        var data = new UnitSkillUpgradeData();
+        foreach (UnitTypes type in Enum.GetValues(typeof(UnitTypes)))
+        {
+            Dictionary<Grade, int> gradeDict = new Dictionary<Grade, int>();
+            foreach (Grade grade in Enum.GetValues(typeof(Grade)))
+            {
+                string name = type.ToString() + grade.ToString();
+                int defaultId = DataTableManager.DefaultDataTable.GetID(name);
+                gradeDict.Add(grade, defaultId);
+            }
+            data.skillUpgradeId.Add(type, gradeDict);
+        }
+        return data;
+    }
+}
+[Serializable]
+public class QuestProgressData
+{
+    public int currentQuest;
+    public int monsterCount;
+    public QuestProgressData() { }
+    public static QuestProgressData CreateDefault()
+    {
+        var data = new QuestProgressData();
+        data.currentQuest = 1;
+        data.monsterCount = 0;
+        return data;
     }
 }
 

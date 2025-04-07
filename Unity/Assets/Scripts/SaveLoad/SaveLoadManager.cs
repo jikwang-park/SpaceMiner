@@ -3,12 +3,13 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
+using Unity.VisualScripting.Antlr3.Runtime.Misc;
 using UnityEngine;
-using SaveDataVC = SaveDataV2;
+using SaveDataVC = SaveDataV3;
 
 public static class SaveLoadManager
 {
-    public static int SaveDataVersion { get; private set; } = 2;
+    public static int SaveDataVersion { get; private set; } = 3;
     public static SaveDataVC Data { get; set; }
 
     public static string fileName = "SaveData.json";
@@ -81,11 +82,25 @@ public static class SaveLoadManager
             currentStage = 1,
             highPlanet = 1,
             highStage = 1,
+            clearedPlanet = 1,
+            clearedStage = 0,
+            highestDungeon = new Dictionary<int, int>(),
+            clearedDungeon = new Dictionary<int, int>()
         };
+
+        List<int> dungeons = DataTableManager.DungeonTable.DungeonTypes;
+
+        foreach (var type in dungeons)
+        {
+            defaultSaveData.stageSaveData.highestDungeon.Add(type, 1);
+            defaultSaveData.stageSaveData.clearedDungeon.Add(type, 0);
+        }
+
+        defaultSaveData.questProgressData = QuestProgressData.CreateDefault();
 
         defaultSaveData.itemSaveData = new Dictionary<int, BigNumber>();
 
-        defaultSaveData.SoldierInventorySaveData = new Dictionary<UnitTypes, SoldierInventoryData>();
+        defaultSaveData.soldierInventorySaveData = new Dictionary<UnitTypes, SoldierInventoryData>();
         var datasByType = DataTableManager.SoldierTable.GetTypeDictionary();
 
         foreach (var type in datasByType.Keys)
@@ -108,9 +123,13 @@ public static class SaveLoadManager
             inventoryData.elements[0].isLocked = false;
             inventoryData.elements[0].count = 1;
             inventoryData.equipElementID = inventoryData.elements[0].soldierId;
-            defaultSaveData.SoldierInventorySaveData[type] = inventoryData;
+            defaultSaveData.soldierInventorySaveData[type] = inventoryData;
         }
-        defaultSaveData.miningRobotInventorySaveData = new MiningRobotInventoryData(60);
+        defaultSaveData.miningRobotInventorySaveData = MiningRobotInventoryData.CreateDefault();
+
+        defaultSaveData.unitStatUpgradeData = UnitStatUpgradeData.CreateDefault();
+        defaultSaveData.unitSkillUpgradeData = UnitSkillUpgradeData.CreateDefault();
+
         return defaultSaveData;
     }
 }

@@ -62,4 +62,23 @@ public class UnitStatUpgradeData
         }
     }
 }
+[Serializable]
+public class UnitSkillUpgradeData
+{
+    public Dictionary<UnitTypes, Dictionary<Grade, int>> skillUpgradeId = new Dictionary<UnitTypes, Dictionary<Grade, int>>();
+    public UnitSkillUpgradeData()
+    {
+        foreach (UnitTypes type in Enum.GetValues(typeof(UnitTypes)))
+        {
+            Dictionary<Grade, int> gradeDict = new Dictionary<Grade, int>();
+            foreach (Grade grade in Enum.GetValues(typeof(Grade)))
+            {
+                string name = type.ToString() + grade.ToString();
+                int defaultId = DataTableManager.DefaultDataTable.GetID(name);
+                gradeDict.Add(grade, defaultId);
+            }
+            skillUpgradeId.Add(type, gradeDict);
+        }
+    }
+}
 

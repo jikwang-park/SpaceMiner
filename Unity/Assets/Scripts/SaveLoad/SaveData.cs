@@ -19,6 +19,13 @@ public class SaveDataV1 : SaveData
     {
         Version = 1;
     }
+    public SaveDataV1(SaveDataV1 oldData)
+    {
+        this.soldierInventorySaveData = oldData.soldierInventorySaveData;
+        this.stageSaveData = oldData.stageSaveData;
+        this.itemSaveData = oldData.itemSaveData;
+        Version = oldData.Version;
+    }
     public override SaveData VersionUp()
     {
         return new SaveDataV2(this);
@@ -27,19 +34,36 @@ public class SaveDataV1 : SaveData
 public class SaveDataV2 : SaveDataV1
 {
     public MiningRobotInventoryData miningRobotInventorySaveData;
-    public SaveDataV2()
+    public SaveDataV2() : base()
     {
-        Version = 2;
         miningRobotInventorySaveData = new MiningRobotInventoryData(60);
+        Version = 2;
     }
-    public SaveDataV2(SaveDataV1 oldData)
+    public SaveDataV2(SaveDataV1 oldData) : base(oldData)
     {
-        this.soldierInventorySaveData = oldData.soldierInventorySaveData;
-        this.stageSaveData = oldData.stageSaveData;
-        this.itemSaveData = oldData.itemSaveData;
-
         miningRobotInventorySaveData = new MiningRobotInventoryData(60);
         Version = 2;
+    }
+    public override SaveData VersionUp()
+    {
+        return new SaveDataV3(this);
+    }
+}
+public class SaveDataV3 : SaveDataV2
+{
+    public UnitStatUpgradeData unitStatUpgradeData;
+    public UnitSkillUpgradeData unitSkillUpgradeData;
+    public SaveDataV3() : base()
+    {
+        unitStatUpgradeData = new UnitStatUpgradeData();
+        unitSkillUpgradeData = new UnitSkillUpgradeData();
+        Version = 3;
+    }
+    public SaveDataV3(SaveDataV2 oldData) : base(oldData)
+    {
+        unitStatUpgradeData = new UnitStatUpgradeData();
+        unitSkillUpgradeData = new UnitSkillUpgradeData();
+        Version = 3;
     }
     public override SaveData VersionUp()
     {

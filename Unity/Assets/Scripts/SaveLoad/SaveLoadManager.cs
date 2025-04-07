@@ -4,11 +4,11 @@ using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using UnityEngine;
-using SaveDataVC = SaveDataV2;
+using SaveDataVC = SaveDataV3;
 
 public static class SaveLoadManager
 {
-    public static int SaveDataVersion { get; private set; } = 2;
+    public static int SaveDataVersion { get; private set; } = 3;
     public static SaveDataVC Data { get; set; }
 
     public static string fileName = "SaveData.json";
@@ -111,6 +111,9 @@ public static class SaveLoadManager
             defaultSaveData.soldierInventorySaveData[type] = inventoryData;
         }
         defaultSaveData.miningRobotInventorySaveData = new MiningRobotInventoryData(60);
+        defaultSaveData.unitStatUpgradeData = new UnitStatUpgradeData();
+        defaultSaveData.unitSkillUpgradeData = new UnitSkillUpgradeData();
+
         return defaultSaveData;
     }
 }

@@ -118,6 +118,6 @@ public static class InventoryManager
     }
     public static bool IsExist(UnitTypes type, Grade grade)
     {
-           return Inventories[type].elements.Where((e) => e.grade == grade).Count() > 0;
+         return Inventories[type].elements.Where((e) => e.grade == grade && e.isLocked).Count() > 0;
     }
 }

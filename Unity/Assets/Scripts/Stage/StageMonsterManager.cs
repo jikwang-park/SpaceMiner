@@ -31,6 +31,17 @@ public class StageMonsterManager : MonoBehaviour
         laneMonsterCounts = new int[laneCount];
     }
 
+    public void StopMonster()
+    {
+        foreach (var line in monsterLines)
+        {
+            foreach (var monster in line.Value)
+            {
+                monster.Value.enabled = false;
+            }
+        }
+    }
+
     public void ClearMonster()
     {
         monsterCount = 0;
@@ -44,12 +55,8 @@ public class StageMonsterManager : MonoBehaviour
             {
                 monster.Value.Release();
             }
-            if (!monsterLines.ContainsKey(currentFrontLine + 1))
-            {
-                break;
-            }
-            ++currentFrontLine;
         }
+        currentFrontLine = currentLastLine;
         monsterLines.Clear();
     }
 

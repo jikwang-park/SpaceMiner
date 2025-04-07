@@ -17,6 +17,7 @@ public class StageManager : MonoBehaviour
     [SerializeField]
     private IngameStatus ingameStatus;
 
+    public LinkedList<IObjectPoolGameObject> backgrounds { get; private set; } = new LinkedList<IObjectPoolGameObject>();
 
     private Dictionary<IngameStatus, StageStatusMachine> machines = new Dictionary<IngameStatus, StageStatusMachine>();
     //private StageStatusMachine stageStatusMachine;
@@ -65,7 +66,7 @@ public class StageManager : MonoBehaviour
         }
 
         StageUiManager.curtain.SetFade(true);
-        StageUiManager.UIGroupStatusManager.SetStatus(status);
+        StageUiManager.UIGroupStatusManager.SetUIStatus(status);
 
         machines[ingameStatus].SetActive(false);
 
@@ -113,12 +114,20 @@ public class StageManager : MonoBehaviour
 
     public void ResetStage()
     {
-        machines[ingameStatus].Start();
+        machines[ingameStatus].Reset();
+    }
+
+    public void ReleaseBackground()
+    {
+        while (backgrounds.Count > 0)
+        {
+            backgrounds.First.Value.Release();
+        }
     }
 
     //TODO: �ν����Ϳ��� ������ ��ư�� ����
     public void OnExitClicked()
     {
-        //stageStatusMachine.Exit();
+        machines[ingameStatus].Exit();
     }
 }

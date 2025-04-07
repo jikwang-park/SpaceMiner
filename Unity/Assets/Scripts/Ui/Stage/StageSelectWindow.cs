@@ -1,23 +1,16 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Numerics;
-using UnityEditor.SceneManagement;
 using UnityEngine;
 using UnityEngine.UI;
 
 public class StageSelectWindow : MonoBehaviour
 {
-    private static readonly int hashSlideIn = Animator.StringToHash("SlideIn");
-    private static readonly int hashSlideOut = Animator.StringToHash("SlideOut");
-
     [SerializeField]
     private PlanetSelectScroll planetScroll;
 
     [SerializeField]
     private StageSelectScroll stageScroll;
-
-    [SerializeField]
-    private Animator animator;
 
     private int currentPlanet = 1;
 
@@ -28,12 +21,13 @@ public class StageSelectWindow : MonoBehaviour
     [SerializeField]
     private Button showButton;
 
+    private bool isShown = false;
+
     private void Start()
     {
         planetScroll.OnPlanetSelected += OnPlanetSelected;
         stageLoadData = SaveLoadManager.Data.stageSaveData;
         OnPlanetSelected(stageLoadData.currentPlanet);
-        showButton.onClick.AddListener(ShowStageWindow);
     }
 
     private void OnPlanetSelected(int planet)
@@ -46,7 +40,7 @@ public class StageSelectWindow : MonoBehaviour
         stageScroll.SetButtons(currentPlanet);
     }
 
-    private void RefreshStageWindow()
+    public void RefreshStageWindow()
     {
         var stageData = SaveLoadManager.Data.stageSaveData;
         if (currentPlanet != stageData.currentPlanet)
@@ -65,27 +59,23 @@ public class StageSelectWindow : MonoBehaviour
         }
     }
 
-    //TODO: 스테이지 선택 버튼 클릭에 연결
-    public void ShowStageWindow()
+    //TODO: 스테이지 선택 버튼에 연결
+    public void ToggleStageWindow()
     {
-        showButton.onClick.RemoveListener(ShowStageWindow);
-
-        RefreshStageWindow();
-
-        background.SetActive(true);
-        animator.SetTrigger(hashSlideIn);
-
-        showButton.onClick.AddListener(HideStageWindow);
+        if (isShown)
+        {
+            HideStageWindow();
+        }
+        else
+        {
+            isShown = true;
+            background.SetActive(true);
+        }
     }
 
-    //TODO: 스테이지창 가림 배경에 연결
     public void HideStageWindow()
     {
-        showButton.onClick.RemoveListener(HideStageWindow);
-
+        isShown = false;
         background.SetActive(false);
-        animator.SetTrigger(hashSlideOut);
-
-        showButton.onClick.AddListener(ShowStageWindow);
     }
 }

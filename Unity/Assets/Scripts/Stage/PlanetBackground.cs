@@ -24,12 +24,17 @@ public class PlanetBackground : MonoBehaviour, IObjectPoolGameObject
     public void Release()
     {
         isNextStageSpawned = false;
+        stageManager.backgrounds.Remove(this);
         ObjectPool.Release(gameObject);
     }
 
-    private void Start()
+    private void OnEnable()
     {
-        stageManager = GameObject.FindGameObjectWithTag("GameController").GetComponent<StageManager>();
+        if (stageManager is null)
+        {
+            stageManager = GameObject.FindGameObjectWithTag("GameController").GetComponent<StageManager>();
+        }
+        stageManager.backgrounds.AddLast(this);
     }
 
     private void Update()

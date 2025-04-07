@@ -1,10 +1,9 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
-using UnityEngine.AddressableAssets;
 using UnityEngine.Pool;
-using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 public class StageButton : MonoBehaviour, IObjectPoolGameObject
@@ -29,6 +28,11 @@ public class StageButton : MonoBehaviour, IObjectPoolGameObject
         stageLoadData = SaveLoadManager.Data.stageSaveData;
     }
 
+    private void Start()
+    {
+        stageManager = GameObject.FindGameObjectWithTag("GameController").GetComponent<StageManager>();
+    }
+
     public void Release()
     {
         Button.interactable = false;
@@ -44,10 +48,15 @@ public class StageButton : MonoBehaviour, IObjectPoolGameObject
 
     public void MoveStage()
     {
-        stageLoadData.currentPlanet= planet;
+        stageLoadData.currentPlanet = planet;
         stageLoadData.currentStage = stage;
-        SaveLoadManager.SaveGame();
-        SceneManager.LoadScene(0);
+
+        stageManager.SetStatus(IngameStatus.Planet);
+        stageManager.StageUiManager.IngameUIManager.stageSelectWindow.HideStageWindow();
+        stageManager.ResetStage();
+
+        //SaveLoadManager.SaveGame();
+        //SceneManager.LoadScene(0);
         //Addressables.LoadSceneAsync("StageDevelopScene");
     }
 }

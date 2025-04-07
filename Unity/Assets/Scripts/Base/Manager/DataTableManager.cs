@@ -110,9 +110,17 @@ public static class DataTableManager
         shopTable.Load(DataTableIds.shopTable);
         tables.Add(DataTableIds.shopTable, shopTable);
 
+
+        
         var defaultDataTable = new DefaultDataTable();
         defaultDataTable.Load(DataTableIds.defaultDataTable);
         tables.Add(DataTableIds.defaultDataTable, defaultDataTable);
+
+
+
+        var guideQuestTable = new GuideQuestTable();
+        guideQuestTable.Load(DataTableIds.guideQuestTable);
+        tables.Add(DataTableIds.guideQuestTable, guideQuestTable);
     }
 
 
@@ -186,4 +194,7 @@ public static class DataTableManager
 
     public static DefaultDataTable DefaultDataTable
         => GetTable<DefaultDataTable>(DataTableIds.defaultDataTable);
+
+    public static GuideQuestTable GuideQuestTable
+        => GetTable<GuideQuestTable>(DataTableIds.guideQuestTable);
 }

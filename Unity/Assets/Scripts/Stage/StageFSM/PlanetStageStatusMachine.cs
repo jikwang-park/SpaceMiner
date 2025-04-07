@@ -253,7 +253,7 @@ public class PlanetStageStatusMachine : StageStatusMachine
         if (previousPlanet != CurrentPlanet)
         {
             stageManager.ReleaseBackground();
-            stageManager.ObjectPoolManager.Clear(stageData.PrefabId);
+            stageManager.ObjectPoolManager.Clear(previousBackground);
             InstantiateBackground();
 
             stageManager.UnitPartyManager.UnitSpawn();

@@ -1,9 +1,11 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
 public static class MiningRobotInventoryManager
 {
+    public static event Action<int, MiningRobotInventorySlotData> onChangedInventory;
     public static MiningRobotInventoryData Inventory
     {
         get
@@ -14,12 +16,13 @@ public static class MiningRobotInventoryManager
 
     public static void AddRobot(int robotId)
     {
-        foreach(var slot in Inventory.slots)
+        for(int i = 0; i < Inventory.slots.Count; i++)
         {
-            if(slot.isEmpty)
+            if (Inventory.slots[i].isEmpty)
             {
-                slot.isEmpty = false;
-                slot.miningRobotId = robotId;
+                Inventory.slots[i].isEmpty = false;
+                Inventory.slots[i].miningRobotId = robotId;
+                onChangedInventory?.Invoke(i, Inventory.slots[i]);
                 return;
             }
         }

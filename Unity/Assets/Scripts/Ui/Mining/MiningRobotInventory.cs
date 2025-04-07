@@ -9,8 +9,10 @@ public class MiningRobotInventory : MonoBehaviour
 {
     [SerializeField]
     private Transform contentParent;
+    private List<MiningRobotInventorySlot> miningRobotInventorySlots = new List<MiningRobotInventorySlot>();
+
     private string prefabFormat = "Prefabs/UI/MiningRobotSlot";
-    private void Start()
+    private void Awake()
     {
         UpdateGridCellSize();
         Initialize();
@@ -24,8 +26,9 @@ public class MiningRobotInventory : MonoBehaviour
 
         var datas = MiningRobotInventoryManager.Inventory.slots;
 
-        foreach (var data in datas)
+        for(int i = 0; i < datas.Count; i++)
         {
+            int index = i;
             Addressables.InstantiateAsync(prefabFormat, contentParent).Completed += (AsyncOperationHandle<GameObject> handle) =>
             {
                 if (handle.Status == AsyncOperationStatus.Succeeded)
@@ -34,7 +37,9 @@ public class MiningRobotInventory : MonoBehaviour
                     MiningRobotInventorySlot miningRobotInventorySlot = elementObj.GetComponent<MiningRobotInventorySlot>();
                     if (miningRobotInventorySlot != null)
                     {
-                        miningRobotInventorySlot.Initialize(data);
+                        miningRobotInventorySlot.Initialize(datas[index]);
+                        miningRobotInventorySlot.index = index;
+                        miningRobotInventorySlots.Add(miningRobotInventorySlot);
                     }
                 }
             };
@@ -57,5 +62,29 @@ public class MiningRobotInventory : MonoBehaviour
         float availableWidth = totalWidth - leftPadding - rightPadding - spacingX * (columns - 1);
         float cellSize = availableWidth / columns;
         gridLayout.cellSize = new Vector2(cellSize, cellSize);
+    }
+    private void OnEnable()
+    {
+        MiningRobotInventoryManager.onChangedInventory += DoInventoryChanged;
+        UpdateUI();
+    }
+    private void OnDisable()
+    {
+        MiningRobotInventoryManager.onChangedInventory -= DoInventoryChanged;
+    }
+    private void DoInventoryChanged(int index, MiningRobotInventorySlotData data)
+    {
+        miningRobotInventorySlots[index].Initialize(data);
+    }
+    private void UpdateUI()
+    {
+        var datas = MiningRobotInventoryManager.Inventory.slots;
+        for (int i = 0; i < datas.Count; i++)
+        {
+            if (i < miningRobotInventorySlots.Count)
+            {
+                miningRobotInventorySlots[i].Initialize(datas[i]);
+            }
+        }
     }
 }

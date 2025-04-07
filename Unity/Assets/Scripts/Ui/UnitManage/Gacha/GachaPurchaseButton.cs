@@ -24,7 +24,7 @@ public class GachaPurchaseButton : MonoBehaviour
         this.count = count;
         this.cost = cost;
 
-        // image.sprite = sprite;
+        // iconImage.sprite = sprite;
         countText.text = $"{this.count} Times";
         costText.text = $"{this.cost}";
     }

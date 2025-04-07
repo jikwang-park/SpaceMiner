@@ -31,6 +31,7 @@ public class TankerSkillTable : DataTable
 
             targetPriority = SplitSoldierTarget(SoldierTarget);
         }
+        
     }
 
     public override Type DataType => typeof(Data);

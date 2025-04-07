@@ -28,6 +28,7 @@ public class UnitSkillGradeButtons : MonoBehaviour
         buttonDictionary[Grade.Rare] = rareButton;
         buttonDictionary[Grade.Epic] = epicButton;
         buttonDictionary[Grade.Legend] = legendButton;
+       
     }
 
     public void SetButton(Grade grade, bool result)

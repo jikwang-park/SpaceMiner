@@ -8,7 +8,7 @@ using UnityEngine.AddressableAssets;
 
 public class UnitStatsUpgrade : MonoBehaviour
 {
-    public List<UnitStatsUpgradeElement> statsUpgradeElements = new List<UnitStatsUpgradeElement>();
+    public UnitStatsUpgradeElement statsUpgradeElements;
 
     [SerializeField]
     private Transform parentTransform;
@@ -16,19 +16,24 @@ public class UnitStatsUpgrade : MonoBehaviour
     [SerializeField]
     private List<Sprite> statsSprite;
 
-
+   
 
     private void Awake()
     {
         Init();
     }
 
+    private void Start()
+    {
+    }
+
     private void Init()
     {
-        for(int i = 0;  i< statsUpgradeElements.Count; i++)
+        for(int i = (int)UnitUpgradeTable.UpgradeType.AttackPoint; i<= (int)UnitUpgradeTable.UpgradeType.CriticalDamages; i++)
         {
-            var stats = Instantiate(statsUpgradeElements[i],parentTransform);
-            stats.Init(DataTableManager.UnitUpgradeTable.GetData(1000*(1+i) +1));
+            var stats = Instantiate(statsUpgradeElements, parentTransform);
+            //stats.SetData();
+            stats.Init(DataTableManager.UnitUpgradeTable.GetData(1000*i +1));
         }
     }
 

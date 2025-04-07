@@ -62,7 +62,10 @@ public class UnitStatsUpgradeElement : MonoBehaviour
         LevelUp();
     }
     
-    
+    public void SetData(int level)
+    {
+        //로드한 데이터를 토대로 level로 세팅 해주기
+    }
 
     private void LevelUp()
     {
@@ -70,7 +73,7 @@ public class UnitStatsUpgradeElement : MonoBehaviour
         {
             return;
         }
-
+        
         level++;
         currentNum++;
     }
@@ -80,6 +83,6 @@ public class UnitStatsUpgradeElement : MonoBehaviour
         stageManager.UnitPartyManager.AddStats(currentType, value + (value * currentNum));
     }
 
-
+     
  
 }

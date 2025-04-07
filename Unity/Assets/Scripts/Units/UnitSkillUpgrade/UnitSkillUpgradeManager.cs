@@ -6,9 +6,9 @@ using UnityEngine;
 
 public class UnitSkillUpgradeManager : MonoBehaviour
 {
-    private UnitTypes currentType = UnitTypes.Tanker;
+    private UnitTypes currentType;
 
-    private Grade currentGrade = Grade.Normal;
+    private Grade currentGrade;
 
     private int id;
 
@@ -54,7 +54,6 @@ public class UnitSkillUpgradeManager : MonoBehaviour
             }
         }
        
-        board.SetInfo(GetCurrentId(),currentType);
     }
     public int GetCurrentId()
     {
@@ -65,15 +64,15 @@ public class UnitSkillUpgradeManager : MonoBehaviour
     {
         if (currentType == type)
             return;
-        SetGradeButtons();
         currentType = type;
         SetGrade(Grade.Normal);
+        SetGradeButtons();
         board.SetInfo(GetCurrentId(),currentType);
     }
 
     private void OnEnable()
     {
-        SetType(currentType);
+        SetType(UnitTypes.Tanker);
     }
     public void SetGrade(Grade grade)
     {

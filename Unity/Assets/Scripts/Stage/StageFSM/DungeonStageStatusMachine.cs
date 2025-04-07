@@ -58,9 +58,11 @@ public class DungeonStageStatusMachine : StageStatusMachine
         }
         else
         {
+            stageManager.ReleaseBackground();
             stageManager.StopAllCoroutines();
 
             stageManager.StageMonsterManager.OnMonsterCleared -= OnMonsterCleared;
+            stageManager.StageMonsterManager.StopMonster();
             stageManager.UnitPartyManager.UnitDespawn();
             stageManager.StageMonsterManager.ClearMonster();
             stageManager.ObjectPoolManager.Clear(dungeonData.PrefabID);
@@ -151,5 +153,19 @@ public class DungeonStageStatusMachine : StageStatusMachine
 
         stageManager.StageUiManager.IngameUIManager.SetDungeonStageText(dungeonData.Type, dungeonData.Stage);
         stageManager.StageUiManager.IngameUIManager.SetWaveText(currentWave);
+    }
+
+    public override void Reset()
+    {
+        stageManager.StopAllCoroutines();
+        stageManager.StageMonsterManager.ClearMonster();
+
+        InitStage();
+        stageManager.ReleaseBackground();
+        InstantiateBackground();
+
+        stageManager.UnitPartyManager.UnitSpawn();
+        stageManager.CameraManager.ResetCameraPosition();
+        stageManager.StartCoroutine(CoSpawnNextWave());
     }
 }

@@ -23,7 +23,7 @@ public class UIGroupStatusManager : MonoBehaviour
         }
     }
 
-    public void SetStatus(IngameStatus status)
+    public void SetUIStatus(IngameStatus status)
     {
         if (ingameStatus == status)
         {

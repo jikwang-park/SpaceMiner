@@ -98,6 +98,7 @@ public class MonsterController : MonoBehaviour, IObjectPoolGameObject
             TargetDistance = -(Target.position.z - transform.position.z);
         }
 
+#if UNITY_EDITOR
         if (Input.GetKeyDown(KeyCode.Alpha8))
         {
             var destructables = GetComponents<IDestructable>();
@@ -107,6 +108,7 @@ public class MonsterController : MonoBehaviour, IObjectPoolGameObject
                 destructable.OnDestruction(null);
             }
         }
+#endif
 
         behaviorTree.Update();
     }
@@ -172,6 +174,7 @@ public class MonsterController : MonoBehaviour, IObjectPoolGameObject
 
     private void OnTargetDie(DestructedDestroyEvent sender)
     {
+        Target.GetComponent<DestructedDestroyEvent>().OnDestroyed -= OnTargetDie;
         Target = null;
         TargetAcquired = false;
     }

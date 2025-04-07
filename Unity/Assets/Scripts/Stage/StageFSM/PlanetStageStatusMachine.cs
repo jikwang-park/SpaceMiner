@@ -30,7 +30,7 @@ public class PlanetStageStatusMachine : StageStatusMachine
     {
         stageManager.StageUiManager.IngameUIManager.SetGoldText();
 
-        InitStage();
+        InitStageInfo();
         InstantiateBackground();
 
         stageManager.UnitPartyManager.UnitSpawn();
@@ -67,19 +67,22 @@ public class PlanetStageStatusMachine : StageStatusMachine
         else
         {
             stageManager.StopAllCoroutines();
-
+            stageManager.ReleaseBackground();
             stageManager.StageUiManager.IngameUIManager.CloseStageEndWindow();
 
             stageManager.StageMonsterManager.OnMonsterDie -= OnMonsterDie;
             stageManager.StageMonsterManager.OnMonsterCleared -= OnMonsterCleared;
+
+            stageManager.StageMonsterManager.StopMonster();
             stageManager.UnitPartyManager.UnitDespawn();
             stageManager.StageMonsterManager.ClearMonster();
             stageManager.ObjectPoolManager.Clear(stageData.PrefabId);
         }
     }
 
-    protected void ChangePlanet()
+    protected void ClearPlanet()
     {
+        stageManager.StageMonsterManager.StopMonster();
         stageManager.UnitPartyManager.UnitDespawn();
         stageManager.StageMonsterManager.ClearMonster();
         stageManager.ObjectPoolManager.Clear(stageData.PrefabId);
@@ -176,21 +179,24 @@ public class PlanetStageStatusMachine : StageStatusMachine
 
         if (Variables.stageMode == StageMode.Ascend)
         {
-            if (DataTableManager.StageTable.IsExistStage(CurrentPlanet, CurrentStage + 1))
-            {
-                ++stageLoadData.currentStage;
-            }
-            else if (DataTableManager.StageTable.IsExistPlanet(CurrentPlanet + 1))
+            if (DataTableManager.StageTable.IsExistPlanet(CurrentPlanet + 1))
             {
                 ++stageLoadData.currentPlanet;
                 stageLoadData.currentStage = 1;
 
+
                 SaveLoadManager.SaveGame();
-                SceneManager.LoadScene(0);
+                stageManager.StageUiManager.IngameUIManager.CloseStageEndWindow();
+                Reset();
+                //SceneManager.LoadScene(0);
+            }
+            else if (DataTableManager.StageTable.IsExistStage(CurrentPlanet, CurrentStage + 1))
+            {
+                ++stageLoadData.currentStage;
             }
         }
 
-        InitStage();
+        InitStageInfo();
         stageManager.StartCoroutine(SpawnNextWave());
 
         SaveLoadManager.SaveGame();
@@ -211,11 +217,14 @@ public class PlanetStageStatusMachine : StageStatusMachine
 
         yield return wait1s;
 
-        SceneManager.LoadScene(0);
+
+        stageManager.StageUiManager.IngameUIManager.CloseStageEndWindow();
+        Reset();
+        //SceneManager.LoadScene(0);
         //Addressables.LoadSceneAsync("StageDevelopScene");
     }
 
-    protected void InitStage()
+    protected void InitStageInfo()
     {
         CurrentPlanet = stageLoadData.currentPlanet;
         CurrentStage = stageLoadData.currentStage;
@@ -237,5 +246,29 @@ public class PlanetStageStatusMachine : StageStatusMachine
     public override void Exit()
     {
         Start();
+    }
+
+    public override void Reset()
+    {
+        stageManager.StageUiManager.curtain.SetFade(true);
+        int previousPlanet = CurrentPlanet;
+        var previousBackground = stageData.PrefabId;
+        stageManager.StopAllCoroutines();
+        stageManager.StageMonsterManager.ClearMonster();
+        stageManager.StageUiManager.IngameUIManager.SetGoldText();
+
+        InitStageInfo();
+        if (previousPlanet != CurrentPlanet)
+        {
+            stageManager.ReleaseBackground();
+            stageManager.ObjectPoolManager.Clear(stageData.PrefabId);
+            InstantiateBackground();
+
+            stageManager.UnitPartyManager.UnitSpawn();
+            stageManager.CameraManager.ResetCameraPosition();
+        }
+
+        stageManager.StartCoroutine(SpawnNextWave());
+        stageManager.StageUiManager.curtain.SetFade(false);
     }
 }

@@ -9,7 +9,6 @@ public class UnitSkillUpgradeBoard : MonoBehaviour
 {
     private UnitSkillUpgradeManager manager;
 
-    private UnitSkillUpgradeElement element;
 
     [SerializeField]
     private Image currentImage;
@@ -25,11 +24,13 @@ public class UnitSkillUpgradeBoard : MonoBehaviour
     private StageManager stageManager;
 
 
-    private int currentId = 1201;
+    private int currentId;
     private int nextId;
-    private UnitTypes currentType = UnitTypes.Tanker;
+    private UnitTypes currentType;
     [SerializeField]
-    public Grade currentGrade = Grade.Normal;
+    public Grade currentGrade;
+
+    private int level;
 
     private void Awake()
     {
@@ -40,9 +41,9 @@ public class UnitSkillUpgradeBoard : MonoBehaviour
         upgradeButton.onClick.AddListener(() => OnClickUpgradeButton());
         
     }
-    public void ShowFirstOpened()
+    public void ShowFirstOpened(int id , UnitTypes type)
     {
-        SetBoardText(currentId, currentType);
+        SetInfo(id, type);
     }
     public void ShowBoard()
     {
@@ -54,6 +55,14 @@ public class UnitSkillUpgradeBoard : MonoBehaviour
         currentId = id;
         currentType = type;
         SetBoardText(id, type);
+    }
+
+    public void SetLimit(Grade grade , UnitTypes type, int id)
+    {
+        currentId = id;
+        manager.unitSkillDictionary[type][grade] = currentId;
+        //DataTableManager.SkillUpgradeTable.GetData(id).level 
+
     }
 
     public void SetBoardText(int id, UnitTypes type)
@@ -89,6 +98,8 @@ public class UnitSkillUpgradeBoard : MonoBehaviour
         currentId = nextId;
         SetBoardText(currentId, currentType);
         stageManager.UnitPartyManager.UpgradeSkillStats(nextId, currentType);
+        SaveLoadManager.Data.unitSkillUpgradeData.skillUpgradeId[currentType][currentGrade] = currentId;
+        SaveLoadManager.SaveGame();
     }
 
     public void SetImage()

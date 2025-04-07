@@ -12,6 +12,8 @@ public class UnitSkillUpgradeManager : MonoBehaviour
 
     private int id;
 
+
+
     public Dictionary<UnitTypes, Dictionary<Grade, int>> unitSkillDictionary = new Dictionary<UnitTypes, Dictionary<Grade, int>>();
     [SerializeField]
     private UnitSkillUpgradeBoard board;
@@ -19,41 +21,39 @@ public class UnitSkillUpgradeManager : MonoBehaviour
 
     public UnitSkillGradeButtons gradeButtons;
 
-    public void SetGradeButtons()
-    {
 
-        for(int i = (int)Grade.Normal; i<=(int)Grade.Legend; ++i)
-        {
-            var results = InventoryManager.IsExist(currentType, (Grade)i);
-            gradeButtons.SetButton((Grade)i , results);
-        }
-    }
-    private void Start()
+    private void Awake()
     {
+        gradeButtons.Init();
+
+        var data = SaveLoadManager.Data.unitSkillUpgradeData.skillUpgradeId;
+
         foreach (UnitTypes type in Enum.GetValues(typeof(UnitTypes)))
         {
             foreach (Grade grade in Enum.GetValues(typeof(Grade)))
             {
+                currentType = type;
+                currentGrade = grade;
+                id = data[currentType][grade];
+
                 if (!unitSkillDictionary.ContainsKey(type))
                 {
                     unitSkillDictionary.Add(type, new Dictionary<Grade, int>());
                 }
-                //테이블 수정 요구사항
-                switch (type)
-                {
-                    case UnitTypes.Tanker:
-                        unitSkillDictionary[type].Add(grade, (int)grade * 1000 + (int)type * 200 + 1);
-                        break;
-                    case UnitTypes.Dealer:
-                        unitSkillDictionary[type].Add(grade, (int)grade * 1000 + (int)type * 50 + 1);
-                        break;
-                    case UnitTypes.Healer:
-                        unitSkillDictionary[type].Add(grade, (int)grade * 1000 + (int)type * 100 + 1);
-                        break;
-                }
+
+                unitSkillDictionary[type].Add(grade, id);
             }
         }
-       
+        board.ShowFirstOpened(id, currentType);
+    }   
+    public void SetGradeButtons()
+    {
+
+        for (int i = (int)Grade.Normal; i <= (int)Grade.Legend; ++i)
+        {
+            var results = InventoryManager.IsExist(currentType, (Grade)i);
+            gradeButtons.SetButton((Grade)i, results);
+        }
     }
     public int GetCurrentId()
     {
@@ -67,13 +67,13 @@ public class UnitSkillUpgradeManager : MonoBehaviour
         currentType = type;
         SetGrade(Grade.Normal);
         SetGradeButtons();
-        board.SetInfo(GetCurrentId(),currentType);
+        board.SetInfo(GetCurrentId(), currentType);
     }
-
     private void OnEnable()
     {
         SetType(UnitTypes.Tanker);
     }
+
     public void SetGrade(Grade grade)
     {
         if (currentGrade == grade)

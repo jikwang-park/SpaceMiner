@@ -16,12 +16,13 @@ public class UnitSkillTypeButtons : MonoBehaviour
     
     private void Awake()
     {
-    }
-    private void Start()
-    {
         tankerButton.onClick.AddListener(() => OnClickTankerButton());
         dealerButton.onClick.AddListener(() => OnClickDealerButton());
         healerButton.onClick.AddListener(() => OnClickHealerButton());
+    }
+    private void Start()
+    {
+       
     }
 
     private void SetButton()

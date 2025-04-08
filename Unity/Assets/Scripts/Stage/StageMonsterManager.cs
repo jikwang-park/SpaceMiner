@@ -106,13 +106,18 @@ public class StageMonsterManager : MonoBehaviour
         OnMonsterDie?.Invoke();
 
         monsterControllers.Remove(monster);
+
         if (monsterCount == 0)
         {
             OnMonsterCleared?.Invoke();
         }
 
-        monsterLines[createdLine].Remove(lane);
-        --laneMonsterCounts[lane];
+        if (monsterLines[createdLine][lane] == monster)
+        {
+            monsterLines[createdLine].Remove(lane);
+            --laneMonsterCounts[lane];
+        }
+
         if (monsterLines[createdLine].Count == 0)
         {
             monsterLines.Remove(createdLine);

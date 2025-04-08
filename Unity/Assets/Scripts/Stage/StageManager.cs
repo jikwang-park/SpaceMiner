@@ -29,8 +29,6 @@ public class StageManager : MonoBehaviour
         ObjectPoolManager = GetComponent<ObjectPoolManager>();
         CameraManager = GetComponent<CameraManager>();
 
-        Init();
-
         machines.Add(IngameStatus.Planet, new PlanetStageStatusMachine(this));
         machines.Add(IngameStatus.Dungeon, new DungeonStageStatusMachine(this));
 
@@ -87,29 +85,6 @@ public class StageManager : MonoBehaviour
         //        Addressables.LoadSceneAsync("Scenes/DungeonScene").WaitForCompletion();
         //        break;
         //}
-    }
-
-    public void Init()
-    {
-        var saveData = SaveLoadManager.Data.stageSaveData;
-
-        List<int> dungeons = DataTableManager.DungeonTable.DungeonTypes;
-
-        bool changed = false;
-
-        foreach (var type in dungeons)
-        {
-            if (!saveData.highestDungeon.ContainsKey(type))
-            {
-                changed = true;
-                saveData.highestDungeon.Add(type, 1);
-            }
-        }
-
-        if (changed)
-        {
-            SaveLoadManager.SaveGame();
-        }
     }
 
     public void ResetStage()

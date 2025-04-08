@@ -41,6 +41,11 @@ public class DataTableIds
     public const string defaultDataTable = "DefaultDataTable";
 
     public const string guideQuestTable = "GuideQuestTable";
+
+    public const string robotTable = "RobotTable";
+    public const string robotMergeTable = "RobotMergeTable";
+
+    public const string buildingTable = "BuildingTable";
 }
 
 public enum StageMode

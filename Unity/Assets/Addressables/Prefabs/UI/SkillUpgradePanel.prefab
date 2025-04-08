@@ -131,6 +131,7 @@ GameObject:
   m_Component:
   - component: {fileID: 5769327567306900723}
   - component: {fileID: 4641481327403759884}
+  - component: {fileID: 7221439719048340434}
   m_Layer: 5
   m_Name: SkillUpgradeConfirmPanel
   m_TagString: Untagged
@@ -179,6 +180,25 @@ MonoBehaviour:
   m_FlexibleWidth: -1
   m_FlexibleHeight: 65
   m_LayoutPriority: 1
+--- !u!114 &7221439719048340434
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 82870123309971402}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3acb7a19089890146b443c1cbd074c36, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  currentImage: {fileID: 1885559221516614770}
+  currentText: {fileID: 4275286488005460490}
+  nextImage: {fileID: 470237190413594540}
+  nextText: {fileID: 539159931807858596}
+  upgradeButton: {fileID: 5686352292245122053}
+  stageManager: {fileID: 0}
+  currentGrade: 1
 --- !u!1 &738020943668709281
 GameObject:
   m_ObjectHideFlags: 0
@@ -193,7 +213,7 @@ GameObject:
   - component: {fileID: 5686352292245122053}
   - component: {fileID: 3837751626890125941}
   m_Layer: 5
-  m_Name: Button (2)
+  m_Name: UpgradeButton
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1642,6 +1662,7 @@ GameObject:
   m_Component:
   - component: {fileID: 6487797212913198465}
   - component: {fileID: 8947881939198220590}
+  - component: {fileID: 7495770792215010217}
   m_Layer: 5
   m_Name: UnitGrade
   m_TagString: Untagged
@@ -1689,6 +1710,23 @@ MonoBehaviour:
   m_FlexibleWidth: -1
   m_FlexibleHeight: 15
   m_LayoutPriority: 1
+--- !u!114 &7495770792215010217
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3937869145016453437}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bb625f00c34217e44b58ccc3cdd5fdb2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  normalButton: {fileID: 5298805924834969698}
+  rareButton: {fileID: 6100303602157293826}
+  epicButton: {fileID: 5296397634194402737}
+  legendButton: {fileID: 332265649306500934}
+  manager: {fileID: 7139247161409899762}
 --- !u!1 &4251115018778529601
 GameObject:
   m_ObjectHideFlags: 0
@@ -1701,8 +1739,9 @@ GameObject:
   - component: {fileID: 700981463193661957}
   - component: {fileID: 2342653208621247336}
   - component: {fileID: 8465397321167240222}
+  - component: {fileID: 7139247161409899762}
   m_Layer: 5
-  m_Name: Background
+  m_Name: UnitSkillUpgradeManager
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1795,6 +1834,20 @@ MonoBehaviour:
   m_ChildScaleWidth: 0
   m_ChildScaleHeight: 0
   m_ReverseArrangement: 0
+--- !u!114 &7139247161409899762
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4251115018778529601}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 91a0bfb96d2aa7345bfb7f57dc71cf3d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  board: {fileID: 7221439719048340434}
+  gradeButtons: {fileID: 7495770792215010217}
 --- !u!1 &4382333494898184549
 GameObject:
   m_ObjectHideFlags: 0
@@ -2043,6 +2096,7 @@ GameObject:
   m_Component:
   - component: {fileID: 5076063175742263244}
   - component: {fileID: 8921685833732290322}
+  - component: {fileID: 3543144042901734988}
   m_Layer: 5
   m_Name: UnitType
   m_TagString: Untagged
@@ -2090,6 +2144,22 @@ MonoBehaviour:
   m_FlexibleWidth: -1
   m_FlexibleHeight: 15
   m_LayoutPriority: 1
+--- !u!114 &3543144042901734988
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5010861766766661887}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 262b56d10a220584cabf98d9a527ca61, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  tankerButton: {fileID: 6090644609417390000}
+  dealerButton: {fileID: 8825599512939199208}
+  healerButton: {fileID: 5717490909414221775}
+  manager: {fileID: 7139247161409899762}
 --- !u!1 &5547638055509645035
 GameObject:
   m_ObjectHideFlags: 0
@@ -2388,15 +2458,15 @@ MonoBehaviour:
       m_Calls: []
   m_text: New Text
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
-  m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: de4e1cff8241dd048bb995c542c75043, type: 2}
+  m_sharedMaterial: {fileID: -2857929540059472502, guid: de4e1cff8241dd048bb995c542c75043, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
   m_fontColor32:
     serializedVersion: 2
-    rgba: 4294967295
-  m_fontColor: {r: 1, g: 1, b: 1, a: 1}
+    rgba: 4278190080
+  m_fontColor: {r: 0, g: 0, b: 0, a: 1}
   m_enableVertexGradient: 0
   m_colorMode: 3
   m_fontColorGradient:
@@ -2677,15 +2747,15 @@ MonoBehaviour:
       m_Calls: []
   m_text: New Text
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
-  m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: de4e1cff8241dd048bb995c542c75043, type: 2}
+  m_sharedMaterial: {fileID: -2857929540059472502, guid: de4e1cff8241dd048bb995c542c75043, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
   m_fontColor32:
     serializedVersion: 2
-    rgba: 4294967295
-  m_fontColor: {r: 1, g: 1, b: 1, a: 1}
+    rgba: 4278190080
+  m_fontColor: {r: 0, g: 0, b: 0, a: 1}
   m_enableVertexGradient: 0
   m_colorMode: 3
   m_fontColorGradient:
@@ -3156,7 +3226,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: New Text
+  m_text: Need for LevelUp
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
@@ -3852,7 +3922,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: Button
+  m_text: Upgrade
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
@@ -3879,8 +3949,8 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 24
-  m_fontSizeBase: 24
+  m_fontSize: 40
+  m_fontSizeBase: 40
   m_fontWeight: 400
   m_enableAutoSizing: 0
   m_fontSizeMin: 18

@@ -9,6 +9,7 @@ public static class MiningRobotInventoryManager
 {
     public static event Action<int, MiningRobotInventorySlotData> onChangedInventory;
     public static event Action<int, MergeResponseCallback> onRequestMerge;
+    public static int currentPlanetId;
     public static MiningRobotInventoryData Inventory
     {
         get
@@ -119,5 +120,10 @@ public static class MiningRobotInventoryManager
         Inventory.slots[indexA].isEmpty = true;
         Inventory.slots[indexA].miningRobotId = 0;
         onChangedInventory?.Invoke(indexA, Inventory.slots[indexA]);
+    }
+    public static void EquipRobotToPlanet(int indexA, int indexB)
+    {
+        MoveSlots(indexA, indexB);
+        Inventory.equipmentSlotsToPlanet[currentPlanetId]
     }
 }

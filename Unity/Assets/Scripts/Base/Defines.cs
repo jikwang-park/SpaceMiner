@@ -83,3 +83,8 @@ public enum IngameStatus
     Planet,
     Dungeon,
 }
+public enum SlotType
+{
+    Equip,
+    Inventory,
+}

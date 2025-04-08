@@ -75,10 +75,7 @@ public class UnitStatsUpgradeElement : MonoBehaviour
     public float GetCurrentValue(int level)
     {
         float result = 0;
-        for(int i = 1; i<=level; ++i)
-        {
-            result += value * i;
-        }
+        result = value * level;
         return result;
     }
     public BigNumber GetCurrentGold(int level)

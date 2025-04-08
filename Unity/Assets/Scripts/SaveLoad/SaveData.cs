@@ -56,11 +56,13 @@ public class SaveDataV3 : SaveDataV2
     public UnitStatUpgradeData unitStatUpgradeData;
     public UnitSkillUpgradeData unitSkillUpgradeData;
     public QuestProgressData questProgressData;
+    public BuildingData buildingData;
     public SaveDataV3() : base()
     {
         unitStatUpgradeData = UnitStatUpgradeData.CreateDefault();
         unitSkillUpgradeData = UnitSkillUpgradeData.CreateDefault();
         questProgressData = QuestProgressData.CreateDefault();
+        buildingData = BuildingData.CreateDefault();
         Version = 3;
     }
     public SaveDataV3(SaveDataV2 oldData) : base(oldData)
@@ -68,6 +70,7 @@ public class SaveDataV3 : SaveDataV2
         unitStatUpgradeData = UnitStatUpgradeData.CreateDefault();
         unitSkillUpgradeData = UnitSkillUpgradeData.CreateDefault();
         questProgressData = QuestProgressData.CreateDefault();
+        buildingData = BuildingData.CreateDefault();
         Version = 3;
     }
     public override SaveData VersionUp()

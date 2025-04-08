@@ -104,3 +104,18 @@ public class QuestProgressData
         return data;
     }
 }
+[Serializable]
+public class BuildingData
+{
+    public Dictionary<BuildingTable.BuildingType, int> buildingLevels = new Dictionary<BuildingTable.BuildingType, int>();
+    public BuildingData() { }
+    public static BuildingData CreateDefault()
+    {
+        var data = new BuildingData();
+        foreach(var type in Enum.GetValues(typeof(BuildingTable.BuildingType)))
+        {
+            data.buildingLevels.Add((BuildingTable.BuildingType)type, 0);
+        }
+        return data;
+    }
+}

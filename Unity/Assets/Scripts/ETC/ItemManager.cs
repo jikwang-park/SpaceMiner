@@ -28,6 +28,7 @@ public static class ItemManager
         {
             items[itemId] = maxStack;
         }
+        GuideQuestManager.QuestProgressChange(GuideQuestTable.MissionType.Item);
         OnItemAmountChanged?.Invoke(itemId, items[itemId]);
     }
     public static void ConsumeItem(int itemId, BigNumber amount)

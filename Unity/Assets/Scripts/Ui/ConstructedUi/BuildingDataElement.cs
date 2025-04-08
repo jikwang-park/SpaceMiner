@@ -86,9 +86,11 @@ public class BuildingDataElement: MonoBehaviour
     {
         constructionExplanText.text = $"{type.ToString()} \n {itemId} 가 {needItemCount} 개 필요합니다";
     }
-    public void SetData()
+    public void SetData(BuildingTable.BuildingType type,int level)
     {
-        //나중에 세이브 데이터에서 쓸것
+        currentType = type;
+        this.level = level;
+        SetLevelData(level);
     }
 
     public float GetCurrentValue()
@@ -100,16 +102,32 @@ public class BuildingDataElement: MonoBehaviour
     {
         level++;
         SetLevelData(level);
-        
 
+        stageManager.UnitPartyManager.AddBuildingStats(currentType,value);
+
+        SaveLoadManager.Data.buildingData.buildingLevels[currentType] = level;
+        SaveLoadManager.SaveGame();
     }
-
+    private bool CheckMaxLevel(int level)
+    {
+        if(level > maxLevel)
+        {
+            upgradeButtonText.text = "최대레벨달성";
+            return true;
+        }
+        return false;
+    }
     private void OnClickUpgradeButton()
     {
         if(isLocked)
         {
             isLocked = false;
-
         }
+        if(CheckMaxLevel(level))
+        {
+            upgradeButton.interactable = false;
+        }
+        LevelUp();
+
     }
 }

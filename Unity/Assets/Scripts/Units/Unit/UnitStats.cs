@@ -30,6 +30,35 @@ public class UnitStats : CharacterStats
         }
     }
 
+    public void AddBuildingStats(BuildingTable.BuildingType type , float amount)
+    {
+        switch (type)
+        {
+            case BuildingTable.BuildingType.IdleTime:
+                break;
+            case BuildingTable.BuildingType.AttackPoint:
+                damage += (int)amount;
+                break;
+            case BuildingTable.BuildingType.HealthPoint:
+                maxHp += (int)amount;
+                break;
+            case BuildingTable.BuildingType.DefensePoint:
+                armor += (int)amount;
+                break;
+            case BuildingTable.BuildingType.CriticalPossibility:
+                criticalChance += (int)amount;
+                break;
+            case BuildingTable.BuildingType.CriticalDamages:
+                criticalMultiplier += (int)amount;
+                break;
+            case BuildingTable.BuildingType.Gold:
+                break;
+            case BuildingTable.BuildingType.Mining:
+                break;
+        }
+    }
+
+
 
     public void SetData(SoldierTable.Data data, UnitTypes type)
     {

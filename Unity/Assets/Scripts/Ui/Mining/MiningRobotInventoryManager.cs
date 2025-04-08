@@ -124,6 +124,6 @@ public static class MiningRobotInventoryManager
     public static void EquipRobotToPlanet(int indexA, int indexB)
     {
         MoveSlots(indexA, indexB);
-        Inventory.equipmentSlotsToPlanet[currentPlanetId]
+        // Inventory.equipmentSlotsToPlanet[currentPlanetId]
     }
 }

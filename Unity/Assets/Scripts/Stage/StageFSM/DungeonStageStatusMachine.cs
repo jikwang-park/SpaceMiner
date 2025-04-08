@@ -128,10 +128,20 @@ public class DungeonStageStatusMachine : StageStatusMachine
 
     protected void OnStageClear()
     {
-        if (SaveLoadManager.Data.stageSaveData.highestDungeon[currentType] == currentStage
-            && DataTableManager.DungeonTable.CountOfStage(currentType) > currentStage)
+        if (SaveLoadManager.Data.stageSaveData.clearedDungeon[currentType] < currentStage)
         {
-            ++SaveLoadManager.Data.stageSaveData.highestDungeon[currentType];
+            SaveLoadManager.Data.stageSaveData.clearedDungeon[currentType] = currentStage;
+
+            if (DataTableManager.DungeonTable.CountOfStage(currentType) > currentStage)
+            {
+                SaveLoadManager.Data.stageSaveData.highestDungeon[currentType] = currentStage+1;
+            }
+            else
+            {
+                SaveLoadManager.Data.stageSaveData.highestDungeon[currentType] = currentStage;
+            }
+
+            GuideQuestManager.QuestProgressChange(GuideQuestTable.MissionType.DungeonClear);
         }
         ItemManager.AddItem(dungeonData.ItemID, dungeonData.ClearReward);
         ItemManager.ConsumeItem(dungeonData.DungeonKeyID, dungeonData.KeyCount);

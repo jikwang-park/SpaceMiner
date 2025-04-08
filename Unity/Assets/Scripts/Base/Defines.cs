@@ -44,6 +44,8 @@ public class DataTableIds
 
     public const string robotTable = "RobotTable";
     public const string robotMergeTable = "RobotMergeTable";
+
+    public const string buildingTable = "BuildingTable";
 }
 
 public enum StageMode

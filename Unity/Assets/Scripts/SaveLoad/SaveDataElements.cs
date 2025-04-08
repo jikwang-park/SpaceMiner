@@ -36,11 +36,13 @@ public class MiningRobotInventorySlotData
 {
     public bool isEmpty = true;
     public int miningRobotId;
+    public SlotType slotType;
 }
 [Serializable]
 public class MiningRobotInventoryData
 {
     public List<MiningRobotInventorySlotData> slots = new List<MiningRobotInventorySlotData>();
+    public Dictionary<int, KeyValuePair<MiningRobotInventorySlotData, MiningRobotInventorySlotData>> equipmentSlotsToPlanet = new Dictionary<int, KeyValuePair<MiningRobotInventorySlotData, MiningRobotInventorySlotData>>();
     public MiningRobotInventoryData() { }
     public static MiningRobotInventoryData CreateDefault(int totalSlots = 60)
     {

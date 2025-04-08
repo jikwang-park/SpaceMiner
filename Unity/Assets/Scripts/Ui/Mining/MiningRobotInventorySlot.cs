@@ -22,11 +22,9 @@ public class MiningRobotInventorySlot : MonoBehaviour, IPointerDownHandler, IPoi
     private GameObject dragIcon;
     private RectTransform dragIconRect;
     private Vector3 originalPosition;
-    private Image image;
     private ScrollRect parentScrollRect;
     private void Awake()
     {
-        image = GetComponent<Image>();
         parentScrollRect = GetComponentInParent<ScrollRect>();
     }
     public void Initialize(MiningRobotInventorySlotData data)

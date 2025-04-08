@@ -46,6 +46,8 @@ public class DataTableIds
     public const string robotMergeTable = "RobotMergeTable";
 
     public const string buildingTable = "BuildingTable";
+
+    public const string planetTable = "PlanetTable";
 }
 
 public enum StageMode
@@ -82,4 +84,9 @@ public enum IngameStatus
 {
     Planet,
     Dungeon,
+}
+public enum SlotType
+{
+    Equip,
+    Inventory,
 }

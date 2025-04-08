@@ -135,6 +135,11 @@ public static class DataTableManager
         var buildingTable = new BuildingTable();
         buildingTable.Load(DataTableIds.buildingTable);
         tables.Add(DataTableIds.buildingTable, buildingTable);
+
+
+        var planetTable = new PlanetTable();
+        planetTable.Load(DataTableIds.planetTable);
+        tables.Add(DataTableIds.planetTable, planetTable);
     }
 
 
@@ -220,4 +225,7 @@ public static class DataTableManager
 
     public static BuildingTable BuildingTable
         => GetTable<BuildingTable>(DataTableIds.buildingTable);
+
+    public static PlanetTable PlanetTable
+        => GetTable<PlanetTable>(DataTableIds.planetTable);
 }

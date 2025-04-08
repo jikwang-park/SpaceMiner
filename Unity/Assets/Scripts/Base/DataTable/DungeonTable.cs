@@ -116,9 +116,9 @@ public class DungeonTable : DataTable
 
     public Data GetData(int type, int stage)
     {
-        foreach(var data in typeDict[type])
+        foreach (var data in typeDict[type])
         {
-            if(data.Stage == stage)
+            if (data.Stage == stage)
             {
                 return data;
             }
@@ -130,7 +130,7 @@ public class DungeonTable : DataTable
 
     public int CountOfStage(int type)
     {
-        if(typeDict.ContainsKey(type))
+        if (typeDict.ContainsKey(type))
         {
             return typeDict[type].Count;
         }

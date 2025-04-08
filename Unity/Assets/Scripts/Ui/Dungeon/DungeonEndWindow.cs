@@ -52,7 +52,9 @@ public class DungeonEndWindow : MonoBehaviour
                 var nextStage = DataTableManager.DungeonTable.GetData(Variables.currentDungeonType, Variables.currentDungeonStage + 1);
 
                 bool powerCondition = Variables.powerLevel > nextStage.ConditionPower;
-                bool planetCondition = SaveLoadManager.Data.stageSaveData.highPlanet > nextStage.ConditionPlanet;
+                bool planetCondition = (SaveLoadManager.Data.stageSaveData.highPlanet > nextStage.ConditionPlanet)
+                    || (SaveLoadManager.Data.stageSaveData.highPlanet == SaveLoadManager.Data.stageSaveData.clearedPlanet
+                        && SaveLoadManager.Data.stageSaveData.highStage == SaveLoadManager.Data.stageSaveData.clearedStage);
                 keyCondition = ItemManager.GetItemAmount(nextStage.DungeonKeyID) >= nextStage.KeyCount;
                 nextButton.interactable = powerCondition && planetCondition && keyCondition;
             }

@@ -128,6 +128,8 @@ public class PlanetStageStatusMachine : StageStatusMachine
 
     protected void OnMonsterDie()
     {
+        ++SaveLoadManager.Data.questProgressData.monsterCount;
+        GuideQuestManager.QuestProgressChange(GuideQuestTable.MissionType.Exterminate);
         stageManager.StageUiManager.IngameUIManager.SetGoldText();
     }
 
@@ -146,17 +148,22 @@ public class PlanetStageStatusMachine : StageStatusMachine
     {
         stageManager.StageUiManager.IngameUIManager.OpenStageEndWindow("Clear");
 
-        if (CurrentPlanet == stageLoadData.highPlanet
-            && CurrentStage == stageLoadData.highStage)
+        if ((CurrentPlanet == stageLoadData.clearedPlanet && CurrentStage > stageLoadData.clearedStage)
+            || (CurrentPlanet > stageLoadData.clearedPlanet))
         {
+            stageLoadData.clearedPlanet = CurrentPlanet;
+            stageLoadData.clearedStage = CurrentStage;
+
             if (stageData.FirstClearRewardID != 0)
             {
                 ItemManager.AddItem(stageData.FirstClearRewardID, stageData.FirstClearRewardCount);
             }
+
             stageManager.StageUiManager.IngameUIManager.SetGoldText();
 
             if (DataTableManager.StageTable.IsExistStage(CurrentPlanet, CurrentStage + 1))
             {
+                stageLoadData.highPlanet = CurrentPlanet;
                 stageLoadData.highStage = CurrentStage + 1;
             }
             else if (DataTableManager.StageTable.IsExistPlanet(CurrentPlanet + 1))
@@ -164,6 +171,12 @@ public class PlanetStageStatusMachine : StageStatusMachine
                 stageLoadData.highPlanet = CurrentPlanet + 1;
                 stageLoadData.highStage = 1;
             }
+            else
+            {
+                stageLoadData.highPlanet = CurrentPlanet;
+                stageLoadData.highStage = CurrentStage;
+            }
+            GuideQuestManager.QuestProgressChange(GuideQuestTable.MissionType.StageClear);
         }
 
         yield return wait1s;
@@ -171,7 +184,11 @@ public class PlanetStageStatusMachine : StageStatusMachine
 
         if (Variables.stageMode == StageMode.Ascend)
         {
-            if (DataTableManager.StageTable.IsExistPlanet(CurrentPlanet + 1))
+            if (DataTableManager.StageTable.IsExistStage(CurrentPlanet, CurrentStage + 1))
+            {
+                ++stageLoadData.currentStage;
+            }
+            else if (DataTableManager.StageTable.IsExistPlanet(CurrentPlanet + 1))
             {
                 ++stageLoadData.currentPlanet;
                 stageLoadData.currentStage = 1;
@@ -180,11 +197,8 @@ public class PlanetStageStatusMachine : StageStatusMachine
                 SaveLoadManager.SaveGame();
                 stageManager.StageUiManager.IngameUIManager.CloseStageEndWindow();
                 Reset();
+                yield break;
                 //SceneManager.LoadScene(0);
-            }
-            else if (DataTableManager.StageTable.IsExistStage(CurrentPlanet, CurrentStage + 1))
-            {
-                ++stageLoadData.currentStage;
             }
         }
 

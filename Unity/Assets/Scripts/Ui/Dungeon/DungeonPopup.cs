@@ -65,7 +65,15 @@ public class DungeonPopup : MonoBehaviour
         selectedDifficulty.text = $"Stage : {curStage.Stage}";
         keyText.text = $"{curStage.KeyCount} / {ItemManager.GetItemAmount(curStage.DungeonKeyID)}";
         conditionPowerText.text = $"Currrent Power : {Variables.powerLevel}\nNeed : {curStage.ConditionPower}";
-        conditionStageText.text = $"Currrent Planet : {SaveLoadManager.Data.stageSaveData.highPlanet - 1}\nNeed : {subStages[index].ConditionPlanet}";
+
+        int highplanet = SaveLoadManager.Data.stageSaveData.highPlanet;
+        if (SaveLoadManager.Data.stageSaveData.highPlanet != SaveLoadManager.Data.stageSaveData.clearedPlanet
+             || SaveLoadManager.Data.stageSaveData.highStage != SaveLoadManager.Data.stageSaveData.clearedStage)
+        {
+            --highplanet;
+        }
+
+        conditionStageText.text = $"Currrent Planet : {highplanet}\nNeed : {subStages[index].ConditionPlanet}";
         clearRewardText.text = $"Reward : {curStage.ItemID}/{curStage.ClearReward}";
 
 
@@ -73,7 +81,9 @@ public class DungeonPopup : MonoBehaviour
         nextDifficultyButton.interactable = index + 1 < maxStage && index < subStages.Count - 1;
 
         bool powerCondition = Variables.powerLevel > curStage.ConditionPower;
-        bool planetCondition = SaveLoadManager.Data.stageSaveData.highPlanet > curStage.ConditionPlanet;
+        bool planetCondition = (SaveLoadManager.Data.stageSaveData.highPlanet > curStage.ConditionPlanet)
+                                 || (SaveLoadManager.Data.stageSaveData.highPlanet == SaveLoadManager.Data.stageSaveData.clearedPlanet
+                                     && SaveLoadManager.Data.stageSaveData.highStage == SaveLoadManager.Data.stageSaveData.clearedStage);
         bool keyCondition = ItemManager.GetItemAmount(curStage.DungeonKeyID) >= curStage.KeyCount;
 
         enterButton.interactable = powerCondition && planetCondition && keyCondition;

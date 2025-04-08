@@ -38,19 +38,12 @@ public class SaveDataV2 : SaveDataV1
     public SaveDataV2() : base()
     {
         Version = 2;
-        miningRobotInventorySaveData = MiningRobotInventoryData.CreateDefault(60);
+        miningRobotInventorySaveData = MiningRobotInventoryData.CreateDefault();
     }
 
     public SaveDataV2(SaveDataV1 oldData) : base(oldData)
     {
-        if (oldData is SaveDataV2 oldV2 && oldV2.miningRobotInventorySaveData != null && oldV2.miningRobotInventorySaveData.slots.Count > 0)
-        {
-            miningRobotInventorySaveData = oldV2.miningRobotInventorySaveData;
-        }
-        else
-        {
-            miningRobotInventorySaveData = MiningRobotInventoryData.CreateDefault(60);
-        }
+        miningRobotInventorySaveData = MiningRobotInventoryData.CreateDefault();
         Version = 2;
     }
     public override SaveData VersionUp()

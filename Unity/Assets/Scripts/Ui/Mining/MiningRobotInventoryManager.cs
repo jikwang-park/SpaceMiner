@@ -27,4 +27,16 @@ public static class MiningRobotInventoryManager
             }
         }
     }
+    public static void ProcessSlots(int indexA, int indexB)
+    {
+        if(indexA < 0 || indexA >= Inventory.slots.Count || indexB < 0 || indexB >= Inventory.slots.Count)
+        {
+            return;
+        }
+
+        if (Inventory.slots[indexA].miningRobotId == Inventory.slots[indexB].miningRobotId)
+        {
+
+        }
+    }
 }

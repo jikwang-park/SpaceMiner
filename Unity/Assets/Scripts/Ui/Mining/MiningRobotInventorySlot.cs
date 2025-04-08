@@ -5,7 +5,7 @@ using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
-public class MiningRobotInventorySlot : MonoBehaviour, IPointerDownHandler, IPointerUpHandler, IDragHandler, IBeginDragHandler, IEndDragHandler
+public class MiningRobotInventorySlot : MonoBehaviour, IPointerDownHandler, IPointerUpHandler, IDragHandler, IBeginDragHandler, IEndDragHandler, IDropHandler
 {
     [SerializeField]
     private Image iconImage;
@@ -23,9 +23,11 @@ public class MiningRobotInventorySlot : MonoBehaviour, IPointerDownHandler, IPoi
     private RectTransform dragIconRect;
     private Vector3 originalPosition;
     private Image image;
+    private ScrollRect parentScrollRect;
     private void Awake()
     {
         image = GetComponent<Image>();
+        parentScrollRect = GetComponentInParent<ScrollRect>();
     }
     public void Initialize(MiningRobotInventorySlotData data)
     {
@@ -35,19 +37,20 @@ public class MiningRobotInventorySlot : MonoBehaviour, IPointerDownHandler, IPoi
         {
             iconImage.color = Color.white;
             iconImage.sprite = gradeSprites[miningRobotId - 3001];
-            image.raycastTarget = true;
         }
         else
         {
             iconImage.color = new Color(1, 1, 1, 0);
-            image.raycastTarget = false;
         }
     }
 
     public void OnPointerDown(PointerEventData eventData)
     {
-        originalPosition = eventData.position;
-        holdCoroutine = StartCoroutine(HoldTimeCoroutine());
+        if(!IsEmpty)
+        {
+            originalPosition = eventData.position;
+            holdCoroutine = StartCoroutine(HoldTimeCoroutine());
+        }
     }
 
     public void OnPointerUp(PointerEventData eventData)
@@ -65,14 +68,22 @@ public class MiningRobotInventorySlot : MonoBehaviour, IPointerDownHandler, IPoi
 
     public void OnDrag(PointerEventData eventData)
     {
-        if (isDragging && dragIconRect != null)
+        if(isDragging && dragIconRect != null)
         {
             dragIconRect.position = eventData.position;
+        }
+        else
+        {
+            parentScrollRect.OnDrag(eventData);
         }
     }
 
     public void OnBeginDrag(PointerEventData eventData)
     {
+        if(!isDragging)
+        {
+            parentScrollRect.OnBeginDrag(eventData);
+        }
     }
 
     public void OnEndDrag(PointerEventData eventData)
@@ -80,6 +91,10 @@ public class MiningRobotInventorySlot : MonoBehaviour, IPointerDownHandler, IPoi
         if(isDragging)
         {
             EndDragging(eventData);
+        }
+        else
+        {
+            parentScrollRect.OnEndDrag(eventData);
         }
     }
     private IEnumerator HoldTimeCoroutine()
@@ -121,6 +136,25 @@ public class MiningRobotInventorySlot : MonoBehaviour, IPointerDownHandler, IPoi
             dragIcon = null;
         }
         iconImage.color = Color.white;
+    }
 
+    public void OnDrop(PointerEventData eventData)
+    {
+        GameObject draggedObject = eventData.pointerDrag;
+        if(draggedObject != null)
+        {
+            MiningRobotInventorySlot draggedSlot = draggedObject.GetComponent<MiningRobotInventorySlot>();
+            if(draggedSlot == null)
+            {
+                return;
+            }
+
+            if(draggedSlot.IsEmpty)
+            {
+                return;
+            }
+
+            Debug.Log($"{draggedSlot.index} {this.index}");
+        }
     }
 }

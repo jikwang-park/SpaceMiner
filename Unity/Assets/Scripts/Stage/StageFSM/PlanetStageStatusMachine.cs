@@ -80,14 +80,6 @@ public class PlanetStageStatusMachine : StageStatusMachine
         }
     }
 
-    protected void ClearPlanet()
-    {
-        stageManager.StageMonsterManager.StopMonster();
-        stageManager.UnitPartyManager.UnitDespawn();
-        stageManager.StageMonsterManager.ClearMonster();
-        stageManager.ObjectPoolManager.Clear(stageData.PrefabId);
-    }
-
     protected IEnumerator SpawnNextWave(float delay = 0.5f)
     {
         stageManager.StageUiManager.IngameUIManager.SetWaveText(CurrentWave);
@@ -261,7 +253,7 @@ public class PlanetStageStatusMachine : StageStatusMachine
         if (previousPlanet != CurrentPlanet)
         {
             stageManager.ReleaseBackground();
-            stageManager.ObjectPoolManager.Clear(stageData.PrefabId);
+            stageManager.ObjectPoolManager.Clear(previousBackground);
             InstantiateBackground();
 
             stageManager.UnitPartyManager.UnitSpawn();

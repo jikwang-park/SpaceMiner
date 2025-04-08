@@ -3,6 +3,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
+using Unity.VisualScripting.Antlr3.Runtime.Misc;
 using UnityEngine;
 using SaveDataVC = SaveDataV3;
 
@@ -81,7 +82,21 @@ public static class SaveLoadManager
             currentStage = 1,
             highPlanet = 1,
             highStage = 1,
+            clearedPlanet = 1,
+            clearedStage = 0,
+            highestDungeon = new Dictionary<int, int>(),
+            clearedDungeon = new Dictionary<int, int>()
         };
+
+        List<int> dungeons = DataTableManager.DungeonTable.DungeonTypes;
+
+        foreach (var type in dungeons)
+        {
+            defaultSaveData.stageSaveData.highestDungeon.Add(type, 1);
+            defaultSaveData.stageSaveData.clearedDungeon.Add(type, 0);
+        }
+
+        defaultSaveData.questProgressData = QuestProgressData.CreateDefault();
 
         defaultSaveData.itemSaveData = new Dictionary<int, BigNumber>();
 
@@ -110,9 +125,10 @@ public static class SaveLoadManager
             inventoryData.equipElementID = inventoryData.elements[0].soldierId;
             defaultSaveData.soldierInventorySaveData[type] = inventoryData;
         }
-        defaultSaveData.miningRobotInventorySaveData = new MiningRobotInventoryData(60);
-        defaultSaveData.unitStatUpgradeData = new UnitStatUpgradeData();
-        defaultSaveData.unitSkillUpgradeData = new UnitSkillUpgradeData();
+        defaultSaveData.miningRobotInventorySaveData = MiningRobotInventoryData.CreateDefault();
+
+        defaultSaveData.unitStatUpgradeData = UnitStatUpgradeData.CreateDefault();
+        defaultSaveData.unitSkillUpgradeData = UnitSkillUpgradeData.CreateDefault();
 
         return defaultSaveData;
     }

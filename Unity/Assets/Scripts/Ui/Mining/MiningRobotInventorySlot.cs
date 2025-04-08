@@ -8,7 +8,7 @@ using UnityEngine.UI;
 public class MiningRobotInventorySlot : MonoBehaviour, IPointerDownHandler, IPointerUpHandler, IDragHandler, IBeginDragHandler, IEndDragHandler, IDropHandler
 {
     [SerializeField]
-    private Image iconImage;
+    private MiningRobotIcon iconImage;
     [SerializeField]
     private List<Sprite> gradeSprites;
     public bool IsEmpty { get; private set; } = true;
@@ -32,16 +32,16 @@ public class MiningRobotInventorySlot : MonoBehaviour, IPointerDownHandler, IPoi
     public void Initialize(MiningRobotInventorySlotData data)
     {
         IsEmpty = data.isEmpty;
-        miningRobotId = data.miningRobotId;   
+        
         if(!IsEmpty)
         {
-            iconImage.color = Color.white;
-            iconImage.sprite = gradeSprites[miningRobotId - 3001];
+            miningRobotId = data.miningRobotId;
         }
         else
         {
-            iconImage.color = new Color(1, 1, 1, 0);
+            miningRobotId = 0;
         }
+        iconImage.Initialize(miningRobotId);
     }
 
     public void OnPointerDown(PointerEventData eventData)
@@ -154,7 +154,7 @@ public class MiningRobotInventorySlot : MonoBehaviour, IPointerDownHandler, IPoi
                 return;
             }
 
-            Debug.Log($"{draggedSlot.index} {this.index}");
+            MiningRobotInventoryManager.ProcessSlots(draggedSlot.index, this.index);
         }
     }
 }

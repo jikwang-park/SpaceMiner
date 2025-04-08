@@ -60,7 +60,6 @@ public class MiningRobotShopElement : MonoBehaviour
         if(ItemManager.CanConsume(needItemId, needAmount))
         {
             ItemManager.ConsumeItem(needItemId, needAmount);
-            ItemManager.AddItem(paymentItemId, paymentItemAmount);
             MiningRobotInventoryManager.AddRobot(paymentItemId);
             UpdateUI();
         }

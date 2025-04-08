@@ -104,4 +104,3 @@ public class QuestProgressData
         return data;
     }
 }
-

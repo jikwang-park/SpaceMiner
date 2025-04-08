@@ -111,7 +111,7 @@ public static class DataTableManager
         tables.Add(DataTableIds.shopTable, shopTable);
 
 
-        
+
         var defaultDataTable = new DefaultDataTable();
         defaultDataTable.Load(DataTableIds.defaultDataTable);
         tables.Add(DataTableIds.defaultDataTable, defaultDataTable);
@@ -131,6 +131,10 @@ public static class DataTableManager
         robotMergeTable.Load(DataTableIds.robotMergeTable);
         tables.Add(DataTableIds.robotMergeTable, robotMergeTable);
 
+
+        var buildingTable = new BuildingTable();
+        buildingTable.Load(DataTableIds.buildingTable);
+        tables.Add(DataTableIds.buildingTable, buildingTable);
     }
 
 
@@ -142,8 +146,8 @@ public static class DataTableManager
             Debug.Assert(isContainsKey, "Table Not Exists");
             return null;
         }
-         return tables[tableId] as T;
-     }
+        return tables[tableId] as T;
+    }
 
     public static StringTable StringTable
         => GetTable<StringTable>(DataTableIds.stringTables[(int)Variables.currentLanguage]);
@@ -213,4 +217,7 @@ public static class DataTableManager
 
     public static RobotMergeTable RobotMergeTable
         => GetTable<RobotMergeTable>(DataTableIds.robotMergeTable);
+
+    public static BuildingTable BuildingTable
+        => GetTable<BuildingTable>(DataTableIds.buildingTable);
 }

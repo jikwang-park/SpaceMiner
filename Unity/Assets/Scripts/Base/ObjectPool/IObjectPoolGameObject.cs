@@ -5,7 +5,7 @@ using UnityEngine.Pool;
 
 public interface IObjectPoolGameObject
 {
-    public IObjectPool<GameObject> ObjectPool { get; set; }
+    IObjectPool<GameObject> ObjectPool { get; set; }
 
-    public void Release();
+    void Release();
 }

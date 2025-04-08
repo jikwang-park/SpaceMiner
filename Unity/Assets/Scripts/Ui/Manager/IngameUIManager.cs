@@ -22,6 +22,8 @@ public class IngameUIManager : MonoBehaviour
     private StageEndWindow stageEndWindow;
     [SerializeField]
     private DungeonEndWindow dungeonEndWindow;
+    [field: SerializeField]
+    public StageSelectWindow stageSelectWindow { get; private set; }
 
     [SerializeField]
     private SerializedDictionary<IngameStatus, List<GameObject>> statusObjectLists;

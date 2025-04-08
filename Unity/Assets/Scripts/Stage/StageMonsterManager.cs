@@ -12,13 +12,14 @@ public class StageMonsterManager : MonoBehaviour
     public event Action OnMonsterDie;
 
     private Dictionary<int, Dictionary<int, MonsterController>> monsterLines;
+    private HashSet<MonsterController> monsterControllers;
 
     private int currentFrontLine = 0;
     private int currentLastLine = 0;
 
     private int[] laneMonsterCounts;
     public int LaneCount => laneCount;
-    private int monsterCount = 0;
+    private int monsterCount => monsterControllers.Count;
 
     private WaveSpawner waveSpawner;
 
@@ -28,37 +29,45 @@ public class StageMonsterManager : MonoBehaviour
         waveSpawner.OnMonsterSpawn += AddMonster;
 
         monsterLines = new Dictionary<int, Dictionary<int, MonsterController>>();
+        monsterControllers = new HashSet<MonsterController>();
         laneMonsterCounts = new int[laneCount];
     }
 
-    public void ClearMonster()
+    public void StopMonster()
     {
-        monsterCount = 0;
-        for (int i = 0; i < laneMonsterCounts.Length; ++i)
-        {
-            laneMonsterCounts[i] = 0;
-        }
         foreach (var line in monsterLines)
         {
             foreach (var monster in line.Value)
             {
-                monster.Value.Release();
+                monster.Value.enabled = false;
             }
-            if (!monsterLines.ContainsKey(currentFrontLine + 1))
-            {
-                break;
-            }
-            ++currentFrontLine;
         }
+    }
+
+    public void ClearMonster()
+    {
+        for (int i = 0; i < laneMonsterCounts.Length; ++i)
+        {
+            laneMonsterCounts[i] = 0;
+        }
+
+        foreach (var monster in monsterControllers)
+        {
+            monster.Release();
+        }
+
+        currentFrontLine = currentLastLine;
+
+        monsterControllers.Clear();
         monsterLines.Clear();
     }
 
     public void AddMonster(int lane, MonsterController monster)
     {
-        ++monsterCount;
         var destructedEvent = monster.GetComponent<DestructedDestroyEvent>();
         if (destructedEvent != null)
         {
+            monsterControllers.Add(monster);
             if (!monsterLines.ContainsKey(currentLastLine))
             {
                 monsterLines.Add(currentLastLine, new Dictionary<int, MonsterController>());
@@ -85,8 +94,6 @@ public class StageMonsterManager : MonoBehaviour
             return;
         }
 
-        --monsterCount;
-
         var monsterController = sender.GetComponent<MonsterController>();
         ItemManager.AddItem(monsterController.RewardData.Reward1, monsterController.RewardData.Count);
 
@@ -98,6 +105,7 @@ public class StageMonsterManager : MonoBehaviour
 
         OnMonsterDie?.Invoke();
 
+        monsterControllers.Remove(monster);
         if (monsterCount == 0)
         {
             OnMonsterCleared?.Invoke();

@@ -16,6 +16,7 @@ public class TankerSkillTable : DataTable
         public float CoolTime { get; set; }
         public int BuffID { get; set; }
         public string SoldierTarget { get; set; }
+        public int Level { get; set; }
 
         public UnitTypes[] targetPriority;
 
@@ -28,9 +29,11 @@ public class TankerSkillTable : DataTable
             CoolTime = int.Parse(argument[4]);
             BuffID = int.Parse(argument[5]);
             SoldierTarget = argument[6];
+            Level = int.Parse(argument[7]);
 
             targetPriority = SplitSoldierTarget(SoldierTarget);
         }
+        
     }
 
     public override Type DataType => typeof(Data);

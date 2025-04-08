@@ -1,44 +1,37 @@
 using System;
+using System.Linq;
 using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
 using UnityEngine;
 using UnityEngine.AddressableAssets;
 
-public class DealerSkillTable : DataTable
+public class RobotMergeTable : DataTable
 {
     public class Data : ITableData
     {
         public int ID { get; set; }
-        public Grade Type { get; set; }
-        public float DamageRatio { get; set; }
-        public float CoolTime { get; set; }
-        public int MonsterMaxTarget { get; set; }
-        public int Level { get; set; }
+        public int materialRobotID { get; set; }
+        public int resultID { get; set; }
+        public int probability { get; set; }
+
 
         public void Set(string[] argument)
         {
             ID = int.Parse(argument[0]);
-            if (int.TryParse(argument[1], out int type))
-            {
-                Type = (Grade)type;
-            }
-            else
-            {
-                Type = Enum.Parse<Grade>(argument[1]);
-            }
-            DamageRatio = float.Parse(argument[2]);
-            CoolTime = float.Parse(argument[3]);
-            MonsterMaxTarget = int.Parse(argument[4]);
-            Level = int.Parse(argument[5]);
+            materialRobotID = int.Parse(argument[1]);
+            resultID = int.Parse(argument[2]);
+            probability = int.Parse(argument[3]);
         }
     }
+
+    public Dictionary<int, Data> materialDict = new Dictionary<int, Data>();
 
     public override Type DataType => typeof(Data);
 
     public override void LoadFromText(string text)
     {
         TableData.Clear();
+        materialDict.Clear();
 
         if (string.IsNullOrEmpty(text))
         {
@@ -52,6 +45,7 @@ public class DealerSkillTable : DataTable
             if (!TableData.ContainsKey(item.ID))
             {
                 TableData.Add(item.ID, item);
+                materialDict.Add(item.materialRobotID, item);
             }
             else
             {
@@ -60,24 +54,27 @@ public class DealerSkillTable : DataTable
         }
     }
 
-    public Data GetData(int key)
+    public Data GetData(int robotID)
     {
-        if (!TableData.ContainsKey(key))
+        if (!materialDict.ContainsKey(robotID))
         {
             return null;
         }
-        return (Data)TableData[key];
+        return materialDict[robotID];
     }
 
     public override void Set(List<string[]> data)
     {
         var tableData = new Dictionary<int, ITableData>();
+        var newMaterialDict = new Dictionary<int, Data>();
         foreach (var item in data)
         {
             var datum = CreateData<Data>(item);
             tableData.Add(datum.ID, datum);
+            newMaterialDict.Add(datum.materialRobotID, datum);
         }
         TableData = tableData;
+        materialDict = newMaterialDict;
     }
 
     public override string GetCsvData()

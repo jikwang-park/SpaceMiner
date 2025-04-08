@@ -110,9 +110,27 @@ public static class DataTableManager
         shopTable.Load(DataTableIds.shopTable);
         tables.Add(DataTableIds.shopTable, shopTable);
 
+
+        
         var defaultDataTable = new DefaultDataTable();
         defaultDataTable.Load(DataTableIds.defaultDataTable);
         tables.Add(DataTableIds.defaultDataTable, defaultDataTable);
+
+
+
+        var guideQuestTable = new GuideQuestTable();
+        guideQuestTable.Load(DataTableIds.guideQuestTable);
+        tables.Add(DataTableIds.guideQuestTable, guideQuestTable);
+
+
+        var robotTable = new RobotTable();
+        robotTable.Load(DataTableIds.robotTable);
+        tables.Add(DataTableIds.robotTable, robotTable);
+
+        var robotMergeTable = new RobotMergeTable();
+        robotMergeTable.Load(DataTableIds.robotMergeTable);
+        tables.Add(DataTableIds.robotMergeTable, robotMergeTable);
+
     }
 
 
@@ -186,4 +204,13 @@ public static class DataTableManager
 
     public static DefaultDataTable DefaultDataTable
         => GetTable<DefaultDataTable>(DataTableIds.defaultDataTable);
+
+    public static GuideQuestTable GuideQuestTable
+        => GetTable<GuideQuestTable>(DataTableIds.guideQuestTable);
+
+    public static RobotTable RobotTable
+        => GetTable<RobotTable>(DataTableIds.robotTable);
+
+    public static RobotMergeTable RobotMergeTable
+        => GetTable<RobotMergeTable>(DataTableIds.robotMergeTable);
 }

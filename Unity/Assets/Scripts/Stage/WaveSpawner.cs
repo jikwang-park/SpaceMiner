@@ -88,6 +88,7 @@ public class WaveSpawner : MonoBehaviour
 
         var monster = objectPoolManager.Get(monsterData.PrefabId);
         var monsterController = monster.GetComponent<MonsterController>();
+        monsterController.enabled = true;
         monsterController.SetMonsterId(monsterId);
         monster.transform.parent = null;
         monster.transform.position = frontPosition + SpawnPoints[index];

@@ -5,38 +5,36 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AddressableAssets;
 
-public class HealerSkillTable : DataTable
+public class RobotTable : DataTable
 {
     public class Data : ITableData
     {
         public int ID { get; set; }
-        public Grade Type { get; set; }
-        public float HealRatio { get; set; }
-        public float CoolTime { get; set; }
-        public int BuffID { get; set; }
-        public string SoldierTarget { get; set; }
-        public int Level { get; set; }
-
-        public UnitTypes[] targetPriority;
+        public int name { get; set; }
+        public Grade grade { get; set; }
+        public int miningSpeed { get; set; }
+        public int moveSpeed { get; set; }
+        public int loadCapacity { get; set; }
+        public int IsMergeable { get; set; }
+        public string prefabID { get; set; }
 
         public void Set(string[] argument)
         {
             ID = int.Parse(argument[0]);
-            if (int.TryParse(argument[1], out int type))
+            name = int.Parse(argument[1]);
+            if (int.TryParse(argument[2], out int grade))
             {
-                Type = (Grade)type;
+                this.grade = (Grade)grade;
             }
             else
             {
-                Type = Enum.Parse<Grade>(argument[1]);
+                this.grade = Enum.Parse<Grade>(argument[2]);
             }
-            HealRatio = float.Parse(argument[2]);
-            CoolTime = float.Parse(argument[3]);
-            BuffID = int.Parse(argument[4]);
-            SoldierTarget = argument[5];
-            Level = int.Parse(argument[6]);
-
-            targetPriority = SplitSoldierTarget(SoldierTarget);
+            miningSpeed = int.Parse(argument[3]);
+            moveSpeed = int.Parse(argument[4]);
+            loadCapacity = int.Parse(argument[5]);
+            IsMergeable = int.Parse(argument[6]);
+            prefabID = argument[7];
         }
     }
 
@@ -57,7 +55,6 @@ public class HealerSkillTable : DataTable
         {
             if (!TableData.ContainsKey(item.ID))
             {
-                item.targetPriority = SplitSoldierTarget(item.SoldierTarget);
                 TableData.Add(item.ID, item);
             }
             else
@@ -75,7 +72,6 @@ public class HealerSkillTable : DataTable
         }
         return (Data)TableData[key];
     }
-
 
     public override void Set(List<string[]> data)
     {
@@ -98,25 +94,5 @@ public class HealerSkillTable : DataTable
         }
 
         return CreateCsv(list);
-    }
-
-    private static UnitTypes[] SplitSoldierTarget(string id)
-    {
-        string[] idstring = id.Split('_');
-        UnitTypes[] ids = new UnitTypes[idstring.Length];
-
-        for (int i = 0; i < ids.Length; ++i)
-        {
-            if (int.TryParse(idstring[i], out int result))
-            {
-                ids[i] = (UnitTypes)result;
-            }
-            else
-            {
-                ids[i] = Enum.Parse<UnitTypes>(idstring[i]);
-            }
-        }
-
-        return ids;
     }
 }

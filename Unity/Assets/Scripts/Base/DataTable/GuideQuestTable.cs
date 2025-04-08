@@ -1,46 +1,54 @@
-using System;
-using System.Linq;
 using System.Collections;
 using System.Collections.Generic;
+using System.IO.Enumeration;
 using UnityEngine;
-using UnityEngine.AddressableAssets;
 
-public class HealerSkillTable : DataTable
+public class GuideQuestTable : DataTable
 {
+    public enum MissionType
+    {
+        Exterminate = 1,
+        StageClear,
+        DungeonClear,
+        StatUpgrade,
+        Item,
+        Building,
+    }
+
     public class Data : ITableData
     {
         public int ID { get; set; }
-        public Grade Type { get; set; }
-        public float HealRatio { get; set; }
-        public float CoolTime { get; set; }
-        public int BuffID { get; set; }
-        public string SoldierTarget { get; set; }
-        public int Level { get; set; }
-
-        public UnitTypes[] targetPriority;
+        public int StringID { get; set; }
+        public int Turn { get; set; }
+        public MissionType MissionClearType { get; set; }
+        public int Target { get; set; }
+        public int TargetCount { get; set; }
+        public int RewardID { get; set; }
+        public int RewardCount { get; set; }
+        public string Prefab { get; set; }
 
         public void Set(string[] argument)
         {
             ID = int.Parse(argument[0]);
-            if (int.TryParse(argument[1], out int type))
+            StringID = int.Parse(argument[1]);
+            Turn = int.Parse(argument[2]);
+            if (int.TryParse(argument[3], out int result))
             {
-                Type = (Grade)type;
+                MissionClearType = (MissionType)result;
             }
             else
             {
-                Type = Enum.Parse<Grade>(argument[1]);
+                MissionClearType = System.Enum.Parse<MissionType>(argument[3]);
             }
-            HealRatio = float.Parse(argument[2]);
-            CoolTime = float.Parse(argument[3]);
-            BuffID = int.Parse(argument[4]);
-            SoldierTarget = argument[5];
-            Level = int.Parse(argument[6]);
-
-            targetPriority = SplitSoldierTarget(SoldierTarget);
+            Target = int.Parse(argument[4]);
+            TargetCount = int.Parse(argument[5]);
+            RewardID = int.Parse(argument[6]);
+            RewardCount = int.Parse(argument[7]);
+            Prefab = argument[8];
         }
     }
 
-    public override Type DataType => typeof(Data);
+    public override System.Type DataType => typeof(Data);
 
     public override void LoadFromText(string text)
     {
@@ -57,7 +65,6 @@ public class HealerSkillTable : DataTable
         {
             if (!TableData.ContainsKey(item.ID))
             {
-                item.targetPriority = SplitSoldierTarget(item.SoldierTarget);
                 TableData.Add(item.ID, item);
             }
             else
@@ -75,7 +82,6 @@ public class HealerSkillTable : DataTable
         }
         return (Data)TableData[key];
     }
-
 
     public override void Set(List<string[]> data)
     {
@@ -98,25 +104,5 @@ public class HealerSkillTable : DataTable
         }
 
         return CreateCsv(list);
-    }
-
-    private static UnitTypes[] SplitSoldierTarget(string id)
-    {
-        string[] idstring = id.Split('_');
-        UnitTypes[] ids = new UnitTypes[idstring.Length];
-
-        for (int i = 0; i < ids.Length; ++i)
-        {
-            if (int.TryParse(idstring[i], out int result))
-            {
-                ids[i] = (UnitTypes)result;
-            }
-            else
-            {
-                ids[i] = Enum.Parse<UnitTypes>(idstring[i]);
-            }
-        }
-
-        return ids;
     }
 }

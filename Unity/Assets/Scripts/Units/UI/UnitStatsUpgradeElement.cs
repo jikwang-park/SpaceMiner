@@ -34,7 +34,10 @@ public class UnitStatsUpgradeElement : MonoBehaviour
     private TextMeshProUGUI levelText;
     [SerializeField]
     private int currentNum = 0;
-
+    [SerializeField]
+    private float currentValue = 0;
+    [SerializeField]
+    private BigNumber currentGold = 0;
 
     private void Awake()
     {
@@ -57,29 +60,57 @@ public class UnitStatsUpgradeElement : MonoBehaviour
     {
         nextLevel = level + 1;
         levelText.text = $"Level + {level}";
-        statsInformation.text = $"Unit {currentType.ToString()} Increase\n +{(value + (value* currentNum)):F2}";
-        addStartButtonText.text = $"Gold \n +{gold * nextLevel}";
-        LevelUp();
+        statsInformation.text = $"Unit {currentType.ToString()} Increase\n +{currentValue:F2} -> {currentValue + value:F2}";
+        addStartButtonText.text = $"Gold \n +{currentGold +gold }";
     }
     
-    
+    public void SetData(int level)
+    {
+        this.level = level;
+        currentValue = GetCurrentValue(level);
+        currentGold = GetCurrentGold(level);
+        SetStatsInfo();
+    }
+
+    public float GetCurrentValue(int level)
+    {
+        float result = 0;
+        for(int i = 1; i<=level; ++i)
+        {
+            result += value * i;
+        }
+        return result;
+    }
+    public BigNumber GetCurrentGold(int level)
+    {
+        BigNumber result = 0;
+        for(int i = 1; i<=level; ++i)
+        {
+            result += gold * i;
+        }
+        return result;
+    }
 
     private void LevelUp()
     {
         if (level > 1000)
         {
-            return;
+            addStatButton.interactable = false;
         }
-
+        
+        currentValue +=  value;
+        currentGold += gold * (level + 1);
         level++;
-        currentNum++;
+        SaveLoadManager.Data.unitStatUpgradeData.upgradeLevels[currentType] = level;
     }
     private void OnClickAddStatsButton()
     {
+        LevelUp();
         SetStatsInfo();
-        stageManager.UnitPartyManager.AddStats(currentType, value + (value * currentNum));
+        stageManager.UnitPartyManager.AddStats(currentType, level*value);
+        SaveLoadManager.SaveGame();
     }
 
-
+     
  
 }

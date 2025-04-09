@@ -121,9 +121,9 @@ public static class MiningRobotInventoryManager
     private static void MoveSlots(int indexA, int indexB)
     {
         Inventory.slots[indexB].isEmpty = false;
+        Inventory.slots[indexB].miningRobotId = Inventory.slots[indexA].miningRobotId;
         Grade grade = DataTableManager.RobotTable.GetData(Inventory.slots[indexB].miningRobotId).grade;
         Inventory.slots[indexB].grade = grade;
-        Inventory.slots[indexB].miningRobotId = Inventory.slots[indexA].miningRobotId;
         onChangedInventory?.Invoke(indexB, Inventory.slots[indexB]);
 
         Inventory.slots[indexA].isEmpty = true;

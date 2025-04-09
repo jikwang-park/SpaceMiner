@@ -14,6 +14,7 @@ public class MiningPanelUI : MonoBehaviour
     private StageManager stageManager;
     private void Awake()
     {
+        stageManager = GameObject.FindGameObjectWithTag("GameController").GetComponent<StageManager>();
         planetIds = DataTableManager.PlanetTable.GetIds();
         onRequestMerge += ShowMergePopup;
     }

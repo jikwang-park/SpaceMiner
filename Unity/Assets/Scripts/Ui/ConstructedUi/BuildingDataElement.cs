@@ -63,8 +63,9 @@ public class BuildingDataElement: MonoBehaviour
         value = data[level].Value;
         itemId = data[level].ItemID;
         maxLevel = data[level].MaxLevel;
-        uisequence = data[level].Sequence;
         needItemCount = data[level].NeedCount;
+        currentType = data[level].Type;
+        SetConstructionInfo();
     }
 
     public void GetCurrentSequence()
@@ -75,16 +76,16 @@ public class BuildingDataElement: MonoBehaviour
     private void SetConstructionInfo()
     {
         SetLevelText(level);
-        SetConstructionExplanText(currentType);
+        SetConstructionExplanText();
     }
 
     private void SetLevelText(int level)
     {
         levelText.text = $"LV.{level}";
     }
-    private void SetConstructionExplanText(BuildingTable.BuildingType type)
+    private void SetConstructionExplanText()
     {
-        constructionExplanText.text = $"{type.ToString()} \n {itemId} 가 {needItemCount} 개 필요합니다";
+        constructionExplanText.text = $"{currentType.ToString()} \n {itemId} 가 {needItemCount} 개 필요합니다";
     }
     public void SetData(BuildingTable.BuildingType type,int level)
     {
@@ -104,6 +105,7 @@ public class BuildingDataElement: MonoBehaviour
         SetLevelData(level);
 
         stageManager.UnitPartyManager.AddBuildingStats(currentType,value);
+        SetConstructionInfo();
 
         SaveLoadManager.Data.buildingData.buildingLevels[currentType] = level;
         SaveLoadManager.SaveGame();

@@ -13,7 +13,10 @@ public class BuildingManager : MonoBehaviour
     private BuildingTable.BuildingType type;
 
 
-
+    private void Awake()
+    {
+        InIt();
+    }
 
 
     private void InIt()

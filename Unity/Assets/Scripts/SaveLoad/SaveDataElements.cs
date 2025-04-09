@@ -36,13 +36,14 @@ public class MiningRobotInventorySlotData
 {
     public bool isEmpty = true;
     public int miningRobotId;
+    public Grade grade = Grade.None;
     public SlotType slotType = SlotType.Inventory;
 }
 [Serializable]
 public class MiningRobotInventoryData
 {
     public List<MiningRobotInventorySlotData> slots = new List<MiningRobotInventorySlotData>();
-    public Dictionary<int, List<MiningRobotInventorySlotData>> equipmentSlotsToPlanet = new Dictionary<int, List<MiningRobotInventorySlotData>>();
+    public Dictionary<int, MiningRobotInventorySlotData[]> equipmentSlotsToPlanet = new Dictionary<int, MiningRobotInventorySlotData[]>();
     public MiningRobotInventoryData() { }
     public static MiningRobotInventoryData CreateDefault(int totalSlots = 60)
     {
@@ -52,14 +53,14 @@ public class MiningRobotInventoryData
             data.slots.Add(new MiningRobotInventorySlotData());
         }
         var planetDatas = DataTableManager.PlanetTable.GetIds();
-        foreach(var planetData in planetDatas)
+        foreach (var planetId in planetDatas)
         {
-            MiningRobotInventorySlotData slotOne = new MiningRobotInventorySlotData();
-            slotOne.slotType = SlotType.Equip;
-            MiningRobotInventorySlotData slotTwo = new MiningRobotInventorySlotData();
-            slotTwo.slotType = SlotType.Equip;
-            List<MiningRobotInventorySlotData> miningRobotInventorySlotDatas = new List<MiningRobotInventorySlotData> { slotOne, slotTwo };
-            data.equipmentSlotsToPlanet.Add(planetData, miningRobotInventorySlotDatas);
+            MiningRobotInventorySlotData[] equipmentSlots = new MiningRobotInventorySlotData[2]
+            {
+            new MiningRobotInventorySlotData { isEmpty = true, miningRobotId = 0, grade = Grade.None, slotType = SlotType.Equip },
+            new MiningRobotInventorySlotData { isEmpty = true, miningRobotId = 0, grade = Grade.None, slotType = SlotType.Equip }
+            };
+            data.equipmentSlotsToPlanet.Add(planetId, equipmentSlots);
         }
         return data;
     }

@@ -9,6 +9,11 @@ public class SetMiningRobotToPlanetUI : MonoBehaviour
     [SerializeField]
     MiningRobotInventorySlot slotTwo;
 
+    private void Awake()
+    {
+        MiningRobotInventoryManager.onEquipRobot += Initialize;
+    }
+
     public void Initialize(int planetId)
     {
         var slotOneData = MiningRobotInventoryManager.Inventory.equipmentSlotsToPlanet[planetId][0];
@@ -16,4 +21,6 @@ public class SetMiningRobotToPlanetUI : MonoBehaviour
         var slotTwoData = MiningRobotInventoryManager.Inventory.equipmentSlotsToPlanet[planetId][1];
         slotTwo.Initialize(slotTwoData);
     }
+
+
 }

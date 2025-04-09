@@ -21,9 +21,12 @@ public class MiningRobotMergePopupUI : MonoBehaviour
     {
         var data = DataTableManager.RobotMergeTable.GetData(robotId);
 
+        var beforeData = DataTableManager.RobotTable.GetData(data.materialRobotID);
+        var afterData = DataTableManager.RobotTable.GetData(data.resultID);
+
         responseCallback = callback;
-        beforeIcon.Initialize(data.materialRobotID);
-        afterIcon.Initialize(data.resultID);
+        beforeIcon.Initialize(beforeData.grade);
+        afterIcon.Initialize(afterData.grade);
         percentText.text = $"{data.probability} %";
     }
 

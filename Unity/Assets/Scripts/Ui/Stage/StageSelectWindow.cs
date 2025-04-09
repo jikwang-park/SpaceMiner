@@ -16,13 +16,6 @@ public class StageSelectWindow : MonoBehaviour
 
     private StageSaveData stageLoadData;
 
-    [SerializeField]
-    private GameObject background;
-    [SerializeField]
-    private Button showButton;
-
-    private bool isShown = false;
-
     private void Start()
     {
         planetScroll.OnPlanetSelected += OnPlanetSelected;
@@ -57,25 +50,5 @@ public class StageSelectWindow : MonoBehaviour
         {
             stageScroll.UnlockStage(stageData.highStage);
         }
-    }
-
-    //TODO: 스테이지 선택 버튼에 연결
-    public void ToggleStageWindow()
-    {
-        if (isShown)
-        {
-            HideStageWindow();
-        }
-        else
-        {
-            isShown = true;
-            background.SetActive(true);
-        }
-    }
-
-    public void HideStageWindow()
-    {
-        isShown = false;
-        background.SetActive(false);
     }
 }

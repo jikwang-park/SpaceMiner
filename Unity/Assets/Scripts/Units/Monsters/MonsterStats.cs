@@ -14,7 +14,6 @@ public class MonsterStats : CharacterStats
         moveSpeed = monsterData.MoveSpeed;
     }
 
-
     public override void Execute(GameObject defender)
     {
         if (defender is null)

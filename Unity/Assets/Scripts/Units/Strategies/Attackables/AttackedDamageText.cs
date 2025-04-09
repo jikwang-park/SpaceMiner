@@ -21,7 +21,7 @@ public class AttackedDamageText : MonoBehaviour, IAttackable
     public void OnAttack(GameObject attacker, Attack attack)
     {
         var textObject = stageManager.ObjectPoolManager.Get(textPrefabAddress);
-        textObject.transform.parent = null;
+        textObject.transform.SetParent(null);
         textObject.transform.position = transform.position;
         textObject.transform.rotation = Quaternion.LookRotation(Camera.main.transform.forward);
         DamageText damageText = textObject.GetComponent<DamageText>();

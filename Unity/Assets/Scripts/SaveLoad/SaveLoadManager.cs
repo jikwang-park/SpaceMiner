@@ -128,6 +128,7 @@ public static class SaveLoadManager
 
         defaultSaveData.unitStatUpgradeData = UnitStatUpgradeData.CreateDefault();
         defaultSaveData.unitSkillUpgradeData = UnitSkillUpgradeData.CreateDefault();
+        defaultSaveData.buildingData = BuildingData.CreateDefault();
 
         return defaultSaveData;
     }

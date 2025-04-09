@@ -36,11 +36,13 @@ public class MiningRobotInventorySlotData
 {
     public bool isEmpty = true;
     public int miningRobotId;
+    public SlotType slotType = SlotType.Inventory;
 }
 [Serializable]
 public class MiningRobotInventoryData
 {
     public List<MiningRobotInventorySlotData> slots = new List<MiningRobotInventorySlotData>();
+    public Dictionary<int, List<MiningRobotInventorySlotData>> equipmentSlotsToPlanet = new Dictionary<int, List<MiningRobotInventorySlotData>>();
     public MiningRobotInventoryData() { }
     public static MiningRobotInventoryData CreateDefault(int totalSlots = 60)
     {
@@ -48,6 +50,16 @@ public class MiningRobotInventoryData
         for (int i = 0; i < totalSlots; i++)
         {
             data.slots.Add(new MiningRobotInventorySlotData());
+        }
+        var planetDatas = DataTableManager.PlanetTable.GetIds();
+        foreach(var planetData in planetDatas)
+        {
+            MiningRobotInventorySlotData slotOne = new MiningRobotInventorySlotData();
+            slotOne.slotType = SlotType.Equip;
+            MiningRobotInventorySlotData slotTwo = new MiningRobotInventorySlotData();
+            slotTwo.slotType = SlotType.Equip;
+            List<MiningRobotInventorySlotData> miningRobotInventorySlotDatas = new List<MiningRobotInventorySlotData> { slotOne, slotTwo };
+            data.equipmentSlotsToPlanet.Add(planetData, miningRobotInventorySlotDatas);
         }
         return data;
     }
@@ -104,4 +116,18 @@ public class QuestProgressData
         return data;
     }
 }
-
+[Serializable]
+public class BuildingData
+{
+    public Dictionary<BuildingTable.BuildingType, int> buildingLevels = new Dictionary<BuildingTable.BuildingType, int>();
+    public BuildingData() { }
+    public static BuildingData CreateDefault()
+    {
+        var data = new BuildingData();
+        foreach(var type in Enum.GetValues(typeof(BuildingTable.BuildingType)))
+        {
+            data.buildingLevels.Add((BuildingTable.BuildingType)type, 0);
+        }
+        return data;
+    }
+}

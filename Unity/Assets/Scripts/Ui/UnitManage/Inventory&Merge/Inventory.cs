@@ -18,17 +18,17 @@ public class Inventory : MonoBehaviour
     private List<Sprite> gradeSprites;
     [SerializeField]
     private InfoMergePanelUI infoMergePanelUI;
+    [SerializeField]
+    private SoldierInteractableUI soldierInteractableUI; 
 
     private UnitTypes type;
     private InventoryElement selectedElement;
     private InventoryElement equipElement;
     private UnitPartyManager unitPartyManager;
-    private SoldierInteractableUI soldierInteractableUI;
     public void Initialize(UnitTypes type)
     {
         UpdateGridCellSize();
         unitPartyManager = FindObjectOfType<UnitPartyManager>();
-        soldierInteractableUI = GetComponentInChildren<SoldierInteractableUI>();
         soldierInteractableUI.equipAction += Equip;
         InitializeInventory(type);
     }

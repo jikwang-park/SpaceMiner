@@ -5,10 +5,10 @@ using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
-public class MiningRobotInventorySlot : MonoBehaviour, IPointerDownHandler, IPointerUpHandler, IDragHandler, IBeginDragHandler, IEndDragHandler
+public class MiningRobotInventorySlot : MonoBehaviour, IPointerDownHandler, IPointerUpHandler, IDragHandler, IBeginDragHandler, IEndDragHandler, IDropHandler
 {
     [SerializeField]
-    private Image iconImage;
+    private MiningRobotIcon iconImage;
     [SerializeField]
     private List<Sprite> gradeSprites;
     public bool IsEmpty { get; private set; } = true;
@@ -22,32 +22,34 @@ public class MiningRobotInventorySlot : MonoBehaviour, IPointerDownHandler, IPoi
     private GameObject dragIcon;
     private RectTransform dragIconRect;
     private Vector3 originalPosition;
-    private Image image;
+    private ScrollRect parentScrollRect;
+    private SlotType slotType;
     private void Awake()
     {
-        image = GetComponent<Image>();
+        parentScrollRect = GetComponentInParent<ScrollRect>();
     }
     public void Initialize(MiningRobotInventorySlotData data)
     {
         IsEmpty = data.isEmpty;
-        miningRobotId = data.miningRobotId;   
-        if(!IsEmpty)
+        slotType = data.slotType;
+        if (!IsEmpty)
         {
-            iconImage.color = Color.white;
-            iconImage.sprite = gradeSprites[miningRobotId - 3001];
-            image.raycastTarget = true;
+            miningRobotId = data.miningRobotId;
         }
         else
         {
-            iconImage.color = new Color(1, 1, 1, 0);
-            image.raycastTarget = false;
+            miningRobotId = 0;
         }
+        iconImage.Initialize(miningRobotId);
     }
 
     public void OnPointerDown(PointerEventData eventData)
     {
-        originalPosition = eventData.position;
-        holdCoroutine = StartCoroutine(HoldTimeCoroutine());
+        if(!IsEmpty)
+        {
+            originalPosition = eventData.position;
+            holdCoroutine = StartCoroutine(HoldTimeCoroutine());
+        }
     }
 
     public void OnPointerUp(PointerEventData eventData)
@@ -65,14 +67,22 @@ public class MiningRobotInventorySlot : MonoBehaviour, IPointerDownHandler, IPoi
 
     public void OnDrag(PointerEventData eventData)
     {
-        if (isDragging && dragIconRect != null)
+        if(isDragging && dragIconRect != null)
         {
             dragIconRect.position = eventData.position;
+        }
+        else if(slotType == SlotType.Inventory)
+        {
+            parentScrollRect.OnDrag(eventData);
         }
     }
 
     public void OnBeginDrag(PointerEventData eventData)
     {
+        if(!isDragging && slotType == SlotType.Inventory)
+        {
+            parentScrollRect.OnBeginDrag(eventData);
+        }
     }
 
     public void OnEndDrag(PointerEventData eventData)
@@ -80,6 +90,10 @@ public class MiningRobotInventorySlot : MonoBehaviour, IPointerDownHandler, IPoi
         if(isDragging)
         {
             EndDragging(eventData);
+        }
+        else if(slotType == SlotType.Inventory)
+        {
+            parentScrollRect.OnEndDrag(eventData);
         }
     }
     private IEnumerator HoldTimeCoroutine()
@@ -121,6 +135,36 @@ public class MiningRobotInventorySlot : MonoBehaviour, IPointerDownHandler, IPoi
             dragIcon = null;
         }
         iconImage.color = Color.white;
+    }
 
+    public void OnDrop(PointerEventData eventData)
+    {
+        GameObject draggedObject = eventData.pointerDrag;
+        if(draggedObject != null)
+        {
+            MiningRobotInventorySlot draggedSlot = draggedObject.GetComponent<MiningRobotInventorySlot>();
+            if(draggedSlot == null)
+            {
+                return;
+            }
+
+            if(draggedSlot.IsEmpty)
+            {
+                return;
+            }
+
+            if(draggedSlot.slotType == SlotType.Inventory && this.slotType == SlotType.Inventory)
+            {
+                MiningRobotInventoryManager.ProcessSlots(draggedSlot.index, this.index);
+            }
+            else if(draggedSlot.slotType == SlotType.Equip && this.slotType == SlotType.Inventory)
+            {
+
+            }
+            else if(draggedSlot.slotType == SlotType.Inventory && this.slotType == SlotType.Equip)
+            {
+
+            }
+        }
     }
 }

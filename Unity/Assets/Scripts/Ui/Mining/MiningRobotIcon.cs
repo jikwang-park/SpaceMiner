@@ -19,17 +19,16 @@ public class MiningRobotIcon : MonoBehaviour
         get { return icon.color; }
         set { icon.color = value; }
     }
-    public void Initialize(int robotId)
+    public void Initialize(Grade grade)
     {
-        var data = DataTableManager.RobotTable.GetData(robotId);
-        if(data == null)
+        if(grade == Grade.None)
         {
             icon.sprite = null;
             color = new Color(1, 1, 1, 0f);
         }
         else
         {
-            icon.sprite = gradeSprites[(int)data.grade - 1];
+            icon.sprite = gradeSprites[(int)grade - 1];
             color = Color.white;
         }
     }

@@ -16,6 +16,8 @@ public class BuildingDataElement: MonoBehaviour
     private TextMeshProUGUI levelText;
     [SerializeField]
     private TextMeshProUGUI constructionExplanText;
+    [SerializeField]
+    private Image lockedImage;
 
 
     [SerializeField]
@@ -53,7 +55,6 @@ public class BuildingDataElement: MonoBehaviour
         this.data = data;
         level = 0;
         SetLevelData(level);
-        isLocked = true;
     }
 
     public void SetLevelData(int level)
@@ -63,8 +64,18 @@ public class BuildingDataElement: MonoBehaviour
         value = data[level].Value;
         itemId = data[level].ItemID;
         maxLevel = data[level].MaxLevel;
-        uisequence = data[level].Sequence;
         needItemCount = data[level].NeedCount;
+        currentType = data[level].Type;
+        if(level == 0)
+        {
+            isLocked = true;
+        }
+        else
+        {
+            isLocked = false;
+        }
+        SetFirstUpgrade(isLocked);
+        SetConstructionInfo();
     }
 
     public void GetCurrentSequence()
@@ -100,22 +111,44 @@ public class BuildingDataElement: MonoBehaviour
 
     public void LevelUp()
     {
+        if (level == maxLevel)
+            return;
+
         level++;
         SetLevelData(level);
 
         stageManager.UnitPartyManager.AddBuildingStats(currentType,value);
+        SetConstructionInfo();
 
         SaveLoadManager.Data.buildingData.buildingLevels[currentType] = level;
         SaveLoadManager.SaveGame();
     }
-    private bool CheckMaxLevel(int level)
+    private bool IsMaxLevel(int level)
     {
-        if(level > maxLevel)
+        if(level == maxLevel)
         {
             upgradeButtonText.text = "최대레벨달성";
             return true;
         }
         return false;
+    }
+
+    private void Update()
+    {
+        if (IsMaxLevel(level))
+        {
+            upgradeButton.interactable = false;
+        }
+    }
+
+    private void SetFirstUpgrade(bool isLocked)
+    {
+        if(isLocked)
+        {
+            lockedImage.gameObject.SetActive(true);
+        }
+
+        lockedImage.gameObject.SetActive(false);
     }
     private void OnClickUpgradeButton()
     {
@@ -123,10 +156,7 @@ public class BuildingDataElement: MonoBehaviour
         {
             isLocked = false;
         }
-        if(CheckMaxLevel(level))
-        {
-            upgradeButton.interactable = false;
-        }
+       
         LevelUp();
 
     }

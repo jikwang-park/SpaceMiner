@@ -74,6 +74,7 @@ public enum Currency
 
 public enum Grade
 {
+    None,
     Normal = 1,
     Rare,
     Epic,

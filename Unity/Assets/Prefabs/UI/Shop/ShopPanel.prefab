@@ -1006,7 +1006,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &3897966559431024969
 RectTransform:
   m_ObjectHideFlags: 0
@@ -1108,7 +1108,19 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 3354638615516518104}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 5138401995493097679}
+        m_TargetAssemblyTypeName: ShopPanelUI, Assembly-CSharp
+        m_MethodName: OnClickOpenMiningRobotShop
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!1 &4919681585815646846
 GameObject:
   m_ObjectHideFlags: 0
@@ -2005,7 +2017,7 @@ MonoBehaviour:
   shopPanels:
   - {fileID: 2221067337891631381}
   - {fileID: 3874379517435253116}
-  - {fileID: 3874379517435253116}
+  - {fileID: 0}
 --- !u!1 &6471423042244164086
 GameObject:
   m_ObjectHideFlags: 0

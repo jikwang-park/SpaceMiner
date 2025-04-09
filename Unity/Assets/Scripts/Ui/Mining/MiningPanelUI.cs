@@ -36,4 +36,8 @@ public class MiningPanelUI : MonoBehaviour
         setRobotToPlanetUI.Initialize(planetIds[index]);
         currentPlanetId = planetIds[index];
     }
+    public void OnClickSortButton()
+    {
+        MiningRobotInventoryManager.SortInventorySlots();
+    }
 }

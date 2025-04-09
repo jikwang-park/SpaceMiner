@@ -66,8 +66,23 @@ public class MineStageStatusMachine : StageStatusMachine
         var mineGo = stageManager.ObjectPoolManager.Get(stageMachineData.mine);
         mine = mineGo.GetComponent<Mine>();
 
-        var robotGo = stageManager.ObjectPoolManager.Get(stageMachineData.robot);
-        robotControllers[0] = robotGo.GetComponent<MiningRobotController>();
-        robotControllers[0].SetOreStorage(mine.GetOre(0), mine.GetStorage(0));
+        var equipments = MiningRobotInventoryManager.Inventory.equipmentSlotsToPlanet;
+
+        if (!equipments.ContainsKey(Variables.planetMiningID))
+        {
+            return;
+        }
+
+        for (int i = 0; i < equipments[Variables.planetMiningID].Length; ++i)
+        {
+            if (equipments[Variables.planetMiningID][i].isEmpty)
+            {
+                continue;
+            }
+            var robotGo = stageManager.ObjectPoolManager.Get(stageMachineData.robot);
+            robotControllers[i] = robotGo.GetComponent<MiningRobotController>();
+            robotControllers[i].Init(Variables.planetMiningID, equipments[Variables.planetMiningID][i].miningRobotId, i);
+            robotControllers[i].SetOreStorage(mine.GetOre(i), mine.GetStorage(i));
+        }
     }
 }

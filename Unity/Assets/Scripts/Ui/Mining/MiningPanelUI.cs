@@ -8,9 +8,12 @@ public class MiningPanelUI : MonoBehaviour
 {
     [SerializeField]
     private MiningRobotMergePopupUI robotMergePopupUI;
-
+    [SerializeField]
+    private SetMiningRobotToPlanetUI setRobotToPlanetUI;
+    private List<int> planetIds = new List<int>();
     private void Awake()
     {
+        planetIds = DataTableManager.PlanetTable.GetIds();
         onRequestMerge += ShowMergePopup;
     }
     private void ShowMergePopup(int mergedRobotId, MergeResponseCallback callback)
@@ -23,5 +26,14 @@ public class MiningPanelUI : MonoBehaviour
         }
         robotMergePopupUI.Initialize(mergedRobotId, callback);
         robotMergePopupUI.gameObject.SetActive(true);
+    }
+    private void OnEnable()
+    {
+        OnClickPlanetButton(0);
+    }
+    public void OnClickPlanetButton(int index)
+    {
+        setRobotToPlanetUI.Initialize(planetIds[index]);
+        currentPlanetId = planetIds[index];
     }
 }

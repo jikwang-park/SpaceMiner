@@ -13,18 +13,24 @@ public class PlanetStageStatusMachine : StageStatusMachine
 
     protected WaveTable.Data waveData;
 
-    public float spawnDistance = 20f;
-
     protected WaitForSeconds wait1s = new WaitForSeconds(1f);
 
     protected bool cleared = false;
 
     private StageSaveData stageLoadData = SaveLoadManager.Data.stageSaveData;
 
+    private PlanetStageStatusMachineData stageMachineData;
+
     public PlanetStageStatusMachine(StageManager stageManager) : base(stageManager)
     {
 
     }
+
+    public override void SetStageData(StageStatusMachineData stageMachineData)
+    {
+        this.stageMachineData = (PlanetStageStatusMachineData)stageMachineData;
+    }
+
 
     public override void Start()
     {
@@ -34,7 +40,7 @@ public class PlanetStageStatusMachine : StageStatusMachine
         InstantiateBackground();
 
         stageManager.UnitPartyManager.UnitSpawn();
-        stageManager.CameraManager.ResetCameraPosition();
+        stageManager.CameraManager.SetCameraOffset();
         stageManager.StartCoroutine(SpawnNextWave());
         stageManager.StageMonsterManager.OnMonsterDie += OnMonsterDie;
         stageManager.StageMonsterManager.OnMonsterCleared += OnMonsterCleared;
@@ -95,7 +101,7 @@ public class PlanetStageStatusMachine : StageStatusMachine
         Transform unit = stageManager.UnitPartyManager.GetFirstLineUnitTransform();
         if (unit != null)
         {
-            stageManager.StageMonsterManager.Spawn(unit.position + Vector3.forward * spawnDistance, corpsData);
+            stageManager.StageMonsterManager.Spawn(unit.position + Vector3.forward * stageMachineData.spawnDistance, corpsData);
         }
         else
         {
@@ -271,7 +277,7 @@ public class PlanetStageStatusMachine : StageStatusMachine
             InstantiateBackground();
 
             stageManager.UnitPartyManager.UnitSpawn();
-            stageManager.CameraManager.ResetCameraPosition();
+            stageManager.CameraManager.SetCameraOffset();
         }
 
         stageManager.StartCoroutine(SpawnNextWave());

@@ -95,6 +95,9 @@ public static class GuideQuestManager
                 break;
 
             case GuideQuestTable.MissionType.Building:
+
+                //TODO: 건물 구현 후 추가 예정
+
                 break;
         }
 

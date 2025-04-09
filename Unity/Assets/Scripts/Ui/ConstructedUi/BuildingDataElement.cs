@@ -116,6 +116,7 @@ public class BuildingDataElement: MonoBehaviour
 
         level++;
         SetLevelData(level);
+        SetLevelText(level);
 
         stageManager.UnitPartyManager.AddBuildingStats(currentType,value);
         SetConstructionInfo();
@@ -147,8 +148,11 @@ public class BuildingDataElement: MonoBehaviour
         {
             lockedImage.gameObject.SetActive(true);
         }
+        else
+        {
+            lockedImage.gameObject.SetActive(false);
+        }
 
-        lockedImage.gameObject.SetActive(false);
     }
     private void OnClickUpgradeButton()
     {

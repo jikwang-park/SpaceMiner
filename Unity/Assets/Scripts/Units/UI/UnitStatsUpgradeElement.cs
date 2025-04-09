@@ -98,6 +98,7 @@ public class UnitStatsUpgradeElement : MonoBehaviour
         currentValue +=  value;
         currentGold += gold * (level + 1);
         level++;
+        GuideQuestManager.QuestProgressChange(GuideQuestTable.MissionType.StatUpgrade);
         SaveLoadManager.Data.unitStatUpgradeData.upgradeLevels[currentType] = level;
     }
     private void OnClickAddStatsButton()

@@ -26,7 +26,6 @@ public class BuildingTable : DataTable
         public int ItemID { get; set; }
         public int NeedCount { get; set; }
         public int MaxLevel { get; set; }
-        public int Sequence { get; set; }
         public string PrefabID { get; set; }
 
         public void Set(string[] argument)
@@ -46,8 +45,7 @@ public class BuildingTable : DataTable
             ItemID = int.Parse(argument[5]);
             NeedCount = int.Parse(argument[6]);
             MaxLevel = int.Parse(argument[7]);
-            Sequence = int.Parse(argument[8]);
-            PrefabID = argument[9];
+            PrefabID = argument[8];
         }
     }
 
@@ -84,7 +82,7 @@ public class BuildingTable : DataTable
                 Debug.Log($"Key Duplicated: {item.ID}");
             }
         }
-    }
+    } 
 
     public List<Data> GetDatas(BuildingType type)
     {

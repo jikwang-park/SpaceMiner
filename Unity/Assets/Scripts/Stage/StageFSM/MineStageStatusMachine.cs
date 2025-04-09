@@ -80,6 +80,7 @@ public class MineStageStatusMachine : StageStatusMachine
                 continue;
             }
             var robotGo = stageManager.ObjectPoolManager.Get(stageMachineData.robot);
+            robotGo.transform.position = mine.GetSpawnPoint(i).position;
             robotControllers[i] = robotGo.GetComponent<MiningRobotController>();
             robotControllers[i].Init(Variables.planetMiningID, equipments[Variables.planetMiningID][i].miningRobotId, i);
             robotControllers[i].SetOreStorage(mine.GetOre(i), mine.GetStorage(i));

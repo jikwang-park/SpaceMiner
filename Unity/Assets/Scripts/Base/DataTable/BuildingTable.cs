@@ -82,7 +82,7 @@ public class BuildingTable : DataTable
                 Debug.Log($"Key Duplicated: {item.ID}");
             }
         }
-    }
+    } 
 
     public List<Data> GetDatas(BuildingType type)
     {

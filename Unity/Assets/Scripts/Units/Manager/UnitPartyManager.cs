@@ -108,6 +108,14 @@ public class UnitPartyManager : MonoBehaviour
         unit.unitSkill.UpgradeUnitSkillStats(id);
     }
 
+    public void AddBuildingStats(BuildingTable.BuildingType type,float amount)
+    {
+        foreach(var unit in party)
+        {
+            unit.Value.unitStats.AddBuildingStats(type, amount);
+        }
+    }
+
     public void UnitDespawn()
     {
         foreach (var unit in party)

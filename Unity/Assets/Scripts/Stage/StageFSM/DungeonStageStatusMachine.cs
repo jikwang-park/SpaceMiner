@@ -11,9 +11,9 @@ public class DungeonStageStatusMachine : StageStatusMachine
     protected int currentStage;
     protected int currentWave;
 
-    protected float spawnDistance = 10f;
-
     protected WaveTable.Data waveData;
+
+    protected DungeonStageStatusMachineData stageMachineData;
 
     protected bool cleared = false;
 
@@ -22,13 +22,18 @@ public class DungeonStageStatusMachine : StageStatusMachine
 
     }
 
+    public override void SetStageData(StageStatusMachineData stageMachineData)
+    {
+        this.stageMachineData = (DungeonStageStatusMachineData)stageMachineData;
+    }
+
     public override void Start()
     {
         InitStage();
         InstantiateBackground();
 
         stageManager.UnitPartyManager.UnitSpawn();
-        stageManager.CameraManager.ResetCameraPosition();
+        stageManager.CameraManager.SetCameraOffset();
         stageManager.StartCoroutine(CoSpawnNextWave());
         stageManager.StageMonsterManager.OnMonsterCleared += OnMonsterCleared;
     }
@@ -85,7 +90,7 @@ public class DungeonStageStatusMachine : StageStatusMachine
         Transform unit = stageManager.UnitPartyManager.GetFirstLineUnitTransform();
         if (unit != null)
         {
-            stageManager.StageMonsterManager.Spawn(unit.position + Vector3.forward * spawnDistance, corpsData);
+            stageManager.StageMonsterManager.Spawn(unit.position + Vector3.forward * stageMachineData.spawnDistance, corpsData);
         }
         else
         {
@@ -134,7 +139,7 @@ public class DungeonStageStatusMachine : StageStatusMachine
 
             if (DataTableManager.DungeonTable.CountOfStage(currentType) > currentStage)
             {
-                SaveLoadManager.Data.stageSaveData.highestDungeon[currentType] = currentStage+1;
+                SaveLoadManager.Data.stageSaveData.highestDungeon[currentType] = currentStage + 1;
             }
             else
             {
@@ -175,7 +180,7 @@ public class DungeonStageStatusMachine : StageStatusMachine
         InstantiateBackground();
 
         stageManager.UnitPartyManager.UnitSpawn();
-        stageManager.CameraManager.ResetCameraPosition();
+        stageManager.CameraManager.SetCameraOffset();
         stageManager.StartCoroutine(CoSpawnNextWave());
     }
 }

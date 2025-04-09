@@ -85,8 +85,9 @@ public enum IngameStatus
 {
     Planet,
     Dungeon,
-    Mine
+    Mine,
 }
+
 public enum SlotType
 {
     Equip,

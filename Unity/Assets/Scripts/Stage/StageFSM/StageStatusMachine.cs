@@ -15,6 +15,7 @@ public abstract class StageStatusMachine
 
     public bool IsActive { get; protected set; } = false;
 
+    public abstract void SetStageData(StageStatusMachineData stageMachineData);
     public abstract void Start();
     public abstract void Update();
     public abstract void Exit();

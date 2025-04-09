@@ -27,7 +27,6 @@ public class Inventory : MonoBehaviour
     private UnitPartyManager unitPartyManager;
     public void Initialize(UnitTypes type)
     {
-        UpdateGridCellSize();
         unitPartyManager = FindObjectOfType<UnitPartyManager>();
         soldierInteractableUI.equipAction += Equip;
         InitializeInventory(type);

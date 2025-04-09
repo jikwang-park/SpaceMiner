@@ -601,13 +601,45 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 3567465656681610397}
     m_Modifications:
+    - target: {fileID: 833814366610045776, guid: d64535c847ce7404e8d885c1390f8812, type: 3}
+      propertyPath: m_Name
+      value: MoveButton
+      objectReference: {fileID: 0}
     - target: {fileID: 2077128676690348646, guid: d64535c847ce7404e8d885c1390f8812, type: 3}
       propertyPath: m_SizeDelta.y
-      value: 15
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 2080898191734285569, guid: d64535c847ce7404e8d885c1390f8812, type: 3}
       propertyPath: m_SizeDelta.y
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2365367974596549300, guid: d64535c847ce7404e8d885c1390f8812, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.size
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2365367974596549300, guid: d64535c847ce7404e8d885c1390f8812, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Mode
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2365367974596549300, guid: d64535c847ce7404e8d885c1390f8812, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
+      value: 
+      objectReference: {fileID: 1347922539892390612}
+    - target: {fileID: 2365367974596549300, guid: d64535c847ce7404e8d885c1390f8812, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_CallState
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 2365367974596549300, guid: d64535c847ce7404e8d885c1390f8812, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
+      value: OnClickMoveButton
+      objectReference: {fileID: 0}
+    - target: {fileID: 2365367974596549300, guid: d64535c847ce7404e8d885c1390f8812, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
+      value: MiningPanelUI, Assembly-CSharp
+      objectReference: {fileID: 0}
+    - target: {fileID: 2365367974596549300, guid: d64535c847ce7404e8d885c1390f8812, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_ObjectArgumentAssemblyTypeName
+      value: UnityEngine.Object, UnityEngine
       objectReference: {fileID: 0}
     - target: {fileID: 2617793470009254855, guid: d64535c847ce7404e8d885c1390f8812, type: 3}
       propertyPath: m_Constraint
@@ -717,8 +749,6 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 7870281229680309153, guid: d64535c847ce7404e8d885c1390f8812, type: 3}
-      propertyPath: m_IsActive
     - target: {fileID: 7262034920120824353, guid: d64535c847ce7404e8d885c1390f8812, type: 3}
       propertyPath: m_AnchorMax.y
       value: 1
@@ -790,6 +820,10 @@ PrefabInstance:
     - target: {fileID: 7828779598827776461, guid: d64535c847ce7404e8d885c1390f8812, type: 3}
       propertyPath: m_AnchoredPosition.y
       value: -43.975834
+      objectReference: {fileID: 0}
+    - target: {fileID: 7870281229680309153, guid: d64535c847ce7404e8d885c1390f8812, type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 8121679900592902332, guid: d64535c847ce7404e8d885c1390f8812, type: 3}
       propertyPath: m_AnchorMax.y
@@ -868,6 +902,17 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: d64535c847ce7404e8d885c1390f8812, type: 3}
+--- !u!114 &1347922539892390612 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 4437410086582564373, guid: d64535c847ce7404e8d885c1390f8812, type: 3}
+  m_PrefabInstance: {fileID: 3395732390138219713}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8357d51e0bd1b964195f14d306808179, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!224 &5660926388055738536 stripped
 RectTransform:
   m_CorrespondingSourceObject: {fileID: 7039044924750726249, guid: d64535c847ce7404e8d885c1390f8812, type: 3}

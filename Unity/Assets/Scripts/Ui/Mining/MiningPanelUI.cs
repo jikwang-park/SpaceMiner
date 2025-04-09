@@ -44,7 +44,7 @@ public class MiningPanelUI : MonoBehaviour
 
     public void OnClickMoveButton()
     {
-        // Variables.PlanetMiningID = currentPlanetId;
-        // stageManager.SetStatus(IngameStatus.Mine);
+        Variables.planetMiningID = currentPlanetId;
+        stageManager.SetStatus(IngameStatus.Mine);
     }
 }

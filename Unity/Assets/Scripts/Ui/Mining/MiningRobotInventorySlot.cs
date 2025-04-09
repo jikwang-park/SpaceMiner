@@ -11,6 +11,8 @@ public class MiningRobotInventorySlot : MonoBehaviour, IPointerDownHandler, IPoi
     private MiningRobotIcon iconImage;
     [SerializeField]
     private List<Sprite> gradeSprites;
+    [SerializeField]
+    private int equipSlotIndex = -1;
     public bool IsEmpty { get; private set; } = true;
     public int index { get; set; }
     private int miningRobotId;
@@ -40,7 +42,7 @@ public class MiningRobotInventorySlot : MonoBehaviour, IPointerDownHandler, IPoi
         {
             miningRobotId = 0;
         }
-        iconImage.Initialize(miningRobotId);
+        iconImage.Initialize(data.grade);
     }
 
     public void OnPointerDown(PointerEventData eventData)
@@ -159,11 +161,11 @@ public class MiningRobotInventorySlot : MonoBehaviour, IPointerDownHandler, IPoi
             }
             else if(draggedSlot.slotType == SlotType.Equip && this.slotType == SlotType.Inventory)
             {
-
+                MiningRobotInventoryManager.SwapInventoryAndEquipmentSlot(this.index, draggedSlot.equipSlotIndex);
             }
             else if(draggedSlot.slotType == SlotType.Inventory && this.slotType == SlotType.Equip)
             {
-
+                MiningRobotInventoryManager.SwapInventoryAndEquipmentSlot(draggedSlot.index, this.equipSlotIndex);
             }
         }
     }

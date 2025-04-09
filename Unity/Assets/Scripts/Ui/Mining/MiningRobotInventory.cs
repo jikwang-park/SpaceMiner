@@ -76,7 +76,7 @@ public class MiningRobotInventory : MonoBehaviour
     {
         miningRobotInventorySlots[index].Initialize(data);
     }
-    private void UpdateUI()
+    public void UpdateUI()
     {
         var datas = MiningRobotInventoryManager.Inventory.slots;
         for (int i = 0; i < datas.Count; i++)

@@ -16,10 +16,15 @@ public class SetMiningRobotToPlanetUI : MonoBehaviour
 
     public void Initialize(int planetId)
     {
+        if (!MiningRobotInventoryManager.Inventory.equipmentSlotsToPlanet.ContainsKey(planetId))
+        {
+            SaveLoadManager.Data.miningRobotInventorySaveData = MiningRobotInventoryData.CreateDefault();
+        }
         var slotOneData = MiningRobotInventoryManager.Inventory.equipmentSlotsToPlanet[planetId][0];
         slotOne.Initialize(slotOneData);
         var slotTwoData = MiningRobotInventoryManager.Inventory.equipmentSlotsToPlanet[planetId][1];
         slotTwo.Initialize(slotTwoData);
+
     }
 
 

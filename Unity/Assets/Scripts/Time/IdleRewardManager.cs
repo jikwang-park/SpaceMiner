@@ -49,6 +49,24 @@ public class IdleRewardManager : MonoBehaviour
 
         idleRewardsDict.Add(highestClearData.IdleRewardID, int.Parse(highestClearData.IdleRewardCount) * idleTime);
 
+        Dictionary<int, BigNumber> idleMiningReward = MiningRobotInventoryManager.GetIdleRewardOpenPlanet();
 
+        foreach(var kvp in idleMiningReward)
+        {
+            if(idleRewardsDict.ContainsKey(kvp.Key))
+            {
+                idleRewardsDict[kvp.Key] += kvp.Value * idleTime;
+            }
+            else 
+            {
+                idleRewardsDict.Add(kvp.Key, kvp.Value * idleTime);
+            }
+        }
+
+        foreach(var rewardItem in idleRewardsDict)
+        {
+            ItemManager.AddItem(rewardItem.Key, rewardItem.Value);
+            Debug.Log($"Get Idle Reward - {rewardItem.Key} : {rewardItem.Value}");
+        }
     }
 }

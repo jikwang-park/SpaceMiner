@@ -40,6 +40,7 @@ public class PlanetStageStatusMachine : StageStatusMachine
         InstantiateBackground();
 
         stageManager.UnitPartyManager.UnitSpawn();
+        stageManager.UnitPartyManager.ResetSkillCoolTime();
         stageManager.CameraManager.SetCameraOffset();
         stageManager.StartCoroutine(SpawnNextWave());
         stageManager.StageMonsterManager.OnMonsterDie += OnMonsterDie;

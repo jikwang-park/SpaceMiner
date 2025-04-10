@@ -17,6 +17,8 @@ public class UnitPartyManager : MonoBehaviour
     private Dictionary<UnitTypes, Unit> prefabs = new Dictionary<UnitTypes, Unit>();
     private Dictionary<UnitTypes, Unit> party = new Dictionary<UnitTypes, Unit>();
 
+    public event System.Action OnUnitDestory;
+
     public event System.Action OnUnitAllDead;
 
     [SerializeField]

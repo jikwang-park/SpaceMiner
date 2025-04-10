@@ -71,7 +71,7 @@ public class UnitStatsUpgradeElement : MonoBehaviour
         SetStatsInfo();
         Debug.Log(this.level);
     }
-
+    
     public float GetCurrentValue(int level)
     {
         float result = 0;
@@ -90,11 +90,14 @@ public class UnitStatsUpgradeElement : MonoBehaviour
 
     private void LevelUp()
     {
-        level++;
+        
         if (level > 1000)
         {
             addStatButton.interactable = false;
         }
+        
+        level++;
+        
         
         currentValue +=  value;
         currentGold += gold * (level + 1);
@@ -103,6 +106,10 @@ public class UnitStatsUpgradeElement : MonoBehaviour
     }
     private void OnClickAddStatsButton()
     {
+        if (ItemManager.CanConsume((int)Currency.Gold, currentGold))
+        {
+            ItemManager.ConsumeCurrency(Currency.Gold, currentGold);
+        }
         LevelUp();
         SetStatsInfo();
         stageManager.UnitPartyManager.AddStats(currentType, level*value);

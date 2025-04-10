@@ -161,6 +161,7 @@ public class BuildingDataElement: MonoBehaviour
     }
     private void OnClickUpgradeButton()
     {
+        
         if(isLocked)
         {
             isLocked = false;

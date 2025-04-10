@@ -57,10 +57,10 @@ public class MiningPanelUI : MonoBehaviour
     }
     public void CheckPlanetsOpen()
     {
-        List<bool> checkResults = MiningRobotInventoryManager.CheckPlanetsOpen();
-        for (int i = 0; i < checkResults.Count; i++)
+        var checkResults = MiningRobotInventoryManager.CheckPlanetsOpen();
+        for (int i = 0; i < planetIds.Count; i++)
         {
-            planetButtons[i].interactable = checkResults[i];
+            planetButtons[i].interactable = checkResults[planetIds[i]];
         }
     }
 }

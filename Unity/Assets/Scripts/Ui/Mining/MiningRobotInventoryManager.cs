@@ -175,9 +175,9 @@ public static class MiningRobotInventoryManager
             onChangedInventory?.Invoke(i, Inventory.slots[i]);
         }
     }
-    public static List<bool> CheckPlanetsOpen()
+    public static Dictionary<int, bool> CheckPlanetsOpen()
     {
-        List<bool> results = new List<bool>();
+        Dictionary<int, bool> results = new Dictionary<int, bool>();
         List<int> planetIds = DataTableManager.PlanetTable.GetIds();
         for (int i = 0; i < planetIds.Count; i++)
         {
@@ -188,9 +188,58 @@ public static class MiningRobotInventoryManager
             bool cleared = (SaveLoadManager.Data.stageSaveData.clearedPlanet == stageData.Planet && SaveLoadManager.Data.stageSaveData.clearedStage >= stageData.Stage)
                     || (SaveLoadManager.Data.stageSaveData.clearedPlanet > stageData.Planet);
 
-            results.Add(cleared);
+            results.Add(planetIds[i], cleared);
         }
 
         return results;
+    }
+    public static Dictionary<int, BigNumber> GetIdleRewardOpenPlanet()
+    {
+        Dictionary<int, BigNumber> result = new Dictionary<int, BigNumber>();
+
+        var checkPlanets = CheckPlanetsOpen();
+
+        foreach(var planet in checkPlanets) 
+        {
+            if(!planet.Value)
+            {
+                continue;
+            }
+            int itemId = DataTableManager.PlanetTable.GetData(planet.Key).ItemID;
+            BigNumber amountPerMinute = CalculateMiningAmountPerMinute(planet.Key);
+
+            result.Add(itemId, amountPerMinute );
+        }
+
+        return result;
+    }
+    public static BigNumber CalculateMiningAmountPerMinute(int planetId)
+    {
+        float amountPerSecond = 0;
+        if(Inventory.equipmentSlotsToPlanet.ContainsKey(planetId))
+        {
+            MiningRobotInventorySlotData[] robots = Inventory.equipmentSlotsToPlanet[planetId];
+
+            for(int i = 0; i < robots.Length; i++)
+            {
+                if (!robots[i].isEmpty)
+                {
+                    amountPerSecond += CalculateRobotMiningAmountPerSecond(planetId, robots[i].miningRobotId, i);
+                }
+            }
+        }
+        return (BigNumber)60 * amountPerSecond;
+    }
+    public static float CalculateRobotMiningAmountPerSecond(int planetId, int robotId, int index)
+    {
+        float robotMiningAmount;
+        var robotData = DataTableManager.RobotTable.GetData(robotId);
+        var planetData = DataTableManager.PlanetTable.GetData(planetId);
+
+        float planetLevel = (index == 1) ? planetData.miningLevel2 : planetData.miningLevel;
+
+        robotMiningAmount = (float)robotData.loadCapacity / (float)((planetLevel / robotData.moveSpeed) + (planetLevel / robotData.miningSpeed));
+
+        return robotMiningAmount;
     }
 }

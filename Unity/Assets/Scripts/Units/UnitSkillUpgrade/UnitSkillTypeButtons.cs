@@ -12,7 +12,7 @@ public class UnitSkillTypeButtons : MonoBehaviour
     [SerializeField]
     public Button healerButton;
     [SerializeField]
-    private UnitSkillUpgradeManager manager;
+    private UnitSkillUpgradePanel manager;
     
     private void Awake()
     {

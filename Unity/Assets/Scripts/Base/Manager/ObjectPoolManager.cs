@@ -66,6 +66,11 @@ public class ObjectPoolManager : MonoBehaviour
         }
     }
 
+    public bool IsObjectPoolCreated(string prefabId)
+    {
+        return gameObjectPools.ContainsKey(prefabId);
+    }
+
     private void CreateAddressableObjectPool(string prefabId)
     {
         ObjectPool<GameObject> pool = null;

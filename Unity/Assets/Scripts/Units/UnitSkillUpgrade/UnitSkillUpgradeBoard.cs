@@ -7,7 +7,7 @@ using UnityEngine.UI;
 
 public class UnitSkillUpgradeBoard : MonoBehaviour
 {
-    private UnitSkillUpgradeManager manager;
+    private UnitSkillUpgradePanel manager;
 
 
     [SerializeField]
@@ -97,7 +97,7 @@ public class UnitSkillUpgradeBoard : MonoBehaviour
     {
         currentId = nextId;
         SetBoardText(currentId, currentType);
-        stageManager.UnitPartyManager.UpgradeSkillStats(nextId, currentType);
+        stageManager.UnitPartyManager.UpgradeSkillStats(currentId, currentType);
         SaveLoadManager.Data.unitSkillUpgradeData.skillUpgradeId[currentType][currentGrade] = currentId;
         SaveLoadManager.SaveGame();
     }

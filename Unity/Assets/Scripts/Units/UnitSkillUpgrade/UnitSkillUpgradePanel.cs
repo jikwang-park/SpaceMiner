@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine;
 
-public class UnitSkillUpgradeManager : MonoBehaviour
+public class UnitSkillUpgradePanel : MonoBehaviour
 {
     private UnitTypes currentType;
 

@@ -7,6 +7,7 @@ public class MonsterSkill : MonoBehaviour
     private MonsterSkillTable.Data skillData;
     private MonsterController controller;
     private float lastSkillTime;
+    private MonsterStats stats;
 
     public bool IsCoolTime => lastSkillTime + skillData.CoolTime < Time.time;
 
@@ -56,9 +57,10 @@ public class MonsterSkill : MonoBehaviour
         lastSkillTime = Time.time;
     }
 
-    public void SetSkill(int skillId)
+    public void SetSkill(int skillId, MonsterStats stats)
     {
         skillData = DataTableManager.MonsterSkillTable.GetData(skillId);
+        this.stats = stats;
     }
 
     public void Use()
@@ -135,21 +137,12 @@ public class MonsterSkill : MonoBehaviour
         foreach (var defender in targets)
         {
             CharacterStats dStats = defender.GetComponent<CharacterStats>();
-            Attack attack = CreateAttack(dStats);
+            Attack attack = stats.CreateAttack(dStats, skillData.AtkRatio);
             IAttackable[] attackables = defender.GetComponents<IAttackable>();
             foreach (var attackable in attackables)
             {
                 attackable.OnAttack(gameObject, attack);
             }
         }
-    }
-
-    public Attack CreateAttack(CharacterStats defenderStats)
-    {
-        //TODO: 대미지 계산식 정해지면 수정해야함 - 250322 HKY
-        Attack attack = new Attack();
-
-        attack.damage = skillData.AtkRatio;
-        return attack;
     }
 }

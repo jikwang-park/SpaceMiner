@@ -52,14 +52,17 @@ public class CameraManager : MonoBehaviour
 
     public void SetCameraOffset(Vector3 offset)
     {
-        unit = unitPartyManager.GetFirstLineUnitTransform();
         Offset = offset;
-        if (unit is null)
+        if (unitPartyManager is not null && unitPartyManager.UnitCount > 0)
         {
-            worldCamera.position = Offset;
-            return;
+            unit = unitPartyManager.GetFirstLineUnitTransform();
+            worldCamera.position = unit.position + Offset;
         }
-        worldCamera.position = unit.position + Offset;
+        else
+        {
+            unit = null;
+            worldCamera.position = Offset;
+        }
     }
 
     public void SetCameraRotation()

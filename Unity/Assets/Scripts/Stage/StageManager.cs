@@ -33,18 +33,7 @@ public class StageManager : MonoBehaviour
         UnitPartyManager = GetComponent<UnitPartyManager>();
         ObjectPoolManager = GetComponent<ObjectPoolManager>();
         CameraManager = GetComponent<CameraManager>();
-
-        StageStatusMachine stageStatusMachine = new PlanetStageStatusMachine(this);
-        stageStatusMachine.SetStageData(statusMachineDatas[IngameStatus.Planet]);
-        machines.Add(IngameStatus.Planet, stageStatusMachine);
-
-        stageStatusMachine = new DungeonStageStatusMachine(this);
-        stageStatusMachine.SetStageData(statusMachineDatas[IngameStatus.Dungeon]);
-        machines.Add(IngameStatus.Dungeon, stageStatusMachine);
-
-        stageStatusMachine = new MineStageStatusMachine(this);
-        stageStatusMachine.SetStageData(statusMachineDatas[IngameStatus.Mine]);
-        machines.Add(IngameStatus.Mine, stageStatusMachine);
+        InitStatusMachines();
 
         //switch (ingameStatus)
         //{
@@ -68,6 +57,23 @@ public class StageManager : MonoBehaviour
         //stageStatusMachine.Update();
 
         machines[ingameStatus].Update();
+    }
+
+    private void InitStatusMachines()
+    {
+        machines.Clear();
+
+        StageStatusMachine stageStatusMachine = new PlanetStageStatusMachine(this);
+        stageStatusMachine.SetStageData(statusMachineDatas[IngameStatus.Planet]);
+        machines.Add(IngameStatus.Planet, stageStatusMachine);
+
+        stageStatusMachine = new DungeonStageStatusMachine(this);
+        stageStatusMachine.SetStageData(statusMachineDatas[IngameStatus.Dungeon]);
+        machines.Add(IngameStatus.Dungeon, stageStatusMachine);
+
+        stageStatusMachine = new MineStageStatusMachine(this);
+        stageStatusMachine.SetStageData(statusMachineDatas[IngameStatus.Mine]);
+        machines.Add(IngameStatus.Mine, stageStatusMachine);
     }
 
     public void SetStatus(IngameStatus status)

@@ -40,4 +40,14 @@ public class Mine : MonoBehaviour, IObjectPoolGameObject
 
         return storages[index];
     }
+
+    public Transform GetSpawnPoint(int index)
+    {
+        if (index < 0 || index >= spawnPoints.Length)
+        {
+            return null;
+        }
+
+        return spawnPoints[index];
+    }
 }

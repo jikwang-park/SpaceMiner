@@ -36,6 +36,8 @@ public class BuildingDataElement: MonoBehaviour
     private int needItemCount;
     [SerializeField]
     private bool isLocked = true;
+    [SerializeField]
+    private float currentValue = 0;
 
     [SerializeField]
     private BuildingTable.BuildingType currentType;
@@ -76,6 +78,7 @@ public class BuildingDataElement: MonoBehaviour
         }
         SetFirstUpgrade(isLocked);
         SetConstructionInfo();
+
     }
 
     public void GetCurrentSequence()
@@ -116,6 +119,7 @@ public class BuildingDataElement: MonoBehaviour
 
         level++;
         SetLevelData(level);
+        SetLevelText(level);
 
         stageManager.UnitPartyManager.AddBuildingStats(currentType,value);
         SetConstructionInfo();
@@ -123,6 +127,8 @@ public class BuildingDataElement: MonoBehaviour
         SaveLoadManager.Data.buildingData.buildingLevels[currentType] = level;
         SaveLoadManager.SaveGame();
     }
+
+   
     private bool IsMaxLevel(int level)
     {
         if(level == maxLevel)
@@ -147,8 +153,11 @@ public class BuildingDataElement: MonoBehaviour
         {
             lockedImage.gameObject.SetActive(true);
         }
+        else
+        {
+            lockedImage.gameObject.SetActive(false);
+        }
 
-        lockedImage.gameObject.SetActive(false);
     }
     private void OnClickUpgradeButton()
     {

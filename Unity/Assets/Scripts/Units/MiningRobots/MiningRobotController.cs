@@ -30,7 +30,6 @@ public class MiningRobotController : MonoBehaviour, IObjectPoolGameObject
     private void Start()
     {
         currentTarget = ore;
-        Init(1, 3001, 1);
     }
 
     private void Update()

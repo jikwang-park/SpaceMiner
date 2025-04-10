@@ -151,7 +151,7 @@ public class MonsterController : MonoBehaviour, IObjectPoolGameObject
         InitBehaviourTree();
         if (MonsterData.MonsterSkill != 0)
         {
-            GetComponent<MonsterSkill>().SetSkill(MonsterData.MonsterSkill);
+            GetComponent<MonsterSkill>().SetSkill(MonsterData.MonsterSkill, Stats);
         }
     }
 

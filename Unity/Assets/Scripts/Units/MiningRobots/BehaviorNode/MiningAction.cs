@@ -16,10 +16,10 @@ public class MiningAction : ActionNode<MiningRobotController>
 
         switch (context.Slot)
         {
-            case 1:
+            case 0:
                 targetTime = Time.time + (float)context.PlanetData.miningLevel / context.RobotData.miningSpeed;
                 break;
-            case 2:
+            case 1:
                 targetTime = Time.time + (float)context.PlanetData.miningLevel2 / context.RobotData.miningSpeed;
                 break;
         }

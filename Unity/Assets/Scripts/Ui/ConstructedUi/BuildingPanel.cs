@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class BuildingManager : MonoBehaviour
+public class BuildingPanel : MonoBehaviour
 {
     [SerializeField]
     private BuildingDataElement element;

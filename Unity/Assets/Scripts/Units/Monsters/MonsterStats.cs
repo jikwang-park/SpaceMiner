@@ -14,7 +14,6 @@ public class MonsterStats : CharacterStats
         moveSpeed = monsterData.MoveSpeed;
     }
 
-
     public override void Execute(GameObject defender)
     {
         if (defender is null)
@@ -39,7 +38,8 @@ public class MonsterStats : CharacterStats
 
     public override Attack CreateAttack(CharacterStats defenderStats)
     {
-        //TODO: 대미지 계산식 정해지면 수정해야함 - 250322 HKY
+        //몬스터 공격력 * 200/(200 + 방어력)
+
         Attack attack = new Attack();
 
         BigNumber damage = this.damage;
@@ -51,9 +51,32 @@ public class MonsterStats : CharacterStats
         }
         attack.damage = damage;
 
-        if (defenderStats != null)
+        if (defenderStats is not null)
         {
-            attack.damage -= defenderStats.armor;
+            attack.damage *= Variables.DefenceBase.DivideToFloat(200 + defenderStats.armor);
+        }
+
+        return attack;
+    }
+
+    public Attack CreateAttack(CharacterStats defenderStats, float skillRatio)
+    {
+        //몬스터 공격력 * 스킬 배율 * 200/(200 + 방어력)
+
+        Attack attack = new Attack();
+
+        BigNumber damage = this.damage;
+
+        attack.isCritical = criticalChance >= Random.value;
+        if (attack.isCritical)
+        {
+            damage *= criticalMultiplier;
+        }
+        attack.damage = damage;
+
+        if (defenderStats is not null)
+        {
+            attack.damage *= skillRatio * Variables.DefenceBase.DivideToFloat(200 + defenderStats.armor);
         }
 
         return attack;

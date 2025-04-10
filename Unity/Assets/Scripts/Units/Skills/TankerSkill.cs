@@ -7,28 +7,38 @@ public class TankerSkill : UnitSkill
     private float shieldRatio;
     private int buffId; //250331 HKY 데이터형 변경
 
-
+    
     protected override void Awake()
     {
         base.Awake();
-        Init();
+        currentType = UnitTypes.Tanker;
         unit = GetComponent<Unit>();
     }
-    public override void Init()
+ 
+    public override void TankerInit(UnitTypes type , Grade grade)
     {
-        var tankerSkillData = DataTableManager.TankerSkillTable.GetData(1201); //250331 HKY 데이터형 변경
+        currentType = type;
+        currentSkillGrade = grade;
+      
+        var data = SaveLoadManager.Data.unitSkillUpgradeData.skillUpgradeId;
+
+        currentSkillId = data[currentType][currentSkillGrade];
+        var tankerSkillData = DataTableManager.TankerSkillTable.GetData(currentSkillId); //250331 HKY 데이터형 변경
         if (tankerSkillData != null)
         {
             coolTime = tankerSkillData.CoolTime;
             shieldRatio = tankerSkillData.ShieldRatio;
             duration = tankerSkillData.Duration;
             buffId = tankerSkillData.BuffID;
+
+            Debug.Log(shieldRatio);
         }
-    }   
-    
+    }
+
+
     public override void GetTarget()
     {
-        var tankerSkillData = DataTableManager.TankerSkillTable.GetData(1201); //250331 HKY 데이터형 변경
+        var tankerSkillData = DataTableManager.TankerSkillTable.GetData(currentSkillId); //250331 HKY 데이터형 변경
         string soliderTarget = tankerSkillData.SoldierTarget;
         string[] targetStrings = soliderTarget.Split("_");
         foreach(string target in targetStrings)

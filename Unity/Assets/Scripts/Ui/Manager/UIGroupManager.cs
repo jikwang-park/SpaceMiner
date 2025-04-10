@@ -11,7 +11,10 @@ public class UIGroupManager : MonoBehaviour
 
     private void Start()
     {
-        tabs[currentTab].gameObject.SetActive(true);
+        if (tabs.Length > 0)
+        {
+            tabs[currentTab].gameObject.SetActive(true);
+        }
     }
 
     //TODO: 탭으로 사용할 패널을 인스펙터에서 OnClick 이벤트에 연결 후 패널인덱스 할당

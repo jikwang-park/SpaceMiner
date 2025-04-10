@@ -74,7 +74,8 @@ public static class MiningRobotInventoryManager
     {
         int currentMergedRobotId = Inventory.slots[indexA].miningRobotId;
         RobotMergeTable.Data data = DataTableManager.RobotMergeTable.GetData(currentMergedRobotId);
-        if(data == null)
+        int canMerge = DataTableManager.RobotTable.GetData(currentMergedRobotId).IsMergeable;
+        if(data == null || canMerge == 0)
         {
             return;
         }
@@ -173,5 +174,23 @@ public static class MiningRobotInventoryManager
         {
             onChangedInventory?.Invoke(i, Inventory.slots[i]);
         }
+    }
+    public static List<bool> CheckPlanetsOpen()
+    {
+        List<bool> results = new List<bool>();
+        List<int> planetIds = DataTableManager.PlanetTable.GetIds();
+        for (int i = 0; i < planetIds.Count; i++)
+        {
+            var planetData = DataTableManager.PlanetTable.GetData(planetIds[i]);
+            var stageData = DataTableManager.StageTable.GetData(planetData.stageToOpen);
+
+
+            bool cleared = (SaveLoadManager.Data.stageSaveData.clearedPlanet == stageData.Planet && SaveLoadManager.Data.stageSaveData.clearedStage >= stageData.Stage)
+                    || (SaveLoadManager.Data.stageSaveData.clearedPlanet > stageData.Planet);
+
+            results.Add(cleared);
+        }
+
+        return results;
     }
 }

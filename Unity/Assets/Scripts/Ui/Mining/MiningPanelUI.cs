@@ -2,18 +2,24 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 using static MiningRobotInventoryManager;
 
 public class MiningPanelUI : MonoBehaviour
 {
     [SerializeField]
+    private List<Button> planetButtons;
+    [SerializeField]
     private MiningRobotMergePopupUI robotMergePopupUI;
     [SerializeField]
     private SetMiningRobotToPlanetUI setRobotToPlanetUI;
+
     private List<int> planetIds = new List<int>();
     private StageManager stageManager;
+    private StageSaveData stageSaveData;
     private void Awake()
     {
+        stageSaveData = SaveLoadManager.Data.stageSaveData;
         stageManager = GameObject.FindGameObjectWithTag("GameController").GetComponent<StageManager>();
         planetIds = DataTableManager.PlanetTable.GetIds();
         onRequestMerge += ShowMergePopup;
@@ -31,6 +37,7 @@ public class MiningPanelUI : MonoBehaviour
     }
     private void OnEnable()
     {
+        CheckPlanetsOpen();
         OnClickPlanetButton(0);
     }
     public void OnClickPlanetButton(int index)
@@ -47,5 +54,13 @@ public class MiningPanelUI : MonoBehaviour
     {
         Variables.planetMiningID = currentPlanetId;
         stageManager.SetStatus(IngameStatus.Mine);
+    }
+    public void CheckPlanetsOpen()
+    {
+        List<bool> checkResults = MiningRobotInventoryManager.CheckPlanetsOpen();
+        for (int i = 0; i < checkResults.Count; i++)
+        {
+            planetButtons[i].interactable = checkResults[i];
+        }
     }
 }

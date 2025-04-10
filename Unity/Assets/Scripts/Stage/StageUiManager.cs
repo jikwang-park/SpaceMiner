@@ -17,8 +17,15 @@ public class StageUiManager : MonoBehaviour
     [field: SerializeField]
     public ScreenCurtain curtain { get; private set; }
 
+    public event System.Action OnExitButtonClicked;
+
     private void Awake()
     {
         ObjectPoolManager = GetComponent<ObjectPoolManager>();
+    }
+
+    public void ExitButtonClicked()
+    {
+        OnExitButtonClicked?.Invoke();
     }
 }

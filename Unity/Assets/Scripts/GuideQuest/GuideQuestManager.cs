@@ -95,9 +95,8 @@ public static class GuideQuestManager
                 break;
 
             case GuideQuestTable.MissionType.Building:
-
-                //TODO: 건물 구현 후 추가 예정
-
+                Progress = SaveLoadManager.Data.buildingData.buildingLevels[(BuildingTable.BuildingType)currentQuestData.Target];
+                isClearedNow = Progress >= currentQuestData.TargetCount;
                 break;
         }
 

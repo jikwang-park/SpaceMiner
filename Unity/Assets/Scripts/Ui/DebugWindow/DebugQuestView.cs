@@ -24,11 +24,17 @@ public class DebugQuestView : MonoBehaviour
     private void Start()
     {
         Refresh();
+        GuideQuestManager.OnQuestProgressChanged += RefreshText;
     }
 
     public void Refresh()
     {
         GuideQuestManager.RefreshQuest();
+        RefreshText();
+    }
+
+    public void RefreshText()
+    {
         var questData = GuideQuestManager.currentQuestData;
         idText.text = questData.ID.ToString();
         turnText.text = questData.Turn.ToString();
@@ -52,6 +58,6 @@ public class DebugQuestView : MonoBehaviour
             return;
         }
         GuideQuestManager.ChangeQuest(result);
-        Refresh();
+        RefreshText();
     }
 }

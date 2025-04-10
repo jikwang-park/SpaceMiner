@@ -49,7 +49,6 @@ public class UnitStatsUpgradeElement : MonoBehaviour
     public void Init(UnitUpgradeTable.Data data)
     {
         currentType = data.Type;
-        level = 0;
         value = data.Value;
         gold = data.Gold;
         maxLevel = data.MaxLevel;
@@ -70,6 +69,7 @@ public class UnitStatsUpgradeElement : MonoBehaviour
         currentValue = GetCurrentValue(level);
         currentGold = GetCurrentGold(level);
         SetStatsInfo();
+        Debug.Log(this.level);
     }
 
     public float GetCurrentValue(int level)

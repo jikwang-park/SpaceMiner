@@ -1,4 +1,5 @@
 using Newtonsoft.Json;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -58,6 +59,7 @@ public class SaveDataV3 : SaveDataV2
     public QuestProgressData questProgressData;
     public BuildingData buildingData;
     public DungeonKeyShopData dungeonKeyShopData;
+    public DateTime quitTime;
     public SaveDataV3() : base()
     {
         unitStatUpgradeData = UnitStatUpgradeData.CreateDefault();
@@ -65,6 +67,7 @@ public class SaveDataV3 : SaveDataV2
         questProgressData = QuestProgressData.CreateDefault();
         buildingData = BuildingData.CreateDefault();
         dungeonKeyShopData = DungeonKeyShopData.CreateDefault();
+        quitTime = DateTime.Now;
         Version = 3;
     }
     public SaveDataV3(SaveDataV2 oldData) : base(oldData)
@@ -74,6 +77,7 @@ public class SaveDataV3 : SaveDataV2
         questProgressData = QuestProgressData.CreateDefault();
         buildingData = BuildingData.CreateDefault();
         dungeonKeyShopData = DungeonKeyShopData.CreateDefault();
+        quitTime = DateTime.Now;
         Version = 3;
     }
     public override SaveData VersionUp()

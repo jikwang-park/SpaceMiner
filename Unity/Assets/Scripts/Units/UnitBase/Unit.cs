@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using Unity.VisualScripting;
 using Unity.VisualScripting.Antlr3.Runtime.Misc;
 using UnityEditor;
 using UnityEngine;
@@ -81,6 +82,8 @@ public class Unit : MonoBehaviour
 
 
     public float lastSkillUsedTime;
+
+    public Grade currentGrade;
 
 
     public bool isAutoSkillMode;
@@ -294,20 +297,25 @@ public class Unit : MonoBehaviour
     public void SetData(SoldierTable.Data data, UnitTypes type)
     {
         unitStats.SetData(data, type);
-
         currentUnitType = type;
+        currentGrade = data.Rating;
         switch (currentUnitType)
         {
             case UnitTypes.Tanker:
                 unitSkill = gameObject.AddComponent<TankerSkill>();
+                unitSkill.TankerInit(currentUnitType, currentGrade);
                 break;
             case UnitTypes.Dealer:
                 unitSkill = gameObject.AddComponent<DealerSkill>();
+                unitSkill.DealerInit(currentUnitType, currentGrade);
                 break;
             case UnitTypes.Healer:
                 unitSkill = gameObject.AddComponent<HealerSkill>();
+                unitSkill.HealerInit(currentUnitType, currentGrade);
                 break;
         }
+        unitSkill.currentType = currentUnitType;
+        unitSkill.currentSkillGrade = currentGrade;
         behaviorTree = UnitBTManager.SetBehaviorTree(this, currentUnitType);
     }
     public bool IsMonsterExist()
@@ -431,6 +439,7 @@ public class Unit : MonoBehaviour
 
     private void Update()
     {
+        
         if (HasBarrier)
         {
             if (Time.time > skillEndTime)
@@ -447,6 +456,30 @@ public class Unit : MonoBehaviour
         {
             IsUnitHit = true;
         }
+
+    }
+
+    public void GetSaveStats(UnitUpgradeTable.UpgradeType type, int level)
+    {
+        float value = DataTableManager.UnitUpgradeTable.GetData(type).Value;
+        float stats = 0;
+
+        for (int i = 1; i <= level; ++i)
+        {
+            stats += value * i;
+        }
+        unitStats.AddStats(type, stats);
+    }
+
+    public void GetSaveBuildingStats(BuildingTable.BuildingType type, int level)
+    {
+        var data =DataTableManager.BuildingTable.GetDatas(type);
+        float buildingStats = 0;
+        for(int i = 0; i <= level; ++ i)
+        {
+            buildingStats += data[i].Value;
+        }
+        unitStats.AddBuildingStats(type, buildingStats);
 
     }
 }

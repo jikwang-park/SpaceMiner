@@ -10,7 +10,7 @@ public class TankerSkillTable : DataTable
     public class Data : ITableData
     {
         public int ID { get; set; }
-        public SkillType Type { get; set; }
+        public Grade Type { get; set; }
         public float ShieldRatio { get; set; }
         public float Duration { get; set; }
         public float CoolTime { get; set; }
@@ -23,7 +23,7 @@ public class TankerSkillTable : DataTable
         public void Set(string[] argument)
         {
             ID = int.Parse(argument[0]);
-            Type = Enum.Parse<SkillType>(argument[1]);
+            Type = Enum.Parse<Grade>(argument[1]);
             ShieldRatio = int.Parse(argument[2]);
             Duration = int.Parse(argument[3]);
             CoolTime = int.Parse(argument[4]);

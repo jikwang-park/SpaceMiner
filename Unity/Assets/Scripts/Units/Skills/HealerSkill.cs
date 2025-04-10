@@ -10,19 +10,28 @@ public class HealerSkill : UnitSkill
     protected override void Awake()
     {
         base.Awake();
-        Init();
         unit = GetComponent<Unit>();
     }
-    public override void Init()
+
+
+    public override void HealerInit(UnitTypes type, Grade grade)
     {
-        var healerSkillData = DataTableManager.HealerSkillTable.GetData(1301); //250331 HKY 데이터형 변경
+        currentType = type;
+        currentSkillGrade = grade;
+
+        var data = SaveLoadManager.Data.unitSkillUpgradeData.skillUpgradeId;
+
+        currentSkillId = data[currentType][currentSkillGrade];
+        var healerSkillData = DataTableManager.HealerSkillTable.GetData(currentSkillId); //250331 HKY 데이터형 변경
         if (healerSkillData != null)
         {
             coolTime = healerSkillData.CoolTime;
             healRatio = healerSkillData.HealRatio;
             buffId = healerSkillData.BuffID;
+            Debug.Log(healRatio);
         }
     }
+   
 
     public override void GetTarget()
     {

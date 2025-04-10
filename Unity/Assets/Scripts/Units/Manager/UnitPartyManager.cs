@@ -217,24 +217,47 @@ public class UnitPartyManager : MonoBehaviour
     {
         Vector3 position = startPos;
 
-        var typeData = DataTableManager.SoldierTable.GetTypeDictionary();
+       
+        var unitStats = SaveLoadManager.Data.unitStatUpgradeData.upgradeLevels;
+        var buildingStats = SaveLoadManager.Data.buildingData.buildingLevels;
 
         for (int i = (int)UnitTypes.Tanker; i <= (int)UnitTypes.Healer; ++i)
         {
-            if (!prefabs.ContainsKey((UnitTypes)i))
+            var currentType = (UnitTypes)i;
+
+
+            if (!prefabs.ContainsKey(currentType))
             {
                 position += unitOffset;
                 continue;
             }
 
-            var go = Instantiate(prefabs[(UnitTypes)i], position, Quaternion.identity);
+            var go = Instantiate(prefabs[currentType], position, Quaternion.identity);
             go.GetComponent<DestructedDestroyEvent>().OnDestroyed += OnUnitDie;
             position += unitOffset;
-            // 나중에 비동기로드로 바꿈
-            go.SetData(typeData[(UnitTypes)i][0], (UnitTypes)i);
+            var currentSoilderId = InventoryManager.GetInventoryData(currentType).equipElementID;
+            var currentSoilderData = DataTableManager.SoldierTable.GetData(currentSoilderId);
+            go.SetData(currentSoilderData, currentType);
             party.Add(go.UnitTypes, go);
+            for (int j = (int)UnitUpgradeTable.UpgradeType.AttackPoint; j <= (int)UnitUpgradeTable.UpgradeType.CriticalDamages; j++)
+            {
+                var currentUpgradeType = (UnitUpgradeTable.UpgradeType)j;
+                var currentTypelevel = unitStats[currentUpgradeType];
+                go.GetSaveStats(currentUpgradeType, currentTypelevel);//레벨비례데미지 계산해줘야댐
+            }
+            for(int k = (int)BuildingTable.BuildingType.IdleTime; k<= (int)BuildingTable.BuildingType.Mining; ++k)
+            {
+                var currentBuildingType = (BuildingTable.BuildingType)k;
+                var currentBuildingLevel = buildingStats[currentBuildingType];
+                go.GetSaveBuildingStats(currentBuildingType, currentBuildingLevel);
+            }
+            //for(int y = (int)Grade.Normal; y <= (int)Grade.Legend; ++y)
+            //{
+            //    go.unitSkill.GetSaveSkillData()
+            //}
         }
     }
 
-  
+
+ 
 }

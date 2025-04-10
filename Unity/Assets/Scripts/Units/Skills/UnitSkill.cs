@@ -1,13 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-public enum SkillType
-{
-    Normal,
-    Rare,
-    Epic,
-    Legend,
-}
+
 public class UnitSkill : MonoBehaviour
 {
 
@@ -21,7 +15,7 @@ public class UnitSkill : MonoBehaviour
 
     protected StageManager stageManager;
 
-    protected SkillType currentSkillType;
+    public Grade currentSkillGrade;
 
     protected UnitStats currentStats;
 
@@ -29,6 +23,11 @@ public class UnitSkill : MonoBehaviour
 
     public List<Unit> targetList;
 
+    public UnitTypes currentType;
+
+    public int currentSkillId;
+
+    public int nextId;
 
 
     public bool CanSaerchTarget;
@@ -47,11 +46,16 @@ public class UnitSkill : MonoBehaviour
     {
 
     }
+ 
 
-    public virtual void Init()
-    {
+    public virtual void TankerInit(UnitTypes type , Grade grade) { }
 
-    }
+
+    public virtual void DealerInit(UnitTypes type, Grade grade) { }
+
+    public virtual void HealerInit(UnitTypes type, Grade grade) { }
+    
+
     public virtual void ExecuteSkill()
     {
 
@@ -61,5 +65,5 @@ public class UnitSkill : MonoBehaviour
     {
         
     }
-    
+
 }

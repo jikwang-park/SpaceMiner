@@ -15,7 +15,7 @@ public class UnitSkillGradeButtons : MonoBehaviour
     [SerializeField]
     private Button legendButton;
     [SerializeField]
-    private UnitSkillUpgradeManager manager;
+    private UnitSkillUpgradePanel manager;
 
     public Dictionary<Grade, Button> buttonDictionary = new Dictionary<Grade, Button>();
 

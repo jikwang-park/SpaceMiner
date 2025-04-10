@@ -86,6 +86,8 @@ public class UnitPartyManager : MonoBehaviour
         if (party.ContainsKey(type))
         {
             party[type].SetData(data, type);
+            GetCurrentStats(party[type]);
+            GetCurrentBulidngStats(party[type]);
         }
     }
 
@@ -236,16 +238,15 @@ public class UnitPartyManager : MonoBehaviour
                 continue;
             }
 
-            var go = Instantiate(prefabs[currentType], position, Quaternion.identity);
-            go.GetComponent<DestructedDestroyEvent>().OnDestroyed += OnUnitDie;
+            var unit = Instantiate(prefabs[currentType], position, Quaternion.identity);
+            unit.GetComponent<DestructedDestroyEvent>().OnDestroyed += OnUnitDie;
             position += unitOffset;
             var currentSoilderId = InventoryManager.GetInventoryData(currentType).equipElementID;
             var currentSoilderData = DataTableManager.SoldierTable.GetData(currentSoilderId);
-            party.Add(currentType, go);
-            go.SetData(currentSoilderData, currentType);
-
-            GetCurrentStats(go);
-            GetCurrentBulidngStats(go);
+            party.Add(currentType, unit);
+            unit.SetData(currentSoilderData, currentType);
+            GetCurrentStats(unit);
+            GetCurrentBulidngStats(unit);
         }
         OnUnitCreated?.Invoke();
     }

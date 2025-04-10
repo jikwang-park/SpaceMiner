@@ -313,15 +313,24 @@ public class Unit : MonoBehaviour
         switch (currentUnitType)
         {
             case UnitTypes.Tanker:
-                unitSkill = gameObject.AddComponent<TankerSkill>();
+                if(unitSkill == null)
+                {
+                    unitSkill = gameObject.AddComponent<TankerSkill>();
+                }
                 unitSkill.TankerInit(currentUnitType, currentGrade);
                 break;
             case UnitTypes.Dealer:
-                unitSkill = gameObject.AddComponent<DealerSkill>();
+                if (unitSkill == null)
+                {
+                    unitSkill = gameObject.AddComponent<DealerSkill>();
+                }
                 unitSkill.DealerInit(currentUnitType, currentGrade);
                 break;
             case UnitTypes.Healer:
-                unitSkill = gameObject.AddComponent<HealerSkill>();
+                if (unitSkill == null)
+                {
+                    unitSkill = gameObject.AddComponent<HealerSkill>();
+                }
                 unitSkill.HealerInit(currentUnitType, currentGrade);
                 break;
         }

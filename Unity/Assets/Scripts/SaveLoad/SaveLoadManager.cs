@@ -130,6 +130,7 @@ public static class SaveLoadManager
         defaultSaveData.unitSkillUpgradeData = UnitSkillUpgradeData.CreateDefault();
         defaultSaveData.buildingData = BuildingData.CreateDefault();
         defaultSaveData.dungeonKeyShopData = DungeonKeyShopData.CreateDefault();
+        defaultSaveData.quitTime = DateTime.Now;
         return defaultSaveData;
     }
 }

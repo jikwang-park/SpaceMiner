@@ -34,7 +34,7 @@ public class GuideQuestWindow : MonoBehaviour
         stageManager = GameObject.FindGameObjectWithTag("GameController").GetComponent<StageManager>();
         questDescriptionText.text = GuideQuestManager.currentQuestData.StringID.ToString();
         UpdateProgress();
-        GuideQuestManager.QuestProgressChange(GuideQuestManager.currentQuestData.MissionClearType);
+        GuideQuestManager.RefreshQuest();
     }
 
     private void UpdateProgress()
@@ -53,7 +53,7 @@ public class GuideQuestWindow : MonoBehaviour
     private void OnQuestClear()
     {
         cleared = true;
-        questProgressText.text = "Clear";
+        questProgressText.text = $"{questProgressText.text} Clear";
     }
 
     public void QuestSuccess()

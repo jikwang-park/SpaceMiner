@@ -25,16 +25,11 @@ public class DebugUIManager : MonoBehaviour
         }
     }
 
-    public void Refresh()
+    public void RefreshItem()
     {
         foreach (var row in itemRows)
         {
             row.Refresh();
         }
-    }
-
-    public void Hide()
-    {
-        gameObject.SetActive(gameObject.activeSelf);
     }
 }

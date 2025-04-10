@@ -14,6 +14,11 @@ public static class ItemManager
     }
     public static void AddItem(int itemId, BigNumber amount)
     {
+        if(DataTableManager.ItemTable.GetData(itemId) == null)
+        {
+            return;
+        }
+
         BigNumber maxStack = DataTableManager.ItemTable.GetData(itemId).MaxStack;
         if(items.ContainsKey(itemId))
         {

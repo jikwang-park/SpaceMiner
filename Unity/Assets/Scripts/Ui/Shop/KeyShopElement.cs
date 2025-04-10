@@ -54,14 +54,17 @@ public class KeyShopElement : MonoBehaviour
         paymentItemAmount = shopData.PayCount;
         needItemAmount = shopData.NeedCount;
         dailyPurchaseLimitCount = shopData.DailyPurchaseLimit;
+
         dailyResetHour = (shopData.ResetTime / 100) % 24;
         dailyResetMinute = shopData.ResetTime % 100;
-        StartCoroutine(CheckReset());
-        UpdateUI();
+        CheckReset();
     }
     private void OnEnable()
     {
-        StartCoroutine(CheckReset());
+        if(currentData != null)
+        {
+            CheckReset();
+        }
     }
     private void Update()
     {
@@ -86,41 +89,37 @@ public class KeyShopElement : MonoBehaviour
             ItemManager.ConsumeItem(needItemId, needItemAmount);
             ItemManager.AddItem(paymentItemId, paymentItemAmount);
             currentData.dailyPurchaseCount++;
-            StartCoroutine(UpdateLastPurchaseTime());
+            UpdateLastPurchaseTime();
             UpdateUI();
         }
     }
-    private IEnumerator CheckReset()
+    private void CheckReset()
     {
-        yield return StartCoroutine(TimeManager.Instance.GetServerTime((DateTime serverTime) =>
+        DateTime estimatedTime = TimeManager.Instance.GetEstimatedServerTime();
+
+        if (estimatedTime == DateTime.MinValue)
         {
-            if (serverTime == DateTime.MinValue)
-            {
-                return;
-            }
-            DateTime currentDate = serverTime.Date;
-            DateTime lastPurchaseDate = currentData.lastPurchaseTime.Date;
+            Debug.LogWarning("추정 서버 시간이 유효하지 않습니다.");
+            return;
+        }
 
-            if (currentData.lastPurchaseTime == DateTime.MinValue || (currentData.lastPurchaseTime.Date < serverTime.Date && serverTime.TimeOfDay >= new TimeSpan(dailyResetHour, dailyResetMinute, 0)))
-            {
-                currentData.dailyPurchaseCount = 0;
-            }
-            else
-            {
-                Debug.Log("오늘 구매 기록이 있음: 마지막 구매 날짜 = " + lastPurchaseDate.ToShortDateString());
-            }
+        TimeSpan resetThreshold = new TimeSpan(dailyResetHour, dailyResetMinute, 0);
 
-            UpdateUI();
-        }));
+        if (currentData.lastPurchaseTime == DateTime.MinValue ||
+            (currentData.lastPurchaseTime.Date < estimatedTime.Date && estimatedTime.TimeOfDay >= resetThreshold))
+        {
+            currentData.dailyPurchaseCount = 0;
+        }
+
+        UpdateUI();
     }
-    private IEnumerator UpdateLastPurchaseTime()
+    private void UpdateLastPurchaseTime()
     {
-        yield return StartCoroutine(TimeManager.Instance.GetServerTime((DateTime serverTime) =>
+        DateTime estimatedTime = TimeManager.Instance.GetEstimatedServerTime();
+        if (estimatedTime != DateTime.MinValue)
         {
-            if (serverTime != DateTime.MinValue)
-            {
-                currentData.lastPurchaseTime = serverTime;
-            }
-        }));
+            currentData.lastPurchaseTime = estimatedTime;
+            SaveLoadManager.SaveGame();
+        }
     }
 }

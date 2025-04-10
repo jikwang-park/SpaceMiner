@@ -16,7 +16,7 @@ public class UnitStatsUpgradeElement : MonoBehaviour
 
     public int maxLevel;
     // 아직 테이블에 없음
-    public int level = 0;
+    public int level;
 
     public int nextLevel = 0;
 
@@ -90,6 +90,7 @@ public class UnitStatsUpgradeElement : MonoBehaviour
 
     private void LevelUp()
     {
+        level++;
         if (level > 1000)
         {
             addStatButton.interactable = false;
@@ -97,9 +98,8 @@ public class UnitStatsUpgradeElement : MonoBehaviour
         
         currentValue +=  value;
         currentGold += gold * (level + 1);
-        level++;
-        GuideQuestManager.QuestProgressChange(GuideQuestTable.MissionType.StatUpgrade);
         SaveLoadManager.Data.unitStatUpgradeData.upgradeLevels[currentType] = level;
+        GuideQuestManager.QuestProgressChange(GuideQuestTable.MissionType.StatUpgrade);
     }
     private void OnClickAddStatsButton()
     {

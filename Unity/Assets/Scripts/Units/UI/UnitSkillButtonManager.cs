@@ -16,6 +16,13 @@ public class UnitSkillButtonManager : MonoBehaviour
     [SerializeField]
     private UnitSkillButtonUi healerSkillButton;
 
+    [SerializeField]
+    public Button healerHpOptionButton;
+    [SerializeField]
+    public Slider healthSlider;
+
+    public bool IsClicked = false;
+
     private const string Auto = "자동";
     private const string Manual = "수동";
  
@@ -23,16 +30,26 @@ public class UnitSkillButtonManager : MonoBehaviour
     private Toggle autoToggle;
     [SerializeField]
     private TextMeshProUGUI text;
-
-
+    [SerializeField]
+    public float currentValue;
+   
+    
     private StageManager stageManager;
+
 
     private void Awake()
     {
+        healthSlider.gameObject.SetActive(false);
+        healerHpOptionButton.onClick.AddListener(() => OnClickHealthSliderButton());
+        healthSlider.onValueChanged.AddListener(OnHealthSilderholdChanaged);
+        OnHealthSilderholdChanaged(healthSlider.value);
         stageManager = GameObject.FindGameObjectWithTag("GameController").GetComponent<StageManager>();
         stageManager.UnitPartyManager.OnUnitCreated += Init;
     }
-
+    private void OnHealthSilderholdChanaged(float value)
+    {
+        currentValue = value * 100;
+    }
     private void Init()
     {
         var tankerUnit = stageManager.UnitPartyManager.GetUnit(UnitTypes.Tanker).gameObject.GetComponent<Unit>();
@@ -46,6 +63,7 @@ public class UnitSkillButtonManager : MonoBehaviour
         unitList.Add(dealerUnit);
         unitList.Add(healerUnit);
 
+
         foreach (var unit in unitList)
         {
             if (unit.isAutoSkillMode)
@@ -53,6 +71,12 @@ public class UnitSkillButtonManager : MonoBehaviour
                 autoToggle.isOn = true;
             }
         }
+    }
+
+    private void OnClickHealthSliderButton()
+    {
+        IsClicked = !IsClicked;
+        healthSlider.gameObject.SetActive(IsClicked);
     }
     private void Update()
     {

@@ -22,6 +22,9 @@ public class UnitPartyManager : MonoBehaviour
     public event System.Action OnUnitAllDead;
 
     [SerializeField]
+    public UnitSkillButtonManager buttonManager;
+
+    [SerializeField]
     private Vector3 unitOffset = Vector3.back * 5f;
 
     public int UnitCount => party.Count;
@@ -221,8 +224,6 @@ public class UnitPartyManager : MonoBehaviour
         Vector3 position = startPos;
 
        
-        var unitStats = SaveLoadManager.Data.unitStatUpgradeData.upgradeLevels;
-        var buildingStats = SaveLoadManager.Data.buildingData.buildingLevels;
 
         for (int i = (int)UnitTypes.Tanker; i <= (int)UnitTypes.Healer; ++i)
         {
@@ -240,28 +241,37 @@ public class UnitPartyManager : MonoBehaviour
             position += unitOffset;
             var currentSoilderId = InventoryManager.GetInventoryData(currentType).equipElementID;
             var currentSoilderData = DataTableManager.SoldierTable.GetData(currentSoilderId);
+            party.Add(currentType, go);
             go.SetData(currentSoilderData, currentType);
-            party.Add(go.UnitTypes, go);
-            for (int j = (int)UnitUpgradeTable.UpgradeType.AttackPoint; j <= (int)UnitUpgradeTable.UpgradeType.CriticalDamages; j++)
-            {
-                var currentUpgradeType = (UnitUpgradeTable.UpgradeType)j;
-                var currentTypelevel = unitStats[currentUpgradeType];
-                go.GetSaveStats(currentUpgradeType, currentTypelevel);//·¹º§ºñ·Êµ¥¹ÌÁö °è»êÇØÁà¾ß´ï
-            }
-            for(int k = (int)BuildingTable.BuildingType.IdleTime; k<= (int)BuildingTable.BuildingType.Mining; ++k)
-            {
-                var currentBuildingType = (BuildingTable.BuildingType)k;
-                var currentBuildingLevel = buildingStats[currentBuildingType];
-                go.GetSaveBuildingStats(currentBuildingType, currentBuildingLevel);
-            }
-            //for(int y = (int)Grade.Normal; y <= (int)Grade.Legend; ++y)
-            //{
-            //    go.unitSkill.GetSaveSkillData()
-            //}
+
+            GetCurrentStats(go);
+            GetCurrentBulidngStats(go);
         }
         OnUnitCreated?.Invoke();
     }
 
+    public void GetCurrentStats(Unit unit)
+    {
+        var unitStats = SaveLoadManager.Data.unitStatUpgradeData.upgradeLevels;
 
+        for (int j = (int)UnitUpgradeTable.UpgradeType.AttackPoint; j <= (int)UnitUpgradeTable.UpgradeType.CriticalDamages; j++)
+        {
+            var currentUpgradeType = (UnitUpgradeTable.UpgradeType)j;
+            var currentTypelevel = unitStats[currentUpgradeType];
+            unit.GetSaveStats(currentUpgradeType, currentTypelevel);
+        }
+    }
+
+    public void GetCurrentBulidngStats(Unit unit)
+    {
+        var buildingStats = SaveLoadManager.Data.buildingData.buildingLevels;
+
+        for (int k = (int)BuildingTable.BuildingType.IdleTime; k <= (int)BuildingTable.BuildingType.Mining; ++k)
+        {
+            var currentBuildingType = (BuildingTable.BuildingType)k;
+            var currentBuildingLevel = buildingStats[currentBuildingType];
+            unit.GetSaveBuildingStats(currentBuildingType, currentBuildingLevel);
+        }
+    }
 
 }

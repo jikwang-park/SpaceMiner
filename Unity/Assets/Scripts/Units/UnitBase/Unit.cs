@@ -85,6 +85,7 @@ public class Unit : MonoBehaviour
 
     public Grade currentGrade;
 
+    
 
     public bool isAutoSkillMode;
     private void Awake()
@@ -194,14 +195,24 @@ public class Unit : MonoBehaviour
     }
 
     public bool IsHealerCanUseSkill
-    {
+    { 
         get
         {
-            if (unitSkill.targetList == null ||
+             if (unitSkill.targetList.Count == 0 ||
                 Time.time < unitSkill.coolTime + lastSkillUsedTime)
                 return false;
 
-            return true;
+            foreach (var unit in unitSkill.targetList)
+            {
+                 var targetStats = unit.unitStats;
+                if ((targetStats.Hp.DivideToFloat(targetStats.maxHp)) * 100f <= stageManger.UnitPartyManager.buttonManager.currentValue)
+                {
+                    return true;
+                }
+
+            }
+
+            return false;
         }
     }
     public bool IsUnitCanAttack
@@ -405,7 +416,6 @@ public class Unit : MonoBehaviour
 
     private IEnumerator HealerSkillTimer()
     {
-        unitSkill.GetTarget();
         unitSkill.ExecuteSkill();
         yield return new WaitForSeconds(2.5f);
         lastAttackTime = Time.time;

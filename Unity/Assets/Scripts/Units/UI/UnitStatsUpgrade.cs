@@ -36,6 +36,7 @@ public class UnitStatsUpgrade : MonoBehaviour
                 var stats = Instantiate(statsUpgradeElements, parentTransform);
                 stats.Init(DataTableManager.UnitUpgradeTable.GetData(1000 * i + 1)); // 디폴트 테이블 추가해달라해야댐
                 stats.SetData(data[(UnitUpgradeTable.UpgradeType)i]);
+                
             }
         }
         

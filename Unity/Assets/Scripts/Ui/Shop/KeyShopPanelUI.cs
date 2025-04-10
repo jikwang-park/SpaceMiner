@@ -21,7 +21,7 @@ public class KeyShopPanelUI : MonoBehaviour
             Destroy(child.gameObject);
         }
 
-        var datas = DataTableManager.ShopTable.GetList(ShopTable.ShopType.DungeonKey);
+        var datas = SaveLoadManager.Data.dungeonKeyShopData.shopElements;
 
         foreach (var data in datas)
         {
@@ -33,7 +33,7 @@ public class KeyShopPanelUI : MonoBehaviour
                     KeyShopElement keyShopElement = elementObj.GetComponent<KeyShopElement>();
                     if (keyShopElement != null)
                     {
-                        keyShopElement.Initialize(data);
+                        keyShopElement.Initialize(data.Value);
                     }
                 }
             };

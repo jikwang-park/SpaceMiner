@@ -13,4 +13,8 @@ public class Variables
 
     public static StageMode stageMode = StageMode.Ascend;
     public static DungeonMode dungeonMode = DungeonMode.End;
+
+    public static int planetMiningID = 1;
+
+    public static readonly BigNumber DefenceBase = 200;
 }

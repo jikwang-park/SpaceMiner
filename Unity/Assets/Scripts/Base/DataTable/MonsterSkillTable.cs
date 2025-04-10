@@ -10,7 +10,7 @@ public class MonsterSkillTable : DataTable
     {
         public int ID { get; set; }
         public int StringID { get; set; }
-        public int AtkRatio { get; set; }
+        public float AtkRatio { get; set; }
         public float SkillRange { get; set; }
         public float CoolTime { get; set; }
         public int MaxCount { get; set; }
@@ -20,7 +20,7 @@ public class MonsterSkillTable : DataTable
         {
             ID = int.Parse(argument[0]);
             StringID = int.Parse(argument[1]);
-            AtkRatio = int.Parse(argument[2]);
+            AtkRatio = float.Parse(argument[2]);
             SkillRange = float.Parse(argument[3]);
             CoolTime = float.Parse(argument[4]);
             MaxCount = int.Parse(argument[5]);

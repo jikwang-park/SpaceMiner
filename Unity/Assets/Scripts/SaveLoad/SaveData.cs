@@ -57,12 +57,14 @@ public class SaveDataV3 : SaveDataV2
     public UnitSkillUpgradeData unitSkillUpgradeData;
     public QuestProgressData questProgressData;
     public BuildingData buildingData;
+    public DungeonKeyShopData dungeonKeyShopData;
     public SaveDataV3() : base()
     {
         unitStatUpgradeData = UnitStatUpgradeData.CreateDefault();
         unitSkillUpgradeData = UnitSkillUpgradeData.CreateDefault();
         questProgressData = QuestProgressData.CreateDefault();
         buildingData = BuildingData.CreateDefault();
+        dungeonKeyShopData = DungeonKeyShopData.CreateDefault();
         Version = 3;
     }
     public SaveDataV3(SaveDataV2 oldData) : base(oldData)
@@ -71,6 +73,7 @@ public class SaveDataV3 : SaveDataV2
         unitSkillUpgradeData = UnitSkillUpgradeData.CreateDefault();
         questProgressData = QuestProgressData.CreateDefault();
         buildingData = BuildingData.CreateDefault();
+        dungeonKeyShopData = DungeonKeyShopData.CreateDefault();
         Version = 3;
     }
     public override SaveData VersionUp()

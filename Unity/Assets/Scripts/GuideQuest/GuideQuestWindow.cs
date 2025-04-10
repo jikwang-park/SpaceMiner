@@ -20,6 +20,8 @@ public class GuideQuestWindow : MonoBehaviour
 
     private bool cleared;
 
+    private StageManager stageManager;
+
     private void Awake()
     {
         cleared = false;
@@ -29,6 +31,7 @@ public class GuideQuestWindow : MonoBehaviour
 
     private void Start()
     {
+        stageManager = GameObject.FindGameObjectWithTag("GameController").GetComponent<StageManager>();
         questDescriptionText.text = GuideQuestManager.currentQuestData.StringID.ToString();
         UpdateProgress();
         GuideQuestManager.QuestProgressChange(GuideQuestManager.currentQuestData.MissionClearType);
@@ -58,6 +61,7 @@ public class GuideQuestWindow : MonoBehaviour
         if (cleared)
         {
             cleared = false;
+            stageManager.StageUiManager.IngameUIManager.GuideQuestRewardWindow.Show(GuideQuestManager.currentQuestData);
             GuideQuestManager.GetReward();
             UpdateProgress();
         }

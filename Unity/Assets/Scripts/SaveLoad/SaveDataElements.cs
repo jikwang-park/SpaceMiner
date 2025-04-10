@@ -132,3 +132,31 @@ public class BuildingData
         return data;
     }
 }
+[Serializable]
+public class DungeonKeyShopElementData
+{
+    public int shopId;
+    public int dailyPurchaseCount;
+    public DateTime lastPurchaseTime;
+}
+[Serializable]
+public class DungeonKeyShopData
+{
+    public Dictionary<int, DungeonKeyShopElementData> shopElements = new Dictionary<int, DungeonKeyShopElementData>();
+    public DungeonKeyShopData() { }
+    public static DungeonKeyShopData CreateDefault()
+    {
+        var data = new DungeonKeyShopData();
+
+        var shopDatas = DataTableManager.ShopTable.GetList(ShopTable.ShopType.DungeonKey);
+
+        foreach(var shopData in shopDatas)
+        {
+            var shopElementData = new DungeonKeyShopElementData();
+            shopElementData.shopId = shopData.ID;
+            data.shopElements.Add(shopData.ID, shopElementData);
+        }
+
+        return data;
+    }
+}

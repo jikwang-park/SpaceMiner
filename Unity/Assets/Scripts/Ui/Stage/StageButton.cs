@@ -52,7 +52,7 @@ public class StageButton : MonoBehaviour, IObjectPoolGameObject
         stageLoadData.currentStage = stage;
 
         stageManager.SetStatus(IngameStatus.Planet);
-        stageManager.StageUiManager.IngameUIManager.stageSelectWindow.HideStageWindow();
+        stageManager.StageUiManager.IngameUIManager.StageSelectWindow.gameObject.SetActive(false);
         stageManager.ResetStage();
 
         //SaveLoadManager.SaveGame();

@@ -23,7 +23,14 @@ public class TankerSkillTable : DataTable
         public void Set(string[] argument)
         {
             ID = int.Parse(argument[0]);
-            Type = Enum.Parse<Grade>(argument[1]);
+            if (int.TryParse(argument[1], out int type))
+            {
+                Type = (Grade)type;
+            }
+            else
+            {
+                Type = Enum.Parse<Grade>(argument[1]);
+            }
             ShieldRatio = int.Parse(argument[2]);
             Duration = int.Parse(argument[3]);
             CoolTime = int.Parse(argument[4]);

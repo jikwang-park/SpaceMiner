@@ -1,3 +1,4 @@
+using AYellowpaper.SerializedCollections;
 using System.Collections;
 using System.Collections.Generic;
 using TMPro;
@@ -17,6 +18,10 @@ public class StageManager : MonoBehaviour
     [SerializeField]
     private IngameStatus ingameStatus;
 
+    [SerializeField]
+    [SerializedDictionary("Status", "Data")]
+    private SerializedDictionary<IngameStatus, StageStatusMachineData> statusMachineDatas;
+
     public LinkedList<IObjectPoolGameObject> backgrounds { get; private set; } = new LinkedList<IObjectPoolGameObject>();
 
     private Dictionary<IngameStatus, StageStatusMachine> machines = new Dictionary<IngameStatus, StageStatusMachine>();
@@ -28,9 +33,7 @@ public class StageManager : MonoBehaviour
         UnitPartyManager = GetComponent<UnitPartyManager>();
         ObjectPoolManager = GetComponent<ObjectPoolManager>();
         CameraManager = GetComponent<CameraManager>();
-
-        machines.Add(IngameStatus.Planet, new PlanetStageStatusMachine(this));
-        machines.Add(IngameStatus.Dungeon, new DungeonStageStatusMachine(this));
+        InitStatusMachines();
 
         //switch (ingameStatus)
         //{
@@ -54,6 +57,23 @@ public class StageManager : MonoBehaviour
         //stageStatusMachine.Update();
 
         machines[ingameStatus].Update();
+    }
+
+    private void InitStatusMachines()
+    {
+        machines.Clear();
+
+        StageStatusMachine stageStatusMachine = new PlanetStageStatusMachine(this);
+        stageStatusMachine.SetStageData(statusMachineDatas[IngameStatus.Planet]);
+        machines.Add(IngameStatus.Planet, stageStatusMachine);
+
+        stageStatusMachine = new DungeonStageStatusMachine(this);
+        stageStatusMachine.SetStageData(statusMachineDatas[IngameStatus.Dungeon]);
+        machines.Add(IngameStatus.Dungeon, stageStatusMachine);
+
+        stageStatusMachine = new MineStageStatusMachine(this);
+        stageStatusMachine.SetStageData(statusMachineDatas[IngameStatus.Mine]);
+        machines.Add(IngameStatus.Mine, stageStatusMachine);
     }
 
     public void SetStatus(IngameStatus status)

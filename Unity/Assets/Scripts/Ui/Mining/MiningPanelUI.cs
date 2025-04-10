@@ -11,8 +11,10 @@ public class MiningPanelUI : MonoBehaviour
     [SerializeField]
     private SetMiningRobotToPlanetUI setRobotToPlanetUI;
     private List<int> planetIds = new List<int>();
+    private StageManager stageManager;
     private void Awake()
     {
+        stageManager = GameObject.FindGameObjectWithTag("GameController").GetComponent<StageManager>();
         planetIds = DataTableManager.PlanetTable.GetIds();
         onRequestMerge += ShowMergePopup;
     }
@@ -39,5 +41,11 @@ public class MiningPanelUI : MonoBehaviour
     public void OnClickSortButton()
     {
         MiningRobotInventoryManager.SortInventorySlots();
+    }
+
+    public void OnClickMoveButton()
+    {
+        Variables.planetMiningID = currentPlanetId;
+        stageManager.SetStatus(IngameStatus.Mine);
     }
 }

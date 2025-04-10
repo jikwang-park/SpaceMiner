@@ -26,12 +26,7 @@ public static class GuideQuestManager
         {
             return;
         }
-        if (isCleared)
-        {
-            return;
-        }
 
-        
         bool isClearedNow = false;
 
         switch (type)
@@ -66,7 +61,10 @@ public static class GuideQuestManager
                 break;
 
             case GuideQuestTable.MissionType.Item:
-                Progress = ItemManager.GetItemAmount(currentQuestData.Target);
+                if (!isCleared)
+                {
+                    Progress = ItemManager.GetItemAmount(currentQuestData.Target);
+                }
                 isClearedNow = Progress >= currentQuestData.TargetCount;
                 break;
 

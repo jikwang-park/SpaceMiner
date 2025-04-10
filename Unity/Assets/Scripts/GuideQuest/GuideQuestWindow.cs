@@ -43,10 +43,8 @@ public class GuideQuestWindow : MonoBehaviour
         int monsterCount = SaveLoadManager.Data.questProgressData.monsterCount;
         int goal = GuideQuestManager.currentQuestData.TargetCount;
         int rewardCount = GuideQuestManager.currentQuestData.RewardCount;
-        if (!GuideQuestManager.isCleared)
-        {
-            questProgressText.text = $"{GuideQuestManager.Progress} / {goal}";
-        }
+
+        questProgressText.text = $"{GuideQuestManager.Progress} / {goal}";
         rewardCountText.text = $"{rewardCount}";
     }
 

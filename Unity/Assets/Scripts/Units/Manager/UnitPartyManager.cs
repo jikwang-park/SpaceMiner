@@ -17,7 +17,7 @@ public class UnitPartyManager : MonoBehaviour
     private Dictionary<UnitTypes, Unit> prefabs = new Dictionary<UnitTypes, Unit>();
     private Dictionary<UnitTypes, Unit> party = new Dictionary<UnitTypes, Unit>();
 
-    public event System.Action OnUnitDestory;
+    public event System.Action OnUnitCreated;
 
     public event System.Action OnUnitAllDead;
 
@@ -43,6 +43,7 @@ public class UnitPartyManager : MonoBehaviour
     }
 
    
+
     public void ResetSkillCoolTime()
     {
         foreach (var unit in party.Values)
@@ -258,8 +259,9 @@ public class UnitPartyManager : MonoBehaviour
             //    go.unitSkill.GetSaveSkillData()
             //}
         }
+        OnUnitCreated?.Invoke();
     }
 
 
- 
+
 }

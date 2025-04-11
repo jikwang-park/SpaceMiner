@@ -39,6 +39,11 @@ public class GuideQuestWindow : MonoBehaviour
 
     private void UpdateProgress()
     {
+        if (GuideQuestManager.currentQuestData is null)
+        {
+            return;
+        }
+
         questDescriptionText.text = GuideQuestManager.currentQuestData.StringID.ToString();
         int monsterCount = SaveLoadManager.Data.questProgressData.monsterCount;
         int goal = GuideQuestManager.currentQuestData.TargetCount;

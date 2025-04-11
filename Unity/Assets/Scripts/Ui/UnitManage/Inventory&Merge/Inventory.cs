@@ -96,9 +96,8 @@ public class Inventory : MonoBehaviour
 
                 if (instantiatedCount == totalCount && inventoryElements.Count > 0)
                 {
-                    var equipElement = inventoryElements.Find((e) => e.soldierId == datas.equipElementID);
-                    OnElementSelected(equipElement);
-                    Equip();
+                    equipElement = inventoryElements.Find((e) => e.soldierId == datas.equipElementID);
+                    equipElement.SetEquip();
                     OnElementSelected(inventoryElements[0]);
                 }
             };

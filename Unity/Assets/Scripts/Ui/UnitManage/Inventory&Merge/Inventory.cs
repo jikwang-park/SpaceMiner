@@ -108,7 +108,7 @@ public class Inventory : MonoBehaviour
     {
         selectedElement = element;
         var currentIndex = inventoryElements.IndexOf(selectedElement);
-        if(currentIndex < inventoryElements.Count)
+        if(currentIndex < inventoryElements.Count && currentIndex >= 0)
         {
             infoMergePanelUI.Initialize(inventoryElements[currentIndex], inventoryElements[currentIndex + 1]);
         }

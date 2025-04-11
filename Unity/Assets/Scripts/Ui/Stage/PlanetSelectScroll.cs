@@ -75,6 +75,11 @@ public class PlanetSelectScroll : MonoBehaviour
 
     public void UnlockPlanet(int planet)
     {
+        if (buttons.Count == 0)
+        {
+            return;
+        }
+
         for (int i = 0; i < planet; ++i)
         {
             buttons[i].Button.interactable = true;

@@ -45,6 +45,11 @@ public class IdleRewardManager : MonoBehaviour
         int highestClearPlanet = stageSaveData.clearedPlanet;
         int highestClearStage = stageSaveData.clearedStage;
 
+        if(highestClearPlanet == 1 && highestClearStage == 0)
+        {
+            return;
+        }
+
         var highestClearData = DataTableManager.StageTable.GetStageData(highestClearPlanet, highestClearStage);
 
         idleRewardsDict.Add(highestClearData.IdleRewardID, int.Parse(highestClearData.IdleRewardCount) * idleTime);

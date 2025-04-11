@@ -12,11 +12,11 @@ public static class ItemManager
             return SaveLoadManager.Data.itemSaveData;
         }
     }
-    public static void AddItem(int itemId, BigNumber amount)
+    public static bool AddItem(int itemId, BigNumber amount)
     {
         if(DataTableManager.ItemTable.GetData(itemId) == null)
         {
-            return;
+            return false;
         }
 
         BigNumber maxStack = DataTableManager.ItemTable.GetData(itemId).MaxStack;
@@ -35,6 +35,7 @@ public static class ItemManager
         }
         GuideQuestManager.QuestProgressChange(GuideQuestTable.MissionType.Item);
         OnItemAmountChanged?.Invoke(itemId, items[itemId]);
+        return true;
     }
     public static void ConsumeItem(int itemId, BigNumber amount)
     {

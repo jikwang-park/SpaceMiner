@@ -8,6 +8,11 @@ public class TimeManager : Singleton<TimeManager>
     public string url = "www.google.com";
     private TimeSpan serverTimeOffset = TimeSpan.Zero;
 
+    private void Awake()
+    {
+        Screen.sleepTimeout = SleepTimeout.NeverSleep;
+    }
+
     public IEnumerator SyncWithServer()
     {
         yield return StartCoroutine(GetServerTime((DateTime serverTime) =>

@@ -22,6 +22,11 @@ public static class GuideQuestManager
 
     public static void QuestProgressChange(GuideQuestTable.MissionType type)
     {
+        if (currentQuestData is null)
+        {
+            return;
+        }
+
         if (currentQuestData.MissionClearType != type)
         {
             return;

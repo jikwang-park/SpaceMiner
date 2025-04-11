@@ -33,6 +33,11 @@ public class StageSelectWindow : MonoBehaviour
         stageScroll.SetButtons(currentPlanet);
     }
 
+    private void OnEnable()
+    {
+        RefreshStageWindow();
+    }
+
     public void RefreshStageWindow()
     {
         var stageData = SaveLoadManager.Data.stageSaveData;

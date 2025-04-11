@@ -50,12 +50,15 @@ public class GuideQuestTable : DataTable
 
     public Dictionary<int, Data> orderDict = new Dictionary<int, Data>();
 
+    public List<int> orders = new List<int>();
+
     public override System.Type DataType => typeof(Data);
 
     public override void LoadFromText(string text)
     {
         TableData.Clear();
         orderDict.Clear();
+        orders.Clear();
 
         if (string.IsNullOrEmpty(text))
         {
@@ -70,6 +73,7 @@ public class GuideQuestTable : DataTable
             {
                 TableData.Add(item.ID, item);
                 orderDict.Add(item.Turn, item);
+                orders.Add(item.Turn);
             }
             else
             {
@@ -87,6 +91,11 @@ public class GuideQuestTable : DataTable
         return (Data)TableData[key];
     }
 
+    public List<int> GetOrders()
+    {
+        return orders;
+    }
+
     public Data GetDataByOrder(int questOrder)
     {
         if (!orderDict.ContainsKey(questOrder))
@@ -100,14 +109,17 @@ public class GuideQuestTable : DataTable
     {
         var tableData = new Dictionary<int, ITableData>();
         var newOrderDict = new Dictionary<int, Data>();
+        var newOrders = new List<int>();
         foreach (var item in data)
         {
             var datum = CreateData<Data>(item);
             tableData.Add(datum.ID, datum);
             newOrderDict.Add(datum.Turn, datum);
+            newOrders.Add(datum.Turn);
         }
         TableData = tableData;
         orderDict = newOrderDict;
+        orders = newOrders;
     }
 
     public override string GetCsvData()

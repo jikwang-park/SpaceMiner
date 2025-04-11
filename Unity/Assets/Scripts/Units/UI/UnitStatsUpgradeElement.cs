@@ -16,7 +16,7 @@ public class UnitStatsUpgradeElement : MonoBehaviour
 
     public int maxLevel;
     // 아직 테이블에 없음
-    public int level = 0;
+    public int level;
 
     public int nextLevel = 0;
 
@@ -49,7 +49,6 @@ public class UnitStatsUpgradeElement : MonoBehaviour
     public void Init(UnitUpgradeTable.Data data)
     {
         currentType = data.Type;
-        level = 0;
         value = data.Value;
         gold = data.Gold;
         maxLevel = data.MaxLevel;
@@ -70,8 +69,9 @@ public class UnitStatsUpgradeElement : MonoBehaviour
         currentValue = GetCurrentValue(level);
         currentGold = GetCurrentGold(level);
         SetStatsInfo();
+        Debug.Log(this.level);
     }
-
+    
     public float GetCurrentValue(int level)
     {
         float result = 0;
@@ -90,19 +90,26 @@ public class UnitStatsUpgradeElement : MonoBehaviour
 
     private void LevelUp()
     {
+        
         if (level > 1000)
         {
             addStatButton.interactable = false;
         }
         
+        level++;
+        
+        
         currentValue +=  value;
         currentGold += gold * (level + 1);
-        level++;
-        GuideQuestManager.QuestProgressChange(GuideQuestTable.MissionType.StatUpgrade);
         SaveLoadManager.Data.unitStatUpgradeData.upgradeLevels[currentType] = level;
+        GuideQuestManager.QuestProgressChange(GuideQuestTable.MissionType.StatUpgrade);
     }
     private void OnClickAddStatsButton()
     {
+        if (ItemManager.CanConsume((int)Currency.Gold, currentGold))
+        {
+            ItemManager.ConsumeCurrency(Currency.Gold, currentGold);
+        }
         LevelUp();
         SetStatsInfo();
         stageManager.UnitPartyManager.AddStats(currentType, level*value);

@@ -16,6 +16,13 @@ public class UnitSkillButtonManager : MonoBehaviour
     [SerializeField]
     private UnitSkillButtonUi healerSkillButton;
 
+    [SerializeField]
+    public Button healerHpOptionButton;
+    [SerializeField]
+    public Slider healthSlider;
+
+    public bool IsClicked = false;
+
     private const string Auto = "자동";
     private const string Manual = "수동";
  
@@ -23,29 +30,28 @@ public class UnitSkillButtonManager : MonoBehaviour
     private Toggle autoToggle;
     [SerializeField]
     private TextMeshProUGUI text;
-
-
+    [SerializeField]
+    public float currentValue;
+   
+    
     private StageManager stageManager;
+
 
     private void Awake()
     {
-
-    }
-
-
-
-    private void Start()
-    {
+        healthSlider.gameObject.SetActive(false);
+        healerHpOptionButton.onClick.AddListener(() => OnClickHealthSliderButton());
+        healthSlider.onValueChanged.AddListener(OnHealthSilderholdChanaged);
+        OnHealthSilderholdChanaged(healthSlider.value);
         stageManager = GameObject.FindGameObjectWithTag("GameController").GetComponent<StageManager>();
-        //skillButtons = new Dictionary<UnitTypes, UnitSkillButtonUi>();
-        //for (int i = (int)UnitTypes.Tanker; i <= (int)UnitTypes.Healer; ++i)
-        //{
-        //    var skillButton = Instantiate(unitSkillButtonUi);
-        //    var unit = stageManager.UnitPartyManager.GetUnit((UnitTypes)i).GetComponent<Unit>();
-        //    skillButton.SetUnit(unit);
-        //    skillButtons[(UnitTypes)i] = skillButton;
-        //}
-        
+        stageManager.UnitPartyManager.OnUnitCreated += Init;
+    }
+    private void OnHealthSilderholdChanaged(float value)
+    {
+        currentValue = value * 100;
+    }
+    private void Init()
+    {
         var tankerUnit = stageManager.UnitPartyManager.GetUnit(UnitTypes.Tanker).gameObject.GetComponent<Unit>();
         tankerSkillButtonUi.SetUnit(tankerUnit);
         var dealerUnit = stageManager.UnitPartyManager.GetUnit(UnitTypes.Dealer).gameObject.GetComponent<Unit>();
@@ -57,13 +63,20 @@ public class UnitSkillButtonManager : MonoBehaviour
         unitList.Add(dealerUnit);
         unitList.Add(healerUnit);
 
-        foreach(var unit in unitList)
+
+        foreach (var unit in unitList)
         {
-            if(unit.isAutoSkillMode)
+            if (unit.isAutoSkillMode)
             {
                 autoToggle.isOn = true;
             }
         }
+    }
+
+    private void OnClickHealthSliderButton()
+    {
+        IsClicked = !IsClicked;
+        healthSlider.gameObject.SetActive(IsClicked);
     }
     private void Update()
     {

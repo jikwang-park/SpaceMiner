@@ -25,11 +25,14 @@ public class ItemTable : DataTable
         }
     }
 
+    private List<int> ids = new List<int>();
+
     public override Type DataType => typeof(Data);
 
     public override void LoadFromText(string text)
     {
         TableData.Clear();
+        ids.Clear();
 
         if (string.IsNullOrEmpty(text))
         {
@@ -43,6 +46,7 @@ public class ItemTable : DataTable
             if (!TableData.ContainsKey(item.ID))
             {
                 TableData.Add(item.ID, item);
+                ids.Add(item.ID);
             }
             else
             {
@@ -60,15 +64,23 @@ public class ItemTable : DataTable
         return (Data)TableData[key];
     }
 
+    public List<int> GetIds()
+    {
+        return ids;
+    }
+
     public override void Set(List<string[]> data)
     {
         var tableData = new Dictionary<int, ITableData>();
+        var newIds = new List<int>();
         foreach (var item in data)
         {
             var datum = CreateData<Data>(item);
             tableData.Add(datum.ID, datum);
+            newIds.Add(datum.ID);
         }
         TableData = tableData;
+        ids = newIds;
     }
 
     public override string GetCsvData()

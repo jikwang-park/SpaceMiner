@@ -11,11 +11,13 @@ public class UnitSkillButtonUi : MonoBehaviour
     [SerializeField]
     public Button SkillButton;
 
+    
+
     [SerializeField]
     private Unit unit;
 
     private StageManager stageManager;
-    
+
     private void Start()
     {
         stageManager = GameObject.FindGameObjectWithTag("GameController").GetComponent<StageManager>();
@@ -25,14 +27,15 @@ public class UnitSkillButtonUi : MonoBehaviour
     {
         ShowCooltime();
         ButtonUpdate();
+
     }
     private void ButtonUpdate()
     {
-        if ((!unit.isAutoSkillMode&&!unit.isAutoSkillMode) || !unit.IsSkillCoolTimeOn)
+        if ((!unit.isAutoSkillMode && !unit.isAutoSkillMode) || !unit.IsSkillCoolTimeOn)
         {
             SkillButton.interactable = false;
         }
-            SkillButton.interactable = true;
+        SkillButton.interactable = true;
     }
     private void ShowCooltime()
     {
@@ -47,7 +50,7 @@ public class UnitSkillButtonUi : MonoBehaviour
     }
     private void OnClickSkill()
     {
-        if(!unit.isAutoSkillMode && unit.IsSkillCoolTimeOn)
+        if (!unit.isAutoSkillMode && unit.IsSkillCoolTimeOn)
         {
             Debug.Log("수동 스킬 사용!");
             unit.UseSkill();

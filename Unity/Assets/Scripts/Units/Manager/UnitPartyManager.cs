@@ -17,9 +17,12 @@ public class UnitPartyManager : MonoBehaviour
     private Dictionary<UnitTypes, Unit> prefabs = new Dictionary<UnitTypes, Unit>();
     private Dictionary<UnitTypes, Unit> party = new Dictionary<UnitTypes, Unit>();
 
-    public event System.Action OnUnitDestory;
+    public event System.Action OnUnitCreated;
 
     public event System.Action OnUnitAllDead;
+
+    [SerializeField]
+    public UnitSkillButtonManager buttonManager;
 
     [SerializeField]
     private Vector3 unitOffset = Vector3.back * 5f;
@@ -43,6 +46,7 @@ public class UnitPartyManager : MonoBehaviour
     }
 
    
+
     public void ResetSkillCoolTime()
     {
         foreach (var unit in party.Values)
@@ -82,6 +86,8 @@ public class UnitPartyManager : MonoBehaviour
         if (party.ContainsKey(type))
         {
             party[type].SetData(data, type);
+            GetCurrentStats(party[type]);
+            GetCurrentBulidngStats(party[type]);
         }
     }
 
@@ -220,8 +226,6 @@ public class UnitPartyManager : MonoBehaviour
         Vector3 position = startPos;
 
        
-        var unitStats = SaveLoadManager.Data.unitStatUpgradeData.upgradeLevels;
-        var buildingStats = SaveLoadManager.Data.buildingData.buildingLevels;
 
         for (int i = (int)UnitTypes.Tanker; i <= (int)UnitTypes.Healer; ++i)
         {
@@ -234,32 +238,41 @@ public class UnitPartyManager : MonoBehaviour
                 continue;
             }
 
-            var go = Instantiate(prefabs[currentType], position, Quaternion.identity);
-            go.GetComponent<DestructedDestroyEvent>().OnDestroyed += OnUnitDie;
+            var unit = Instantiate(prefabs[currentType], position, Quaternion.identity);
+            unit.GetComponent<DestructedDestroyEvent>().OnDestroyed += OnUnitDie;
             position += unitOffset;
             var currentSoilderId = InventoryManager.GetInventoryData(currentType).equipElementID;
             var currentSoilderData = DataTableManager.SoldierTable.GetData(currentSoilderId);
-            go.SetData(currentSoilderData, currentType);
-            party.Add(go.UnitTypes, go);
-            for (int j = (int)UnitUpgradeTable.UpgradeType.AttackPoint; j <= (int)UnitUpgradeTable.UpgradeType.CriticalDamages; j++)
-            {
-                var currentUpgradeType = (UnitUpgradeTable.UpgradeType)j;
-                var currentTypelevel = unitStats[currentUpgradeType];
-                go.GetSaveStats(currentUpgradeType, currentTypelevel);//·¹º§ºñ·Êµ¥¹ÌÁö °è»êÇØÁà¾ß´ï
-            }
-            for(int k = (int)BuildingTable.BuildingType.IdleTime; k<= (int)BuildingTable.BuildingType.Mining; ++k)
-            {
-                var currentBuildingType = (BuildingTable.BuildingType)k;
-                var currentBuildingLevel = buildingStats[currentBuildingType];
-                go.GetSaveBuildingStats(currentBuildingType, currentBuildingLevel);
-            }
-            //for(int y = (int)Grade.Normal; y <= (int)Grade.Legend; ++y)
-            //{
-            //    go.unitSkill.GetSaveSkillData()
-            //}
+            party.Add(currentType, unit);
+            unit.SetData(currentSoilderData, currentType);
+            GetCurrentStats(unit);
+            GetCurrentBulidngStats(unit);
+        }
+        OnUnitCreated?.Invoke();
+    }
+
+    public void GetCurrentStats(Unit unit)
+    {
+        var unitStats = SaveLoadManager.Data.unitStatUpgradeData.upgradeLevels;
+
+        for (int j = (int)UnitUpgradeTable.UpgradeType.AttackPoint; j <= (int)UnitUpgradeTable.UpgradeType.CriticalDamages; j++)
+        {
+            var currentUpgradeType = (UnitUpgradeTable.UpgradeType)j;
+            var currentTypelevel = unitStats[currentUpgradeType];
+            unit.GetSaveStats(currentUpgradeType, currentTypelevel);
         }
     }
 
+    public void GetCurrentBulidngStats(Unit unit)
+    {
+        var buildingStats = SaveLoadManager.Data.buildingData.buildingLevels;
 
- 
+        for (int k = (int)BuildingTable.BuildingType.IdleTime; k <= (int)BuildingTable.BuildingType.Mining; ++k)
+        {
+            var currentBuildingType = (BuildingTable.BuildingType)k;
+            var currentBuildingLevel = buildingStats[currentBuildingType];
+            unit.GetSaveBuildingStats(currentBuildingType, currentBuildingLevel);
+        }
+    }
+
 }

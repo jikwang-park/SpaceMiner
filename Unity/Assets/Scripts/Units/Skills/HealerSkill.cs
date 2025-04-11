@@ -11,8 +11,13 @@ public class HealerSkill : UnitSkill
     {
         base.Awake();
         unit = GetComponent<Unit>();
+       
     }
 
+    private void Start()
+    {
+         
+    }
 
     public override void HealerInit(UnitTypes type, Grade grade)
     {
@@ -30,17 +35,19 @@ public class HealerSkill : UnitSkill
             buffId = healerSkillData.BuffID;
             Debug.Log(healRatio);
         }
+        GetTarget();
     }
    
 
     public override void GetTarget()
     {
-        var tankerSkillData = DataTableManager.HealerSkillTable.GetData(1301); //250331 HKY 데이터형 변경
-        string soliderTarget = tankerSkillData.SoldierTarget;
+        var healerSkillData = DataTableManager.HealerSkillTable.GetData(currentSkillId); //250331 HKY 데이터형 변경
+        string soliderTarget = healerSkillData.SoldierTarget;
         string[] targetStrings = soliderTarget.Split("_");
         foreach (string target in targetStrings)
         {
             var targetUnit = stageManager.UnitPartyManager.GetCurrentTargetType(target);
+
             targetList.Add(targetUnit);
         }
     }

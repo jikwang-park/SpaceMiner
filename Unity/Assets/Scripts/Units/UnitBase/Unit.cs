@@ -85,6 +85,7 @@ public class Unit : MonoBehaviour
 
     public Grade currentGrade;
 
+    
 
     public bool isAutoSkillMode;
     private void Awake()
@@ -194,14 +195,24 @@ public class Unit : MonoBehaviour
     }
 
     public bool IsHealerCanUseSkill
-    {
+    { 
         get
         {
-            if (unitSkill.targetList == null ||
+             if (unitSkill.targetList.Count == 0 ||
                 Time.time < unitSkill.coolTime + lastSkillUsedTime)
                 return false;
 
-            return true;
+            foreach (var unit in unitSkill.targetList)
+            {
+                 var targetStats = unit.unitStats;
+                if ((targetStats.Hp.DivideToFloat(targetStats.maxHp)) * 100f <= stageManger.UnitPartyManager.buttonManager.currentValue)
+                {
+                    return true;
+                }
+
+            }
+
+            return false;
         }
     }
     public bool IsUnitCanAttack
@@ -302,15 +313,24 @@ public class Unit : MonoBehaviour
         switch (currentUnitType)
         {
             case UnitTypes.Tanker:
-                unitSkill = gameObject.AddComponent<TankerSkill>();
+                if(unitSkill == null)
+                {
+                    unitSkill = gameObject.AddComponent<TankerSkill>();
+                }
                 unitSkill.TankerInit(currentUnitType, currentGrade);
                 break;
             case UnitTypes.Dealer:
-                unitSkill = gameObject.AddComponent<DealerSkill>();
+                if (unitSkill == null)
+                {
+                    unitSkill = gameObject.AddComponent<DealerSkill>();
+                }
                 unitSkill.DealerInit(currentUnitType, currentGrade);
                 break;
             case UnitTypes.Healer:
-                unitSkill = gameObject.AddComponent<HealerSkill>();
+                if (unitSkill == null)
+                {
+                    unitSkill = gameObject.AddComponent<HealerSkill>();
+                }
                 unitSkill.HealerInit(currentUnitType, currentGrade);
                 break;
         }
@@ -405,7 +425,6 @@ public class Unit : MonoBehaviour
 
     private IEnumerator HealerSkillTimer()
     {
-        unitSkill.GetTarget();
         unitSkill.ExecuteSkill();
         yield return new WaitForSeconds(2.5f);
         lastAttackTime = Time.time;

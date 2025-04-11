@@ -89,7 +89,7 @@ public class DebugStageView : MonoBehaviour
     {
         string temp = clearedStageInput.text;
         clearedStageInput.text = string.Empty;
-        if (!TryParse(clearedStageInput.text, out int planet, out int stage))
+        if (!TryParse(temp, out int planet, out int stage))
         {
             return;
         }
@@ -103,7 +103,7 @@ public class DebugStageView : MonoBehaviour
     {
         string temp = unlockedStageInput.text;
         unlockedStageInput.text = string.Empty;
-        if (!TryParse(unlockedStageInput.text, out int planet, out int stage))
+        if (!TryParse(temp, out int planet, out int stage))
         {
             return;
         }

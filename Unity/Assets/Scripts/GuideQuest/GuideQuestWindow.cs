@@ -32,9 +32,12 @@ public class GuideQuestWindow : MonoBehaviour
     private void Start()
     {
         stageManager = GameObject.FindGameObjectWithTag("GameController").GetComponent<StageManager>();
-        questDescriptionText.text = GuideQuestManager.currentQuestData.StringID.ToString();
-        UpdateProgress();
-        GuideQuestManager.RefreshQuest();
+        if (GuideQuestManager.currentQuestData is not null)
+        {
+            questDescriptionText.text = GuideQuestManager.currentQuestData.StringID.ToString();
+            UpdateProgress();
+            GuideQuestManager.RefreshQuest();
+        }
     }
 
     private void UpdateProgress()

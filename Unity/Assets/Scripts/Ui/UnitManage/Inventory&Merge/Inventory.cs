@@ -137,6 +137,7 @@ public class Inventory : MonoBehaviour
         UnEquip();
         equipElement = selectedElement;
         equipElement.SetEquip();
+        InventoryManager.Equip(type, equipElement.soldierId);
         unitPartyManager.SetUnitData(DataTableManager.SoldierTable.GetData(equipElement.soldierId), type);
     }
     private void UnEquip()

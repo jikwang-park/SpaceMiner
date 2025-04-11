@@ -194,6 +194,10 @@ PrefabInstance:
       propertyPath: m_AnchoredPosition.y
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 457282401225357962, guid: fdad9204bc14e26489b105510cb6bfae, type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 1289139866685090444, guid: fdad9204bc14e26489b105510cb6bfae, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
       value: 
@@ -436,6 +440,10 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4743790268125248803, guid: fdad9204bc14e26489b105510cb6bfae, type: 3}
       propertyPath: m_AnchoredPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4764017061617832207, guid: fdad9204bc14e26489b105510cb6bfae, type: 3}
+      propertyPath: m_AnchorMax.y
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 4970598567746416659, guid: fdad9204bc14e26489b105510cb6bfae, type: 3}
@@ -1237,6 +1245,17 @@ RectTransform:
   m_CorrespondingSourceObject: {fileID: 2550253571882538642, guid: a879204730ecb3f4697db66ccb80bbe4, type: 3}
   m_PrefabInstance: {fileID: 1289392212}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &1347127462 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 74703610195256884, guid: fdad9204bc14e26489b105510cb6bfae, type: 3}
+  m_PrefabInstance: {fileID: 395941009}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 128e06f9bb0998c46b70540e94f8c9f9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!114 &1356779327 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 7149126086526843196, guid: 101330edd7cb4b34ca9628876b2f2805, type: 3}
@@ -1258,6 +1277,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1496686784}
   - component: {fileID: 1496686783}
+  - component: {fileID: 1496686785}
   m_Layer: 0
   m_Name: TimeManager
   m_TagString: Untagged
@@ -1293,6 +1313,18 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1496686785
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1496686782}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a8779094111be1a4bac1afff511ceb7c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1939840561
 GameObject:
   m_ObjectHideFlags: 0
@@ -1463,6 +1495,10 @@ PrefabInstance:
       propertyPath: worldCamera
       value: 
       objectReference: {fileID: 963194228}
+    - target: {fileID: 4185081511514637580, guid: 101330edd7cb4b34ca9628876b2f2805, type: 3}
+      propertyPath: buttonManager
+      value: 
+      objectReference: {fileID: 1347127462}
     - target: {fileID: 7149126086526843196, guid: 101330edd7cb4b34ca9628876b2f2805, type: 3}
       propertyPath: <StageUiManager>k__BackingField
       value: 

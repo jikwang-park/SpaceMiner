@@ -16,7 +16,7 @@ public class StageManager : MonoBehaviour
     public CameraManager CameraManager { get; private set; }
 
     [SerializeField]
-    private IngameStatus ingameStatus;
+    public IngameStatus IngameStatus { get; private set; }
 
     [SerializeField]
     [SerializedDictionary("Status", "Data")]
@@ -54,7 +54,7 @@ public class StageManager : MonoBehaviour
 
     private void Start()
     {
-        machines[ingameStatus].Start();
+        machines[IngameStatus].Start();
         //stageStatusMachine.Start();
     }
 
@@ -62,7 +62,7 @@ public class StageManager : MonoBehaviour
     {
         //stageStatusMachine.Update();
 
-        machines[ingameStatus].Update();
+        machines[IngameStatus].Update();
     }
 
     private void InitStatusMachines()
@@ -84,7 +84,7 @@ public class StageManager : MonoBehaviour
 
     public void SetStatus(IngameStatus status)
     {
-        if (status == ingameStatus)
+        if (status == IngameStatus)
         {
             return;
         }
@@ -92,7 +92,7 @@ public class StageManager : MonoBehaviour
         StageUiManager.curtain.SetFade(true);
         StageUiManager.UIGroupStatusManager.SetUIStatus(status);
 
-        machines[ingameStatus].SetActive(false);
+        machines[IngameStatus].SetActive(false);
 
         StageUiManager.IngameUIManager.SetStatus(status);
 
@@ -100,7 +100,7 @@ public class StageManager : MonoBehaviour
 
         StageUiManager.curtain.SetFade(false);
 
-        ingameStatus = status;
+        IngameStatus = status;
 
         //switch (status)
         //{
@@ -115,7 +115,7 @@ public class StageManager : MonoBehaviour
 
     public void ResetStage()
     {
-        machines[ingameStatus].Reset();
+        machines[IngameStatus].Reset();
     }
 
     public void ReleaseBackground()
@@ -129,6 +129,6 @@ public class StageManager : MonoBehaviour
     //TODO: �ν����Ϳ��� ������ ��ư�� ����
     public void OnExitClicked()
     {
-        machines[ingameStatus].Exit();
+        machines[IngameStatus].Exit();
     }
 }

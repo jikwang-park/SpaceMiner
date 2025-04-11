@@ -8,7 +8,6 @@ public class UnitStats : CharacterStats
 {
 
 
-
     public void AddStats(UpgradeType type , float amount)
     {
         switch (type)
@@ -23,30 +22,36 @@ public class UnitStats : CharacterStats
                 armor += (int)amount;
                 break;
             case UpgradeType.CriticalPossibility:
-                //나중에 바꿔야함
+                criticalChance += (amount*100);
                 break;
             case UpgradeType.CriticalDamages:
+                criticalMultiplier += (amount * 100);
                 break;
         }
     }
 
     public void AddBuildingStats(BuildingTable.BuildingType type , float amount)
     {
+        if(amount == 0)
+        {
+            return;
+        }
+
         switch (type)
         {
             case BuildingTable.BuildingType.IdleTime:
                 break;
             case BuildingTable.BuildingType.AttackPoint:
-                damage += (int)amount;
+                damage *= (int)amount;
                 break;
             case BuildingTable.BuildingType.HealthPoint:
-                maxHp += (int)amount;
+                maxHp *= (int)amount;
                 break;
             case BuildingTable.BuildingType.DefensePoint:
-                armor += (int)amount;
+                armor *= (int)amount;
                 break;
             case BuildingTable.BuildingType.CriticalPossibility:
-                criticalChance += (int)amount;
+                criticalChance += amount;
                 break;
             case BuildingTable.BuildingType.CriticalDamages:
                 criticalMultiplier += (int)amount;
@@ -137,7 +142,7 @@ public class UnitStats : CharacterStats
 
         BigNumber damage = this.damage;
 
-        attack.isCritical = criticalChance >= Random.value;
+        attack.isCritical = criticalChance >= Random.Range(0,100);
         if(attack.isCritical)
         {
             damage *= criticalMultiplier;
@@ -151,7 +156,7 @@ public class UnitStats : CharacterStats
 
         return attack;
     }
-
+    
     public override Attack CreateAttack(CharacterStats defenderStats)
     {
         //TODO: 대미지 계산식 정해지면 수정해야함 - 250322 HKY
@@ -159,10 +164,14 @@ public class UnitStats : CharacterStats
 
         BigNumber damage = this.damage;
 
-        attack.isCritical = criticalChance >= Random.value;
+
+        attack.isCritical = criticalChance >= Random.Range(0, 100);
         if (attack.isCritical)
         {
-            damage *= criticalMultiplier;
+            damage = (damage * 2) + (damage * criticalMultiplier);
+            Debug.Log(damage);
+            Debug.Log(criticalChance);
+
         }
         attack.damage = damage;
 

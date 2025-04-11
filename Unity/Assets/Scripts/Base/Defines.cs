@@ -88,6 +88,18 @@ public enum IngameStatus
     Mine,
 }
 
+public enum TargetPriority
+{
+    /// <summary>
+    /// ÅÊÄ¿-µô·¯-Èú·¯
+    /// </summary>
+    FrontOrder = 1,
+    /// <summary>
+    /// Èú·¯-µô·¯-ÅÊÄ¿
+    /// </summary>
+    BackOrder = 2,
+}
+
 public enum SlotType
 {
     Equip,

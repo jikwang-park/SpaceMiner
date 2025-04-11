@@ -86,7 +86,7 @@ public class MonsterSkill : MonoBehaviour
 
         switch (skillData.Type)
         {
-            case MonsterSkillTable.TargetPriority.FrontOrder:
+            case TargetPriority.FrontOrder:
                 for (int i = (int)UnitTypes.Tanker; i <= (int)UnitTypes.Healer; ++i)
                 {
                     Transform target = controller.StageManager.UnitPartyManager.GetUnit((UnitTypes)i);
@@ -109,7 +109,7 @@ public class MonsterSkill : MonoBehaviour
                     }
                 }
                 break;
-            case MonsterSkillTable.TargetPriority.BackOrder:
+            case TargetPriority.BackOrder:
                 for (int i = (int)UnitTypes.Healer; i >= (int)UnitTypes.Tanker; --i)
                 {
                     Transform target = controller.StageManager.UnitPartyManager.GetUnit((UnitTypes)i);

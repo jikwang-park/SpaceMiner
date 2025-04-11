@@ -31,7 +31,7 @@ public class UnitSkillButtonManager : MonoBehaviour
     [SerializeField]
     private TextMeshProUGUI text;
     [SerializeField]
-    public float currentValue;
+    public float currentValue { get; private set; }
    
     
     private StageManager stageManager;
@@ -42,6 +42,7 @@ public class UnitSkillButtonManager : MonoBehaviour
         healthSlider.gameObject.SetActive(false);
         healerHpOptionButton.onClick.AddListener(() => OnClickHealthSliderButton());
         healthSlider.onValueChanged.AddListener(OnHealthSilderholdChanaged);
+        healthSlider.value = 0.5f;
         OnHealthSilderholdChanaged(healthSlider.value);
         stageManager = GameObject.FindGameObjectWithTag("GameController").GetComponent<StageManager>();
         stageManager.UnitPartyManager.OnUnitCreated += Init;

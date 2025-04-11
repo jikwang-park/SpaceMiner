@@ -13,11 +13,16 @@ public class InventoryPanelUI : MonoBehaviour
     [SerializeField]
     private Inventory healerInventory;
 
-    private UnitTypes currentInventoryType;
+    private Dictionary<UnitTypes, Inventory> inventories = new Dictionary<UnitTypes, Inventory>();
+    private UnitTypes currentType = UnitTypes.Tanker;
     public void Awake()
     {
         InitializeInventories();
         InventoryManager.onChangedInventory += ApplyChangesInventorys;
+        inventories.Add(UnitTypes.Tanker, tankerInventory);
+        inventories.Add(UnitTypes.Dealer, dealerInventory);
+        inventories.Add(UnitTypes.Healer, healerInventory);
+        inventories[currentType].gameObject.SetActive(true);
     }
     public void OnEnable()
     {
@@ -30,28 +35,14 @@ public class InventoryPanelUI : MonoBehaviour
 
     public void DisplayInventory(UnitTypes type)
     {
-        if(currentInventoryType == type)
+        if(currentType == type)
         {
             return;
         }
 
-        currentInventoryType = type;
-        tankerInventory.gameObject.SetActive(false);
-        dealerInventory.gameObject.SetActive(false);
-        healerInventory.gameObject.SetActive(false);
-
-        switch (currentInventoryType)
-        {
-            case UnitTypes.Tanker:
-                tankerInventory.gameObject.SetActive(true);
-                break;
-            case UnitTypes.Dealer:
-                dealerInventory.gameObject.SetActive(true);
-                break;
-            case UnitTypes.Healer:
-                healerInventory.gameObject.SetActive(true);
-                break;
-        }
+        inventories[currentType].gameObject.SetActive(false);
+        currentType = type;
+        inventories[currentType].gameObject.SetActive(true);
     }
 
     private void InitializeInventories()
@@ -62,7 +53,7 @@ public class InventoryPanelUI : MonoBehaviour
     }
     public void OnClickBatchMergeButton()
     {
-        switch (currentInventoryType)
+        switch (currentType)
         {
             case UnitTypes.Tanker:
                 tankerInventory.BatchMerge();
@@ -83,7 +74,7 @@ public class InventoryPanelUI : MonoBehaviour
     }
     public void OnClickDisplayTankerInventoryButton()
     {
-        if(currentInventoryType == UnitTypes.Tanker)
+        if(currentType == UnitTypes.Tanker)
         {
             return;
         }
@@ -91,7 +82,7 @@ public class InventoryPanelUI : MonoBehaviour
     }
     public void OnClickDisplayDealerInventoryButton()
     {
-        if (currentInventoryType == UnitTypes.Dealer)
+        if (currentType == UnitTypes.Dealer)
         {
             return;
         }
@@ -99,7 +90,7 @@ public class InventoryPanelUI : MonoBehaviour
     }
     public void OnClickDisplayHealerInventoryButton()
     {
-        if (currentInventoryType == UnitTypes.Healer)
+        if (currentType == UnitTypes.Healer)
         {
             return;
         }

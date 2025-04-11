@@ -109,13 +109,10 @@ public class UnitStatsUpgradeElement : MonoBehaviour
         if (ItemManager.CanConsume((int)Currency.Gold, currentGold))
         {
             ItemManager.ConsumeCurrency(Currency.Gold, currentGold);
+            LevelUp();
+            SetStatsInfo();
+            stageManager.UnitPartyManager.AddStats(currentType, level * value);
+            SaveLoadManager.SaveGame();
         }
-        LevelUp();
-        SetStatsInfo();
-        stageManager.UnitPartyManager.AddStats(currentType, level*value);
-        SaveLoadManager.SaveGame();
     }
-
-     
- 
 }

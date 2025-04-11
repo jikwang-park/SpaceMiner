@@ -96,9 +96,8 @@ public class Inventory : MonoBehaviour
 
                 if (instantiatedCount == totalCount && inventoryElements.Count > 0)
                 {
-                    var equipElement = inventoryElements.Find((e) => e.soldierId == datas.equipElementID);
-                    OnElementSelected(equipElement);
-                    Equip();
+                    equipElement = inventoryElements.Find((e) => e.soldierId == datas.equipElementID);
+                    equipElement.SetEquip();
                     OnElementSelected(inventoryElements[0]);
                 }
             };
@@ -108,7 +107,7 @@ public class Inventory : MonoBehaviour
     {
         selectedElement = element;
         var currentIndex = inventoryElements.IndexOf(selectedElement);
-        if(currentIndex < inventoryElements.Count)
+        if(currentIndex < inventoryElements.Count && currentIndex >= 0)
         {
             infoMergePanelUI.Initialize(inventoryElements[currentIndex], inventoryElements[currentIndex + 1]);
         }
@@ -137,6 +136,7 @@ public class Inventory : MonoBehaviour
         UnEquip();
         equipElement = selectedElement;
         equipElement.SetEquip();
+        InventoryManager.Equip(type, equipElement.soldierId);
         unitPartyManager.SetUnitData(DataTableManager.SoldierTable.GetData(equipElement.soldierId), type);
     }
     private void UnEquip()

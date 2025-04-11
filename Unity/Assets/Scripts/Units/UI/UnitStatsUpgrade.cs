@@ -28,6 +28,7 @@ public class UnitStatsUpgrade : MonoBehaviour
 
     private void Init()
     {
+        //수정해야됌
         var data = SaveLoadManager.Data.unitStatUpgradeData.upgradeLevels;
         if(data !=null)
         {

@@ -37,7 +37,7 @@ public class GoldShopPanelUI : MonoBehaviour
     private void OnEnable()
     {
         SetGoldShopElement(defaultElementId);
-        UpdateTexts();
+        UpdateUI();
         ItemManager.OnItemAmountChanged += DoItemChanged;
     }
     private void OnDisable()
@@ -87,15 +87,15 @@ public class GoldShopPanelUI : MonoBehaviour
     }
     public void OnValueChangedSellAmount()
     {
-        UpdateTexts();
+        UpdateUI();
     }
-    public void UpdateTexts()
+    public void UpdateUI()
     {
         describeText.text = $"Sell Amount - {SellAmount}\nTotal Price - {TotalPrice}";
+        sellAmountSlider.interactable = SellAmount > 0;
     }
     public void OnClickSellButton()
     {
-        ItemManager.AddItem((int)currentCurrency, 1000);
         if (!ItemManager.CanConsume((int)currentCurrency, SellAmount))
         {
             Debug.Log($"OnClickSellButton : {currentCurrency}이 모자랍니다");
@@ -109,7 +109,7 @@ public class GoldShopPanelUI : MonoBehaviour
     {
         if((int)currentCurrency == itemId)
         {
-            UpdateTexts();
+            UpdateUI();
         }
     }
 }

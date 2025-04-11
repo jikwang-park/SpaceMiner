@@ -175,7 +175,7 @@ public class Unit : MonoBehaviour
     {
         get
         {
-            if (Time.time < unitSkill.coolTime + lastSkillUsedTime)
+            if (targetPos == null || Time.time < unitSkill.coolTime + lastSkillUsedTime)
                 return false;
 
             return true;
@@ -186,7 +186,7 @@ public class Unit : MonoBehaviour
     {
         get
         {
-            if (targetDistance > unitStats.range ||
+            if (targetPos == null|| targetDistance > unitStats.range ||
                     Time.time < unitSkill.coolTime + lastSkillUsedTime)
                 return false;
 
@@ -496,7 +496,7 @@ public class Unit : MonoBehaviour
         float buildingStats = 0;
         for(int i = 0; i <= level; ++ i)
         {
-            buildingStats += data[i].Value;
+            buildingStats = data[i].Value;
         }
         unitStats.AddBuildingStats(type, buildingStats);
 

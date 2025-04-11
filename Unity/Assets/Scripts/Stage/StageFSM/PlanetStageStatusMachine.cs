@@ -183,10 +183,17 @@ public class PlanetStageStatusMachine : StageStatusMachine
                 stageLoadData.highPlanet = CurrentPlanet;
                 stageLoadData.highStage = CurrentStage;
             }
+
+            if (stageManager.StageUiManager.IngameUIManager.StageSelectWindow.gameObject.activeSelf)
+            {
+                stageManager.StageUiManager.IngameUIManager.StageSelectWindow.RefreshStageWindow();
+            }
+
             GuideQuestManager.QuestProgressChange(GuideQuestTable.MissionType.StageClear);
         }
 
         yield return wait1s;
+
 
 
         if (Variables.stageMode == StageMode.Ascend)
@@ -200,8 +207,12 @@ public class PlanetStageStatusMachine : StageStatusMachine
                 ++stageLoadData.currentPlanet;
                 stageLoadData.currentStage = 1;
 
-
                 SaveLoadManager.SaveGame();
+
+                if (stageManager.StageUiManager.IngameUIManager.StageSelectWindow.gameObject.activeSelf)
+                {
+                    stageManager.StageUiManager.IngameUIManager.StageSelectWindow.RefreshStageWindow();
+                }
                 stageManager.StageUiManager.IngameUIManager.CloseStageEndWindow();
                 Reset();
                 yield break;

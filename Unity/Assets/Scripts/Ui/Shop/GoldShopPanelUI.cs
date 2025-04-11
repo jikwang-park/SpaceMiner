@@ -95,7 +95,6 @@ public class GoldShopPanelUI : MonoBehaviour
     }
     public void OnClickSellButton()
     {
-        ItemManager.AddItem((int)currentCurrency, 1000);
         if (!ItemManager.CanConsume((int)currentCurrency, SellAmount))
         {
             Debug.Log($"OnClickSellButton : {currentCurrency}이 모자랍니다");

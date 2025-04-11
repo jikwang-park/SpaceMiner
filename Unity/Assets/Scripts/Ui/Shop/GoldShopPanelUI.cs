@@ -84,6 +84,7 @@ public class GoldShopPanelUI : MonoBehaviour
         sellAmountSlider.value = 0f;
         currentCurrency = (Currency)DataTableManager.ShopTable.GetData(currentGoldShopElementId).NeedItemID;
         currentSellPrice = DataTableManager.ShopTable.GetData(currentGoldShopElementId).PayCount;
+        UpdateUI();
     }
     public void OnValueChangedSellAmount()
     {
@@ -92,7 +93,7 @@ public class GoldShopPanelUI : MonoBehaviour
     public void UpdateUI()
     {
         describeText.text = $"Sell Amount - {SellAmount}\nTotal Price - {TotalPrice}";
-        sellAmountSlider.interactable = SellAmount > 0;
+        sellAmountSlider.interactable = ItemManager.GetItemAmount((int)currentCurrency) > 0;
     }
     public void OnClickSellButton()
     {

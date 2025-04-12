@@ -67,8 +67,8 @@ public class UnitStats : CharacterStats
         Hp = maxHp;
 
         coolDown = 1;
-        armor = (int)data.Basic_DP;
-        damage = (int)data.Basic_AP;
+        armor = (int)data.Defence;
+        damage = (int)data.Attack;
         //range = (int)data.Distance;
 
         switch (type)

@@ -23,10 +23,10 @@ public class BuildingTable : DataTable
         public int NameStringID { get; set; }
         public int Level { get; set; }
         public float Value { get; set; }
-        public int ItemID { get; set; }
-        public int NeedCount { get; set; }
+        public int NeedItemID { get; set; }
+        public int NeedItemCount { get; set; }
         public int MaxLevel { get; set; }
-        public string PrefabID { get; set; }
+        public int SpriteID { get; set; }
 
         public void Set(string[] argument)
         {
@@ -42,10 +42,10 @@ public class BuildingTable : DataTable
             NameStringID = int.Parse(argument[2]);
             Level = int.Parse(argument[3]);
             Value = float.Parse(argument[4]);
-            ItemID = int.Parse(argument[5]);
-            NeedCount = int.Parse(argument[6]);
+            NeedItemID = int.Parse(argument[5]);
+            NeedItemCount = int.Parse(argument[6]);
             MaxLevel = int.Parse(argument[7]);
-            PrefabID = argument[8];
+            SpriteID = int.Parse(argument[8]);
         }
     }
 

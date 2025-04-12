@@ -83,7 +83,9 @@ public class PlanetStageStatusMachine : StageStatusMachine
             stageManager.StageMonsterManager.StopMonster();
             stageManager.UnitPartyManager.UnitDespawn();
             stageManager.StageMonsterManager.ClearMonster();
-            stageManager.ObjectPoolManager.Clear(stageData.PrefabId);
+
+            var prefabID =DataTableManager.AddressTable.GetData(stageData.PrefabID);
+            stageManager.ObjectPoolManager.Clear(prefabID);
         }
     }
 
@@ -92,7 +94,7 @@ public class PlanetStageStatusMachine : StageStatusMachine
         stageManager.StageUiManager.IngameUIManager.SetWaveText(CurrentWave);
         yield return new WaitForSeconds(delay);
 
-        var corpsData = DataTableManager.CorpsTable.GetData(waveData.WaveCorpsIDs[CurrentWave - 1]);
+        var corpsData = DataTableManager.CorpsTable.GetData(waveData.CorpsIDs[CurrentWave - 1]);
 
         if (corpsData is null)
         {
@@ -115,7 +117,8 @@ public class PlanetStageStatusMachine : StageStatusMachine
 
     protected void InstantiateBackground()
     {
-        var background = stageManager.ObjectPoolManager.Get(stageData.PrefabId);
+        var prefabID = DataTableManager.AddressTable.GetData(stageData.PrefabID);
+        var background = stageManager.ObjectPoolManager.Get(prefabID);
         background.transform.parent = null;
         background.transform.position = Vector3.back * 30f;
         background.transform.rotation = Quaternion.identity;
@@ -123,7 +126,7 @@ public class PlanetStageStatusMachine : StageStatusMachine
 
     protected void OnMonsterCleared()
     {
-        if (CurrentWave > waveData.WaveCorpsIDs.Length)
+        if (CurrentWave > waveData.CorpsIDs.Length)
         {
             cleared = true;
             EndStage(true);
@@ -251,7 +254,7 @@ public class PlanetStageStatusMachine : StageStatusMachine
 
         //stageData = DataTableManager.StageTable.GetData(string.Format(stageIDFormat, CurrentPlanet, CurrentStage));
         stageData = DataTableManager.StageTable.GetStageData(CurrentPlanet, CurrentStage);
-        waveData = DataTableManager.WaveTable.GetData(stageData.CorpsID);
+        waveData = DataTableManager.WaveTable.GetData(stageData.WaveID);
         stageManager.StageUiManager.IngameUIManager.SetStageText(CurrentPlanet, CurrentStage);
         stageManager.StageUiManager.IngameUIManager.SetWaveText(CurrentWave);
     }
@@ -265,7 +268,6 @@ public class PlanetStageStatusMachine : StageStatusMachine
     {
         stageManager.StageUiManager.curtain.SetFade(true);
         int previousPlanet = CurrentPlanet;
-        var previousBackground = stageData.PrefabId;
         stageManager.StopAllCoroutines();
         stageManager.StageMonsterManager.ClearMonster();
         stageManager.StageUiManager.IngameUIManager.SetGoldText();
@@ -274,7 +276,7 @@ public class PlanetStageStatusMachine : StageStatusMachine
         if (previousPlanet != CurrentPlanet)
         {
             stageManager.ReleaseBackground();
-            stageManager.ObjectPoolManager.Clear(previousBackground);
+
             InstantiateBackground();
 
             stageManager.UnitPartyManager.UnitSpawn();

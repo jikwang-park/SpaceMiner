@@ -28,7 +28,7 @@ public class MiningRobotShopElement : MonoBehaviour
         needItemId = data.NeedItemID;
         paymentItemId = data.PaymentItemID;
 
-        needAmount = data.NeedCount;
+        needAmount = data.NeedItemCount;
         paymentItemAmount = data.PayCount;
         UpdateUI();
     }

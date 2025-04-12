@@ -38,11 +38,11 @@ public class DungeonEndWindow : MonoBehaviour
             messageText.text = "Cleared";
             bool lastStageCondition = Variables.currentDungeonStage == DataTableManager.DungeonTable.CountOfStage(Variables.currentDungeonType);
             var curStage = DataTableManager.DungeonTable.GetData(Variables.currentDungeonType, Variables.currentDungeonStage);
-            bool keyCondition = ItemManager.GetItemAmount(curStage.DungeonKeyID) >= curStage.KeyCount;
+            bool keyCondition = ItemManager.GetItemAmount(curStage.NeedKeyItemID) >= curStage.NeedKeyCount;
 
             if (lastStageCondition)
             {
-                nextButton.interactable = ItemManager.GetItemAmount(curStage.DungeonKeyID) >= curStage.KeyCount;
+                nextButton.interactable = ItemManager.GetItemAmount(curStage.NeedKeyItemID) >= curStage.NeedKeyCount;
 
                 nextText.text = "Retry";
             }
@@ -51,11 +51,11 @@ public class DungeonEndWindow : MonoBehaviour
                 nextText.text = "Next";
                 var nextStage = DataTableManager.DungeonTable.GetData(Variables.currentDungeonType, Variables.currentDungeonStage + 1);
 
-                bool powerCondition = Variables.powerLevel > nextStage.ConditionPower;
-                bool planetCondition = (SaveLoadManager.Data.stageSaveData.highPlanet > nextStage.ConditionPlanet)
+                bool powerCondition = Variables.powerLevel > nextStage.NeedPower;
+                bool planetCondition = (SaveLoadManager.Data.stageSaveData.highPlanet > nextStage.NeedClearPlanet)
                     || (SaveLoadManager.Data.stageSaveData.highPlanet == SaveLoadManager.Data.stageSaveData.clearedPlanet
                         && SaveLoadManager.Data.stageSaveData.highStage == SaveLoadManager.Data.stageSaveData.clearedStage);
-                keyCondition = ItemManager.GetItemAmount(nextStage.DungeonKeyID) >= nextStage.KeyCount;
+                keyCondition = ItemManager.GetItemAmount(nextStage.NeedKeyItemID) >= nextStage.NeedKeyCount;
                 nextButton.interactable = powerCondition && planetCondition && keyCondition;
             }
         }

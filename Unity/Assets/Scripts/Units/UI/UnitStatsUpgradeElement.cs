@@ -50,7 +50,7 @@ public class UnitStatsUpgradeElement : MonoBehaviour
     {
         currentType = data.Type;
         value = data.Value;
-        gold = data.Gold;
+        gold = data.NeedItemCount;
         maxLevel = data.MaxLevel;
         SetStatsInfo();
     }

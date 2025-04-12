@@ -21,13 +21,13 @@ public class MiningRobotMergePopupUI : MonoBehaviour
     {
         var data = DataTableManager.RobotMergeTable.GetData(robotId);
 
-        var beforeData = DataTableManager.RobotTable.GetData(data.materialRobotID);
-        var afterData = DataTableManager.RobotTable.GetData(data.resultID);
+        var beforeData = DataTableManager.RobotTable.GetData(data.NeedRobotID);
+        var afterData = DataTableManager.RobotTable.GetData(data.ResultRobotID);
 
         responseCallback = callback;
-        beforeIcon.Initialize(beforeData.grade);
-        afterIcon.Initialize(afterData.grade);
-        percentText.text = $"{data.probability} %";
+        beforeIcon.Initialize(beforeData.Grade);
+        afterIcon.Initialize(afterData.Grade);
+        percentText.text = $"{data.Probability} %";
     }
 
     public void OnClickConfirmButton()

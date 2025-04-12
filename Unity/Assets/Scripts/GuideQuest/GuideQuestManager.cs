@@ -85,7 +85,7 @@ public static class GuideQuestManager
 
     public static void GetReward()
     {
-        ItemManager.AddItem(currentQuestData.RewardID, currentQuestData.RewardCount);
+        ItemManager.AddItem(currentQuestData.RewardItemID, currentQuestData.RewardItemCount);
         ChangeQuest(currentQuestData.Turn + 1);
         SaveLoadManager.SaveGame();
     }

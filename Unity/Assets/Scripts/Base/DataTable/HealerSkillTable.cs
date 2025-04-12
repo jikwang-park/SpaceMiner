@@ -10,12 +10,14 @@ public class HealerSkillTable : DataTable
     public class Data : ITableData
     {
         public int ID { get; set; }
-        public Grade Type { get; set; }
+        public Grade Grade { get; set; }
         public float HealRatio { get; set; }
         public float CoolTime { get; set; }
         public int BuffID { get; set; }
         public string SoldierTarget { get; set; }
         public int Level { get; set; }
+        public int NameStringID { get; set; }
+        public int DetailStringID { get; set; }
 
         public UnitTypes[] targetPriority;
 
@@ -24,17 +26,19 @@ public class HealerSkillTable : DataTable
             ID = int.Parse(argument[0]);
             if (int.TryParse(argument[1], out int type))
             {
-                Type = (Grade)type;
+                Grade = (Grade)type;
             }
             else
             {
-                Type = Enum.Parse<Grade>(argument[1]);
+                Grade = Enum.Parse<Grade>(argument[1]);
             }
             HealRatio = float.Parse(argument[2]);
             CoolTime = float.Parse(argument[3]);
             BuffID = int.Parse(argument[4]);
             SoldierTarget = argument[5];
             Level = int.Parse(argument[6]);
+            NameStringID = int.Parse(argument[7]);
+            DetailStringID = int.Parse(argument[8]);
 
             targetPriority = SplitSoldierTarget(SoldierTarget);
         }

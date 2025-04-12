@@ -32,17 +32,17 @@ public class GuideQuestWindow : MonoBehaviour
     private void Start()
     {
         stageManager = GameObject.FindGameObjectWithTag("GameController").GetComponent<StageManager>();
-        questDescriptionText.text = GuideQuestManager.currentQuestData.StringID.ToString();
+        questDescriptionText.text = GuideQuestManager.currentQuestData.DetailStringID.ToString();
         UpdateProgress();
         GuideQuestManager.RefreshQuest();
     }
 
     private void UpdateProgress()
     {
-        questDescriptionText.text = GuideQuestManager.currentQuestData.StringID.ToString();
+        questDescriptionText.text = GuideQuestManager.currentQuestData.DetailStringID.ToString();
         int monsterCount = SaveLoadManager.Data.questProgressData.monsterCount;
         int goal = GuideQuestManager.currentQuestData.TargetCount;
-        int rewardCount = GuideQuestManager.currentQuestData.RewardCount;
+        int rewardCount = GuideQuestManager.currentQuestData.RewardItemCount;
 
         questProgressText.text = $"{GuideQuestManager.Progress} / {goal}";
         rewardCountText.text = $"{rewardCount}";

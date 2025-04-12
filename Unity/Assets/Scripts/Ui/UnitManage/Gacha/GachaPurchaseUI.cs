@@ -24,18 +24,18 @@ public class GachaPurchaseUI : MonoBehaviour
     }
     public void Initialize(GachaTable.Data data)
     {
-        currentGachaId = data.gachaID;
+        currentGachaId = data.ID;
         if(useTicket)
         {
             gachaOneButton.Initialize(1, 1);
-            gachaRepeatButton.Initialize(data.repeat, data.repeat);
-            gachaRepeat2Button.Initialize(data.repeat2, data.repeat2);
+            gachaRepeatButton.Initialize(data.RepeatCount1, data.RepeatCount1);
+            gachaRepeat2Button.Initialize(data.RepeatCount2, data.RepeatCount2);
         }
         else
         {
             gachaOneButton.Initialize(1, GachaManager.CalCulateCost(currentGachaId, 1));
-            gachaRepeatButton.Initialize(data.repeat, GachaManager.CalCulateCost(currentGachaId, data.repeat));
-            gachaRepeat2Button.Initialize(data.repeat2, GachaManager.CalCulateCost(currentGachaId, data.repeat2));
+            gachaRepeatButton.Initialize(data.RepeatCount1, GachaManager.CalCulateCost(currentGachaId, data.RepeatCount1));
+            gachaRepeat2Button.Initialize(data.RepeatCount2, GachaManager.CalCulateCost(currentGachaId, data.RepeatCount2));
         }
 
     }

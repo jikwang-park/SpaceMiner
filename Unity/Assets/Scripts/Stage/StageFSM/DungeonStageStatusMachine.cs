@@ -70,7 +70,10 @@ public class DungeonStageStatusMachine : StageStatusMachine
             stageManager.StageMonsterManager.StopMonster();
             stageManager.UnitPartyManager.UnitDespawn();
             stageManager.StageMonsterManager.ClearMonster();
-            stageManager.ObjectPoolManager.Clear(dungeonData.PrefabID);
+
+            var prefabID = DataTableManager.AddressTable.GetData(dungeonData.PrefabID);
+
+            stageManager.ObjectPoolManager.Clear(prefabID);
         }
     }
 
@@ -79,7 +82,7 @@ public class DungeonStageStatusMachine : StageStatusMachine
         stageManager.StageUiManager.IngameUIManager.SetWaveText(currentWave);
         yield return new WaitForSeconds(delay);
 
-        var corpsData = DataTableManager.CorpsTable.GetData(waveData.WaveCorpsIDs[currentWave - 1]);
+        var corpsData = DataTableManager.CorpsTable.GetData(waveData.CorpsIDs[currentWave - 1]);
 
         if (corpsData is null)
         {
@@ -103,7 +106,8 @@ public class DungeonStageStatusMachine : StageStatusMachine
 
     protected void InstantiateBackground()
     {
-        var background = stageManager.ObjectPoolManager.Get(dungeonData.PrefabID);
+        var prefabID = DataTableManager.AddressTable.GetData(dungeonData.PrefabID);
+        var background = stageManager.ObjectPoolManager.Get(prefabID);
         background.transform.parent = null;
         background.transform.position = Vector3.back * 30f;
         background.transform.rotation = Quaternion.identity;
@@ -121,7 +125,7 @@ public class DungeonStageStatusMachine : StageStatusMachine
 
     protected void OnMonsterCleared()
     {
-        if (currentWave > waveData.WaveCorpsIDs.Length)
+        if (currentWave > waveData.CorpsIDs.Length)
         {
             cleared = true;
             OnStageClear();
@@ -148,8 +152,8 @@ public class DungeonStageStatusMachine : StageStatusMachine
 
             GuideQuestManager.QuestProgressChange(GuideQuestTable.MissionType.DungeonClear);
         }
-        ItemManager.AddItem(dungeonData.ItemID, dungeonData.ClearReward);
-        ItemManager.ConsumeItem(dungeonData.DungeonKeyID, dungeonData.KeyCount);
+        ItemManager.AddItem(dungeonData.RewardItemID, dungeonData.ClearRewardItemCount);
+        ItemManager.ConsumeItem(dungeonData.NeedKeyItemID, dungeonData.NeedKeyCount);
         SaveLoadManager.SaveGame();
 
         stageManager.StageUiManager.IngameUIManager.OpenDungeonEndWindow("Clear", true);
@@ -162,7 +166,7 @@ public class DungeonStageStatusMachine : StageStatusMachine
         currentWave = 1;
 
         dungeonData = DataTableManager.DungeonTable.GetData(currentType, currentStage);
-        waveData = DataTableManager.WaveTable.GetData(dungeonData.WaveCorpsID);
+        waveData = DataTableManager.WaveTable.GetData(dungeonData.WaveID);
 
         stageEndTime = Time.time + dungeonData.LimitTime;
 

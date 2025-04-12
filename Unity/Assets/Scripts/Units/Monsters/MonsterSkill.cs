@@ -17,7 +17,7 @@ public class MonsterSkill : MonoBehaviour
     {
         get
         {
-            switch (skillData.Type)
+            switch (skillData.TargetPriority)
             {
                 case MonsterSkillTable.TargetPriority.FrontOrder:
                     for (int i = (int)UnitTypes.Tanker; i <= (int)UnitTypes.Healer; ++i)
@@ -84,7 +84,7 @@ public class MonsterSkill : MonoBehaviour
 
         List<Transform> targets = new List<Transform>();
 
-        switch (skillData.Type)
+        switch (skillData.TargetPriority)
         {
             case MonsterSkillTable.TargetPriority.FrontOrder:
                 for (int i = (int)UnitTypes.Tanker; i <= (int)UnitTypes.Healer; ++i)
@@ -137,7 +137,7 @@ public class MonsterSkill : MonoBehaviour
         foreach (var defender in targets)
         {
             CharacterStats dStats = defender.GetComponent<CharacterStats>();
-            Attack attack = stats.CreateAttack(dStats, skillData.AtkRatio);
+            Attack attack = stats.CreateAttack(dStats, skillData.AttackRatio);
             IAttackable[] attackables = defender.GetComponents<IAttackable>();
             foreach (var attackable in attackables)
             {

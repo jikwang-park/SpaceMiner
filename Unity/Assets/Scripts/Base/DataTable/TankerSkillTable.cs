@@ -10,13 +10,15 @@ public class TankerSkillTable : DataTable
     public class Data : ITableData
     {
         public int ID { get; set; }
-        public Grade Type { get; set; }
+        public Grade Grade { get; set; }
         public float ShieldRatio { get; set; }
         public float Duration { get; set; }
         public float CoolTime { get; set; }
         public int BuffID { get; set; }
         public string SoldierTarget { get; set; }
         public int Level { get; set; }
+        public int NameStringID { get; set; }
+        public int DetailStringID { get; set; }
 
         public UnitTypes[] targetPriority;
 
@@ -25,11 +27,11 @@ public class TankerSkillTable : DataTable
             ID = int.Parse(argument[0]);
             if (int.TryParse(argument[1], out int type))
             {
-                Type = (Grade)type;
+                Grade = (Grade)type;
             }
             else
             {
-                Type = Enum.Parse<Grade>(argument[1]);
+                Grade = Enum.Parse<Grade>(argument[1]);
             }
             ShieldRatio = int.Parse(argument[2]);
             Duration = int.Parse(argument[3]);
@@ -37,6 +39,8 @@ public class TankerSkillTable : DataTable
             BuffID = int.Parse(argument[5]);
             SoldierTarget = argument[6];
             Level = int.Parse(argument[7]);
+            NameStringID = int.Parse(argument[8]);
+            DetailStringID = int.Parse(argument[9]);
 
             targetPriority = SplitSoldierTarget(SoldierTarget);
         }

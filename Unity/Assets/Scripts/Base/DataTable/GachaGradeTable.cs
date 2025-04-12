@@ -9,23 +9,23 @@ public class GachaGradeTable : DataTable
     public class Data : ITableData
     {
         public int ID { get; set; }
-        public int gachaID { get; set; }
-        public Grade grade { get; set; }
-        public float probability { get; set; }
+        public int GachaID { get; set; }
+        public Grade Grade { get; set; }
+        public float Probability { get; set; }
 
         public void Set(string[] argument)
         {
             ID = int.Parse(argument[0]);
-            gachaID = int.Parse(argument[1]);
+            GachaID = int.Parse(argument[1]);
             if (int.TryParse(argument[2], out int type))
             {
-                grade = (Grade)type;
+                Grade = (Grade)type;
             }
             else
             {
-                grade = Enum.Parse<Grade>(argument[1]);
+                Grade = Enum.Parse<Grade>(argument[1]);
             }
-            probability = float.Parse(argument[3]);
+            Probability = float.Parse(argument[3]);
         }
     }
 
@@ -47,14 +47,14 @@ public class GachaGradeTable : DataTable
 
         foreach (var item in list)
         {
-            if (!TableData.ContainsKey(item.gachaID))
+            if (!TableData.ContainsKey(item.GachaID))
             {
                 TableData.Add(item.ID, item);
-                if (!levelDict.ContainsKey(item.gachaID))
+                if (!levelDict.ContainsKey(item.GachaID))
                 {
-                    levelDict.Add(item.gachaID, new List<Data>());
+                    levelDict.Add(item.GachaID, new List<Data>());
                 }
-                levelDict[item.gachaID].Add(item);
+                levelDict[item.GachaID].Add(item);
             }
             else
             {
@@ -81,11 +81,11 @@ public class GachaGradeTable : DataTable
             var datum = CreateData<Data>(item);
             tableData.Add(datum.ID, datum);
 
-            if (!levelDict.ContainsKey(datum.gachaID))
+            if (!levelDict.ContainsKey(datum.GachaID))
             {
-                levelDict.Add(datum.gachaID, new List<Data>());
+                levelDict.Add(datum.GachaID, new List<Data>());
             }
-            levelDict[datum.gachaID].Add(datum);
+            levelDict[datum.GachaID].Add(datum);
         }
         TableData = tableData;
         this.levelDict = levelDict;

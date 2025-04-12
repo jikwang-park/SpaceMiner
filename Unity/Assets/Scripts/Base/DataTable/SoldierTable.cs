@@ -10,42 +10,48 @@ public class SoldierTable : DataTable
     public class Data : ITableData
     {
         public int ID { get; set; }
-        public int StringID { get; set; }
-        public UnitTypes Kind { get; set; }
-        public Grade Rating { get; set; }
+        public int NameStringID { get; set; }
+        public UnitTypes UnitType { get; set; }
+        public Grade Grade { get; set; }
         public int Level { get; set; }
-        public float Basic_AP { get; set; }
-        public float Basic_HP { get; set; }
-        public float Basic_DP { get; set; }
-        public float Distance { get; set; }
+        public float Attack { get; set; }
+        public float HP { get; set; }
+        public float Defence { get; set; }
+        public float Range { get; set; }
         public float MoveSpeed { get; set; }
+        public int AttackSpeed { get; set; }
+        public int CharacterPrefabID { get; set; }
+        public int WeaponPrefabID { get; set; }
 
         public void Set(string[] argument)
         {
             ID = int.Parse(argument[0]);
-            StringID = int.Parse(argument[1]);
+            NameStringID = int.Parse(argument[1]);
             if (int.TryParse(argument[2], out int kind))
             {
-                Kind = (UnitTypes)kind;
+                UnitType = (UnitTypes)kind;
             }
             else
             {
-                Kind = Enum.Parse<UnitTypes>(argument[2]);
+                UnitType = Enum.Parse<UnitTypes>(argument[2]);
             }
             if (int.TryParse(argument[3], out int rating))
             {
-                Rating = (Grade)rating;
+                Grade = (Grade)rating;
             }
             else
             {
-                Rating = Enum.Parse<Grade>(argument[3]);
+                Grade = Enum.Parse<Grade>(argument[3]);
             }
             Level = int.Parse(argument[4]);
-            Basic_AP = float.Parse(argument[5]);
-            Basic_HP = float.Parse(argument[6]);
-            Basic_DP = float.Parse(argument[7]);
-            Distance = float.Parse(argument[8]);
+            Attack = float.Parse(argument[5]);
+            HP = float.Parse(argument[6]);
+            Defence = float.Parse(argument[7]);
+            Range = float.Parse(argument[8]);
             MoveSpeed = float.Parse(argument[9]);
+            AttackSpeed = int.Parse(argument[10]);
+            CharacterPrefabID = int.Parse(argument[11]);
+            WeaponPrefabID = int.Parse(argument[12]);
         }
     }
 
@@ -71,11 +77,11 @@ public class SoldierTable : DataTable
             {
                 TableData.Add(item.ID, item);
 
-                if (!typeDict.ContainsKey(item.Kind))
+                if (!typeDict.ContainsKey(item.UnitType))
                 {
-                    typeDict[item.Kind] = new List<Data>();
+                    typeDict[item.UnitType] = new List<Data>();
                 }
-                typeDict[item.Kind].Add(item);
+                typeDict[item.UnitType].Add(item);
             }
             else
             {
@@ -108,11 +114,11 @@ public class SoldierTable : DataTable
             var datum = CreateData<Data>(item);
             tableData.Add(datum.ID, datum);
 
-            if (!typeDict.ContainsKey(datum.Kind))
+            if (!typeDict.ContainsKey(datum.UnitType))
             {
-                typeDict[datum.Kind] = new List<Data>();
+                typeDict[datum.UnitType] = new List<Data>();
             }
-            typeDict[datum.Kind].Add(datum);
+            typeDict[datum.UnitType].Add(datum);
         }
         TableData = tableData;
         this.typeDict = typeDict;

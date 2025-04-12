@@ -10,31 +10,31 @@ public class RobotTable : DataTable
     public class Data : ITableData
     {
         public int ID { get; set; }
-        public int name { get; set; }
-        public Grade grade { get; set; }
-        public int miningSpeed { get; set; }
-        public int moveSpeed { get; set; }
-        public int loadCapacity { get; set; }
-        public int IsMergeable { get; set; }
-        public string prefabID { get; set; }
+        public int NameStringID { get; set; }
+        public Grade Grade { get; set; }
+        public int MiningSpeed { get; set; }
+        public int MoveSpeed { get; set; }
+        public int ProductCapacity { get; set; }
+        public int SpriteID { get; set; }
+        public int PrefabID { get; set; }
 
         public void Set(string[] argument)
         {
             ID = int.Parse(argument[0]);
-            name = int.Parse(argument[1]);
+            NameStringID = int.Parse(argument[1]);
             if (int.TryParse(argument[2], out int grade))
             {
-                this.grade = (Grade)grade;
+                this.Grade = (Grade)grade;
             }
             else
             {
-                this.grade = Enum.Parse<Grade>(argument[2]);
+                this.Grade = Enum.Parse<Grade>(argument[2]);
             }
-            miningSpeed = int.Parse(argument[3]);
-            moveSpeed = int.Parse(argument[4]);
-            loadCapacity = int.Parse(argument[5]);
-            IsMergeable = int.Parse(argument[6]);
-            prefabID = argument[7];
+            MiningSpeed = int.Parse(argument[3]);
+            MoveSpeed = int.Parse(argument[4]);
+            ProductCapacity = int.Parse(argument[5]);
+            SpriteID = int.Parse(argument[6]);
+            PrefabID = int.Parse(argument[7]);
         }
     }
 

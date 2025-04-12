@@ -147,7 +147,7 @@ public class MonsterController : MonoBehaviour, IObjectPoolGameObject
     {
         MonsterData = DataTableManager.MonsterTable.GetData(monsterId);
         Stats.SetData(MonsterData);
-        RewardData = DataTableManager.MonsterRewardTable.GetData(MonsterData.RewardID);
+        RewardData = DataTableManager.MonsterRewardTable.GetData(MonsterData.RewardTableID);
         InitBehaviourTree();
         if (MonsterData.MonsterSkill != 0)
         {

@@ -8,8 +8,6 @@ using UnityEngine.ResourceManagement.AsyncOperations;
 
 public class ObjectPoolManager : MonoBehaviour
 {
-    private const string objectPoolIDFormat = "ObjectPoolGameObject/{0}";
-
     [SerializeField]
     private string[] addressableAssetsNames;
 
@@ -74,7 +72,7 @@ public class ObjectPoolManager : MonoBehaviour
     private void CreateAddressableObjectPool(string prefabId)
     {
         ObjectPool<GameObject> pool = null;
-        string referenceName = string.Format(objectPoolIDFormat, prefabId);
+        string referenceName = string.Format(prefabId);
         pool = new ObjectPool<GameObject>
             (() => CreatePooledItem(referenceName, pool), OnTakeFromPool, OnReturnedToPool, OnDestroyOnObject, true);
         gameObjectPools.Add(prefabId, pool);

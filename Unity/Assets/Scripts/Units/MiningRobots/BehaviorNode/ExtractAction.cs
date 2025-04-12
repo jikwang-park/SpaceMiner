@@ -15,7 +15,7 @@ public class ExtractAction : ActionNode<MiningRobotController>
 
     protected override NodeStatus OnUpdate()
     {
-        ItemManager.AddItem(context.PlanetData.ItemID, context.RobotData.loadCapacity);
+        ItemManager.AddItem(context.PlanetData.ItemID, context.RobotData.ProductCapacity);
         Debug.Log(ItemManager.GetItemAmount(context.PlanetData.ItemID));
         context.ChangeTarget(true);
         return NodeStatus.Success;

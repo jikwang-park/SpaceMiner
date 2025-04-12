@@ -39,6 +39,7 @@ public class DataTableIds
     public const string shopTable = "ShopTable";
 
     public const string defaultDataTable = "DefaultDataTable";
+    public const string addressTable = "AddressTable";
 
     public const string guideQuestTable = "GuideQuestTable";
 

@@ -64,9 +64,9 @@ public class BuildingDataElement: MonoBehaviour
         id = data[level].ID;
         this.level = data[level].Level;
         value = data[level].Value;
-        itemId = data[level].ItemID;
+        itemId = data[level].NeedItemID;
         maxLevel = data[level].MaxLevel;
-        needItemCount = data[level].NeedCount;
+        needItemCount = data[level].NeedItemCount;
         currentType = data[level].Type;
         if(level == 0)
         {

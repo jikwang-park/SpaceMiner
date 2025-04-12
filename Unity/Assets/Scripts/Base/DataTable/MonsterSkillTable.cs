@@ -9,28 +9,28 @@ public class MonsterSkillTable : DataTable
     public class Data : ITableData
     {
         public int ID { get; set; }
-        public int StringID { get; set; }
-        public float AtkRatio { get; set; }
+        public int PrefabID { get; set; }
+        public float AttackRatio { get; set; }
         public float SkillRange { get; set; }
         public float CoolTime { get; set; }
         public int MaxCount { get; set; }
-        public TargetPriority Type { get; set; }
+        public TargetPriority TargetPriority { get; set; }
 
         public void Set(string[] argument)
         {
             ID = int.Parse(argument[0]);
-            StringID = int.Parse(argument[1]);
-            AtkRatio = float.Parse(argument[2]);
+            PrefabID = int.Parse(argument[1]);
+            AttackRatio = float.Parse(argument[2]);
             SkillRange = float.Parse(argument[3]);
             CoolTime = float.Parse(argument[4]);
             MaxCount = int.Parse(argument[5]);
             if (int.TryParse(argument[6], out int type))
             {
-                Type = (TargetPriority)type;
+                TargetPriority = (TargetPriority)type;
             }
             else
             {
-                Type = Enum.Parse<TargetPriority>(argument[6]);
+                TargetPriority = Enum.Parse<TargetPriority>(argument[6]);
             }
         }
     }

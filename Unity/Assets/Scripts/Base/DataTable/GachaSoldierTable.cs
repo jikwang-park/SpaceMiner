@@ -10,23 +10,23 @@ public class GachaSoldierTable : DataTable
     public class Data : ITableData
     {
         public int ID { get; set; }
-        public Grade grade { get; set; }
-        public int soldierID { get; set; }
-        public float probability { get; set; }
+        public Grade Grade { get; set; }
+        public int SoldierID { get; set; }
+        public float Probability { get; set; }
 
         public void Set(string[] argument)
         {
             ID = int.Parse(argument[0]);
             if (int.TryParse(argument[1], out int type))
             {
-                grade = (Grade)type;
+                Grade = (Grade)type;
             }
             else
             {
-                grade = Enum.Parse<Grade>(argument[1]);
+                Grade = Enum.Parse<Grade>(argument[1]);
             }
-            soldierID = int.Parse(argument[2]);
-            probability = float.Parse(argument[3]);
+            SoldierID = int.Parse(argument[2]);
+            Probability = float.Parse(argument[3]);
         }
     }
 
@@ -51,11 +51,11 @@ public class GachaSoldierTable : DataTable
             if (!TableData.ContainsKey(item.ID))
             {
                 TableData.Add(item.ID, item);
-                if (!gradeDict.ContainsKey(item.grade))
+                if (!gradeDict.ContainsKey(item.Grade))
                 {
-                    gradeDict.Add(item.grade, new List<Data>());
+                    gradeDict.Add(item.Grade, new List<Data>());
                 }
-                gradeDict[item.grade].Add(item);
+                gradeDict[item.Grade].Add(item);
             }
             else
             {
@@ -81,11 +81,11 @@ public class GachaSoldierTable : DataTable
         {
             var datum = CreateData<Data>(item);
             tableData.Add(datum.ID, datum);
-            if (!gradeDict.ContainsKey(datum.grade))
+            if (!gradeDict.ContainsKey(datum.Grade))
             {
-                gradeDict.Add(datum.grade, new List<Data>());
+                gradeDict.Add(datum.Grade, new List<Data>());
             }
-            gradeDict[datum.grade].Add(datum);
+            gradeDict[datum.Grade].Add(datum);
         }
         TableData = tableData;
         this.gradeDict = gradeDict;

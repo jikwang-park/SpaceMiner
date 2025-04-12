@@ -236,9 +236,9 @@ public static class MiningRobotInventoryManager
         var robotData = DataTableManager.RobotTable.GetData(robotId);
         var planetData = DataTableManager.PlanetTable.GetData(planetId);
 
-        float planetLevel = (index == 1) ? planetData.miningLevel2 : planetData.miningLevel;
+        float planetLevel = (index == 1) ? planetData.MiningLevel2 : planetData.MiningLevel1;
 
-        robotMiningAmount = (float)robotData.loadCapacity / (float)((planetLevel / robotData.moveSpeed) + (planetLevel / robotData.miningSpeed));
+        robotMiningAmount = (float)robotData.ProductCapacity / (float)((planetLevel / robotData.MoveSpeed) + (planetLevel / robotData.MiningSpeed));
 
         return robotMiningAmount;
     }

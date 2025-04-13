@@ -38,11 +38,11 @@ public class DungeonEndWindow : MonoBehaviour
             messageText.text = "Cleared";
             bool lastStageCondition = Variables.currentDungeonStage == DataTableManager.DungeonTable.CountOfStage(Variables.currentDungeonType);
             var curStage = DataTableManager.DungeonTable.GetData(Variables.currentDungeonType, Variables.currentDungeonStage);
-            bool keyCondition = ItemManager.GetItemAmount(curStage.NeedKeyItemID) >= curStage.NeedKeyCount;
+            bool keyCondition = ItemManager.GetItemAmount(curStage.NeedKeyItemID) >= curStage.NeedKeyItemCount;
 
             if (lastStageCondition)
             {
-                nextButton.interactable = ItemManager.GetItemAmount(curStage.NeedKeyItemID) >= curStage.NeedKeyCount;
+                nextButton.interactable = ItemManager.GetItemAmount(curStage.NeedKeyItemID) >= curStage.NeedKeyItemCount;
 
                 nextText.text = "Retry";
             }
@@ -55,7 +55,7 @@ public class DungeonEndWindow : MonoBehaviour
                 bool planetCondition = (SaveLoadManager.Data.stageSaveData.highPlanet > nextStage.NeedClearPlanet)
                     || (SaveLoadManager.Data.stageSaveData.highPlanet == SaveLoadManager.Data.stageSaveData.clearedPlanet
                         && SaveLoadManager.Data.stageSaveData.highStage == SaveLoadManager.Data.stageSaveData.clearedStage);
-                keyCondition = ItemManager.GetItemAmount(nextStage.NeedKeyItemID) >= nextStage.NeedKeyCount;
+                keyCondition = ItemManager.GetItemAmount(nextStage.NeedKeyItemID) >= nextStage.NeedKeyItemCount;
                 nextButton.interactable = powerCondition && planetCondition && keyCondition;
             }
         }

@@ -153,7 +153,7 @@ public class DungeonStageStatusMachine : StageStatusMachine
             GuideQuestManager.QuestProgressChange(GuideQuestTable.MissionType.DungeonClear);
         }
         ItemManager.AddItem(dungeonData.RewardItemID, dungeonData.ClearRewardItemCount);
-        ItemManager.ConsumeItem(dungeonData.NeedKeyItemID, dungeonData.NeedKeyCount);
+        ItemManager.ConsumeItem(dungeonData.NeedKeyItemID, dungeonData.NeedKeyItemCount);
         SaveLoadManager.SaveGame();
 
         stageManager.StageUiManager.IngameUIManager.OpenDungeonEndWindow("Clear", true);

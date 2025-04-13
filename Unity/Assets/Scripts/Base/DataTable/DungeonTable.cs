@@ -13,7 +13,7 @@ public class DungeonTable : DataTable
         public int NameStringID { get; set; }
         public int Stage { get; set; }
         public int NeedKeyItemID { get; set; }
-        public int NeedKeyCount { get; set; }
+        public int NeedKeyItemCount { get; set; }
         public int RewardItemID { get; set; }
         public int FirstClearRewardItemCount { get; set; }
         public int ClearRewardItemCount { get; set; }
@@ -32,7 +32,7 @@ public class DungeonTable : DataTable
             NameStringID = int.Parse(argument[2]);
             Stage = int.Parse(argument[3]);
             NeedKeyItemID = int.Parse(argument[4]);
-            NeedKeyCount = int.Parse(argument[5]);
+            NeedKeyItemCount = int.Parse(argument[5]);
             RewardItemID = int.Parse(argument[6]);
             FirstClearRewardItemCount = int.Parse(argument[7]);
             ClearRewardItemCount = int.Parse(argument[8]);

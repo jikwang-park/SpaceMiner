@@ -14,6 +14,7 @@ public class PlanetTable : DataTable
         public int MiningLevel1 { get; set; }
         public int MiningLevel2 { get; set; }
         public int PrefabID { get; set; }
+        public int SpriteID { get; set; }
 
 
         public void Set(string[] argument)
@@ -24,6 +25,7 @@ public class PlanetTable : DataTable
             MiningLevel1 = int.Parse(argument[3]);
             MiningLevel2 = int.Parse(argument[4]);
             PrefabID = int.Parse(argument[5]);
+            SpriteID = int.Parse(argument[6]);
         }
     }
 

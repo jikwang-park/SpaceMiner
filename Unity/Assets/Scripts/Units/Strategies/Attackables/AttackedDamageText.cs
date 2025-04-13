@@ -6,7 +6,7 @@ using UnityEngine.AddressableAssets;
 
 public class AttackedDamageText : MonoBehaviour, IAttackable
 {
-    private const string textPrefabAddress = "DamageText";
+    private const string textPrefabAddress = "Assets/Addressables/Prefabs/UI/DamageText.prefab";
 
     public float showingDuration = 1.5f;
     public float risingSpeed = 2f;

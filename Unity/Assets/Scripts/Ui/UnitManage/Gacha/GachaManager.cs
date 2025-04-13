@@ -25,8 +25,7 @@ public static class GachaManager
     {
         if(gachaCostDict.ContainsKey(gachaId))
         {
-            int growRate = DataTableManager.GachaTable.GetData(gachaId).growRate;
-            var cost = gachaCostDict[gachaId] * (int)Math.Pow(growRate, count) - gachaCostDict[gachaId];
+            var cost = gachaCostDict[gachaId] * count;
             return cost;
         }
         return null;
@@ -54,7 +53,6 @@ public static class GachaManager
                 return null;
             }
             ItemManager.ConsumeItem(gachaData.cost_ItemID, requiredCost);
-            gachaCostDict[gachaId] = gachaCostDict[gachaId] * (int)Math.Pow(gachaData.growRate, count);
         }
 
         List<SoldierTable.Data> gachaResults = new List<SoldierTable.Data>();

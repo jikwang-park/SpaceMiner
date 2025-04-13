@@ -119,7 +119,7 @@ public class MonsterController : MonoBehaviour, IObjectPoolGameObject
 
         var rootSelector = new SelectorNode<MonsterController>(this);
 
-        if (MonsterData.MonsterSkill != 0)
+        if (MonsterData.MonsterSkillID != 0)
         {
             var skillSequence = new SquenceNode<MonsterController>(this);
             skillSequence.AddChild(new IsMonsterSkillCooltimeCondition(this));
@@ -149,9 +149,9 @@ public class MonsterController : MonoBehaviour, IObjectPoolGameObject
         Stats.SetData(MonsterData);
         RewardData = DataTableManager.MonsterRewardTable.GetData(MonsterData.RewardTableID);
         InitBehaviourTree();
-        if (MonsterData.MonsterSkill != 0)
+        if (MonsterData.MonsterSkillID != 0)
         {
-            GetComponent<MonsterSkill>().SetSkill(MonsterData.MonsterSkill, Stats);
+            GetComponent<MonsterSkill>().SetSkill(MonsterData.MonsterSkillID, Stats);
         }
     }
 

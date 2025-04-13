@@ -13,7 +13,7 @@ public class MonsterSkillTable : DataTable
         public float AttackRatio { get; set; }
         public float SkillRange { get; set; }
         public float CoolTime { get; set; }
-        public int MaxCount { get; set; }
+        public int MaxTargetCount { get; set; }
         public TargetPriority TargetPriority { get; set; }
 
         public void Set(string[] argument)
@@ -23,7 +23,7 @@ public class MonsterSkillTable : DataTable
             AttackRatio = float.Parse(argument[2]);
             SkillRange = float.Parse(argument[3]);
             CoolTime = float.Parse(argument[4]);
-            MaxCount = int.Parse(argument[5]);
+            MaxTargetCount = int.Parse(argument[5]);
             if (int.TryParse(argument[6], out int type))
             {
                 TargetPriority = (TargetPriority)type;

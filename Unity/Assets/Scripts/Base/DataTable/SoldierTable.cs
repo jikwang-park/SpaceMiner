@@ -14,14 +14,15 @@ public class SoldierTable : DataTable
         public UnitTypes UnitType { get; set; }
         public Grade Grade { get; set; }
         public int Level { get; set; }
-        public float Attack { get; set; }
-        public float HP { get; set; }
-        public float Defence { get; set; }
+        public string Attack { get; set; }
+        public string HP { get; set; }
+        public string Defence { get; set; }
         public float Range { get; set; }
         public float MoveSpeed { get; set; }
         public int AttackSpeed { get; set; }
         public int CharacterPrefabID { get; set; }
         public int WeaponPrefabID { get; set; }
+        public int SpriteID { get; set; }
 
         public void Set(string[] argument)
         {
@@ -44,14 +45,15 @@ public class SoldierTable : DataTable
                 Grade = Enum.Parse<Grade>(argument[3]);
             }
             Level = int.Parse(argument[4]);
-            Attack = float.Parse(argument[5]);
-            HP = float.Parse(argument[6]);
-            Defence = float.Parse(argument[7]);
+            Attack = argument[5];
+            HP = argument[6];
+            Defence = argument[7];
             Range = float.Parse(argument[8]);
             MoveSpeed = float.Parse(argument[9]);
             AttackSpeed = int.Parse(argument[10]);
             CharacterPrefabID = int.Parse(argument[11]);
             WeaponPrefabID = int.Parse(argument[12]);
+            SpriteID = int.Parse(argument[13]);
         }
     }
 

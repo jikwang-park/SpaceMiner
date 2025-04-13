@@ -8,7 +8,7 @@ public class MonsterStats : CharacterStats
     {
         damage = monsterData.Attack;
         range = monsterData.AttackRange;
-        maxHp = monsterData.Hp;
+        maxHp = monsterData.HP;
         Hp = maxHp;
         coolDown = 100f / monsterData.AttackSpeed;
         moveSpeed = monsterData.MoveSpeed;

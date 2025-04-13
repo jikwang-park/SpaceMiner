@@ -103,7 +103,7 @@ public class MonsterSkill : MonoBehaviour
 
                     targets.Add(target);
 
-                    if (targets.Count >= skillData.MaxCount)
+                    if (targets.Count >= skillData.MaxTargetCount)
                     {
                         break;
                     }
@@ -126,7 +126,7 @@ public class MonsterSkill : MonoBehaviour
 
                     targets.Add(target);
 
-                    if (targets.Count >= skillData.MaxCount)
+                    if (targets.Count >= skillData.MaxTargetCount)
                     {
                         break;
                     }

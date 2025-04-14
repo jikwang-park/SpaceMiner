@@ -25,8 +25,6 @@ public class UnitStatsUpgradeElement : MonoBehaviour
     [SerializeField]
     private TextMeshProUGUI addStartButtonText;
     [SerializeField]
-    private TextMeshProUGUI statsInformation;
-    [SerializeField]
     private UnitPartyManager unitPartyManager;
     [SerializeField]
     private StageManager stageManager;
@@ -39,6 +37,10 @@ public class UnitStatsUpgradeElement : MonoBehaviour
     [SerializeField]
     private BigNumber currentGold = 0;
 
+    [SerializeField]
+    private TextMeshProUGUI BeforeStatsInfo;
+    [SerializeField]
+    private TextMeshProUGUI AfterStatsInfo;
     private void Awake()
     {
         stageManager = GameObject.FindGameObjectWithTag("GameController").GetComponent<StageManager>(); 
@@ -54,13 +56,14 @@ public class UnitStatsUpgradeElement : MonoBehaviour
         maxLevel = data.MaxLevel;
         SetStatsInfo();
     }
-
+    
     private void SetStatsInfo()
     {
         nextLevel = level + 1;
         levelText.text = $"Level + {level}";
-        statsInformation.text = $"Unit {currentType.ToString()} Increase\n +{currentValue:F2} -> {currentValue + value:F2}";
-        addStartButtonText.text = $"Gold \n +{currentGold +gold }";
+        BeforeStatsInfo.text = $"{currentValue:F2}";
+        AfterStatsInfo.text = $"{currentValue + value:F2}";
+        addStartButtonText.text = $" +{currentGold +gold }";
     }
     
     public void SetData(int level)

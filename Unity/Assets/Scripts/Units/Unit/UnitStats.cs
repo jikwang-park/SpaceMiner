@@ -24,7 +24,7 @@ public class UnitStats : CharacterStats
     //�⺻
     private BigNumber baseDamage;
     private BigNumber accountDamage = 0;
-    private float buildingAttackDamage = 1;
+    private float buildingAttackDamage = 0;
     //ũ��
     private float accountCriticalDamage = 0f;
     private float buildingCriticalDamage = 0f;
@@ -107,10 +107,7 @@ public class UnitStats : CharacterStats
 
     public void AddBuildingStats(BuildingTable.BuildingType type, float amount)
     {
-        if (amount == 0)
-        {
-            return;
-        }
+        
 
         switch (type)
         {

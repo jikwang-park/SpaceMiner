@@ -300,7 +300,6 @@ public class Unit : MonoBehaviour
             {
                 var frontUnit = stageManger.UnitPartyManager.GetFrontUnit(currentUnitType);
                 float distance = (frontUnit.transform.position.z - transform.position.z);
-                Debug.Log(distance);
                 isFrontSafe = (distance >= minDis * (((int)currentUnitType) - (int)frontUnit.currentUnitType));
 
             }

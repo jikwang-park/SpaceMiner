@@ -11,22 +11,30 @@ public class UnitStats : CharacterStats
 
     private Grade currentGrade;
 
+    private BigNumber FinialDamage
+    {
+        get
+        {
+            return (defalutValue * ((1f + buildingAttackDamage)) * (baseDamage + accountDamage));
+        }
+    }
+
     private BigNumber defalutValue = 1;
     //�⺻
-    private float baseDamage;
-    private float accountDamage = 0f;
-    private float buildingAttackDamage = 1f;
+    private BigNumber baseDamage;
+    private BigNumber accountDamage = 0;
+    private BigNumber buildingAttackDamage = 1;
     //ũ��
     private float accountCriticalDamage = 0f;
     private float buildingCriticalDamage = 0f;
     //���
-    private float baseArmor;
-    private float accountArmor = 0f;
-    private float buildingArmor = 0f;
+    private BigNumber baseArmor;
+    private BigNumber accountArmor = 0;
+    private BigNumber buildingArmor = 0;
     //ü��
-    private float baseMaxHp;
-    private float accountHp = 0f;
-    private float buildingHp = 0f;
+    private BigNumber baseMaxHp;
+    private BigNumber accountHp = 0;
+    private BigNumber buildingHp = 0;
     //ũȮ
     private float accountCriticalChance = 0f;
     private float buildingCriticalChance = 0f;
@@ -101,14 +109,15 @@ public class UnitStats : CharacterStats
     public void SetData(SoldierTable.Data data, UnitTypes type)
     {
         moveSpeed = (int)data.MoveSpeed;
-        baseDamage = (int)data.Basic_AP;
+        baseDamage = data.Attack;
 
-        baseMaxHp = (int)data.Basic_HP;
+        baseMaxHp = int.Parse(data.HP);
+        currentGrade = data.Grade;
         Hp = maxHp;
 
         coolDown = 1;
-        baseArmor = (int)data.Basic_DP;
-        range = (int)data.Distance;
+        baseArmor = int.Parse(data.Defence);
+        range = (int)data.Range;
 
         switch (type)
         {
@@ -146,9 +155,6 @@ public class UnitStats : CharacterStats
     public override Attack CreateAttack(CharacterStats defenderStats)
     {
         Attack attack = new Attack();
-
-
-        BigNumber finialDamage = (defalutValue * ((1f + buildingAttackDamage)) * (baseDamage + accountDamage));
 
 
         criticalChance = accountCriticalChance + buildingCriticalChance;
@@ -199,13 +205,11 @@ public class UnitStats : CharacterStats
 
         var data = SaveLoadManager.Data.unitSkillUpgradeData.skillUpgradeId;
 
-        currentGrade = stageManager.UnitPartyManager.GetUnit(UnitTypes.Dealer).GetComponent<Unit>().currentGrade;
-
         var id = data[UnitTypes.Dealer][currentGrade];
         
         var currentData = DataTableManager.DealerSkillTable.GetData(id);
 
-        BigNumber finialDamage = (defalutValue * ((1f + buildingAttackDamage)) * (baseDamage + accountDamage))* dealerSkill.damageRatio;
+        BigNumber finialSkillDamage = FinialDamage * currentData.DamageRatio;
 
 
         criticalChance = accountCriticalChance + buildingCriticalChance;
@@ -216,9 +220,10 @@ public class UnitStats : CharacterStats
             BigNumber criticalBase = (defalutValue * (baseDamage * 2f));
             BigNumber criticalBonus = (defalutValue * (accountCriticalDamage + buildingCriticalDamage));
 
-            finialDamage = criticalBase + criticalBonus;
+            var percent = criticalBase + criticalBonus;
+            var criticalSkillDamage = finialDamage * percent;
         }
-        attack.damage = finialDamage;
+        attack.damage = finialSkillDamage;
 
 
         if (defenderStats != null)

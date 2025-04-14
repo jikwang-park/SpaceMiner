@@ -12,20 +12,21 @@ public class GachaPurchaseButton : MonoBehaviour
     [SerializeField]
     private TextMeshProUGUI costText;
     [SerializeField]
-    private TextMeshProUGUI countText;
+    private LocalizationText countText;
 
     private BigNumber cost;
     private int count;
-
     public event Action<int> onClickGachaButton;
-
+    private void Awake()
+    {
+    }
     public void Initialize(int count, BigNumber cost, Sprite sprite = null)
     {
         this.count = count;
         this.cost = cost;
 
         // iconImage.sprite = sprite;
-        countText.text = $"{this.count} Times";
+        countText.SetStringArguments(count.ToString());
         costText.text = $"{this.cost}";
     }
 

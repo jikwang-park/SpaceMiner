@@ -11,7 +11,7 @@ public class SoldierInfoUI : MonoBehaviour
     [SerializeField]
     private TextMeshProUGUI gradeText;
     [SerializeField]
-    private TextMeshProUGUI nameText;
+    private LocalizationText nameText;
     [SerializeField]
     private Button equipButton;
 
@@ -21,6 +21,6 @@ public class SoldierInfoUI : MonoBehaviour
         var data = DataTableManager.SoldierTable.GetData(element.soldierId);
         soldierInfo.Initialize(element.Level.ToString(), element.Count.ToString(), sprite);
         gradeText.text = data.Grade.ToString();
-        nameText.text = data.NameStringID.ToString();
+        nameText.SetString(data.NameStringID);
     }
 }

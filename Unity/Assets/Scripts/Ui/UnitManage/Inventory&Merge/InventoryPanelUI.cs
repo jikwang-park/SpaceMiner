@@ -13,6 +13,7 @@ public class InventoryPanelUI : MonoBehaviour
     [SerializeField]
     private Inventory healerInventory;
 
+
     private Dictionary<UnitTypes, Inventory> inventories = new Dictionary<UnitTypes, Inventory>();
     private UnitTypes currentType = UnitTypes.Tanker;
     public void Awake()

@@ -62,9 +62,9 @@ public class IngameUIManager : MonoBehaviour
         stageEndWindow.Close();
     }
 
-    public void OpenDungeonEndWindow(string message, bool isCleared)
+    public void OpenDungeonEndWindow(bool isCleared,bool firstCleared)
     {
-        dungeonEndWindow.Open(message, isCleared);
+        dungeonEndWindow.Open(isCleared, firstCleared);
     }
 
     public void CloseDungeonEndWindow()

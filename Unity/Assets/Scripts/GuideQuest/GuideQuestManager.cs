@@ -94,6 +94,7 @@ public static class GuideQuestManager
     {
         ItemManager.AddItem(currentQuestData.RewardItemID, currentQuestData.RewardItemCount);
         ChangeQuest(currentQuestData.Turn + 1);
+        SaveLoadManager.Data.questProgressData.monsterCount = 0;
         SaveLoadManager.SaveGame();
     }
 

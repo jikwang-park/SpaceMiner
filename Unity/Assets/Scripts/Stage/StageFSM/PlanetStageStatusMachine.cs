@@ -59,6 +59,10 @@ public class PlanetStageStatusMachine : StageStatusMachine
                 EndStage(false);
             }
         }
+        if (stageManager.UnitPartyManager.UnitCount == 0)
+        {
+            EndStage(false);
+        }
 
         stageManager.StageUiManager.IngameUIManager.SetTimer(remainTime);
     }

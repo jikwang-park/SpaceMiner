@@ -58,6 +58,10 @@ public class DungeonStageStatusMachine : StageStatusMachine
                 OnTimeOver();
             }
         }
+        if (stageManager.UnitPartyManager.UnitCount == 0)
+        {
+            OnTimeOver();
+        }
 
         stageManager.StageUiManager.IngameUIManager.SetTimer(remainTime);
     }
@@ -130,7 +134,7 @@ public class DungeonStageStatusMachine : StageStatusMachine
     protected void OnTimeOver()
     {
         Time.timeScale = 0f;
-        stageManager.StageUiManager.IngameUIManager.OpenStageEndWindow("Fail");
+        stageManager.StageUiManager.IngameUIManager.OpenDungeonEndWindow(false, false);
     }
 
     protected void OnMonsterCleared()
@@ -148,7 +152,9 @@ public class DungeonStageStatusMachine : StageStatusMachine
 
     protected void OnStageClear()
     {
-        if (SaveLoadManager.Data.stageSaveData.clearedDungeon[currentType] < currentStage)
+        bool firstCleared = SaveLoadManager.Data.stageSaveData.clearedDungeon[currentType] < currentStage;
+
+        if (firstCleared)
         {
             SaveLoadManager.Data.stageSaveData.clearedDungeon[currentType] = currentStage;
 
@@ -162,19 +168,24 @@ public class DungeonStageStatusMachine : StageStatusMachine
             }
 
             GuideQuestManager.QuestProgressChange(GuideQuestTable.MissionType.DungeonClear);
+            ItemManager.AddItem(dungeonData.RewardItemID, dungeonData.FirstClearRewardItemCount);
         }
-        ItemManager.AddItem(dungeonData.RewardItemID, dungeonData.ClearRewardItemCount);
+        else
+        {
+            ItemManager.AddItem(dungeonData.RewardItemID, dungeonData.ClearRewardItemCount);
+        }
         if (dungeonData.KeyPoint == 1)
         {
             ItemManager.ConsumeItem(dungeonData.NeedKeyItemID, dungeonData.NeedKeyItemCount);
         }
         SaveLoadManager.SaveGame();
 
-        stageManager.StageUiManager.IngameUIManager.OpenDungeonEndWindow("Clear", true);
+        stageManager.StageUiManager.IngameUIManager.OpenDungeonEndWindow(true, firstCleared);
     }
 
     protected void InitStage()
     {
+        cleared = false;
         currentType = Variables.currentDungeonType;
         currentStage = Variables.currentDungeonStage;
         currentWave = 1;

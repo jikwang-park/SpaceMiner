@@ -111,4 +111,9 @@ public class LocalizationText : MonoBehaviour
         }
         OnChangedLanguage();
     }
+
+    public void SetColor(Color color)
+    {
+        text.color = color;
+    }
 }

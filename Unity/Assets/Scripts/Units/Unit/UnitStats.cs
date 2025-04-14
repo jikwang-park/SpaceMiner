@@ -22,23 +22,23 @@ public class UnitStats : CharacterStats
 
     private BigNumber defalutValue = 1;
     //�⺻
-    private BigNumber baseDamage;
-    private BigNumber accountDamage = 0;
-    private float buildingAttackDamage = 1;
+    public BigNumber baseDamage { get; private set; } = 0;
+    public BigNumber accountDamage { get; private set; } = 0;
+    public float buildingAttackDamage { get; private set; } = 0;
     //ũ��
-    private float accountCriticalDamage = 0f;
-    private float buildingCriticalDamage = 0f;
+    public float accountCriticalDamage { get; private set; } = 0;
+    public float buildingCriticalDamage { get; private set; } = 0;
     //���
-    private BigNumber baseArmor;
-    private BigNumber accountArmor = 0;
-    private float buildingArmor = 0;
+    public BigNumber baseArmor { get; private set; } = 0;
+    public BigNumber accountArmor { get; private set; } = 0;
+    public float buildingArmor { get; private set; } = 0;
     //ü��
-    private BigNumber baseMaxHp;
-    private BigNumber accountHp = 0;
-    private float buildingHp = 0;
+    public BigNumber baseMaxHp { get; private set; } = 0;
+    public BigNumber accountHp { get; private set; } = 0;
+    public float buildingHp { get; private set; } = 0;
     //ũȮ
-    private float accountCriticalChance = 0f;
-    private float buildingCriticalChance = 0f;
+    public float accountCriticalChance { get; private set; } = 0;
+    public float buildingCriticalChance { get; private set; } = 0;
 
 
     private void Awake()

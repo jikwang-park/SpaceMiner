@@ -1,7 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using static UnitUpgradeTable;
 
 public class DefaultDataTable : DataTable
 {
@@ -9,13 +8,13 @@ public class DefaultDataTable : DataTable
     {
         public int ID { get; set; }
         public string Name { get; set; }
-        public int TargetId { get; set; }
+        public int TargetID { get; set; }
 
         public void Set(string[] argument)
         {
             ID = int.Parse(argument[0]);
             Name = argument[1];
-            TargetId = int.Parse(argument[2]);
+            TargetID = int.Parse(argument[2]);
         }
     }
 
@@ -43,7 +42,7 @@ public class DefaultDataTable : DataTable
 
                 if (!stringDict.ContainsKey(item.Name))
                 {
-                    stringDict.Add(item.Name, item.TargetId);
+                    stringDict.Add(item.Name, item.TargetID);
                 }
             }
             else
@@ -81,7 +80,7 @@ public class DefaultDataTable : DataTable
             tableData.Add(datum.ID, datum);
             if (!newStringDict.ContainsKey(datum.Name))
             {
-                newStringDict.Add(datum.Name, datum.TargetId);
+                newStringDict.Add(datum.Name, datum.TargetID);
             }
         }
         TableData = tableData;

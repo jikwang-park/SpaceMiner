@@ -21,7 +21,7 @@ public class RobotMoveAction : ActionNode<MiningRobotController>
     {
         if (context.sqrDistance > 0.001f)
         {
-            var moving = Time.deltaTime * direction * context.RobotData.moveSpeed;
+            var moving = Time.deltaTime * direction * context.RobotData.MoveSpeed;
             if (context.sqrDistance > moving.sqrMagnitude)
             {
                 context.transform.position += moving;

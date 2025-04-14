@@ -116,6 +116,10 @@ public static class DataTableManager
         defaultDataTable.Load(DataTableIds.defaultDataTable);
         tables.Add(DataTableIds.defaultDataTable, defaultDataTable);
 
+        var addressTable = new AddressTable();
+        addressTable.Load(DataTableIds.addressTable);
+        tables.Add(DataTableIds.addressTable, addressTable);
+
 
 
         var guideQuestTable = new GuideQuestTable();
@@ -228,4 +232,7 @@ public static class DataTableManager
 
     public static PlanetTable PlanetTable
         => GetTable<PlanetTable>(DataTableIds.planetTable);
+
+    public static AddressTable AddressTable
+        => GetTable<AddressTable>(DataTableIds.addressTable);
 }

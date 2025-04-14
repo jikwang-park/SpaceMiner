@@ -63,7 +63,9 @@ public class MineStageStatusMachine : StageStatusMachine
 
     protected void InitStage()
     {
-        var mineGo = stageManager.ObjectPoolManager.Get(stageMachineData.mine);
+        var planetData = DataTableManager.PlanetTable.GetData(Variables.planetMiningID);
+        var prefabAddress = DataTableManager.AddressTable.GetData(planetData.PrefabID);
+        var mineGo = stageManager.ObjectPoolManager.Get(prefabAddress);
         mine = mineGo.GetComponent<Mine>();
 
         var equipments = MiningRobotInventoryManager.Inventory.equipmentSlotsToPlanet;
@@ -79,7 +81,9 @@ public class MineStageStatusMachine : StageStatusMachine
             {
                 continue;
             }
-            var robotGo = stageManager.ObjectPoolManager.Get(stageMachineData.robot);
+            var robotData = DataTableManager.RobotTable.GetData(equipments[Variables.planetMiningID][i].miningRobotId);
+            var robotAddress = DataTableManager.AddressTable.GetData(robotData.PrefabID);
+            var robotGo = stageManager.ObjectPoolManager.Get(robotAddress);
             robotGo.transform.position = mine.GetSpawnPoint(i).position;
             robotControllers[i] = robotGo.GetComponent<MiningRobotController>();
             robotControllers[i].Init(Variables.planetMiningID, equipments[Variables.planetMiningID][i].miningRobotId, i);

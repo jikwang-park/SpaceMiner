@@ -12,18 +12,18 @@ public class UnitStats : CharacterStats
     private Grade currentGrade;
 
     private BigNumber defalutValue = 1;
-    //±âº»
+    //ï¿½âº»
     private float baseDamage;
     private float accountDamage = 0f;
     private float buildingAttackDamage = 1f;
-    //Å©¸®
+    //Å©ï¿½ï¿½
     private float accountCriticalDamage = 0f;
     private float buildingCriticalDamage = 0f;
-    //¹æ¾î
+    //ï¿½ï¿½ï¿½
     private float baseArmor;
     private float accountArmor = 0f;
     private float buildingArmor = 0f;
-    //Ã¼·Â
+    //Ã¼ï¿½ï¿½
     private float baseMaxHp;
     private float accountHp = 0f;
     private float buildingHp = 0f;
@@ -171,7 +171,7 @@ public class UnitStats : CharacterStats
 
         return attack;
     }
-    public void SkillExecute(GameObject defender) // ½ºÅ³ ÀÎÆ÷¹× µðÆæ´õ Á¤º¸ ³Ñ°Ü¼­ µ¥¹ÌÁö Ã³¸®
+    public void SkillExecute(GameObject defender) // ï¿½ï¿½Å³ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Ñ°Ü¼ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ Ã³ï¿½ï¿½
     {
         if (defender is null)
         {

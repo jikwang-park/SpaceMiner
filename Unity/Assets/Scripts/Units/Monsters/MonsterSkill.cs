@@ -17,9 +17,9 @@ public class MonsterSkill : MonoBehaviour
     {
         get
         {
-            switch (skillData.Type)
+            switch (skillData.TargetPriority)
             {
-                case MonsterSkillTable.TargetPriority.FrontOrder:
+                case TargetPriority.FrontOrder:
                     for (int i = (int)UnitTypes.Tanker; i <= (int)UnitTypes.Healer; ++i)
                     {
                         Target = controller.StageManager.UnitPartyManager.GetUnit((UnitTypes)i);
@@ -29,7 +29,7 @@ public class MonsterSkill : MonoBehaviour
                         }
                     }
                     break;
-                case MonsterSkillTable.TargetPriority.BackOrder:
+                case TargetPriority.BackOrder:
                     for (int i = (int)UnitTypes.Healer; i >= (int)UnitTypes.Tanker; --i)
                     {
                         Target = controller.StageManager.UnitPartyManager.GetUnit((UnitTypes)i);
@@ -84,9 +84,9 @@ public class MonsterSkill : MonoBehaviour
 
         List<Transform> targets = new List<Transform>();
 
-        switch (skillData.Type)
+        switch (skillData.TargetPriority)
         {
-            case MonsterSkillTable.TargetPriority.FrontOrder:
+            case TargetPriority.FrontOrder:
                 for (int i = (int)UnitTypes.Tanker; i <= (int)UnitTypes.Healer; ++i)
                 {
                     Transform target = controller.StageManager.UnitPartyManager.GetUnit((UnitTypes)i);
@@ -103,13 +103,13 @@ public class MonsterSkill : MonoBehaviour
 
                     targets.Add(target);
 
-                    if (targets.Count >= skillData.MaxCount)
+                    if (targets.Count >= skillData.MaxTargetCount)
                     {
                         break;
                     }
                 }
                 break;
-            case MonsterSkillTable.TargetPriority.BackOrder:
+            case TargetPriority.BackOrder:
                 for (int i = (int)UnitTypes.Healer; i >= (int)UnitTypes.Tanker; --i)
                 {
                     Transform target = controller.StageManager.UnitPartyManager.GetUnit((UnitTypes)i);
@@ -126,7 +126,7 @@ public class MonsterSkill : MonoBehaviour
 
                     targets.Add(target);
 
-                    if (targets.Count >= skillData.MaxCount)
+                    if (targets.Count >= skillData.MaxTargetCount)
                     {
                         break;
                     }
@@ -137,7 +137,7 @@ public class MonsterSkill : MonoBehaviour
         foreach (var defender in targets)
         {
             CharacterStats dStats = defender.GetComponent<CharacterStats>();
-            Attack attack = stats.CreateAttack(dStats, skillData.AtkRatio);
+            Attack attack = stats.CreateAttack(dStats, skillData.AttackRatio);
             IAttackable[] attackables = defender.GetComponents<IAttackable>();
             foreach (var attackable in attackables)
             {

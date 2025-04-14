@@ -332,7 +332,7 @@ public class Unit : MonoBehaviour
     {
         unitStats.SetData(data, type);
         currentUnitType = type;
-        currentGrade = data.Rating;
+        currentGrade = data.Grade;
         switch (currentUnitType)
         {
             case UnitTypes.Tanker:

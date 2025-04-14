@@ -16,7 +16,7 @@ public static class GachaManager
         {
             if(!gachaCostDict.ContainsKey(gacha.Key))
             {
-                gachaCostDict[gacha.Key] = gacha.Value.cost;
+                gachaCostDict[gacha.Key] = gacha.Value.NeedItemCount1;
             }
         }
     }
@@ -25,8 +25,8 @@ public static class GachaManager
     {
         if(gachaCostDict.ContainsKey(gachaId))
         {
-            int growRate = DataTableManager.GachaTable.GetData(gachaId).growRate;
-            var cost = gachaCostDict[gachaId] * (int)Math.Pow(growRate, count) - gachaCostDict[gachaId];
+            // 250412 HKY 가챠 증가율 삭제 적용
+            var cost = gachaCostDict[gachaId] * count;
             return cost;
         }
         return null;
@@ -36,10 +36,10 @@ public static class GachaManager
     {
         if(useTicket)
         {
-            int ticketId = DataTableManager.GachaTable.GetData(gachaId).cost_Item2ID;
+            int ticketId = DataTableManager.GachaTable.GetData(gachaId).NeedItemID2;
             if(!ItemManager.CanConsume(ticketId, count))
             {
-                Debug.Log($"{DataTableManager.ItemTable.GetData(ticketId).ItemStringID}가 부족합니다");
+                Debug.Log($"{DataTableManager.ItemTable.GetData(ticketId).NameStringID}가 부족합니다");
                 return null;
             }
             ItemManager.ConsumeItem(ticketId, count);
@@ -48,13 +48,13 @@ public static class GachaManager
         {
             var gachaData = DataTableManager.GachaTable.GetData(gachaId);
             BigNumber requiredCost = CalCulateCost(gachaId, count);
-            if (!ItemManager.CanConsume(gachaData.cost_ItemID, requiredCost))
+            if (!ItemManager.CanConsume(gachaData.NeedItemID1, requiredCost))
             {
-                Debug.Log($"{DataTableManager.ItemTable.GetData(gachaData.cost_ItemID).ItemStringID}가 부족합니다");
+                Debug.Log($"{DataTableManager.ItemTable.GetData(gachaData.NeedItemID1).NameStringID}가 부족합니다");
                 return null;
             }
-            ItemManager.ConsumeItem(gachaData.cost_ItemID, requiredCost);
-            gachaCostDict[gachaId] = gachaCostDict[gachaId] * (int)Math.Pow(gachaData.growRate, count);
+            ItemManager.ConsumeItem(gachaData.NeedItemID1, requiredCost);
+            // 250412 HKY 가챠 증가율 삭제 적용
         }
 
         List<SoldierTable.Data> gachaResults = new List<SoldierTable.Data>();
@@ -70,7 +70,7 @@ public static class GachaManager
             }
         }
 
-        gachaResults = gachaResults.OrderByDescending((e) => e.Rating).ToList();
+        gachaResults = gachaResults.OrderByDescending((e) => e.Grade).ToList();
 
         return gachaResults;
     }
@@ -82,11 +82,11 @@ public static class GachaManager
         var randomProbability = Random.Range(0f, 1f);
         foreach (var gachaGradeData in gachaGradeDatas)
         {
-            if (gachaGradeData.probability != 0f && randomProbability - gachaGradeData.probability <= 0f)
+            if (gachaGradeData.Probability != 0f && randomProbability - gachaGradeData.Probability <= 0f)
             {
-                return gachaGradeData.grade;
+                return gachaGradeData.Grade;
             }
-            randomProbability -= gachaGradeData.probability;
+            randomProbability -= gachaGradeData.Probability;
         }
 
         return default;
@@ -98,11 +98,11 @@ public static class GachaManager
         var randomProbability = Random.Range(0f, 1f);
         foreach(var soldierData in soldierDatas)
         {
-            if (randomProbability - soldierData.probability <= 0f)
+            if (randomProbability - soldierData.Probability <= 0f)
             {
-                return DataTableManager.SoldierTable.GetData(soldierData.soldierID);
+                return DataTableManager.SoldierTable.GetData(soldierData.SoldierID);
             }
-            randomProbability -= soldierData.probability;
+            randomProbability -= soldierData.Probability;
         }
         return default;
     }

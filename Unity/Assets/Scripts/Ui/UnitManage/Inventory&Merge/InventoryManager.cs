@@ -29,7 +29,7 @@ public static class InventoryManager
                 {
                     soldierId = soldierData.ID,
                     isLocked = true,
-                    grade = soldierData.Rating,
+                    grade = soldierData.Grade,
                     count = 0,
                     level = 0
                 };
@@ -58,12 +58,12 @@ public static class InventoryManager
     }
     public static void Add(SoldierTable.Data data)
     {
-        if (!Inventories.ContainsKey(data.Kind))
+        if (!Inventories.ContainsKey(data.UnitType))
         {
             return;
         }
 
-        SoldierInventoryData inventoryData = Inventories[data.Kind];
+        SoldierInventoryData inventoryData = Inventories[data.UnitType];
 
         SoldierInventoryElementData element = inventoryData.elements.Find(e => e.soldierId == data.ID);
 
@@ -84,7 +84,7 @@ public static class InventoryManager
     public static void Merge(int soldierId, int count = 1)
     {
         SoldierTable.Data data = DataTableManager.SoldierTable.GetData(soldierId);
-        SoldierInventoryData inventoryData = GetInventoryData(data.Kind);
+        SoldierInventoryData inventoryData = GetInventoryData(data.UnitType);
         if(inventoryData == null) 
         {
             return;

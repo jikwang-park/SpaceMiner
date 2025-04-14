@@ -19,7 +19,7 @@ public class GuideQuestRewardWindow : MonoBehaviour
         //TODO: 스트링테이블 데이터 추가 후 필요
         gameObject.SetActive(true);
         titleText.text = $"Quest {data.ID} Complete";
-        rewardText.text = $"Reward {data.RewardID} {data.RewardCount} Got";
+        rewardText.text = $"Reward {data.RewardItemID} {data.RewardItemCount} Got";
         noticeText.text = $"Press Any To Close";
     }
 }

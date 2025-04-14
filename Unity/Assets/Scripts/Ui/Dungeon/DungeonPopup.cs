@@ -63,8 +63,8 @@ public class DungeonPopup : MonoBehaviour
         var curStage = subStages[index];
 
         selectedDifficulty.text = $"Stage : {curStage.Stage}";
-        keyText.text = $"{curStage.KeyCount} / {ItemManager.GetItemAmount(curStage.DungeonKeyID)}";
-        conditionPowerText.text = $"Currrent Power : {Variables.powerLevel}\nNeed : {curStage.ConditionPower}";
+        keyText.text = $"{curStage.NeedKeyItemCount} / {ItemManager.GetItemAmount(curStage.NeedKeyItemID)}";
+        conditionPowerText.text = $"Currrent Power : {Variables.powerLevel}\nNeed : {curStage.NeedPower}";
 
         int highplanet = SaveLoadManager.Data.stageSaveData.highPlanet;
         if (SaveLoadManager.Data.stageSaveData.highPlanet != SaveLoadManager.Data.stageSaveData.clearedPlanet
@@ -73,18 +73,18 @@ public class DungeonPopup : MonoBehaviour
             --highplanet;
         }
 
-        conditionStageText.text = $"Currrent Planet : {highplanet}\nNeed : {subStages[index].ConditionPlanet}";
-        clearRewardText.text = $"Reward : {curStage.ItemID}/{curStage.ClearReward}";
+        conditionStageText.text = $"Currrent Planet : {highplanet}\nNeed : {subStages[index].NeedClearPlanet}";
+        clearRewardText.text = $"Reward : {curStage.RewardItemID}/{curStage.ClearRewardItemCount}";
 
 
         previousDifficultyButton.interactable = index > 0;
         nextDifficultyButton.interactable = index + 1 < maxStage && index < subStages.Count - 1;
 
-        bool powerCondition = Variables.powerLevel > curStage.ConditionPower;
-        bool planetCondition = (SaveLoadManager.Data.stageSaveData.highPlanet > curStage.ConditionPlanet)
+        bool powerCondition = Variables.powerLevel > curStage.NeedPower;
+        bool planetCondition = (SaveLoadManager.Data.stageSaveData.highPlanet > curStage.NeedClearPlanet)
                                  || (SaveLoadManager.Data.stageSaveData.highPlanet == SaveLoadManager.Data.stageSaveData.clearedPlanet
                                      && SaveLoadManager.Data.stageSaveData.highStage == SaveLoadManager.Data.stageSaveData.clearedStage);
-        bool keyCondition = ItemManager.GetItemAmount(curStage.DungeonKeyID) >= curStage.KeyCount;
+        bool keyCondition = ItemManager.GetItemAmount(curStage.NeedKeyItemID) >= curStage.NeedKeyItemCount;
 
         enterButton.interactable = powerCondition && planetCondition && keyCondition;
     }
@@ -127,7 +127,7 @@ public class DungeonPopup : MonoBehaviour
 
     public void OnClickKeyGet()
     {
-        ItemManager.AddItem(subStages[index].DungeonKeyID, 1);
+        ItemManager.AddItem(subStages[index].NeedKeyItemID, 1);
         ShowData(index);
     }
 }

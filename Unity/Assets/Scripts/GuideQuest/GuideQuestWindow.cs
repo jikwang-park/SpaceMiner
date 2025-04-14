@@ -34,7 +34,7 @@ public class GuideQuestWindow : MonoBehaviour
         stageManager = GameObject.FindGameObjectWithTag("GameController").GetComponent<StageManager>();
         if (GuideQuestManager.currentQuestData is not null)
         {
-            questDescriptionText.text = GuideQuestManager.currentQuestData.StringID.ToString();
+            questDescriptionText.text = GuideQuestManager.currentQuestData.DetailStringID.ToString();
             UpdateProgress();
             GuideQuestManager.RefreshQuest();
         }
@@ -47,10 +47,10 @@ public class GuideQuestWindow : MonoBehaviour
             return;
         }
 
-        questDescriptionText.text = GuideQuestManager.currentQuestData.StringID.ToString();
+        questDescriptionText.text = GuideQuestManager.currentQuestData.DetailStringID.ToString();
         int monsterCount = SaveLoadManager.Data.questProgressData.monsterCount;
         int goal = GuideQuestManager.currentQuestData.TargetCount;
-        int rewardCount = GuideQuestManager.currentQuestData.RewardCount;
+        int rewardCount = GuideQuestManager.currentQuestData.RewardItemCount;
 
         questProgressText.text = $"{GuideQuestManager.Progress} / {goal}";
         rewardCountText.text = $"{rewardCount}";

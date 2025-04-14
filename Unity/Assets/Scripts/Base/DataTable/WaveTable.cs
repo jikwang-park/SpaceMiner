@@ -10,15 +10,15 @@ public class WaveTable : DataTable
     public class Data : ITableData
     {
         public int ID { get; set; }
-        public string WaveCorpsID { get; set; }
+        public string CorpsID { get; set; }
 
-        public int[] WaveCorpsIDs;
+        public int[] CorpsIDs;
 
         public void Set(string[] argument)
         {
             ID = int.Parse(argument[0]);
-            WaveCorpsID = argument[1];
-            WaveCorpsIDs = SplitWaveCorpsID(WaveCorpsID);
+            CorpsID = argument[1];
+            CorpsIDs = SplitWaveCorpsID(CorpsID);
         }
     }
 
@@ -39,7 +39,7 @@ public class WaveTable : DataTable
         {
             if (!TableData.ContainsKey(item.ID))
             {
-                item.WaveCorpsIDs = SplitWaveCorpsID(item.WaveCorpsID);
+                item.CorpsIDs = SplitWaveCorpsID(item.CorpsID);
                 TableData.Add(item.ID, item);
             }
             else

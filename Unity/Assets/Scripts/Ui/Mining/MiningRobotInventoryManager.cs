@@ -32,7 +32,7 @@ public static class MiningRobotInventoryManager
             {
                 Inventory.slots[i].isEmpty = false;
                 Inventory.slots[i].miningRobotId = robotId;
-                Grade grade = DataTableManager.RobotTable.GetData(Inventory.slots[i].miningRobotId).grade;
+                Grade grade = DataTableManager.RobotTable.GetData(Inventory.slots[i].miningRobotId).Grade;
                 Inventory.slots[i].grade = grade;
                 onChangedInventory?.Invoke(i, Inventory.slots[i]);
                 return;
@@ -74,8 +74,8 @@ public static class MiningRobotInventoryManager
     {
         int currentMergedRobotId = Inventory.slots[indexA].miningRobotId;
         RobotMergeTable.Data data = DataTableManager.RobotMergeTable.GetData(currentMergedRobotId);
-        int canMerge = DataTableManager.RobotTable.GetData(currentMergedRobotId).IsMergeable;
-        if(data == null || canMerge == 0)
+        // 250412 HKY isMergeable ªË¡¶
+        if(data == null)
         {
             return;
         }
@@ -85,10 +85,10 @@ public static class MiningRobotInventoryManager
             if (confirmed)
             {
                 int randomValue = Random.Range(0, 101);
-                if (randomValue < data.probability)
+                if (randomValue < data.Probability)
                 {
-                    Inventory.slots[indexB].miningRobotId = data.resultID;
-                    Grade grade = DataTableManager.RobotTable.GetData(Inventory.slots[indexB].miningRobotId).grade;
+                    Inventory.slots[indexB].miningRobotId = data.ResultRobotID;
+                    Grade grade = DataTableManager.RobotTable.GetData(Inventory.slots[indexB].miningRobotId).Grade;
                     Inventory.slots[indexB].grade = grade;
                 }
                 else
@@ -123,7 +123,7 @@ public static class MiningRobotInventoryManager
     {
         Inventory.slots[indexB].isEmpty = false;
         Inventory.slots[indexB].miningRobotId = Inventory.slots[indexA].miningRobotId;
-        Grade grade = DataTableManager.RobotTable.GetData(Inventory.slots[indexB].miningRobotId).grade;
+        Grade grade = DataTableManager.RobotTable.GetData(Inventory.slots[indexB].miningRobotId).Grade;
         Inventory.slots[indexB].grade = grade;
         onChangedInventory?.Invoke(indexB, Inventory.slots[indexB]);
 
@@ -182,7 +182,7 @@ public static class MiningRobotInventoryManager
         for (int i = 0; i < planetIds.Count; i++)
         {
             var planetData = DataTableManager.PlanetTable.GetData(planetIds[i]);
-            var stageData = DataTableManager.StageTable.GetData(planetData.stageToOpen);
+            var stageData = DataTableManager.StageTable.GetData(planetData.NeedClearStageID);
 
 
             bool cleared = (SaveLoadManager.Data.stageSaveData.clearedPlanet == stageData.Planet && SaveLoadManager.Data.stageSaveData.clearedStage >= stageData.Stage)
@@ -236,9 +236,9 @@ public static class MiningRobotInventoryManager
         var robotData = DataTableManager.RobotTable.GetData(robotId);
         var planetData = DataTableManager.PlanetTable.GetData(planetId);
 
-        float planetLevel = (index == 1) ? planetData.miningLevel2 : planetData.miningLevel;
+        float planetLevel = (index == 1) ? planetData.MiningLevel2 : planetData.MiningLevel1;
 
-        robotMiningAmount = (float)robotData.loadCapacity / (float)((planetLevel / robotData.moveSpeed) + (planetLevel / robotData.miningSpeed));
+        robotMiningAmount = (float)robotData.ProductCapacity / (float)((planetLevel / robotData.MoveSpeed) + (planetLevel / robotData.MiningSpeed));
 
         return robotMiningAmount;
     }

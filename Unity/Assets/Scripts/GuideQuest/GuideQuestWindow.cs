@@ -7,7 +7,7 @@ using UnityEngine.UI;
 public class GuideQuestWindow : MonoBehaviour
 {
     [SerializeField]
-    private TextMeshProUGUI questDescriptionText;
+    private TextMeshProUGUI questDetailText;
 
     [SerializeField]
     private TextMeshProUGUI questProgressText;
@@ -34,7 +34,7 @@ public class GuideQuestWindow : MonoBehaviour
         stageManager = GameObject.FindGameObjectWithTag("GameController").GetComponent<StageManager>();
         if (GuideQuestManager.currentQuestData is not null)
         {
-            questDescriptionText.text = GuideQuestManager.currentQuestData.DetailStringID.ToString();
+            questDetailText.text = GuideQuestManager.currentQuestData.DetailStringID.ToString();
             UpdateProgress();
             GuideQuestManager.RefreshQuest();
         }
@@ -47,7 +47,7 @@ public class GuideQuestWindow : MonoBehaviour
             return;
         }
 
-        questDescriptionText.text = GuideQuestManager.currentQuestData.DetailStringID.ToString();
+        questDetailText.text = GuideQuestManager.currentQuestData.DetailStringID.ToString();
         int monsterCount = SaveLoadManager.Data.questProgressData.monsterCount;
         int goal = GuideQuestManager.currentQuestData.TargetCount;
         int rewardCount = GuideQuestManager.currentQuestData.RewardItemCount;

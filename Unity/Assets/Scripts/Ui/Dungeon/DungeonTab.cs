@@ -9,7 +9,7 @@ public class DungeonPage : MonoBehaviour
     private Transform scrollContent;
 
     [SerializeField]
-    private const string dungeonRowPrefab = "Prefabs/UI/DungeonEnterRow";
+    private string dungeonRowPrefab = "Prefabs/UI/DungeonEnterRow";
 
     [SerializeField]
     private DungeonPopup dungeonPopup;

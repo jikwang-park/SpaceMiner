@@ -7,6 +7,7 @@ using static UnitUpgradeTable;
 
 public class UnitStats : CharacterStats
 {
+    public float attackSpeed { get; private set; } = 0;
     private StageManager stageManager;
 
     private Grade currentGrade;
@@ -143,6 +144,7 @@ public class UnitStats : CharacterStats
     {
         moveSpeed = data.MoveSpeed;
         baseDamage = data.Attack;
+        attackSpeed = data.AttackSpeed;
 
         baseMaxHp = data.HP;
         currentGrade = data.Grade;
@@ -189,7 +191,7 @@ public class UnitStats : CharacterStats
         {
             criticalPercent = (2 + (accountCriticalDamage + buildingCriticalDamage));
 
-            attack.damage = FinialDamage * criticalPercent;
+            attack.damage = FinialDamage * criticalPercent; 
         }
         else
         {

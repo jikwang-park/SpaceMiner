@@ -310,14 +310,6 @@ public class Unit : MonoBehaviour
         }
     }
 
-    //public bool IsSafe
-    //{
-    //    get
-    //    {
-    //        bool isFront = stageManger.UnitPartyManager.IsUnitExistFront(currentUnitType);
-    //        bool isBack = stageManger.UnitPartyManager.IsUnitExistBack(currentUnitType);
-    //    }
-    //}
 
 
 
@@ -439,7 +431,7 @@ public class Unit : MonoBehaviour
         {
             unitStats.Execute(targetPos.gameObject);
         }
-        yield return new WaitForSeconds(attackUsingTime);
+        yield return new WaitForSeconds(unitStats.attackSpeed);
         currentStatus = UnitStatus.Wait;
     }
 

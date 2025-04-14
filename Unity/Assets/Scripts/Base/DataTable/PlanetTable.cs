@@ -10,20 +10,22 @@ public class PlanetTable : DataTable
     {
         public int ID { get; set; }
         public int ItemID { get; set; }
-        public int stageToOpen { get; set; }
-        public int miningLevel { get; set; }
-        public int miningLevel2 { get; set; }
-        public string prefabID { get; set; }
+        public int NeedClearStageID { get; set; }
+        public int MiningLevel1 { get; set; }
+        public int MiningLevel2 { get; set; }
+        public int PrefabID { get; set; }
+        public int SpriteID { get; set; }
 
 
         public void Set(string[] argument)
         {
             ID = int.Parse(argument[0]);
             ItemID = int.Parse(argument[1]);
-            stageToOpen = int.Parse(argument[2]);
-            miningLevel = int.Parse(argument[3]);
-            miningLevel2 = int.Parse(argument[4]);
-            prefabID = argument[5];
+            NeedClearStageID = int.Parse(argument[2]);
+            MiningLevel1 = int.Parse(argument[3]);
+            MiningLevel2 = int.Parse(argument[4]);
+            PrefabID = int.Parse(argument[5]);
+            SpriteID = int.Parse(argument[6]);
         }
     }
 

@@ -12,17 +12,18 @@ public class DungeonTable : DataTable
         public int Type { get; set; }
         public int NameStringID { get; set; }
         public int Stage { get; set; }
-        public int DungeonKeyID { get; set; }
-        public int KeyCount { get; set; }
-        public int ItemID { get; set; }
-        public int FirstClearReward { get; set; }
-        public int ClearReward { get; set; }
-        public int ConditionPlanet { get; set; }
-        public int ConditionPower { get; set; }
+        public int NeedKeyItemID { get; set; }
+        public int NeedKeyItemCount { get; set; }
+        public int RewardItemID { get; set; }
+        public int FirstClearRewardItemCount { get; set; }
+        public int ClearRewardItemCount { get; set; }
+        public int NeedClearPlanet { get; set; }
+        public int NeedPower { get; set; }
         public int KeyPoint { get; set; }
         public float LimitTime { get; set; }
-        public int WaveCorpsID { get; set; }
-        public string PrefabID { get; set; }
+        public int WaveID { get; set; }
+        public int PrefabID { get; set; }
+        public int SpriteID { get; set; }
 
         public void Set(string[] argument)
         {
@@ -30,17 +31,18 @@ public class DungeonTable : DataTable
             Type = int.Parse(argument[1]);
             NameStringID = int.Parse(argument[2]);
             Stage = int.Parse(argument[3]);
-            DungeonKeyID = int.Parse(argument[4]);
-            KeyCount = int.Parse(argument[5]);
-            ItemID = int.Parse(argument[6]);
-            FirstClearReward = int.Parse(argument[7]);
-            ClearReward = int.Parse(argument[8]);
-            ConditionPlanet = int.Parse(argument[9]);
-            ConditionPower = int.Parse(argument[10]);
+            NeedKeyItemID = int.Parse(argument[4]);
+            NeedKeyItemCount = int.Parse(argument[5]);
+            RewardItemID = int.Parse(argument[6]);
+            FirstClearRewardItemCount = int.Parse(argument[7]);
+            ClearRewardItemCount = int.Parse(argument[8]);
+            NeedClearPlanet = int.Parse(argument[9]);
+            NeedPower = int.Parse(argument[10]);
             KeyPoint = int.Parse(argument[11]);
             LimitTime = float.Parse(argument[12]);
-            WaveCorpsID = int.Parse(argument[13]);
-            PrefabID = argument[14];
+            WaveID = int.Parse(argument[13]);
+            PrefabID = int.Parse(argument[14]);
+            SpriteID = int.Parse(argument[15]);
         }
     }
 

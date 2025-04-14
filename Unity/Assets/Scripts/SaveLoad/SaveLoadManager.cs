@@ -113,7 +113,7 @@ public static class SaveLoadManager
                 {
                     soldierId = soldierData.ID,
                     isLocked = true,
-                    grade = soldierData.Rating,
+                    grade = soldierData.Grade,
                     count = 0,
                     level = 0
                 };

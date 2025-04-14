@@ -10,17 +10,17 @@ public class RobotMergeTable : DataTable
     public class Data : ITableData
     {
         public int ID { get; set; }
-        public int materialRobotID { get; set; }
-        public int resultID { get; set; }
-        public int probability { get; set; }
+        public int NeedRobotID { get; set; }
+        public int ResultRobotID { get; set; }
+        public int Probability { get; set; }
 
 
         public void Set(string[] argument)
         {
             ID = int.Parse(argument[0]);
-            materialRobotID = int.Parse(argument[1]);
-            resultID = int.Parse(argument[2]);
-            probability = int.Parse(argument[3]);
+            NeedRobotID = int.Parse(argument[1]);
+            ResultRobotID = int.Parse(argument[2]);
+            Probability = int.Parse(argument[3]);
         }
     }
 
@@ -45,7 +45,7 @@ public class RobotMergeTable : DataTable
             if (!TableData.ContainsKey(item.ID))
             {
                 TableData.Add(item.ID, item);
-                materialDict.Add(item.materialRobotID, item);
+                materialDict.Add(item.NeedRobotID, item);
             }
             else
             {
@@ -71,7 +71,7 @@ public class RobotMergeTable : DataTable
         {
             var datum = CreateData<Data>(item);
             tableData.Add(datum.ID, datum);
-            newMaterialDict.Add(datum.materialRobotID, datum);
+            newMaterialDict.Add(datum.NeedRobotID, datum);
         }
         TableData = tableData;
         materialDict = newMaterialDict;

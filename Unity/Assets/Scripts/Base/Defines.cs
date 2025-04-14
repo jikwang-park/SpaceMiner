@@ -39,6 +39,7 @@ public class DataTableIds
     public const string shopTable = "ShopTable";
 
     public const string defaultDataTable = "DefaultDataTable";
+    public const string addressTable = "AddressTable";
 
     public const string guideQuestTable = "GuideQuestTable";
 
@@ -86,6 +87,18 @@ public enum IngameStatus
     Planet,
     Dungeon,
     Mine,
+}
+
+public enum TargetPriority
+{
+    /// <summary>
+    /// ÅÊÄ¿-µô·¯-Èú·¯
+    /// </summary>
+    FrontOrder = 1,
+    /// <summary>
+    /// Èú·¯-µô·¯-ÅÊÄ¿
+    /// </summary>
+    BackOrder = 2,
 }
 
 public enum SlotType

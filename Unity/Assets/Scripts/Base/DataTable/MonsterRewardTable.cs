@@ -1,4 +1,3 @@
-using JetBrains.Annotations;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -11,11 +10,11 @@ public class MonsterRewardTable : DataTable
     public class Data : ITableData
     {
         public int ID { get; set; }
-        public int Reward1 { get; set; }
-        public int Count { get; set; }
-        public int Reward2 { get; set; }
-        public string CountArray { get; set; }
-        public string Probability { get; set; }
+        public int RewardItemID1 { get; set; }
+        public int RewardItemCount1 { get; set; }
+        public int RewardItemID2 { get; set; }
+        public string RewardItemCount2 { get; set; }
+        public string RewardItemProbability2 { get; set; }
 
         public int[] counts;
         public float[] probabilities;
@@ -23,16 +22,16 @@ public class MonsterRewardTable : DataTable
         public void Set(string[] argument)
         {
             ID = int.Parse(argument[0]);
-            Reward1 = int.Parse(argument[1]);
-            Count = int.Parse(argument[2]);
-            Reward2 = int.Parse(argument[3]);
-            CountArray = argument[4];
-            Probability = argument[5];
+            RewardItemID1 = int.Parse(argument[1]);
+            RewardItemCount1 = int.Parse(argument[2]);
+            RewardItemID2 = int.Parse(argument[3]);
+            RewardItemCount2 = argument[4];
+            RewardItemProbability2 = argument[5];
         }
 
         public int RandomReward2()
         {
-            if (Reward2 == 0)
+            if (RewardItemID2 == 0)
             {
                 return -1;
             }
@@ -70,7 +69,7 @@ public class MonsterRewardTable : DataTable
             if (!TableData.ContainsKey(item.ID))
             {
                 TableData.Add(item.ID, item);
-                var strCounts = item.CountArray.Split('_');
+                var strCounts = item.RewardItemCount2.Split('_');
                 int countLength = strCounts.Length;
                 item.counts = new int[countLength];
                 for (int i = 0; i < countLength; ++i)
@@ -78,7 +77,7 @@ public class MonsterRewardTable : DataTable
                     item.counts[i] = int.Parse(strCounts[i]);
                 }
 
-                var strProbabilities = item.Probability.Split('_');
+                var strProbabilities = item.RewardItemProbability2.Split('_');
                 countLength = strProbabilities.Length;
                 item.probabilities = new float[countLength];
                 for (int i = 0; i < countLength; ++i)

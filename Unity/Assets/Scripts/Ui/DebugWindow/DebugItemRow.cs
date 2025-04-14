@@ -23,7 +23,7 @@ public class DebugItemRow : MonoBehaviour
     {
         data = DataTableManager.ItemTable.GetData(itemId);
         idText.text = itemId.ToString();
-        nameText.SetString(data.ItemStringID.ToString());
+        nameText.SetString(data.NameStringID.ToString());
         Refresh();
     }
 

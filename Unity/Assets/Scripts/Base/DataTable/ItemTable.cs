@@ -9,19 +9,19 @@ public class ItemTable : DataTable
     public class Data : ITableData
     {
         public int ID { get; set; }
-        public int ItemStringID { get; set; }
+        public int NameStringID { get; set; }
         public int ItemType { get; set; }
         public int MaxStack { get; set; }
-        public string ResourcesName { get; set; }
+        public int SpriteID { get; set; }
 
 
         public void Set(string[] argument)
         {
             ID = int.Parse(argument[0]);
-            ItemStringID = int.Parse(argument[1]);
+            NameStringID = int.Parse(argument[1]);
             ItemType = int.Parse(argument[2]);
             MaxStack = int.Parse(argument[3]);
-            ResourcesName = argument[4];
+            SpriteID = int.Parse(argument[4]);
         }
     }
 

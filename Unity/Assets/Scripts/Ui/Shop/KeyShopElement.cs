@@ -52,7 +52,7 @@ public class KeyShopElement : MonoBehaviour
         needItemId = shopData.NeedItemID;
         paymentItemId = shopData.PaymentItemID;
         paymentItemAmount = shopData.PayCount;
-        needItemAmount = shopData.NeedCount;
+        needItemAmount = shopData.NeedItemCount;
         dailyPurchaseLimitCount = shopData.DailyPurchaseLimit;
 
         dailyResetHour = (shopData.ResetTime / 100) % 24;

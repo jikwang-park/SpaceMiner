@@ -6,11 +6,11 @@ public class MonsterStats : CharacterStats
 {
     public void SetData(MonsterTable.Data monsterData)
     {
-        damage = monsterData.Atk;
-        range = monsterData.AtkRange;
-        maxHp = monsterData.Hp;
+        damage = monsterData.Attack;
+        range = monsterData.AttackRange;
+        maxHp = monsterData.HP;
         Hp = maxHp;
-        coolDown = 100f / monsterData.AtkSpeed;
+        coolDown = 100f / monsterData.AttackSpeed;
         moveSpeed = monsterData.MoveSpeed;
     }
 

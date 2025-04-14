@@ -6,9 +6,9 @@ using UnityEngine;
 
 public class UnitSkillUpgradePanel : MonoBehaviour
 {
-    private UnitTypes currentType;
+    private UnitTypes currentType = UnitTypes.Tanker;
 
-    private Grade currentGrade;
+    private Grade currentGrade = Grade.Normal;
 
     private int id;
 
@@ -26,24 +26,26 @@ public class UnitSkillUpgradePanel : MonoBehaviour
     {
         gradeButtons.Init();
 
-        var data = SaveLoadManager.Data.unitSkillUpgradeData.skillUpgradeId;
+        unitSkillDictionary = SaveLoadManager.Data.unitSkillUpgradeData.skillUpgradeId;
 
-        foreach (UnitTypes type in Enum.GetValues(typeof(UnitTypes)))
-        {
-            foreach (Grade grade in Enum.GetValues(typeof(Grade)))
-            {
-                currentType = type;
-                currentGrade = grade;
-                id = data[currentType][grade];
+        //foreach (UnitTypes type in Enum.GetValues(typeof(UnitTypes)))
+        //{
+        //    foreach (Grade grade in Enum.GetValues(typeof(Grade)))
+        //    {
+        //        currentType = type;
+        //        currentGrade = grade;
+        //        id = data[currentType][grade];
 
-                if (!unitSkillDictionary.ContainsKey(type))
-                {
-                    unitSkillDictionary.Add(type, new Dictionary<Grade, int>());
-                }
+        //        if (!unitSkillDictionary.ContainsKey(type))
+        //        {
+        //            unitSkillDictionary.Add(type, new Dictionary<Grade, int>());
+        //        }
 
-                unitSkillDictionary[type].Add(grade, id);
-            }
-        }
+        //        unitSkillDictionary[type].Add(grade, id);
+        //    }
+        //}
+
+        id = unitSkillDictionary[currentType][currentGrade];
         board.ShowFirstOpened(id, currentType);
     }   
     public void SetGradeButtons()

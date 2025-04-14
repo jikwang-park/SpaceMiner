@@ -4,35 +4,110 @@ using UnityEditor;
 using UnityEngine;
 using static UnitUpgradeTable;
 
+
 public class UnitStats : CharacterStats
 {
+    private StageManager stageManager;
+
+    private Grade currentGrade;
+    private float criticalPercent;
+
+    private BigNumber FinialDamage
+    {
+        get
+        {
+            return ((baseDamage + accountDamage) * (1f + buildingAttackDamage));
+        }
+    }
+
+    private BigNumber defalutValue = 1;
+    //ï¿½âº»
+    private BigNumber baseDamage;
+    private BigNumber accountDamage = 0;
+    private float buildingAttackDamage = 1;
+    //Å©ï¿½ï¿½
+    private float accountCriticalDamage = 0f;
+    private float buildingCriticalDamage = 0f;
+    //ï¿½ï¿½ï¿½
+    private BigNumber baseArmor;
+    private BigNumber accountArmor = 0;
+    private float buildingArmor = 0;
+    //Ã¼ï¿½ï¿½
+    private BigNumber baseMaxHp;
+    private BigNumber accountHp = 0;
+    private float buildingHp = 0;
+    //Å©È®
+    private float accountCriticalChance = 0f;
+    private float buildingCriticalChance = 0f;
 
 
-    public void AddStats(UpgradeType type , float amount)
+    private void Awake()
+    {
+        stageManager = GameObject.FindGameObjectWithTag("GameController").GetComponent<StageManager>();
+    }
+
+    private void Start()
+    {
+    }
+    public void AddStats(UpgradeType type, float amount)
     {
         switch (type)
         {
             case UpgradeType.AttackPoint:
-                damage += (int)amount;
+                accountDamage += (int)amount;
                 break;
             case UpgradeType.HealthPoint:
-                maxHp += (int)amount;
+                accountHp += (int)amount;
+                RecalculateHpWithIncrease();
                 break;
             case UpgradeType.DefensePoint:
-                armor += (int)amount;
+                accountArmor += (int)amount;
+                RecalculateArmor();
                 break;
             case UpgradeType.CriticalPossibility:
-                criticalChance += (amount*100);
+                 accountCriticalChance += (int)amount;
                 break;
             case UpgradeType.CriticalDamages:
-                criticalMultiplier += (amount * 100);
+                accountCriticalDamage += (int)amount;
                 break;
         }
     }
 
-    public void AddBuildingStats(BuildingTable.BuildingType type , float amount)
+    private void RecalculateArmor()
     {
-        if(amount == 0)
+        armor = (baseArmor + accountArmor) * (1 + buildingArmor);
+    }
+
+    private void RecalculateHpWithIncrease()
+    {
+        BigNumber previousMaxHp = maxHp;
+        maxHp = (baseMaxHp + accountHp) * (1f + buildingHp);
+
+        BigNumber increase = maxHp - previousMaxHp;
+
+        Hp += increase;
+        if (Hp > maxHp)
+            Hp = maxHp;
+    }
+
+    private void RecalculateHpWithRatio()
+    {
+        float ratio = 0f;
+        if(maxHp>0)
+        {
+            ratio = Hp.DivideToFloat(maxHp);
+        }
+        else
+        {
+            ratio = 1f;
+        }
+        maxHp = (baseMaxHp + accountHp) * (1f + buildingHp);
+        Hp = maxHp * ratio;
+    }
+
+    public void AddBuildingStats(BuildingTable.BuildingType type, float amount)
+    {
+        if (amount == 0)
         {
             return;
         }
@@ -42,19 +117,21 @@ public class UnitStats : CharacterStats
             case BuildingTable.BuildingType.IdleTime:
                 break;
             case BuildingTable.BuildingType.AttackPoint:
-                damage *= (int)amount;
+                buildingAttackDamage += (int)amount;
                 break;
             case BuildingTable.BuildingType.HealthPoint:
-                maxHp *= (int)amount;
+                buildingHp += (int)amount;
+                RecalculateHpWithIncrease();
                 break;
             case BuildingTable.BuildingType.DefensePoint:
-                armor *= (int)amount;
+                buildingArmor += amount;
+                RecalculateArmor();
                 break;
             case BuildingTable.BuildingType.CriticalPossibility:
-                criticalChance += amount;
+                buildingCriticalChance += amount;
                 break;
             case BuildingTable.BuildingType.CriticalDamages:
-                criticalMultiplier += (int)amount;
+                buildingCriticalDamage += amount;
                 break;
             case BuildingTable.BuildingType.Gold:
                 break;
@@ -67,49 +144,20 @@ public class UnitStats : CharacterStats
 
     public void SetData(SoldierTable.Data data, UnitTypes type)
     {
-        moveSpeed = 5f;
-        maxHp = 1000;/*(int)data.Basic_HP;*/
-        Hp = maxHp;
+        moveSpeed = data.MoveSpeed;
+        baseDamage = data.Attack;
+
+        baseMaxHp = data.HP;
+        currentGrade = data.Grade;
 
         coolDown = 1;
-        armor = data.Defence;
-        damage = data.Attack;
-        //range = (int)data.Distance;
+        baseArmor = data.Defence;
+        range = data.Range;
+        RecalculateArmor();
 
-        switch (type)
-        {
-            case UnitTypes.Tanker:
-                range = 1f;
-                break;
-            case UnitTypes.Dealer:
-                range = 5.5f;
-                break;
-            case UnitTypes.Healer:
-                range = 10f;
-                break;
-        }
+        RecalculateHpWithRatio();
     }
-    public void SkillExecute(GameObject defender) // ½ºÅ³ ÀÎÆ÷¹× µðÆæ´õ Á¤º¸ ³Ñ°Ü¼­ µ¥¹ÌÁö Ã³¸®
-    {
-        if(defender is null)
-        {
-            return;
-        }
-        var distance = Vector3.Dot(transform.position - defender.transform.position, Vector3.forward);
 
-        if (distance > range)
-        {
-            return;
-        }
-
-        CharacterStats dStats = defender.GetComponent<CharacterStats>();
-        Attack attack = CreateSkillAttack(dStats);
-        IAttackable[] attackables = defender.GetComponents<IAttackable>();
-        foreach (var attackable in attackables)
-        {
-            attackable.OnAttack(gameObject, attack);
-        }
-    }
 
     public override void Execute(GameObject defender)
     {
@@ -132,48 +180,25 @@ public class UnitStats : CharacterStats
             attackable.OnAttack(gameObject, attack);
         }
     }
-
-    public Attack CreateSkillAttack(CharacterStats defenderStats)
-    {
-        //³ªÁß¿¡ Ãß°¡ ÇØ¾ß‰Î
-        Attack attack = new Attack();
-
-        var dealerData = DataTableManager.DealerSkillTable.GetData(1101); //250331 HKY µ¥ÀÌÅÍÇü º¯°æ
-
-        BigNumber damage = this.damage;
-
-        attack.isCritical = criticalChance >= Random.Range(0,100);
-        if(attack.isCritical)
-        {
-            damage *= criticalMultiplier;
-        }
-        attack.damage = damage;
-
-        if (defenderStats != null)
-        {
-            attack.damage -= defenderStats.armor;
-        }
-
-        return attack;
-    }
-    
     public override Attack CreateAttack(CharacterStats defenderStats)
     {
-        //TODO: ´ë¹ÌÁö °è»ê½Ä Á¤ÇØÁö¸é ¼öÁ¤ÇØ¾ßÇÔ - 250322 HKY
         Attack attack = new Attack();
 
-        BigNumber damage = this.damage;
 
+        criticalChance = accountCriticalChance + buildingCriticalChance;
 
         attack.isCritical = criticalChance >= Random.Range(0, 100);
         if (attack.isCritical)
         {
-            damage = (damage * 2) + (damage * criticalMultiplier);
-            Debug.Log(damage);
-            Debug.Log(criticalChance);
+            criticalPercent = (2 + (accountCriticalDamage + buildingCriticalDamage));
 
+            attack.damage = FinialDamage * criticalPercent;
         }
-        attack.damage = damage;
+        else
+        {
+            attack.damage = FinialDamage;
+        }
+
 
         if (defenderStats != null)
         {
@@ -182,4 +207,62 @@ public class UnitStats : CharacterStats
 
         return attack;
     }
+    public void SkillExecute(GameObject defender) // ï¿½ï¿½Å³ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Ñ°Ü¼ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ Ã³ï¿½ï¿½
+    {
+        if (defender is null)
+        {
+            return;
+        }
+        var distance = Vector3.Dot(transform.position - defender.transform.position, Vector3.forward);
+
+        if (distance > range)
+        {
+            return;
+        }
+
+        CharacterStats dStats = defender.GetComponent<CharacterStats>();
+        Attack attack = CreateDealerSkillAttack(dStats);
+        IAttackable[] attackables = defender.GetComponents<IAttackable>();
+        foreach (var attackable in attackables)
+        {
+            attackable.OnAttack(gameObject, attack);
+        }
+    }
+
+    public Attack CreateDealerSkillAttack(CharacterStats defenderStats)
+    {
+        Attack attack = new Attack();
+
+        var data = SaveLoadManager.Data.unitSkillUpgradeData.skillUpgradeId;
+
+        var id = data[UnitTypes.Dealer][currentGrade];
+
+        var currentData = DataTableManager.DealerSkillTable.GetData(id);
+
+        BigNumber finialSkillDamage = FinialDamage * currentData.DamageRatio;
+
+
+        criticalChance = accountCriticalChance + buildingCriticalChance;
+
+        attack.isCritical = criticalChance >= Random.Range(0, 100);
+        if (attack.isCritical)
+        {
+            criticalPercent = (2 + (accountCriticalDamage + buildingCriticalDamage));
+            attack.damage = finialSkillDamage * criticalPercent;
+        }
+        else
+        {
+            attack.damage = finialSkillDamage;
+        }
+
+
+        if (defenderStats != null)
+        {
+            attack.damage -= defenderStats.armor;
+        }
+
+        return attack;
+    }
+
+
 }

@@ -5,7 +5,7 @@ using UnityEngine;
 
 public class DealerSkill : UnitSkill
 {
-    private float damageRatio;
+    public float damageRatio { get; private set; }
     private int targetCount;
 
     protected override void Awake()

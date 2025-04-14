@@ -95,6 +95,11 @@ public struct BigNumber : ISerializationCallbackReceiver
         }
         currentValue = ToString();
     }
+    public BigNumber(float input)
+    {
+        int truncated = (int)input;
+        this = new BigNumber(truncated);
+    }
     private BigNumber(List<int> parts)
     {
         this.parts = parts;
@@ -162,6 +167,18 @@ public struct BigNumber : ISerializationCallbackReceiver
 
         return a + other;
     }
+    public static BigNumber operator +(int a, BigNumber b)
+    {
+        BigNumber other = new BigNumber(a.ToString());
+
+        return other + b;
+    }
+    public static BigNumber operator +(string a, BigNumber b)
+    {
+        BigNumber other = new BigNumber(a);
+
+        return other + b;
+    }
     public static BigNumber operator -(BigNumber a, BigNumber b)
     {
         return a + (-b);
@@ -178,6 +195,18 @@ public struct BigNumber : ISerializationCallbackReceiver
 
         return a + (-other);
     }
+    public static BigNumber operator -(int a, BigNumber b)
+    {
+        BigNumber other = new BigNumber(a.ToString());
+
+        return other + (-b);
+    }
+    public static BigNumber operator -(string a, BigNumber b)
+    {
+        BigNumber other = new BigNumber(a);
+
+        return other + (-b);
+    }
     public static BigNumber operator *(BigNumber a, float multiplier)
     {
         if (multiplier == 0f)
@@ -192,6 +221,10 @@ public struct BigNumber : ISerializationCallbackReceiver
         BigNumber result = temp / scale;
         result.sign = a.sign * (multiplier < 0 ? -1 : 1);
         return result;
+    }
+    public static BigNumber operator *(float multiplier, BigNumber a)
+    {
+        return a * multiplier;
     }
     public static BigNumber operator *(BigNumber a, int multiplier)
     {
@@ -221,6 +254,10 @@ public struct BigNumber : ISerializationCallbackReceiver
         result.sign = newSign;
         result.Normalize();
         return result;
+    }
+    public static BigNumber operator *(int multiplier, BigNumber a)
+    {
+        return a * multiplier;
     }
     public static BigNumber operator /(BigNumber a, int divisor)
     {
@@ -328,6 +365,11 @@ public struct BigNumber : ISerializationCallbackReceiver
         BigNumber other = new BigNumber(b.ToString());
         return a < other;
     }
+    public static bool operator <(int a, BigNumber b)
+    {
+        BigNumber other = new BigNumber(a.ToString());
+        return other < b;
+    }
     public static bool operator >(BigNumber a, BigNumber b)
     {
         return a.CompareTo(b) > 0;
@@ -336,6 +378,11 @@ public struct BigNumber : ISerializationCallbackReceiver
     {
         BigNumber other = new BigNumber(b.ToString());
         return a > other;
+    }
+    public static bool operator >(int a, BigNumber b)
+    {
+        BigNumber other = new BigNumber(a.ToString());
+        return other > b;
     }
     public static bool operator <=(BigNumber a, BigNumber b)
     {
@@ -346,6 +393,11 @@ public struct BigNumber : ISerializationCallbackReceiver
         BigNumber other = new BigNumber(b.ToString());
         return a <= other;
     }
+    public static bool operator <=(int a, BigNumber b)
+    {
+        BigNumber other = new BigNumber(a.ToString());
+        return other <= b;
+    }
     public static bool operator >=(BigNumber a, BigNumber b)
     {
         return a.CompareTo(b) >= 0;
@@ -354,6 +406,11 @@ public struct BigNumber : ISerializationCallbackReceiver
     {
         BigNumber other = new BigNumber(b.ToString());
         return a >= other;
+    }
+    public static bool operator >=(int a, BigNumber b)
+    {
+        BigNumber other = new BigNumber(a.ToString());
+        return other >= b;
     }
     public static bool operator ==(BigNumber a, BigNumber b)
     {
@@ -364,6 +421,11 @@ public struct BigNumber : ISerializationCallbackReceiver
         BigNumber other = new BigNumber(b.ToString());
         return a == other;
     }
+    public static bool operator ==(int a, BigNumber b)
+    {
+        BigNumber other = new BigNumber(a.ToString());
+        return other == b;
+    }
     public static bool operator !=(BigNumber a, BigNumber b)
     {
         return !(a == b);
@@ -372,6 +434,11 @@ public struct BigNumber : ISerializationCallbackReceiver
     {
         BigNumber other = new BigNumber(b.ToString());
         return a != other;
+    }
+    public static bool operator !=(int a, BigNumber b)
+    {
+        BigNumber other = new BigNumber(a.ToString());
+        return other != b;
     }
     private static List<int> AddAbsolute(List<int> aParts, List<int> bParts)
     {

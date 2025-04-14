@@ -25,7 +25,6 @@ public static class GachaManager
     {
         if(gachaCostDict.ContainsKey(gachaId))
         {
-            // 250412 HKY 가챠 증가율 삭제 적용
             var cost = gachaCostDict[gachaId] * count;
             return cost;
         }

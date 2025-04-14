@@ -60,9 +60,9 @@ public static class GuideQuestManager
 
             case GuideQuestTable.MissionType.StatUpgrade:
                 var statData = SaveLoadManager.Data.unitStatUpgradeData;
-
-                Progress = statData.upgradeLevels[(UnitUpgradeTable.UpgradeType)currentQuestData.Target];
-                isClearedNow = statData.upgradeLevels[(UnitUpgradeTable.UpgradeType)currentQuestData.Target] >= currentQuestData.TargetCount;
+                var upgradeData = DataTableManager.UnitUpgradeTable.GetData(currentQuestData.Target);
+                Progress = statData.upgradeLevels[upgradeData.Type];
+                isClearedNow = statData.upgradeLevels[upgradeData.Type] >= currentQuestData.TargetCount;
                 break;
 
             case GuideQuestTable.MissionType.Item:
@@ -74,7 +74,9 @@ public static class GuideQuestManager
                 break;
 
             case GuideQuestTable.MissionType.Building:
-                Progress = SaveLoadManager.Data.buildingData.buildingLevels[(BuildingTable.BuildingType)currentQuestData.Target];
+                var buildingData = DataTableManager.BuildingTable.GetData(currentQuestData.Target);
+
+                Progress = SaveLoadManager.Data.buildingData.buildingLevels[buildingData.Type];
                 isClearedNow = Progress >= currentQuestData.TargetCount;
                 break;
         }

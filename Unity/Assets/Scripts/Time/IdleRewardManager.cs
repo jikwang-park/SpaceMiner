@@ -80,6 +80,7 @@ public class IdleRewardManager : MonoBehaviour
                 ItemManager.AddItem(rewardItem.Key, rewardItem.Value);
                 Debug.Log($"Get Idle Reward - {rewardItem.Key} : {rewardItem.Value}");
             }
+            TimeManager.Instance.SetQuitTime();
             DisplayRewardUI(processedIdleRewards);
         }
     }

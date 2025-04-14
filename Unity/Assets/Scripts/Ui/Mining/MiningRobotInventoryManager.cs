@@ -210,7 +210,7 @@ public static class MiningRobotInventoryManager
             int itemId = DataTableManager.PlanetTable.GetData(planet.Key).ItemID;
             BigNumber amountPerMinute = CalculateMiningAmountPerMinute(planet.Key);
 
-            result.Add(itemId, amountPerMinute );
+            result.Add(itemId, amountPerMinute);
         }
 
         return result;
@@ -246,6 +246,8 @@ public static class MiningRobotInventoryManager
 
         robotMiningAmount = (float)robotData.loadCapacity / (float)((planetLevel / robotData.moveSpeed) + (planetLevel / robotData.miningSpeed));
 
-        return (BigNumber)robotMiningAmount * ScaleFactor;
+        float scaledValue = robotMiningAmount * ScaleFactor;
+
+        return new BigNumber((int)scaledValue);
     }
 }

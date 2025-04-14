@@ -84,7 +84,7 @@ public class PlanetStageStatusMachine : StageStatusMachine
             stageManager.UnitPartyManager.UnitDespawn();
             stageManager.StageMonsterManager.ClearMonster();
 
-            var prefabID =DataTableManager.AddressTable.GetData(stageData.PrefabID);
+            var prefabID = DataTableManager.AddressTable.GetData(stageData.PrefabID);
             stageManager.ObjectPoolManager.Clear(prefabID);
         }
     }

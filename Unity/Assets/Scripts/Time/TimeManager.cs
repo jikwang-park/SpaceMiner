@@ -59,15 +59,18 @@ public class TimeManager : Singleton<TimeManager>
     }
     private void OnApplicationQuit()
     {
-        SaveLoadManager.Data.quitTime = GetEstimatedServerTime();
-        SaveLoadManager.SaveGame();
+        SetQuitTime();
     }
     private void OnApplicationPause(bool pause)
     {
         if (pause)
         {
-            SaveLoadManager.Data.quitTime = GetEstimatedServerTime();
-            SaveLoadManager.SaveGame();
+            SetQuitTime();
         }
+    }
+    public void SetQuitTime()
+    {
+        SaveLoadManager.Data.quitTime = GetEstimatedServerTime();
+        SaveLoadManager.SaveGame();
     }
 }

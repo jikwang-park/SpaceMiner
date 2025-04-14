@@ -1,12 +1,16 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 public class IdleRewardManager : MonoBehaviour
 {
     private StageSaveData stageSaveData;
     private readonly int defaultMaxMinute = 600;
+
+    [SerializeField]
+    private IdleRewardPopup idleRewardPopup;
     private int MaxMinute
     {
         get
@@ -67,11 +71,23 @@ public class IdleRewardManager : MonoBehaviour
                 idleRewardsDict.Add(kvp.Key, kvp.Value * idleTime);
             }
         }
-
-        foreach(var rewardItem in idleRewardsDict)
+        var processedIdleRewards = idleRewardsDict.Where((e) => e.Value > 0).ToList();
+        if(processedIdleRewards.Count > 0)
         {
-            ItemManager.AddItem(rewardItem.Key, rewardItem.Value);
-            Debug.Log($"Get Idle Reward - {rewardItem.Key} : {rewardItem.Value}");
+            foreach (var rewardItem in processedIdleRewards)
+            {
+                var value = rewardItem.Value / 1000;
+                ItemManager.AddItem(rewardItem.Key, rewardItem.Value);
+                Debug.Log($"Get Idle Reward - {rewardItem.Key} : {rewardItem.Value}");
+            }
+            TimeManager.Instance.SetQuitTime();
+            DisplayRewardUI(processedIdleRewards);
         }
+    }
+
+    private void DisplayRewardUI(List<KeyValuePair<int, BigNumber>> rewards)
+    {
+        idleRewardPopup.gameObject.SetActive(true);
+        idleRewardPopup.DisplayIdleReward(rewards);
     }
 }

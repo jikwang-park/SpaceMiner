@@ -15,6 +15,7 @@ public class MoveAction : ActionNode<Unit>
 
     protected override NodeStatus OnUpdate()
     {
+        Debug.Log("¿Ãµø¡ﬂ");
         context.Move();
         return NodeStatus.Success;
     }

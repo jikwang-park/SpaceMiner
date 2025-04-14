@@ -112,7 +112,7 @@ public class UnitStatsUpgradeElement : MonoBehaviour
             LevelUp();
             SetStatsInfo();
             stageManager.UnitPartyManager.AddStats(currentType, level * value);
-            SaveLoadManager.SaveGame();
+            SaveLoadManager.SaveGame(); 
         }
     }
 }

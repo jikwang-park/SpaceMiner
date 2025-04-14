@@ -20,6 +20,10 @@ public class UnitCombatPowerCalculator : MonoBehaviour
     {
         unitPartyManager = GetComponent<StageManager>().UnitPartyManager;
     }
+    private void Start()
+    {
+        CalculateTotalCombatPower();
+    }
 
     public BigNumber CalculateTotalCombatPower()
     {
@@ -27,15 +31,68 @@ public class UnitCombatPowerCalculator : MonoBehaviour
     }
     public BigNumber GetTankerCombatPower()
     {
-        Unit tankerUnit = unitPartyManager.GetUnit(UnitTypes.Tanker).GetComponent<Unit>();
-        return 0;
+        BigNumber combatPower = 0;
+        Unit unit = unitPartyManager.GetUnit(UnitTypes.Tanker).GetComponent<Unit>();
+        UnitStats unitStats = unit.unitStats;
+
+        BigNumber attackPowerPerSecond = GetAttackPowerPerSecond(unit);
+        TankerSkillTable.Data skillData = DataTableManager.TankerSkillTable.GetData(unit.unitSkill.currentSkillId);
+
+        combatPower = (attackPowerPerSecond * (unitStats.baseDamage / weightDivider)) + (unitStats.armor * (unitStats.baseArmor / weightDivider)) + ((unitStats.maxHp + (unitStats.armor * skillData.ShieldRatio * tankerSkillWeight / skillData.CoolTime)) * (unitStats.baseMaxHp / weightDivider));
+
+        return combatPower;
     }
     public BigNumber GetDealerCombatPower()
     {
-        return 0;
+        BigNumber combatPower = 0;
+        Unit unit = unitPartyManager.GetUnit(UnitTypes.Dealer).GetComponent<Unit>();
+        UnitStats unitStats = unit.unitStats;
+
+        BigNumber attackPowerPerSecond = GetAttackPowerPerSecond(unit);
+        DealerSkillTable.Data skillData = DataTableManager.DealerSkillTable.GetData(unit.unitSkill.currentSkillId);
+
+        combatPower = (attackPowerPerSecond + (GetExpectedDamage(unit, true) / skillData.CoolTime) * (unitStats.baseDamage / weightDivider)) + (unitStats.baseArmor / weightDivider) + (unitStats.baseMaxHp / weightDivider);
+
+        return combatPower;
     }
     public BigNumber GetHealerCombatPower()
     {
-        return 0;
+        BigNumber combatPower = 0;
+        Unit unit = unitPartyManager.GetUnit(UnitTypes.Healer).GetComponent<Unit>();
+        UnitStats unitStats = unit.unitStats;
+
+        BigNumber attackPowerPerSecond = GetAttackPowerPerSecond(unit);
+        HealerSkillTable.Data skillData = DataTableManager.HealerSkillTable.GetData(unit.unitSkill.currentSkillId);
+
+        combatPower = (attackPowerPerSecond * (unitStats.baseDamage / weightDivider)) + (unitStats.armor * (unitStats.baseArmor / weightDivider)) + ((unitStats.maxHp + (unitStats.maxHp * skillData.HealRatio * healerSkillWeight / skillData.CoolTime)) * (unitStats.baseMaxHp / weightDivider));
+
+        return combatPower;
+    }
+    public BigNumber GetAttackPowerPerSecond(Unit unit)
+    {
+        BigNumber attackPowerPerSecond = 0;
+
+        BigNumber expectedNormalDamage = GetExpectedDamage(unit, false);
+
+        attackPowerPerSecond = expectedNormalDamage * (unit.unitStats.attackSpeed / 100);
+
+        return attackPowerPerSecond;
+    }
+    public BigNumber GetExpectedDamage(Unit unit, bool isDealerSkill)
+    {
+        BigNumber expectedDamage = 0;
+        UnitStats unitStats = unit.unitStats;
+        if (isDealerSkill)
+        {
+            UnitSkill unitSkill = unit.unitSkill;
+            DealerSkillTable.Data skillData = DataTableManager.DealerSkillTable.GetData(unitSkill.currentSkillId);
+
+            expectedDamage = (unitStats.FinialDamage * skillData.DamageRatio) * (1 - (unitStats.accountCriticalChance + unitStats.buildingCriticalChance)) + ((unitStats.FinialDamage * skillData.DamageRatio) * (2 + unitStats.accountCriticalDamage + unitStats.buildingCriticalDamage) * (unitStats.accountCriticalChance + unitStats.buildingCriticalChance));
+        }
+        else
+        {
+            expectedDamage = unitStats.FinialDamage * (1 - (unitStats.accountCriticalChance + unitStats.buildingCriticalChance)) + (unitStats.FinialDamage * (2 + unitStats.accountCriticalDamage + unitStats.buildingCriticalDamage) * (unitStats.accountCriticalChance + unitStats.buildingCriticalChance));
+        }
+        return expectedDamage;
     }
 }

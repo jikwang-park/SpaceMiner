@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -52,7 +53,7 @@ public class Unit : MonoBehaviour
     {
         get
         {
-            if (targetDistance <= unitStats.range)
+            if (targetPos != null && targetDistance <= unitStats.range)
                 return true;
 
             return false;
@@ -62,7 +63,7 @@ public class Unit : MonoBehaviour
 
     public BehaviorTree<Unit> behaviorTree;
 
-    public float attackUsingTime = 0.4f;
+    public float attackUsingTime = 0.25f;
 
     public int unitAliveCount = 0;
 
@@ -85,7 +86,7 @@ public class Unit : MonoBehaviour
 
     public Grade currentGrade;
 
-    
+
 
     public bool isAutoSkillMode;
     private void Awake()
@@ -98,6 +99,19 @@ public class Unit : MonoBehaviour
     private void Start()
     {
         Debug.Log($"현재 타입 : {currentUnitType}, 현재 공격사거리 : {unitStats.range}");
+    }
+
+    public bool IsUnitExeedMonsterPosition
+    {
+        get
+        {
+            if(targetPos == null)
+                return false;
+
+            float distance = targetPos.position.z - transform.position.z ;
+
+            return distance < 1f;
+        }
     }
 
     public bool IsDead
@@ -186,7 +200,7 @@ public class Unit : MonoBehaviour
     {
         get
         {
-            if (targetPos == null|| targetDistance > unitStats.range ||
+            if (targetPos == null || targetDistance > unitStats.range ||
                     Time.time < unitSkill.coolTime + lastSkillUsedTime)
                 return false;
 
@@ -195,16 +209,16 @@ public class Unit : MonoBehaviour
     }
 
     public bool IsHealerCanUseSkill
-    { 
+    {
         get
         {
-             if (unitSkill.targetList.Count == 0 ||
-                Time.time < unitSkill.coolTime + lastSkillUsedTime)
+            if (unitSkill.targetList.Count == 0 ||
+               Time.time < unitSkill.coolTime + lastSkillUsedTime)
                 return false;
 
             foreach (var unit in unitSkill.targetList)
             {
-                 var targetStats = unit.unitStats;
+                var targetStats = unit.unitStats;
                 if ((targetStats.Hp.DivideToFloat(targetStats.maxHp)) * 100f <= stageManger.UnitPartyManager.buttonManager.currentValue)
                 {
                     return true;
@@ -286,7 +300,7 @@ public class Unit : MonoBehaviour
             {
                 var frontUnit = stageManger.UnitPartyManager.GetFrontUnit(currentUnitType);
                 float distance = (frontUnit.transform.position.z - transform.position.z);
-
+                Debug.Log(distance);
                 isFrontSafe = (distance >= minDis * (((int)currentUnitType) - (int)frontUnit.currentUnitType));
 
             }
@@ -296,6 +310,15 @@ public class Unit : MonoBehaviour
 
         }
     }
+
+    //public bool IsSafe
+    //{
+    //    get
+    //    {
+    //        bool isFront = stageManger.UnitPartyManager.IsUnitExistFront(currentUnitType);
+    //        bool isBack = stageManger.UnitPartyManager.IsUnitExistBack(currentUnitType);
+    //    }
+    //}
 
 
 
@@ -313,7 +336,7 @@ public class Unit : MonoBehaviour
         switch (currentUnitType)
         {
             case UnitTypes.Tanker:
-                if(unitSkill == null)
+                if (unitSkill == null)
                 {
                     unitSkill = gameObject.AddComponent<TankerSkill>();
                 }
@@ -362,19 +385,17 @@ public class Unit : MonoBehaviour
         {
             var target = stageManger.StageMonsterManager.GetMonsterCount(i);
             var targetPosition = stageManger.StageMonsterManager.GetFirstMonster(i);
-
             if (target > 0)
             {
                 // 250403 HKY - 한 유닛에서 전체 유닛 순회하지 않도록 수정
 
                 targetDistance = targetPosition.position.z - transform.position.z;
+                targetPos = targetPosition;
 
-                if (targetDistance <= unitStats.range)
-                {
-                    targetPos = targetPosition;
-                    targetPos.GetComponent<DestructedDestroyEvent>().OnDestroyed += (_) => targetPos = null;
-                    return targetPos;
-                }
+
+                targetPos.GetComponent<DestructedDestroyEvent>().OnDestroyed += (_) => targetPos = null;
+                return targetPos;
+
             }
         }
         return null;
@@ -426,7 +447,7 @@ public class Unit : MonoBehaviour
     private IEnumerator HealerSkillTimer()
     {
         unitSkill.ExecuteSkill();
-        yield return new WaitForSeconds(2.5f);
+        yield return new WaitForSeconds(0.25f);
         lastAttackTime = Time.time;
         currentStatus = UnitStatus.Wait;
     }
@@ -436,14 +457,14 @@ public class Unit : MonoBehaviour
     {
 
         unitSkill.ExecuteSkill();
-        yield return new WaitForSeconds(2f);
+        yield return new WaitForSeconds(0.25f);
         currentStatus = UnitStatus.Wait;
     }
     private IEnumerator TankerSkillTimer()
     {
         unitSkill.GetTarget();
         unitSkill.ExecuteSkill();
-        yield return new WaitForSeconds(2.0f);
+        yield return new WaitForSeconds(0.25f);
         currentStatus = UnitStatus.Wait;
     }
 
@@ -458,7 +479,7 @@ public class Unit : MonoBehaviour
 
     private void Update()
     {
-        
+        Debug.Log(IsUnitExeedMonsterPosition);
         if (HasBarrier)
         {
             if (Time.time > skillEndTime)
@@ -475,7 +496,6 @@ public class Unit : MonoBehaviour
         {
             IsUnitHit = true;
         }
-
     }
 
     public void GetSaveStats(UnitUpgradeTable.UpgradeType type, int level)
@@ -492,9 +512,9 @@ public class Unit : MonoBehaviour
 
     public void GetSaveBuildingStats(BuildingTable.BuildingType type, int level)
     {
-        var data =DataTableManager.BuildingTable.GetDatas(type);
+        var data = DataTableManager.BuildingTable.GetDatas(type);
         float buildingStats = 0;
-        for(int i = 0; i <= level; ++ i)
+        for (int i = 0; i <= level; ++i)
         {
             buildingStats = data[i].Value;
         }

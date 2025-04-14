@@ -6,26 +6,59 @@ using static UnitUpgradeTable;
 
 public class UnitStats : CharacterStats
 {
+    private StageManager stageManager;
+    private DealerSkill dealerSkill;
+
+    private Grade currentGrade;
+
+    private BigNumber defalutValue = 1;
+    //기본
+    private float baseDamage;
+    private float accountDamage = 0f;
+    private float buildingAttackDamage = 1f;
+    //크리
+    private float accountCriticalDamage = 0f;
+    private float buildingCriticalDamage = 0f;
+    //방어
+    private float baseArmor;
+    private float accountArmor = 0f;
+    private float buildingArmor = 0f;
+    //체력
+    private float baseMaxHp;
+    private float accountHp = 0f;
+    private float buildingHp = 0f;
+    //크확
+    private float accountCriticalChance = 0f;
+    private float buildingCriticalChance = 0f;
 
 
+    private void Awake()
+    {
+        stageManager = GameObject.FindGameObjectWithTag("GameController").GetComponent<StageManager>();
+        dealerSkill = stageManager.UnitPartyManager.GetUnit(UnitTypes.Dealer).GetComponent<DealerSkill>();
+    }
+
+    private void Start()
+    {
+    }
     public void AddStats(UpgradeType type , float amount)
     {
         switch (type)
         {
             case UpgradeType.AttackPoint:
-                damage += (int)amount;
+                accountDamage += (int)amount;
                 break;
             case UpgradeType.HealthPoint:
-                maxHp += (int)amount;
+                accountHp += (int)amount;
                 break;
             case UpgradeType.DefensePoint:
-                armor += (int)amount;
+                accountArmor += (int)amount;
                 break;
             case UpgradeType.CriticalPossibility:
-                criticalChance += (amount*100);
+                accountCriticalChance += (int)amount;
                 break;
             case UpgradeType.CriticalDamages:
-                criticalMultiplier += (amount * 100);
+                accountCriticalDamage += (int)amount;
                 break;
         }
     }
@@ -42,19 +75,19 @@ public class UnitStats : CharacterStats
             case BuildingTable.BuildingType.IdleTime:
                 break;
             case BuildingTable.BuildingType.AttackPoint:
-                damage *= (int)amount;
+                buildingAttackDamage += (int)amount;
                 break;
             case BuildingTable.BuildingType.HealthPoint:
-                maxHp *= (int)amount;
+                maxHp += (int)amount;
                 break;
             case BuildingTable.BuildingType.DefensePoint:
-                armor *= (int)amount;
+                armor += (int)amount;
                 break;
             case BuildingTable.BuildingType.CriticalPossibility:
-                criticalChance += amount;
+                buildingCriticalChance += (int)amount;
                 break;
             case BuildingTable.BuildingType.CriticalDamages:
-                criticalMultiplier += (int)amount;
+                buildingCriticalDamage += (int)amount;
                 break;
             case BuildingTable.BuildingType.Gold:
                 break;
@@ -67,49 +100,27 @@ public class UnitStats : CharacterStats
 
     public void SetData(SoldierTable.Data data, UnitTypes type)
     {
-        moveSpeed = 5f;
-        maxHp = 1000;/*(int)data.Basic_HP;*/
+        moveSpeed = (int)data.MoveSpeed;
+        baseDamage = (int)data.Basic_AP;
+
+        baseMaxHp = (int)data.Basic_HP;
         Hp = maxHp;
 
         coolDown = 1;
-        armor = (int)data.Basic_DP;
-        damage = (int)data.Basic_AP;
-        //range = (int)data.Distance;
+        baseArmor = (int)data.Basic_DP;
+        range = (int)data.Distance;
 
         switch (type)
         {
             case UnitTypes.Tanker:
-                range = 1f;
                 break;
             case UnitTypes.Dealer:
-                range = 5.5f;
                 break;
             case UnitTypes.Healer:
-                range = 10f;
                 break;
         }
     }
-    public void SkillExecute(GameObject defender) // 스킬 인포및 디펜더 정보 넘겨서 데미지 처리
-    {
-        if(defender is null)
-        {
-            return;
-        }
-        var distance = Vector3.Dot(transform.position - defender.transform.position, Vector3.forward);
-
-        if (distance > range)
-        {
-            return;
-        }
-
-        CharacterStats dStats = defender.GetComponent<CharacterStats>();
-        Attack attack = CreateSkillAttack(dStats);
-        IAttackable[] attackables = defender.GetComponents<IAttackable>();
-        foreach (var attackable in attackables)
-        {
-            attackable.OnAttack(gameObject, attack);
-        }
-    }
+ 
 
     public override void Execute(GameObject defender)
     {
@@ -132,48 +143,26 @@ public class UnitStats : CharacterStats
             attackable.OnAttack(gameObject, attack);
         }
     }
-
-    public Attack CreateSkillAttack(CharacterStats defenderStats)
-    {
-        //나중에 추가 해야됌
-        Attack attack = new Attack();
-
-        var dealerData = DataTableManager.DealerSkillTable.GetData(1101); //250331 HKY 데이터형 변경
-
-        BigNumber damage = this.damage;
-
-        attack.isCritical = criticalChance >= Random.Range(0,100);
-        if(attack.isCritical)
-        {
-            damage *= criticalMultiplier;
-        }
-        attack.damage = damage;
-
-        if (defenderStats != null)
-        {
-            attack.damage -= defenderStats.armor;
-        }
-
-        return attack;
-    }
-    
     public override Attack CreateAttack(CharacterStats defenderStats)
     {
-        //TODO: 대미지 계산식 정해지면 수정해야함 - 250322 HKY
         Attack attack = new Attack();
 
-        BigNumber damage = this.damage;
 
+        BigNumber finialDamage = (defalutValue * ((1f + buildingAttackDamage)) * (baseDamage + accountDamage));
+
+
+        criticalChance = accountCriticalChance + buildingCriticalChance;
 
         attack.isCritical = criticalChance >= Random.Range(0, 100);
         if (attack.isCritical)
         {
-            damage = (damage * 2) + (damage * criticalMultiplier);
-            Debug.Log(damage);
-            Debug.Log(criticalChance);
+            BigNumber criticalBase = (defalutValue * (baseDamage * 2f));
+            BigNumber criticalBonus = (defalutValue * (accountCriticalDamage + buildingCriticalDamage));
 
+            finialDamage = criticalBase + criticalBonus;
         }
-        attack.damage = damage;
+        attack.damage = finialDamage;
+
 
         if (defenderStats != null)
         {
@@ -182,4 +171,63 @@ public class UnitStats : CharacterStats
 
         return attack;
     }
+    public void SkillExecute(GameObject defender) // 스킬 인포및 디펜더 정보 넘겨서 데미지 처리
+    {
+        if (defender is null)
+        {
+            return;
+        }
+        var distance = Vector3.Dot(transform.position - defender.transform.position, Vector3.forward);
+
+        if (distance > range)
+        {
+            return;
+        }
+
+        CharacterStats dStats = defender.GetComponent<CharacterStats>();
+        Attack attack = CreateSkillAttack(dStats);
+        IAttackable[] attackables = defender.GetComponents<IAttackable>();
+        foreach (var attackable in attackables)
+        {
+            attackable.OnAttack(gameObject, attack);
+        }
+    }
+
+    public Attack CreateSkillAttack(CharacterStats defenderStats)
+    {
+        Attack attack = new Attack();
+
+        var data = SaveLoadManager.Data.unitSkillUpgradeData.skillUpgradeId;
+
+        currentGrade = stageManager.UnitPartyManager.GetUnit(UnitTypes.Dealer).GetComponent<Unit>().currentGrade;
+
+        var id = data[UnitTypes.Dealer][currentGrade];
+        
+        var currentData = DataTableManager.DealerSkillTable.GetData(id);
+
+        BigNumber finialDamage = (defalutValue * ((1f + buildingAttackDamage)) * (baseDamage + accountDamage))* dealerSkill.damageRatio;
+
+
+        criticalChance = accountCriticalChance + buildingCriticalChance;
+
+        attack.isCritical = criticalChance >= Random.Range(0, 100);
+        if (attack.isCritical)
+        {
+            BigNumber criticalBase = (defalutValue * (baseDamage * 2f));
+            BigNumber criticalBonus = (defalutValue * (accountCriticalDamage + buildingCriticalDamage));
+
+            finialDamage = criticalBase + criticalBonus;
+        }
+        attack.damage = finialDamage;
+
+
+        if (defenderStats != null)
+        {
+            attack.damage -= defenderStats.armor;
+        }
+
+        return attack;
+    }
+
+
 }

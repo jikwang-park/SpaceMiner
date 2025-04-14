@@ -55,7 +55,7 @@ public class UnitSkill : MonoBehaviour
     public virtual void DealerInit(UnitTypes type, Grade grade) { }
 
     public virtual void HealerInit(UnitTypes type, Grade grade) { }
-    
+        
 
     public virtual void ExecuteSkill()
     {

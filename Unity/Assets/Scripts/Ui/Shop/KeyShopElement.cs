@@ -16,7 +16,7 @@ public class KeyShopElement : MonoBehaviour
     [SerializeField]
     private TextMeshProUGUI needItemCountText;
     [SerializeField]
-    private TextMeshProUGUI dailyPurchaseText;
+    private LocalizationText dailyPurchaseText;
     [SerializeField]
     private Button purchaseButton;
 
@@ -27,12 +27,14 @@ public class KeyShopElement : MonoBehaviour
     private int dailyResetHour;
     private int dailyResetMinute;
 
-    private string needItemCountFormat = "Need {0} item : {1}";
-    private string dailyPurchaseFormat = "Buy\n({0}/{1})";
+    private string needItemCountFormat = "« ø‰«— {0} : {1}";
 
     private BigNumber paymentItemAmount;
     private BigNumber needItemAmount;
     private int dailyPurchaseLimitCount;
+
+    private string paymentItemString;
+    private string needItemString;
 
     private DungeonKeyShopElementData currentData;
     private bool CanPurchase
@@ -57,6 +59,13 @@ public class KeyShopElement : MonoBehaviour
 
         dailyResetHour = (shopData.ResetTime / 100) % 24;
         dailyResetMinute = shopData.ResetTime % 100;
+
+        int paymentItemStringId = DataTableManager.ItemTable.GetData(paymentItemId).NameStringID;
+        paymentItemString = DataTableManager.StringTable.GetData(paymentItemStringId);
+
+        int needItemStringId = DataTableManager.ItemTable.GetData(needItemId).NameStringID;
+        needItemString = DataTableManager.StringTable.GetData(needItemStringId);
+
         CheckReset();
     }
     private void OnEnable()
@@ -66,19 +75,11 @@ public class KeyShopElement : MonoBehaviour
             CheckReset();
         }
     }
-    private void Update()
-    {
-        if(Input.GetKeyDown(KeyCode.F1))
-        {
-            ItemManager.AddItem(1002, 5000);
-            UpdateUI();
-        }
-    }
     private void UpdateUI()
     {
-        paymentItemCountText.text = $"{paymentItemId} * {paymentItemAmount}";
-        needItemCountText.text = string.Format(needItemCountFormat, needItemId, needItemAmount);
-        dailyPurchaseText.text = string.Format(dailyPurchaseFormat, currentData.dailyPurchaseCount, dailyPurchaseLimitCount);
+        paymentItemCountText.text = $"{paymentItemString} * {paymentItemAmount}";
+        needItemCountText.text = string.Format(needItemCountFormat, needItemString, needItemAmount);
+        dailyPurchaseText.SetStringArguments(currentData.dailyPurchaseCount.ToString(), dailyPurchaseLimitCount.ToString());
 
         purchaseButton.interactable = CanPurchase;
     }

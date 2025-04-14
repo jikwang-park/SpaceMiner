@@ -10,7 +10,7 @@ public class GoldShopElement : MonoBehaviour
     [SerializeField]
     private Image icon;
     [SerializeField]
-    private TextMeshProUGUI mineralNameText;
+    private LocalizationText mineralNameText;
     [SerializeField]
     private TextMeshProUGUI NeedAmountText;
     [SerializeField]
@@ -41,7 +41,7 @@ public class GoldShopElement : MonoBehaviour
     }
     private void UpdateUI()
     {
-        mineralNameText.text = currencyType.ToString();
+        mineralNameText.SetString(DataTableManager.ItemTable.GetData((int)currencyType).NameStringID);
         NeedAmountText.text = $"{ItemManager.GetItemAmount((int)currencyType)}";
         SellRatioText.text = string.Format(sellRatioFormat, payAmount);
     }

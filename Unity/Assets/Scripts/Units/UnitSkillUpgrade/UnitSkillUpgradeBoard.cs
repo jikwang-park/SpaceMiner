@@ -13,11 +13,11 @@ public class UnitSkillUpgradeBoard : MonoBehaviour
     [SerializeField]
     private Image currentImage;
     [SerializeField]
-    private TextMeshProUGUI currentText;
+    private LocalizationText currentText;
     [SerializeField]
     private Image nextImage;
     [SerializeField]
-    private TextMeshProUGUI nextText;
+    private LocalizationText nextText;
     [SerializeField]
     private Button upgradeButton;
     [SerializeField]
@@ -45,10 +45,7 @@ public class UnitSkillUpgradeBoard : MonoBehaviour
     {
         SetInfo(id, type);
     }
-    public void ShowBoard()
-    {
-
-    }
+  
 
     public void SetInfo(int id , UnitTypes type)
     {
@@ -74,22 +71,34 @@ public class UnitSkillUpgradeBoard : MonoBehaviour
         switch (type)
         {
             case UnitTypes.Tanker:
-                   var tankerData = DataTableManager.TankerSkillTable.GetData(id);
-                currentText.text = $"쉴드량 : {tankerData.ShieldRatio}% 쿨타임 : {tankerData.CoolTime}초 지속시간: {tankerData.Duration}초";
+                var tankerData = DataTableManager.TankerSkillTable.GetData(id);
+                var stringId = tankerData.DetailStringID;
+                currentText.SetString(stringId);
+                currentText.SetStringArguments(tankerData.Duration.ToString(),tankerData.ShieldRatio.ToString(),tankerData.CoolTime.ToString());
                 var nextTankerData = DataTableManager.TankerSkillTable.GetData(nextId);
-                nextText.text = $"쉴드량 : {nextTankerData.ShieldRatio}% 쿨타임 : {nextTankerData.CoolTime}초 지속시간 : {nextTankerData.Duration}초";
+                var nextstringId = nextTankerData.DetailStringID;
+                nextText.SetString(nextstringId);
+                nextText.SetStringArguments(nextTankerData.Duration.ToString(), nextTankerData.ShieldRatio.ToString(), nextTankerData.CoolTime.ToString());
                 break;
             case UnitTypes.Dealer:
-                var delaerData = DataTableManager.DealerSkillTable.GetData(id);
-                currentText.text = $"쿨타임 : {delaerData.CoolTime}초 몬스터 타겟수: {delaerData.MonsterMaxTarget}초";
+                var dealerData = DataTableManager.DealerSkillTable.GetData(id);
+                var dealerStringId = dealerData.DetailStringID;
+                currentText.SetString(dealerStringId);
+                currentText.SetStringArguments(dealerData.MonsterMaxTarget.ToString(), dealerData.DamageRatio.ToString(), dealerData.CoolTime.ToString());
                 var nextDealerData = DataTableManager.DealerSkillTable.GetData(nextId);
-                nextText.text = $"쿨타임 :  {nextDealerData.CoolTime} 초 몬스터 타겟수:  {nextDealerData.MonsterMaxTarget}초";
+                var nextdealerStringId = nextDealerData.DetailStringID;
+                nextText.SetString(nextdealerStringId);
+                nextText.SetStringArguments(nextDealerData.MonsterMaxTarget.ToString(), nextDealerData.DamageRatio.ToString(), nextDealerData.CoolTime.ToString());
                 break;
             case UnitTypes.Healer:
                 var healerData = DataTableManager.HealerSkillTable.GetData(id);
-                currentText.text = $"쿨타임 : {healerData.CoolTime}초";
+                var healerStringId = healerData.DetailStringID;
+                currentText.SetString(healerStringId);
+                currentText.SetStringArguments(healerData.HealRatio.ToString(), healerData.CoolTime.ToString());
                 var nextHealerData = DataTableManager.HealerSkillTable.GetData(nextId);
-                nextText.text = $"쿨타임 : {nextHealerData.CoolTime}초";
+                var nextHealerStringId = nextHealerData.DetailStringID;
+                nextText.SetString(nextHealerStringId);
+                nextText.SetStringArguments(nextHealerData.HealRatio.ToString(), nextHealerData.CoolTime.ToString());
                 break;
         }
     }

@@ -7,6 +7,7 @@ using static UnitUpgradeTable;
 
 public class UnitStats : CharacterStats
 {
+    public float attackSpeed { get; private set; } = 0;
     private StageManager stageManager;
 
     private Grade currentGrade;
@@ -28,7 +29,7 @@ public class UnitStats : CharacterStats
     //ũ��
     public float accountCriticalDamage { get; private set; } = 0;
     public float buildingCriticalDamage { get; private set; } = 0;
-    //���
+    //���?
     public BigNumber baseArmor { get; private set; } = 0;
     public BigNumber accountArmor { get; private set; } = 0;
     public float buildingArmor { get; private set; } = 0;
@@ -107,10 +108,7 @@ public class UnitStats : CharacterStats
 
     public void AddBuildingStats(BuildingTable.BuildingType type, float amount)
     {
-        if (amount == 0)
-        {
-            return;
-        }
+        
 
         switch (type)
         {
@@ -146,6 +144,7 @@ public class UnitStats : CharacterStats
     {
         moveSpeed = data.MoveSpeed;
         baseDamage = data.Attack;
+        attackSpeed = data.AttackSpeed;
 
         baseMaxHp = data.HP;
         currentGrade = data.Grade;
@@ -192,7 +191,7 @@ public class UnitStats : CharacterStats
         {
             criticalPercent = (2 + (accountCriticalDamage + buildingCriticalDamage));
 
-            attack.damage = FinialDamage * criticalPercent;
+            attack.damage = FinialDamage * criticalPercent; 
         }
         else
         {
@@ -207,7 +206,7 @@ public class UnitStats : CharacterStats
 
         return attack;
     }
-    public void SkillExecute(GameObject defender) // ��ų ������ ����� ���� �Ѱܼ� ������ ó��
+    public void SkillExecute(GameObject defender) // ��ų ������ �����? ���� �Ѱܼ� ������ ó��
     {
         if (defender is null)
         {

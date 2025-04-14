@@ -300,7 +300,6 @@ public class Unit : MonoBehaviour
             {
                 var frontUnit = stageManger.UnitPartyManager.GetFrontUnit(currentUnitType);
                 float distance = (frontUnit.transform.position.z - transform.position.z);
-                Debug.Log(distance);
                 isFrontSafe = (distance >= minDis * (((int)currentUnitType) - (int)frontUnit.currentUnitType));
 
             }
@@ -311,14 +310,6 @@ public class Unit : MonoBehaviour
         }
     }
 
-    //public bool IsSafe
-    //{
-    //    get
-    //    {
-    //        bool isFront = stageManger.UnitPartyManager.IsUnitExistFront(currentUnitType);
-    //        bool isBack = stageManger.UnitPartyManager.IsUnitExistBack(currentUnitType);
-    //    }
-    //}
 
 
 
@@ -440,7 +431,7 @@ public class Unit : MonoBehaviour
         {
             unitStats.Execute(targetPos.gameObject);
         }
-        yield return new WaitForSeconds(attackUsingTime);
+        yield return new WaitForSeconds(unitStats.attackSpeed);
         currentStatus = UnitStatus.Wait;
     }
 

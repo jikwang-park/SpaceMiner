@@ -13,25 +13,22 @@ public class DungeonPopup : MonoBehaviour
     private int index;
 
     [SerializeField]
-    private TextMeshProUGUI nameText;
-
-    [SerializeField]
-    private TextMeshProUGUI difficultyText;
+    private LocalizationText nameText;
 
     [SerializeField]
     private TextMeshProUGUI selectedDifficulty;
 
     [SerializeField]
-    private TextMeshProUGUI conditionStageText;
+    private LocalizationText conditionStageText;
 
     [SerializeField]
-    private TextMeshProUGUI conditionPowerText;
+    private LocalizationText conditionPowerText;
 
     [SerializeField]
-    private TextMeshProUGUI keyText;
+    private LocalizationText keyText;
 
     [SerializeField]
-    private TextMeshProUGUI clearRewardText;
+    private LocalizationText clearRewardText;
 
     [SerializeField]
     private Button nextDifficultyButton;
@@ -44,27 +41,45 @@ public class DungeonPopup : MonoBehaviour
 
     private int maxStage;
 
+    private bool Disabled;
+
 
     private void Start()
     {
         stageManager = GameObject.FindGameObjectWithTag("GameController").GetComponent<StageManager>();
     }
 
-    public void ShowPopup(int dungeonType)
+    public void ShowPopup()
     {
-        subStages = DataTableManager.DungeonTable.GetDungeonList(dungeonType);
-        Variables.currentDungeonType = dungeonType;
-        maxStage = SaveLoadManager.Data.stageSaveData.highestDungeon[dungeonType];
+        subStages = DataTableManager.DungeonTable.GetDungeonList(Variables.currentDungeonType);
+        maxStage = SaveLoadManager.Data.stageSaveData.highestDungeon[Variables.currentDungeonType];
         SetIndex(maxStage - 1);
     }
+
+    private void OnDisable()
+    {
+        Disabled = true;
+    }
+
+    private void OnEnable()
+    {
+        if (Disabled)
+        {
+            Disabled = false;
+            ShowPopup();
+        }
+    }
+
 
     private void ShowData(int index)
     {
         var curStage = subStages[index];
 
-        selectedDifficulty.text = $"Stage : {curStage.Stage}";
-        keyText.text = $"{curStage.NeedKeyItemCount} / {ItemManager.GetItemAmount(curStage.NeedKeyItemID)}";
-        conditionPowerText.text = $"Currrent Power : {Variables.powerLevel}\nNeed : {curStage.NeedPower}";
+        nameText.SetString(curStage.NameStringID);
+
+        selectedDifficulty.text = curStage.Stage.ToString();
+        keyText.SetStringArguments(curStage.NeedKeyItemCount.ToString(), ItemManager.GetItemAmount(curStage.NeedKeyItemID).ToString());
+        conditionPowerText.SetStringArguments(curStage.NeedPower.ToString());
 
         int highplanet = SaveLoadManager.Data.stageSaveData.highPlanet;
         if (SaveLoadManager.Data.stageSaveData.highPlanet != SaveLoadManager.Data.stageSaveData.clearedPlanet
@@ -73,8 +88,8 @@ public class DungeonPopup : MonoBehaviour
             --highplanet;
         }
 
-        conditionStageText.text = $"Currrent Planet : {highplanet}\nNeed : {subStages[index].NeedClearPlanet}";
-        clearRewardText.text = $"Reward : {curStage.RewardItemID}/{curStage.ClearRewardItemCount}";
+        conditionStageText.SetStringArguments(subStages[index].NeedClearPlanet.ToString());
+        clearRewardText.SetStringArguments(curStage.RewardItemID.ToString(), curStage.ClearRewardItemCount.ToString());
 
 
         previousDifficultyButton.interactable = index > 0;

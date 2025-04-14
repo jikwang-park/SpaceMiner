@@ -42,7 +42,8 @@ public class DungeonPage : MonoBehaviour
 
     public void ShowWindow(int type)
     {
+        Variables.currentDungeonType = type;
         dungeonPopup.gameObject.SetActive(true);
-        dungeonPopup.ShowPopup(type);
+        dungeonPopup.ShowPopup();
     }
 }

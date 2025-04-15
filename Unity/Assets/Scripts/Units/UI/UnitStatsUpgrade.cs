@@ -13,6 +13,7 @@ public class UnitStatsUpgrade : MonoBehaviour
     public UnitStatsUpgradeElement statsUpgradeElements;
 
     private const string prefabFormat = "Prefabs/UI/Stats";
+    
 
     [SerializeField]
     private Transform parentTransform;
@@ -43,6 +44,7 @@ public class UnitStatsUpgrade : MonoBehaviour
                     {
                         statsElement.SetData(data[currentType], DataTableManager.UnitUpgradeTable.GetData(currentType));
                         statsElement.SetInitString();
+                        statsElement.SetImage(currentType, statsSprite);
                     }
 
                 }

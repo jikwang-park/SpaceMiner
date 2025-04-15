@@ -7,6 +7,15 @@ public static class UnitCombatPowerCalculator
     private const int weightDivider = 100;
     private const int tankerSkillWeight = 10;
     private const int healerSkillWeight = 7;
+
+    public struct UnitCombatStats
+    {
+        public BigNumber soldierAttack;  
+        public BigNumber soldierArmor;   
+        public BigNumber soldierHp;      
+        public float criticalPossibility;
+        public float criticalMultiplier; 
+    }
     public static BigNumber ToTalCombatPower { get; private set; }
     public static void CalculateTotalCombatPower()
     {
@@ -37,6 +46,7 @@ public static class UnitCombatPowerCalculator
 
         return combatPower;
     }
+
     public static BigNumber GetDealerCombatPower()
     {
         BigNumber combatPower = 0;
@@ -88,6 +98,18 @@ public static class UnitCombatPowerCalculator
         combatPower = (attackPowerPerSecond * (soldierBaseAttack / weightDivider)) + (soldierArmor * (soldierBaseArmor / weightDivider)) + ((soldierHp + (soldierHp * skillData.HealRatio * healerSkillWeight / skillData.CoolTime)) * (soldierBaseHp / weightDivider));
 
         return combatPower;
+    }
+    public static UnitCombatStats GetUnitCombatStats(UnitTypes unitType)
+    {
+        UnitCombatStats unitCombatStats = new UnitCombatStats();
+
+        unitCombatStats.soldierAttack = UnitStats.GetStats(unitType, UnitUpgradeTable.UpgradeType.AttackPoint);
+        unitCombatStats.soldierArmor = UnitStats.GetStats(unitType, UnitUpgradeTable.UpgradeType.DefensePoint);
+        unitCombatStats.soldierHp = UnitStats.GetStats(unitType, UnitUpgradeTable.UpgradeType.HealthPoint);
+        unitCombatStats.criticalPossibility = UnitStats.GetCriticalStats(unitType, UnitUpgradeTable.UpgradeType.CriticalPossibility);
+        unitCombatStats.criticalMultiplier = UnitStats.GetCriticalStats(unitType, UnitUpgradeTable.UpgradeType.CriticalDamages);
+
+        return unitCombatStats;
     }
     public static BigNumber GetAttackPowerPerSecond(BigNumber expectedDamage, BigNumber attackSpeed)
     {

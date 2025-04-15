@@ -18,6 +18,7 @@ public class UnitPartyManager : MonoBehaviour
     private Dictionary<UnitTypes, Unit> party = new Dictionary<UnitTypes, Unit>();
 
     public event System.Action OnUnitCreated;
+    public event System.Action OnUnitUpdated;
 
     public event System.Action OnUnitAllDead;
 
@@ -90,6 +91,7 @@ public class UnitPartyManager : MonoBehaviour
             party[type].SetData(data, type);
             GetCurrentStats(party[type]);
             GetCurrentBulidngStats(party[type]);
+            UnitCombatPowerCalculator.CalculateTotalCombatPower();
         }
     }
 
@@ -110,6 +112,7 @@ public class UnitPartyManager : MonoBehaviour
         {
             unit.Value.unitStats.AddStats(type, amount);
         }
+        UnitCombatPowerCalculator.CalculateTotalCombatPower();
     }
 
     public void UpgradeSkillStats(int id, UnitTypes type)
@@ -124,6 +127,7 @@ public class UnitPartyManager : MonoBehaviour
         {
             unit.Value.unitStats.AddBuildingStats(type, amount);
         }
+        UnitCombatPowerCalculator.CalculateTotalCombatPower();
     }
 
     public void UnitDespawn()
@@ -251,6 +255,7 @@ public class UnitPartyManager : MonoBehaviour
             GetCurrentBulidngStats(unit);
         }
         OnUnitCreated?.Invoke();
+        OnUnitUpdated?.Invoke();
     }
 
     public void GetCurrentStats(Unit unit)

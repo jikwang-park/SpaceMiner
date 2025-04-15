@@ -91,8 +91,13 @@ public class UnitStatsUpgradeElement : MonoBehaviour
         addStartButtonText.text = $" +{currentGold +gold }";
     }
     
-    public void SetData(int level)
+    public void SetData(int level, UnitUpgradeTable.Data data)
     {
+        currentType = data.Type;
+        value = data.Value;
+        gold = data.NeedItemCount;
+        maxLevel = data.MaxLevel;
+
         this.level = level;
         currentValue = GetCurrentValue(level);
         currentGold = GetCurrentGold(level);

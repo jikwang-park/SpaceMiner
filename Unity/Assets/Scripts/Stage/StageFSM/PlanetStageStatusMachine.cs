@@ -5,6 +5,13 @@ using UnityEngine.SceneManagement;
 
 public class PlanetStageStatusMachine : StageStatusMachine
 {
+    private enum Status
+    {
+        Play,
+        Pause,
+    }
+
+
     protected int CurrentPlanet;
     protected int CurrentStage;
     protected int CurrentWave;
@@ -20,6 +27,8 @@ public class PlanetStageStatusMachine : StageStatusMachine
     private StageSaveData stageLoadData = SaveLoadManager.Data.stageSaveData;
 
     private PlanetStageStatusMachineData stageMachineData;
+
+    private Status status;
 
     public PlanetStageStatusMachine(StageManager stageManager) : base(stageManager)
     {
@@ -45,10 +54,17 @@ public class PlanetStageStatusMachine : StageStatusMachine
         stageManager.StartCoroutine(SpawnNextWave());
         stageManager.StageMonsterManager.OnMonsterDie += OnMonsterDie;
         stageManager.StageMonsterManager.OnMonsterCleared += OnMonsterCleared;
+
+        status = Status.Play;
     }
 
     public override void Update()
     {
+        if (status != Status.Play)
+        {
+            return;
+        }
+
         float remainTime = stageEndTime - Time.time;
 
         if (remainTime <= 0f)
@@ -95,6 +111,7 @@ public class PlanetStageStatusMachine : StageStatusMachine
 
     protected IEnumerator SpawnNextWave(float delay = 0.5f)
     {
+        status = Status.Pause;
         stageManager.StageUiManager.IngameUIManager.SetWaveText(CurrentWave);
         yield return new WaitForSeconds(delay);
 
@@ -104,7 +121,7 @@ public class PlanetStageStatusMachine : StageStatusMachine
         {
             EndStage(false);
         }
-
+        status = Status.Play;
         Transform unit = stageManager.UnitPartyManager.GetFirstLineUnitTransform();
         if (unit != null)
         {
@@ -160,6 +177,8 @@ public class PlanetStageStatusMachine : StageStatusMachine
 
     private IEnumerator CoClearStage()
     {
+        status = Status.Pause;
+
         stageManager.StageUiManager.IngameUIManager.OpenStageEndWindow("Clear");
 
         if ((CurrentPlanet == stageLoadData.clearedPlanet && CurrentStage > stageLoadData.clearedStage)
@@ -237,6 +256,8 @@ public class PlanetStageStatusMachine : StageStatusMachine
 
     private IEnumerator CoStageFail()
     {
+        status = Status.Pause;
+
         if (stageLoadData.currentStage > 1)
         {
             --stageLoadData.currentStage;
@@ -251,6 +272,7 @@ public class PlanetStageStatusMachine : StageStatusMachine
 
         stageManager.StageUiManager.IngameUIManager.CloseStageEndWindow();
         Reset();
+
         //SceneManager.LoadScene(0);
         //Addressables.LoadSceneAsync("StageDevelopScene");
     }
@@ -293,12 +315,12 @@ public class PlanetStageStatusMachine : StageStatusMachine
             stageManager.ReleaseBackground();
 
             InstantiateBackground();
-
-            stageManager.UnitPartyManager.UnitSpawn();
-            stageManager.CameraManager.SetCameraOffset();
         }
+        stageManager.UnitPartyManager.UnitSpawn();
+        stageManager.CameraManager.SetCameraOffset();
 
         stageManager.StartCoroutine(SpawnNextWave());
         stageManager.StageUiManager.curtain.SetFade(false);
+        status = Status.Play;
     }
 }

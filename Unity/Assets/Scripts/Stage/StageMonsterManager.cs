@@ -95,12 +95,15 @@ public class StageMonsterManager : MonoBehaviour
         }
 
         var monsterController = sender.GetComponent<MonsterController>();
-        ItemManager.AddItem(monsterController.RewardData.RewardItemID1, monsterController.RewardData.RewardItemCount1);
-
-        int reward2index = monsterController.RewardData.RandomReward2();
-        if (reward2index > -1)
+        if (monsterController.MonsterData.RewardTableID != 0)
         {
-            ItemManager.AddItem(monsterController.RewardData.RewardItemID2, monsterController.RewardData.counts[reward2index]);
+            ItemManager.AddItem(monsterController.RewardData.RewardItemID1, monsterController.RewardData.RewardItemCount1);
+
+            int reward2index = monsterController.RewardData.RandomReward2();
+            if (reward2index > -1)
+            {
+                ItemManager.AddItem(monsterController.RewardData.RewardItemID2, monsterController.RewardData.counts[reward2index]);
+            }
         }
 
         OnMonsterDie?.Invoke();

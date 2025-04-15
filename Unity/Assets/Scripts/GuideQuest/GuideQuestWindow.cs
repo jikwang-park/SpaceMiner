@@ -25,6 +25,7 @@ public class GuideQuestWindow : MonoBehaviour
     private void Awake()
     {
         cleared = false;
+        GuideQuestManager.OnQuestChanged += SetQuestTargetReward;
         GuideQuestManager.OnQuestProgressChanged += UpdateProgress;
         GuideQuestManager.OnClear += OnQuestClear;
     }
@@ -49,10 +50,20 @@ public class GuideQuestWindow : MonoBehaviour
             return;
         }
 
-        int monsterCount = SaveLoadManager.Data.questProgressData.monsterCount;
-        int goal = GuideQuestManager.currentQuestData.TargetCount;
-
-        questProgressText.text = $"{GuideQuestManager.Progress} / {goal}";
+        var questData = GuideQuestManager.currentQuestData;
+        switch (questData.MissionClearType)
+        {
+            case GuideQuestTable.MissionType.Exterminate:
+            case GuideQuestTable.MissionType.Item:
+                questProgressText.text = $"{GuideQuestManager.Progress} / {questData.TargetCount}";
+                break;
+            case GuideQuestTable.MissionType.StageClear:
+            case GuideQuestTable.MissionType.DungeonClear:
+            case GuideQuestTable.MissionType.StatUpgrade:
+            case GuideQuestTable.MissionType.Building:
+                questProgressText.text = $"{GuideQuestManager.Progress} / 1";
+                break;
+        }
     }
 
     private void OnQuestClear()
@@ -76,11 +87,12 @@ public class GuideQuestWindow : MonoBehaviour
                 break;
             case GuideQuestTable.MissionType.DungeonClear:
                 var dungeonData = DataTableManager.DungeonTable.GetData(questData.Target);
-                questDetailText.SetString(questData.DetailStringID, dungeonData.NameStringID);
+                questDetailText.SetString(questData.DetailStringID, dungeonData.Stage.ToString());
                 break;
             case GuideQuestTable.MissionType.StatUpgrade:
                 var upgradeData = DataTableManager.UnitUpgradeTable.GetData(questData.Target);
-                questDetailText.SetString(questData.DetailStringID, upgradeData.Type.ToString(), questData.TargetCount.ToString());
+                var upgradeName = DataTableManager.StringTable.GetData(upgradeData.NameStringID);
+                questDetailText.SetString(questData.DetailStringID, upgradeName, questData.TargetCount.ToString());
                 break;
             case GuideQuestTable.MissionType.Item:
                 var itemData = DataTableManager.ItemTable.GetData(questData.Target);
@@ -89,7 +101,7 @@ public class GuideQuestWindow : MonoBehaviour
                 break;
             case GuideQuestTable.MissionType.Building:
                 var buildingData = DataTableManager.BuildingTable.GetData(questData.Target);
-                questDetailText.SetString(questData.DetailStringID, buildingData.NameStringID);
+                questDetailText.SetString(questData.DetailStringID, buildingData.Level.ToString());
                 break;
         }
         var itemSprite = DataTableManager.ItemTable.GetData(questData.RewardItemID);

@@ -6,7 +6,7 @@ using UnityEngine;
 public class GuideQuestRewardWindow : MonoBehaviour
 {
     [SerializeField]
-    private TextMeshProUGUI rewardText;
+    private LocalizationText rewardText;
     [SerializeField]
     private AddressableImage icon;
 
@@ -17,6 +17,6 @@ public class GuideQuestRewardWindow : MonoBehaviour
         gameObject.SetActive(true);
         var itemData = DataTableManager.ItemTable.GetData(data.RewardItemID);
         icon.SetSprite(itemData.SpriteID);
-        rewardText.text = data.RewardItemCount.ToString();
+        rewardText.SetStringArguments(data.RewardItemCount.ToString());
     }
 }

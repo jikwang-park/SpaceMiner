@@ -6,4 +6,6 @@ using UnityEngine;
 public class PlanetStageStatusMachineData : StageStatusMachineData
 {
     public float spawnDistance = 20f;
+    public float spawnDelay = 1f;
+    public float stageEndDelay = 1f;
 }

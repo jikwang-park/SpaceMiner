@@ -7,6 +7,7 @@ using UnityEngine.Pool;
 public class DamageText : MonoBehaviour, IObjectPoolGameObject
 {
     public IObjectPool<GameObject> ObjectPool { get; set; }
+    private StageManager stageManager;
     private TextMeshPro text;
     private float showingDuration;
     private float risingSpeed;
@@ -16,8 +17,15 @@ public class DamageText : MonoBehaviour, IObjectPoolGameObject
         text = GetComponent<TextMeshPro>();
     }
 
+    private void OnEnable()
+    {
+        stageManager = GameObject.FindGameObjectWithTag("GameController").GetComponent<StageManager>();
+        stageManager.damageTexts.AddLast(this);
+    }
+
     public void Release()
     {
+        stageManager.damageTexts.Remove(this);
         ObjectPool.Release(gameObject);
     }
 

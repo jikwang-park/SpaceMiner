@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -7,7 +8,7 @@ public static class UnitCombatPowerCalculator
     private const int weightDivider = 100;
     private const int tankerSkillWeight = 10;
     private const int healerSkillWeight = 7;
-
+    public static event Action onCombatPowerChanged;
     public struct UnitCombatStats
     {
         public BigNumber soldierAttack;  
@@ -19,7 +20,12 @@ public static class UnitCombatPowerCalculator
     public static BigNumber ToTalCombatPower { get; private set; }
     public static void CalculateTotalCombatPower()
     {
-        ToTalCombatPower = GetTankerCombatPower() + GetDealerCombatPower() + GetHealerCombatPower();
+        var calculatedCombatPower = GetTankerCombatPower() + GetDealerCombatPower() + GetHealerCombatPower();
+        if(ToTalCombatPower != calculatedCombatPower)
+        {
+            ToTalCombatPower = calculatedCombatPower;
+            onCombatPowerChanged?.Invoke();
+        }
     }
     public static BigNumber GetTankerCombatPower()
     {

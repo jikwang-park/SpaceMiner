@@ -174,7 +174,10 @@ public class MonsterController : MonoBehaviour, IObjectPoolGameObject
 
     private void OnTargetDie(DestructedDestroyEvent sender)
     {
-        Target.GetComponent<DestructedDestroyEvent>().OnDestroyed -= OnTargetDie;
+        if (Target is not null)
+        {
+            Target.GetComponent<DestructedDestroyEvent>().OnDestroyed -= OnTargetDie;
+        }
         Target = null;
         TargetAcquired = false;
     }

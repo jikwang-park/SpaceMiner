@@ -73,32 +73,26 @@ public class UnitSkillUpgradeBoard : MonoBehaviour
             case UnitTypes.Tanker:
                 var tankerData = DataTableManager.TankerSkillTable.GetData(id);
                 var stringId = tankerData.DetailStringID;
-                currentText.SetString(stringId);
-                currentText.SetStringArguments(tankerData.Duration.ToString(),tankerData.ShieldRatio.ToString(),tankerData.CoolTime.ToString());
+                currentText.SetString(stringId, tankerData.Duration.ToString(), tankerData.ShieldRatio.ToString(), tankerData.CoolTime.ToString());
                 var nextTankerData = DataTableManager.TankerSkillTable.GetData(nextId);
                 var nextstringId = nextTankerData.DetailStringID;
-                nextText.SetString(nextstringId);
-                nextText.SetStringArguments(nextTankerData.Duration.ToString(), nextTankerData.ShieldRatio.ToString(), nextTankerData.CoolTime.ToString());
+                nextText.SetString(nextstringId, nextTankerData.Duration.ToString(), nextTankerData.ShieldRatio.ToString(), nextTankerData.CoolTime.ToString());
                 break;
             case UnitTypes.Dealer:
                 var dealerData = DataTableManager.DealerSkillTable.GetData(id);
                 var dealerStringId = dealerData.DetailStringID;
-                currentText.SetString(dealerStringId);
-                currentText.SetStringArguments(dealerData.MonsterMaxTarget.ToString(), dealerData.DamageRatio.ToString(), dealerData.CoolTime.ToString());
+                currentText.SetString(dealerStringId, dealerData.MonsterMaxTarget.ToString(), dealerData.DamageRatio.ToString(), dealerData.CoolTime.ToString());
                 var nextDealerData = DataTableManager.DealerSkillTable.GetData(nextId);
                 var nextdealerStringId = nextDealerData.DetailStringID;
-                nextText.SetString(nextdealerStringId);
-                nextText.SetStringArguments(nextDealerData.MonsterMaxTarget.ToString(), nextDealerData.DamageRatio.ToString(), nextDealerData.CoolTime.ToString());
+                nextText.SetString(nextdealerStringId, nextDealerData.MonsterMaxTarget.ToString(), nextDealerData.DamageRatio.ToString(), nextDealerData.CoolTime.ToString());
                 break;
             case UnitTypes.Healer:
                 var healerData = DataTableManager.HealerSkillTable.GetData(id);
                 var healerStringId = healerData.DetailStringID;
-                currentText.SetString(healerStringId);
-                currentText.SetStringArguments(healerData.HealRatio.ToString(), healerData.CoolTime.ToString());
+                currentText.SetString(healerStringId, healerData.HealRatio.ToString(), healerData.CoolTime.ToString());
                 var nextHealerData = DataTableManager.HealerSkillTable.GetData(nextId);
                 var nextHealerStringId = nextHealerData.DetailStringID;
-                nextText.SetString(nextHealerStringId);
-                nextText.SetStringArguments(nextHealerData.HealRatio.ToString(), nextHealerData.CoolTime.ToString());
+                nextText.SetString(nextHealerStringId,nextHealerData.HealRatio.ToString(), nextHealerData.CoolTime.ToString());
                 break;
         }
     }

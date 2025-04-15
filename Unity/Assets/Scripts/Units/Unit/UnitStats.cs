@@ -13,7 +13,7 @@ public class UnitStats : CharacterStats
     private Grade currentGrade;
     private float criticalPercent;
 
-    private BigNumber FinialDamage
+    public BigNumber FinialDamage
     {
         get
         {

@@ -74,6 +74,10 @@ public static class DataTableManager
         skillUpgradeTable.Load(DataTableIds.skillUpgradeTable);
         tables.Add(DataTableIds.skillUpgradeTable, skillUpgradeTable);
 
+        var buffTable = new BuffTable();
+        buffTable.Load(DataTableIds.buffTable);
+        tables.Add(DataTableIds.buffTable, buffTable);
+
 
         var monsterTable = new MonsterTable();
         monsterTable.Load(DataTableIds.monsterTable);
@@ -235,4 +239,7 @@ public static class DataTableManager
 
     public static AddressTable AddressTable
         => GetTable<AddressTable>(DataTableIds.addressTable);
+
+    public static BuffTable BuffTable
+        => GetTable<BuffTable>(DataTableIds.buffTable);
 }

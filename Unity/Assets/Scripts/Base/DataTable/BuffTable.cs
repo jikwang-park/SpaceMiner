@@ -2,49 +2,28 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.AddressableAssets;
 
-public class TankerSkillTable : DataTable
+public class BuffTable : DataTable
 {
     public class Data : ITableData
     {
         public int ID { get; set; }
-        public Grade Grade { get; set; }
-        public float ShieldRatio { get; set; }
-        public float Duration { get; set; }
-        public float CoolTime { get; set; }
-        public int BuffID { get; set; }
+        public float RemainHP { get; set; }
+        public int Reflection { get; set; }
+        public int Duration { get; set; }
         public string SoldierTarget { get; set; }
-        public int Level { get; set; }
-        public int NameStringID { get; set; }
-        public int DetailStringID { get; set; }
-
-        //public UnitTypes[] targetPriority;
 
         public void Set(string[] argument)
         {
             ID = int.Parse(argument[0]);
-            if (int.TryParse(argument[1], out int type))
-            {
-                Grade = (Grade)type;
-            }
-            else
-            {
-                Grade = Enum.Parse<Grade>(argument[1]);
-            }
-            ShieldRatio = int.Parse(argument[2]);
+            RemainHP = float.Parse(argument[1]);
+            Reflection = int.Parse(argument[2]);
             Duration = int.Parse(argument[3]);
-            CoolTime = int.Parse(argument[4]);
-            BuffID = int.Parse(argument[5]);
-            SoldierTarget = argument[6];
-            Level = int.Parse(argument[7]);
-            NameStringID = int.Parse(argument[8]);
-            DetailStringID = int.Parse(argument[9]);
-
-            //targetPriority = SplitSoldierTarget(SoldierTarget);
+            SoldierTarget = argument[4];
         }
-        
     }
 
     public override Type DataType => typeof(Data);
@@ -74,7 +53,7 @@ public class TankerSkillTable : DataTable
     }
 
     public Data GetData(int key)
-          {
+    {
         if (!TableData.ContainsKey(key))
         {
             return null;
@@ -104,25 +83,4 @@ public class TankerSkillTable : DataTable
 
         return CreateCsv(list);
     }
-
-
-    //private static UnitTypes[] SplitSoldierTarget(string id)
-    //{
-    //    string[] idstring = id.Split('_');
-    //    UnitTypes[] ids = new UnitTypes[idstring.Length];
-
-    //    for (int i = 0; i < ids.Length; ++i)
-    //    {
-    //        if (int.TryParse(idstring[i], out int result))
-    //        {
-    //            ids[i] = (UnitTypes)result;
-    //        }
-    //        else
-    //        {
-    //            ids[i] = Enum.Parse<UnitTypes>(idstring[i]);
-    //        }
-    //    }
-
-    //    return ids;
-    //}
 }

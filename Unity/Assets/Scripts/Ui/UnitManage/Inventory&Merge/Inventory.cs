@@ -33,7 +33,14 @@ public class Inventory : MonoBehaviour
     }
     private void OnDisable()
     {
-        OnElementSelected(equipElement);
+        selectedElement = equipElement;
+    }
+    private void OnEnable()
+    {   
+        if(selectedElement != null)
+        {
+            OnElementSelected(selectedElement);
+        }
     }
     private void InitializeInventory(UnitTypes type)
     {

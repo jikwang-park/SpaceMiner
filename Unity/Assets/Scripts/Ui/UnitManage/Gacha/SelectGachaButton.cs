@@ -8,7 +8,7 @@ using UnityEngine.UI;
 public class SelectGachaButton : MonoBehaviour
 {
     [SerializeField]
-    private TextMeshProUGUI nameText;
+    private LocalizationText nameText;
     public int gachaId { get; private set; } //250331 HKY 데이터형 변경
     private Button button;
     public GachaInteractableUI parent;
@@ -23,7 +23,7 @@ public class SelectGachaButton : MonoBehaviour
 
     public void Initialize(GachaTable.Data data)
     {
-        nameText.text = DataTableManager.StringTable.GetData(data.NameStringID); //250331 HKY 데이터형 변경
+        nameText.SetString(data.NameStringID);
         gachaId = data.ID;
     }
     private void OnClickSelectButton()

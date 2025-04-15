@@ -54,7 +54,7 @@ public class PlanetStageStatusMachine : StageStatusMachine
         UnitSpawn();
 
         stageManager.CameraManager.SetCameraOffset();
-        SetNextWave();
+        SetNextWave(true);
         SetEvent(true);
     }
 
@@ -121,11 +121,18 @@ public class PlanetStageStatusMachine : StageStatusMachine
         stageManager.StageUiManager.IngameUIManager.SetTimer(remainingTime);
     }
 
-    protected void SetNextWave()
+    protected void SetNextWave(bool isFirstWave)
     {
         status = Status.SpawnWait;
         stageManager.StageUiManager.IngameUIManager.SetWaveText(CurrentWave);
-        stepTimer = Time.time + stageMachineData.spawnDelay;
+        if (isFirstWave)
+        {
+            SpawnWave();
+        }
+        else
+        {
+            stepTimer = Time.time + stageMachineData.spawnDelay;
+        }
     }
 
     protected void SpawnWave()
@@ -170,7 +177,7 @@ public class PlanetStageStatusMachine : StageStatusMachine
             OnStageEnd(Status.Clear);
             return;
         }
-        SetNextWave();
+        SetNextWave(false);
     }
 
     protected void OnStageEnd(Status status)
@@ -218,7 +225,7 @@ public class PlanetStageStatusMachine : StageStatusMachine
         {
             SetStageText();
             SetStageData();
-            SetNextWave();
+            SetNextWave(true);
         }
     }
 
@@ -362,17 +369,17 @@ public class PlanetStageStatusMachine : StageStatusMachine
         stageManager.StageUiManager.IngameUIManager.CloseStageEndWindow();
         stageManager.StageUiManager.curtain.SetFade(true);
         int previousPlanet = CurrentPlanet;
-        
+
         ClearStage();
         SetStageText();
         SetStageData();
 
         stageManager.ReleaseBackground();
         InstantiateBackground();
-        
+
         UnitSpawn();
         stageManager.CameraManager.SetCameraOffset();
         stageManager.StageUiManager.curtain.SetFade(false);
-        SetNextWave();
+        SetNextWave(true);
     }
 }

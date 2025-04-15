@@ -18,6 +18,10 @@ public static class UnitCombatPowerCalculator
         public float criticalMultiplier; 
     }
     public static BigNumber ToTalCombatPower { get; private set; }
+    static UnitCombatPowerCalculator()
+    {
+        CalculateTotalCombatPower();
+    }
     public static void CalculateTotalCombatPower()
     {
         var calculatedCombatPower = GetTankerCombatPower() + GetDealerCombatPower() + GetHealerCombatPower();

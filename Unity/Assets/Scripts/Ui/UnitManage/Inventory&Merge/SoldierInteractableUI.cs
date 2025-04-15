@@ -49,8 +49,8 @@ public class SoldierInteractableUI : MonoBehaviour
         var currentElementSprite = currentElement.GetComponent<Image>().sprite;
         var nextElementSprite = nextElement.GetComponent<Image>().sprite;
 
-        currentSoldierInfo.Initialize(currentElement.Level.ToString(), currentElement.Count.ToString(), currentElementSprite);
-        nextSoldierInfo.Initialize(nextElement.Level.ToString(), nextElement.Count.ToString(), nextElementSprite);
+        currentSoldierInfo.Initialize(currentElement.Level.ToString(), "", currentElementSprite);
+        nextSoldierInfo.Initialize(nextElement.Level.ToString(), "", nextElementSprite);
 
         currentElementCount = currentElement.Count;
         nextElementCount = nextElement.Count;
@@ -137,8 +137,6 @@ public class SoldierInteractableUI : MonoBehaviour
 
         UpdateCountText();
         UpdateButton();
-        currentSoldierInfo.SetCountText(currentCountText.text);
-        nextSoldierInfo.SetCountText(nextCountText.text);
     }
 
     public void OnClickEquipButton()

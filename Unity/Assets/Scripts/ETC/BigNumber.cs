@@ -161,6 +161,12 @@ public struct BigNumber : ISerializationCallbackReceiver
 
         return a + other;
     }
+    public static BigNumber operator +(BigNumber a, float b)
+    {
+        BigNumber other = new BigNumber(b);
+
+        return a + other;
+    }
     public static BigNumber operator +(BigNumber a, string b)
     {
         BigNumber other = new BigNumber(b);
@@ -174,6 +180,12 @@ public struct BigNumber : ISerializationCallbackReceiver
         return other + b;
     }
     public static BigNumber operator +(string a, BigNumber b)
+    {
+        BigNumber other = new BigNumber(a);
+
+        return other + b;
+    }
+    public static BigNumber operator +(float a, BigNumber b)
     {
         BigNumber other = new BigNumber(a);
 

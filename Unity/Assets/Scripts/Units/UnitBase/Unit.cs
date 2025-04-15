@@ -431,7 +431,7 @@ public class Unit : MonoBehaviour
         {
             unitStats.Execute(targetPos.gameObject);
         }
-        yield return new WaitForSeconds(unitStats.attackSpeed);
+        yield return new WaitForSeconds(unitStats.attackSpeed/100);
         currentStatus = UnitStatus.Wait;
     }
 

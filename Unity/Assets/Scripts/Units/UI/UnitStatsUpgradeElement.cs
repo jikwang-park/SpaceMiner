@@ -38,15 +38,40 @@ public class UnitStatsUpgradeElement : MonoBehaviour
     private BigNumber currentGold = 0;
 
     [SerializeField]
-    private TextMeshProUGUI BeforeStatsInfo;
+    private TextMeshProUGUI beforeStatsInfo;
     [SerializeField]
-    private TextMeshProUGUI AfterStatsInfo;
+    private TextMeshProUGUI afterStatsInfo;
+    [SerializeField]
+    private LocalizationText titleText;
+    
     private void Awake()
     {
         stageManager = GameObject.FindGameObjectWithTag("GameController").GetComponent<StageManager>(); 
         addStatButton.onClick.AddListener(() => OnClickAddStatsButton());
     }
 
+    public void SetInitString()
+    {
+        //유닛 업그레이드 테이블에 stringid에 맞게끔 컬럼으로 있어야함
+        switch (currentType)
+        {
+            case UpgradeType.AttackPoint:
+                titleText.SetString(55);
+                break;
+            case UpgradeType.HealthPoint:
+                titleText.SetString(56);
+                break;
+            case UpgradeType.DefensePoint:
+                titleText.SetString(57);
+                break;
+            case UpgradeType.CriticalPossibility:
+                titleText.SetString(58);
+                break;
+            case UpgradeType.CriticalDamages:
+                titleText.SetString(59);
+                break;
+        }
+    }
 
     public void Init(UnitUpgradeTable.Data data)
     {
@@ -61,13 +86,18 @@ public class UnitStatsUpgradeElement : MonoBehaviour
     {
         nextLevel = level + 1;
         levelText.text = $"Level + {level}";
-        BeforeStatsInfo.text = $"{currentValue:F2}";
-        AfterStatsInfo.text = $"{currentValue + value:F2}";
+        beforeStatsInfo.text = $"{currentValue:F2}";
+        afterStatsInfo.text = $"{currentValue + value:F2}";
         addStartButtonText.text = $" +{currentGold +gold }";
     }
     
-    public void SetData(int level)
+    public void SetData(int level, UnitUpgradeTable.Data data)
     {
+        currentType = data.Type;
+        value = data.Value;
+        gold = data.NeedItemCount;
+        maxLevel = data.MaxLevel;
+
         this.level = level;
         currentValue = GetCurrentValue(level);
         currentGold = GetCurrentGold(level);

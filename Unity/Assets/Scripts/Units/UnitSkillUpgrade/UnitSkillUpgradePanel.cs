@@ -28,26 +28,13 @@ public class UnitSkillUpgradePanel : MonoBehaviour
 
         unitSkillDictionary = SaveLoadManager.Data.unitSkillUpgradeData.skillUpgradeId;
 
-        //foreach (UnitTypes type in Enum.GetValues(typeof(UnitTypes)))
-        //{
-        //    foreach (Grade grade in Enum.GetValues(typeof(Grade)))
-        //    {
-        //        currentType = type;
-        //        currentGrade = grade;
-        //        id = data[currentType][grade];
-
-        //        if (!unitSkillDictionary.ContainsKey(type))
-        //        {
-        //            unitSkillDictionary.Add(type, new Dictionary<Grade, int>());
-        //        }
-
-        //        unitSkillDictionary[type].Add(grade, id);
-        //    }
-        //}
-
         id = unitSkillDictionary[currentType][currentGrade];
+    }
+    private void Start()
+    {
         board.ShowFirstOpened(id, currentType);
-    }   
+
+    }
     public void SetGradeButtons()
     {
 

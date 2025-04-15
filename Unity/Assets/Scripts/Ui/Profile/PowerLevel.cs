@@ -11,7 +11,7 @@ public class PowerLevel : MonoBehaviour
     private void Start()
     {
         UnitCombatPowerCalculator.onCombatPowerChanged += CombatPowerChange;
-        UnitCombatPowerCalculator.CalculateTotalCombatPower();
+        CombatPowerChange();
     }
 
     private void CombatPowerChange()

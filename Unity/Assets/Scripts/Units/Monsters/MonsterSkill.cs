@@ -75,6 +75,7 @@ public class MonsterSkill : MonoBehaviour
         yield return new WaitForSeconds(0.25f);
         Execute();
         yield return new WaitForSeconds(0.25f);
+        lastSkillTime = Time.time;
         controller.status = MonsterController.Status.Wait;
     }
 

@@ -6,8 +6,10 @@ using UnityEngine.UI;
 
 public class GuideQuestWindow : MonoBehaviour
 {
-    private readonly Color clearedColor = new Color(0.5f, 1f, 0.5f, 0.4f);
-    private readonly Color notClearedColor = new Color(0f, 0f, 0f, 0.4f);
+    [SerializeField]
+    private Color clearedBackColor = new Color(0.5f, 1f, 0.5f, 0.4f);
+    [SerializeField]
+    private Color inProgressBackColor = new Color(0f, 0f, 0f, 0.4f);
 
 
     [SerializeField]
@@ -76,12 +78,12 @@ public class GuideQuestWindow : MonoBehaviour
     private void OnQuestClear()
     {
         cleared = true;
-        background.color = clearedColor;
+        background.color = clearedBackColor;
     }
 
     private void SetQuestTargetReward()
     {
-        background.color = notClearedColor;
+        background.color = inProgressBackColor;
         var questData = GuideQuestManager.currentQuestData;
 
         switch (questData.MissionClearType)
@@ -129,7 +131,7 @@ public class GuideQuestWindow : MonoBehaviour
             UpdateProgress();
             if (GuideQuestManager.isCleared)
             {
-                background.color = clearedColor;
+                background.color = clearedBackColor;
             }
         }
     }

@@ -259,6 +259,31 @@ public struct BigNumber : ISerializationCallbackReceiver
     {
         return a * multiplier;
     }
+    public static BigNumber operator *(BigNumber a, BigNumber b)
+    {
+        int n = a.parts.Count;
+        int m = b.parts.Count;
+        int[] resultArr = new int[n + m];
+
+        for (int i = 0; i < n; i++)
+        {
+            int carry = 0;
+            for (int j = 0; j < m; j++)
+            {
+                long mult = (long)a.parts[i] * (long)b.parts[j] + resultArr[i + j] + carry;
+                resultArr[i + j] = (int)(mult % 1000);
+                carry = (int)(mult / 1000);
+            }
+            resultArr[i + m] += carry;
+        }
+
+        List<int> resultParts = new List<int>(resultArr);
+
+        BigNumber result = new BigNumber(resultParts);
+        result.sign = a.sign * b.sign;
+        result.Normalize();
+        return result;
+    }
     public static BigNumber operator /(BigNumber a, int divisor)
     {
         if (divisor == 0)

@@ -97,7 +97,7 @@ public class UnitPartyManager : MonoBehaviour
     {
         var unit = sender.GetComponent<Unit>();
         party.Remove(unit.UnitTypes);
-
+        unit.gameObject.SetActive(false);
         if (party.Count == 0)
         {
             OnUnitAllDead?.Invoke();

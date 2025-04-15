@@ -20,6 +20,15 @@ public class UnitSkillTypeButtons : MonoBehaviour
         dealerButton.onClick.AddListener(() => OnClickDealerButton());
         healerButton.onClick.AddListener(() => OnClickHealerButton());
     }
+    private void Start()
+    {
+       
+    }
+
+    private void SetButton()
+    {
+
+    }
 
 
 

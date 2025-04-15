@@ -43,12 +43,10 @@ public class UnitStatsUpgradeElement : MonoBehaviour
     private TextMeshProUGUI afterStatsInfo;
     [SerializeField]
     private LocalizationText titleText;
-    [SerializeField]
-    private Image StatsImage;
-
+    
     private void Awake()
     {
-        stageManager = GameObject.FindGameObjectWithTag("GameController").GetComponent<StageManager>();
+        stageManager = GameObject.FindGameObjectWithTag("GameController").GetComponent<StageManager>(); 
         addStatButton.onClick.AddListener(() => OnClickAddStatsButton());
     }
 
@@ -74,13 +72,6 @@ public class UnitStatsUpgradeElement : MonoBehaviour
                 break;
         }
     }
-    //임시 처리
-    public void SetImage(UpgradeType type, List<Sprite> statsSprite)
-    {
-        int index = (int)type;
-
-        StatsImage.sprite = statsSprite[index-1];
-    }
 
     public void Init(UnitUpgradeTable.Data data)
     {
@@ -90,16 +81,16 @@ public class UnitStatsUpgradeElement : MonoBehaviour
         maxLevel = data.MaxLevel;
         SetStatsInfo();
     }
-
+    
     private void SetStatsInfo()
     {
         nextLevel = level + 1;
         levelText.text = $"Level + {level}";
         beforeStatsInfo.text = $"{currentValue:F2}";
         afterStatsInfo.text = $"{currentValue + value:F2}";
-        addStartButtonText.text = $" +{currentGold + gold}";
+        addStartButtonText.text = $" +{currentGold +gold }";
     }
-
+    
     public void SetData(int level, UnitUpgradeTable.Data data)
     {
         currentType = data.Type;
@@ -113,7 +104,7 @@ public class UnitStatsUpgradeElement : MonoBehaviour
         SetStatsInfo();
         Debug.Log(this.level);
     }
-
+    
     public float GetCurrentValue(int level)
     {
         float result = 0;
@@ -123,7 +114,7 @@ public class UnitStatsUpgradeElement : MonoBehaviour
     public BigNumber GetCurrentGold(int level)
     {
         BigNumber result = 0;
-        for (int i = 1; i <= level; ++i)
+        for(int i = 1; i<=level; ++i)
         {
             result += gold * i;
         }
@@ -132,16 +123,16 @@ public class UnitStatsUpgradeElement : MonoBehaviour
 
     private void LevelUp()
     {
-
+        
         if (level > 1000)
         {
             addStatButton.interactable = false;
         }
-
+        
         level++;
-
-
-        currentValue += value;
+        
+        
+        currentValue +=  value;
         currentGold += gold * (level + 1);
         SaveLoadManager.Data.unitStatUpgradeData.upgradeLevels[currentType] = level;
         GuideQuestManager.QuestProgressChange(GuideQuestTable.MissionType.StatUpgrade);
@@ -154,7 +145,7 @@ public class UnitStatsUpgradeElement : MonoBehaviour
             LevelUp();
             SetStatsInfo();
             stageManager.UnitPartyManager.AddStats(currentType, level * value);
-            SaveLoadManager.SaveGame();
+            SaveLoadManager.SaveGame(); 
         }
     }
 }

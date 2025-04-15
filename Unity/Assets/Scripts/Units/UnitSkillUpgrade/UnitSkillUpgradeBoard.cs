@@ -23,13 +23,6 @@ public class UnitSkillUpgradeBoard : MonoBehaviour
     [SerializeField]
     private StageManager stageManager;
 
-    [SerializeField]
-    private TextMeshProUGUI needText;
-
-    //임시
-    [SerializeField]
-    private List<Sprite> skillImage = new List<Sprite>();
-
 
     private int currentId;
     private int nextId;
@@ -46,30 +39,22 @@ public class UnitSkillUpgradeBoard : MonoBehaviour
     private void Start()
     {
         upgradeButton.onClick.AddListener(() => OnClickUpgradeButton());
-
+        
     }
-    public void ShowFirstOpened(int id, UnitTypes type)
+    public void ShowFirstOpened(int id , UnitTypes type)
     {
         SetInfo(id, type);
     }
+  
 
-    public void SetImage(UnitTypes type)
-    {
-        int index = (int)type;
-
-        currentImage.sprite = skillImage[index - 1];
-        nextImage.sprite = skillImage[index - 1];
-
-    }
-
-    public void SetInfo(int id, UnitTypes type)
+    public void SetInfo(int id , UnitTypes type)
     {
         currentId = id;
         currentType = type;
         SetBoardText(id, type);
     }
 
-    public void SetLimit(Grade grade, UnitTypes type, int id)
+    public void SetLimit(Grade grade , UnitTypes type, int id)
     {
         currentId = id;
         manager.unitSkillDictionary[type][grade] = currentId;
@@ -81,8 +66,7 @@ public class UnitSkillUpgradeBoard : MonoBehaviour
     {
         currentId = id;
         currentType = type;
-        SetImage(currentType);
-        var data = DataTableManager.SkillUpgradeTable.GetData(id);
+         var data = DataTableManager.SkillUpgradeTable.GetData(id);
         nextId = data.SkillPaymentID;
         switch (type)
         {
@@ -93,7 +77,6 @@ public class UnitSkillUpgradeBoard : MonoBehaviour
                 var nextTankerData = DataTableManager.TankerSkillTable.GetData(nextId);
                 var nextstringId = nextTankerData.DetailStringID;
                 nextText.SetString(nextstringId, nextTankerData.Duration.ToString(), nextTankerData.ShieldRatio.ToString(), nextTankerData.CoolTime.ToString());
-                needText.text = $" 아이템 {data.NeedItemID} 가  {data.NeedItemCount} 개 필요합니다";
                 break;
             case UnitTypes.Dealer:
                 var dealerData = DataTableManager.DealerSkillTable.GetData(id);
@@ -102,7 +85,6 @@ public class UnitSkillUpgradeBoard : MonoBehaviour
                 var nextDealerData = DataTableManager.DealerSkillTable.GetData(nextId);
                 var nextdealerStringId = nextDealerData.DetailStringID;
                 nextText.SetString(nextdealerStringId, nextDealerData.MonsterMaxTarget.ToString(), nextDealerData.DamageRatio.ToString(), nextDealerData.CoolTime.ToString());
-                needText.text = $" 아이템 {data.NeedItemID} 가  {data.NeedItemCount} 개 필요합니다";
                 break;
             case UnitTypes.Healer:
                 var healerData = DataTableManager.HealerSkillTable.GetData(id);
@@ -110,8 +92,7 @@ public class UnitSkillUpgradeBoard : MonoBehaviour
                 currentText.SetString(healerStringId, healerData.HealRatio.ToString(), healerData.CoolTime.ToString());
                 var nextHealerData = DataTableManager.HealerSkillTable.GetData(nextId);
                 var nextHealerStringId = nextHealerData.DetailStringID;
-                nextText.SetString(nextHealerStringId, nextHealerData.HealRatio.ToString(), nextHealerData.CoolTime.ToString());
-                needText.text = $" 아이템 {data.NeedItemID} 가  {data.NeedItemCount} 개 필요합니다";
+                nextText.SetString(nextHealerStringId,nextHealerData.HealRatio.ToString(), nextHealerData.CoolTime.ToString());
                 break;
         }
     }

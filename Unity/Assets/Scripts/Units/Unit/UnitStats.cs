@@ -18,6 +18,7 @@ public class UnitStats : CharacterStats
     {
         get
         {
+            damage = ((baseDamage + accountDamage) * (1f + buildingAttackDamage));
             return ((baseDamage + accountDamage) * (1f + buildingAttackDamage));
         }
     }
@@ -176,7 +177,7 @@ public class UnitStats : CharacterStats
         var data = DataTableManager.UnitUpgradeTable.GetData(upgradeType);
         for (int i = 1; i <= level; i++)
         {
-            stat += data.Value * level;
+            stat += data.Value * i;
         }
         return stat;
     }
@@ -229,7 +230,7 @@ public class UnitStats : CharacterStats
         var data = DataTableManager.UnitUpgradeTable.GetData(upgradeType);
         for(int i = 1; i <= level; i++)
         {
-            stat += data.Value * level;
+            stat += data.Value * i;
         }
         return stat;
     }

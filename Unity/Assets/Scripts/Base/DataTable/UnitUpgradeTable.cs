@@ -1,7 +1,6 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
 using UnityEngine;
 
 public class UnitUpgradeTable : DataTable
@@ -23,6 +22,7 @@ public class UnitUpgradeTable : DataTable
         public int NeedItemID { get; set; }
         public int NeedItemCount { get; set; }
         public int MaxLevel { get; set; }
+        public int NameStringID { get; set; }
 
         public void Set(string[] argument)
         {
@@ -39,6 +39,7 @@ public class UnitUpgradeTable : DataTable
             NeedItemID = int.Parse(argument[3]);
             NeedItemCount = int.Parse(argument[4]);
             MaxLevel = int.Parse(argument[5]);
+            NameStringID = int.Parse(argument[6]);
         }
     }
 

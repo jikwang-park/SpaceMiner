@@ -31,7 +31,10 @@ public class DungeonStageStatusMachine : StageStatusMachine
     {
         InitStage();
         InstantiateBackground();
-
+        if (dungeonData.KeyPoint == 0)
+        {
+            ItemManager.ConsumeItem(dungeonData.NeedKeyItemID, dungeonData.NeedKeyItemCount);
+        }
         stageManager.UnitPartyManager.UnitSpawn();
         stageManager.CameraManager.SetCameraOffset();
         stageManager.StartCoroutine(CoSpawnNextWave());
@@ -40,6 +43,11 @@ public class DungeonStageStatusMachine : StageStatusMachine
 
     public override void Update()
     {
+        if (cleared)
+        {
+            return;
+        }
+
         float remainTime = stageEndTime - Time.time;
 
         if (remainTime <= 0f)
@@ -49,6 +57,10 @@ public class DungeonStageStatusMachine : StageStatusMachine
             {
                 OnTimeOver();
             }
+        }
+        if (stageManager.UnitPartyManager.UnitCount == 0)
+        {
+            OnTimeOver();
         }
 
         stageManager.StageUiManager.IngameUIManager.SetTimer(remainTime);
@@ -63,6 +75,7 @@ public class DungeonStageStatusMachine : StageStatusMachine
         }
         else
         {
+            Time.timeScale = 1f;
             stageManager.ReleaseBackground();
             stageManager.StopAllCoroutines();
 
@@ -120,7 +133,8 @@ public class DungeonStageStatusMachine : StageStatusMachine
 
     protected void OnTimeOver()
     {
-        stageManager.StageUiManager.IngameUIManager.OpenStageEndWindow("Fail");
+        Time.timeScale = 0f;
+        stageManager.StageUiManager.IngameUIManager.OpenDungeonEndWindow(false, false);
     }
 
     protected void OnMonsterCleared()
@@ -128,6 +142,7 @@ public class DungeonStageStatusMachine : StageStatusMachine
         if (currentWave > waveData.CorpsIDs.Length)
         {
             cleared = true;
+            Time.timeScale = 0f;
             OnStageClear();
             return;
         }
@@ -137,7 +152,9 @@ public class DungeonStageStatusMachine : StageStatusMachine
 
     protected void OnStageClear()
     {
-        if (SaveLoadManager.Data.stageSaveData.clearedDungeon[currentType] < currentStage)
+        bool firstCleared = SaveLoadManager.Data.stageSaveData.clearedDungeon[currentType] < currentStage;
+
+        if (firstCleared)
         {
             SaveLoadManager.Data.stageSaveData.clearedDungeon[currentType] = currentStage;
 
@@ -151,16 +168,24 @@ public class DungeonStageStatusMachine : StageStatusMachine
             }
 
             GuideQuestManager.QuestProgressChange(GuideQuestTable.MissionType.DungeonClear);
+            ItemManager.AddItem(dungeonData.RewardItemID, dungeonData.FirstClearRewardItemCount);
         }
-        ItemManager.AddItem(dungeonData.RewardItemID, dungeonData.ClearRewardItemCount);
-        ItemManager.ConsumeItem(dungeonData.NeedKeyItemID, dungeonData.NeedKeyItemCount);
+        else
+        {
+            ItemManager.AddItem(dungeonData.RewardItemID, dungeonData.ClearRewardItemCount);
+        }
+        if (dungeonData.KeyPoint == 1)
+        {
+            ItemManager.ConsumeItem(dungeonData.NeedKeyItemID, dungeonData.NeedKeyItemCount);
+        }
         SaveLoadManager.SaveGame();
 
-        stageManager.StageUiManager.IngameUIManager.OpenDungeonEndWindow("Clear", true);
+        stageManager.StageUiManager.IngameUIManager.OpenDungeonEndWindow(true, firstCleared);
     }
 
     protected void InitStage()
     {
+        cleared = false;
         currentType = Variables.currentDungeonType;
         currentStage = Variables.currentDungeonStage;
         currentWave = 1;
@@ -171,11 +196,21 @@ public class DungeonStageStatusMachine : StageStatusMachine
         stageEndTime = Time.time + dungeonData.LimitTime;
 
         stageManager.StageUiManager.IngameUIManager.SetDungeonStageText(dungeonData.Type, dungeonData.Stage);
-        stageManager.StageUiManager.IngameUIManager.SetWaveText(currentWave);
+
+        if (waveData.CorpsIDs.Length > 1)
+        {
+            stageManager.StageUiManager.IngameUIManager.waveText.gameObject.SetActive(true);
+            stageManager.StageUiManager.IngameUIManager.SetWaveText(currentWave);
+        }
+        else
+        {
+            stageManager.StageUiManager.IngameUIManager.waveText.gameObject.SetActive(false);
+        }
     }
 
     public override void Reset()
     {
+        Time.timeScale = 1f;
         stageManager.StopAllCoroutines();
         stageManager.StageMonsterManager.ClearMonster();
 

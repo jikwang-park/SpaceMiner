@@ -12,8 +12,8 @@ public class IngameUIManager : MonoBehaviour
 
     [SerializeField]
     private TextMeshProUGUI stageText;
-    [SerializeField]
-    private TextMeshProUGUI waveText;
+    [field: SerializeField]
+    public TextMeshProUGUI waveText { get; private set; }
     [SerializeField]
     private TextMeshProUGUI timerText;
     [SerializeField]
@@ -24,7 +24,7 @@ public class IngameUIManager : MonoBehaviour
     private DungeonEndWindow dungeonEndWindow;
     [field: SerializeField]
     public StageSelectWindow StageSelectWindow { get; private set; }
-    [field:SerializeField]
+    [field: SerializeField]
     public GuideQuestRewardWindow GuideQuestRewardWindow { get; private set; }
 
     [SerializeField]
@@ -62,9 +62,9 @@ public class IngameUIManager : MonoBehaviour
         stageEndWindow.Close();
     }
 
-    public void OpenDungeonEndWindow(string message, bool isCleared)
+    public void OpenDungeonEndWindow(bool isCleared,bool firstCleared)
     {
-        dungeonEndWindow.Open(message, isCleared);
+        dungeonEndWindow.Open(isCleared, firstCleared);
     }
 
     public void CloseDungeonEndWindow()

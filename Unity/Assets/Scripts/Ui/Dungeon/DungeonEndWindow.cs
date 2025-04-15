@@ -8,10 +8,21 @@ using UnityEngine.UI;
 
 public class DungeonEndWindow : MonoBehaviour
 {
+    private const int ClearID = 65;
+    private const int FailID = 65;
+    private const int NextID = 45;
+    private const int RetryID = 46;
+
     [SerializeField]
-    private TextMeshProUGUI nextText;
+    private LocalizationText nextText;
     [SerializeField]
-    private TextMeshProUGUI messageText;
+    private LocalizationText messageText;
+    [SerializeField]
+    private AddressableImage icon;
+    [SerializeField]
+    private TextMeshProUGUI countText;
+    [SerializeField]
+    private GameObject rewardRow;
 
     private float closeTime;
     private WaitForSeconds wait = new WaitForSeconds(1f);
@@ -27,28 +38,40 @@ public class DungeonEndWindow : MonoBehaviour
         stageManager = GameObject.FindGameObjectWithTag("GameController").GetComponent<StageManager>();
     }
 
-    public void Open(string message, bool isCleared)
+    public void Open(bool isCleared, bool firstCleared)
     {
         this.isCleared = isCleared;
 
         gameObject.SetActive(true);
-
+        rewardRow.SetActive(this.isCleared);
         if (this.isCleared)
         {
-            messageText.text = "Cleared";
+            messageText.SetColor(Color.white);
+            messageText.SetString(ClearID);
             bool lastStageCondition = Variables.currentDungeonStage == DataTableManager.DungeonTable.CountOfStage(Variables.currentDungeonType);
             var curStage = DataTableManager.DungeonTable.GetData(Variables.currentDungeonType, Variables.currentDungeonStage);
             bool keyCondition = ItemManager.GetItemAmount(curStage.NeedKeyItemID) >= curStage.NeedKeyItemCount;
+
+            var itemData = DataTableManager.ItemTable.GetData(curStage.RewardItemID);
+            icon.SetSprite(itemData.SpriteID);
+            if (firstCleared)
+            {
+                countText.text = curStage.FirstClearRewardItemCount.ToString();
+            }
+            else
+            {
+                countText.text = curStage.ClearRewardItemCount.ToString();
+            }
 
             if (lastStageCondition)
             {
                 nextButton.interactable = ItemManager.GetItemAmount(curStage.NeedKeyItemID) >= curStage.NeedKeyItemCount;
 
-                nextText.text = "Retry";
+                nextText.SetString(RetryID);
             }
             else
             {
-                nextText.text = "Next";
+                nextText.SetString(NextID);
                 var nextStage = DataTableManager.DungeonTable.GetData(Variables.currentDungeonType, Variables.currentDungeonStage + 1);
 
                 bool powerCondition = Variables.powerLevel > nextStage.NeedPower;
@@ -61,8 +84,9 @@ public class DungeonEndWindow : MonoBehaviour
         }
         else
         {
-            messageText.text = "Failed";
-            nextText.text = "Retry";
+            messageText.SetColor(Color.red);
+            messageText.SetString(FailID);
+            nextText.SetString(RetryID);
         }
     }
 

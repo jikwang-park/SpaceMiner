@@ -20,7 +20,7 @@ public class TankerSkillTable : DataTable
         public int NameStringID { get; set; }
         public int DetailStringID { get; set; }
 
-        public UnitTypes[] targetPriority;
+        //public UnitTypes[] targetPriority;
 
         public void Set(string[] argument)
         {
@@ -42,7 +42,7 @@ public class TankerSkillTable : DataTable
             NameStringID = int.Parse(argument[8]);
             DetailStringID = int.Parse(argument[9]);
 
-            targetPriority = SplitSoldierTarget(SoldierTarget);
+            //targetPriority = SplitSoldierTarget(SoldierTarget);
         }
         
     }
@@ -106,23 +106,23 @@ public class TankerSkillTable : DataTable
     }
 
 
-    private static UnitTypes[] SplitSoldierTarget(string id)
-    {
-        string[] idstring = id.Split('_');
-        UnitTypes[] ids = new UnitTypes[idstring.Length];
+    //private static UnitTypes[] SplitSoldierTarget(string id)
+    //{
+    //    string[] idstring = id.Split('_');
+    //    UnitTypes[] ids = new UnitTypes[idstring.Length];
 
-        for (int i = 0; i < ids.Length; ++i)
-        {
-            if (int.TryParse(idstring[i], out int result))
-            {
-                ids[i] = (UnitTypes)result;
-            }
-            else
-            {
-                ids[i] = Enum.Parse<UnitTypes>(idstring[i]);
-            }
-        }
+    //    for (int i = 0; i < ids.Length; ++i)
+    //    {
+    //        if (int.TryParse(idstring[i], out int result))
+    //        {
+    //            ids[i] = (UnitTypes)result;
+    //        }
+    //        else
+    //        {
+    //            ids[i] = Enum.Parse<UnitTypes>(idstring[i]);
+    //        }
+    //    }
 
-        return ids;
-    }
+    //    return ids;
+    //}
 }

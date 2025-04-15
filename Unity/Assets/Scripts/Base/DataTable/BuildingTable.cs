@@ -82,7 +82,7 @@ public class BuildingTable : DataTable
                 Debug.Log($"Key Duplicated: {item.ID}");
             }
         }
-    } 
+    }
 
     public List<Data> GetDatas(BuildingType type)
     {
@@ -91,6 +91,15 @@ public class BuildingTable : DataTable
             return null;
         }
         return typeDict[type];
+    }
+
+    public Data GetData(int id)
+    {
+        if (!TableData.ContainsKey(id))
+        {
+            return null;
+        }
+        return (Data)TableData[id];
     }
 
     public override void Set(List<string[]> data)

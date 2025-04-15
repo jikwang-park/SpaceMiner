@@ -6,8 +6,12 @@ using UnityEngine.UI;
 
 public class GuideQuestWindow : MonoBehaviour
 {
+    private readonly Color clearedColor = new Color(0.5f, 1f, 0.5f, 0.4f);
+    private readonly Color notClearedColor = new Color(0f, 0f, 0f, 0.4f);
+
+
     [SerializeField]
-    private TextMeshProUGUI questDescriptionText;
+    private LocalizationText questDetailText;
 
     [SerializeField]
     private TextMeshProUGUI questProgressText;
@@ -16,15 +20,19 @@ public class GuideQuestWindow : MonoBehaviour
     private TextMeshProUGUI rewardCountText;
 
     [SerializeField]
-    private Image questIcon;
+    private AddressableImage questRewardIcon;
 
     private bool cleared;
+
+    private Image background;
 
     private StageManager stageManager;
 
     private void Awake()
     {
         cleared = false;
+        background = GetComponent<Image>();
+        GuideQuestManager.OnQuestChanged += SetQuestTargetReward;
         GuideQuestManager.OnQuestProgressChanged += UpdateProgress;
         GuideQuestManager.OnClear += OnQuestClear;
     }
@@ -34,7 +42,9 @@ public class GuideQuestWindow : MonoBehaviour
         stageManager = GameObject.FindGameObjectWithTag("GameController").GetComponent<StageManager>();
         if (GuideQuestManager.currentQuestData is not null)
         {
-            questDescriptionText.text = GuideQuestManager.currentQuestData.DetailStringID.ToString();
+            SetQuestTargetReward();
+            var itemSprite = DataTableManager.ItemTable.GetData(GuideQuestManager.currentQuestData.RewardItemID);
+            questRewardIcon.SetSprite(itemSprite.SpriteID);
             UpdateProgress();
             GuideQuestManager.RefreshQuest();
         }
@@ -47,19 +57,65 @@ public class GuideQuestWindow : MonoBehaviour
             return;
         }
 
-        questDescriptionText.text = GuideQuestManager.currentQuestData.DetailStringID.ToString();
-        int monsterCount = SaveLoadManager.Data.questProgressData.monsterCount;
-        int goal = GuideQuestManager.currentQuestData.TargetCount;
-        int rewardCount = GuideQuestManager.currentQuestData.RewardItemCount;
-
-        questProgressText.text = $"{GuideQuestManager.Progress} / {goal}";
-        rewardCountText.text = $"{rewardCount}";
+        var questData = GuideQuestManager.currentQuestData;
+        switch (questData.MissionClearType)
+        {
+            case GuideQuestTable.MissionType.Exterminate:
+            case GuideQuestTable.MissionType.Item:
+                questProgressText.text = $"{GuideQuestManager.Progress} / {questData.TargetCount}";
+                break;
+            case GuideQuestTable.MissionType.StageClear:
+            case GuideQuestTable.MissionType.DungeonClear:
+            case GuideQuestTable.MissionType.StatUpgrade:
+            case GuideQuestTable.MissionType.Building:
+                questProgressText.text = $"{GuideQuestManager.Progress} / 1";
+                break;
+        }
     }
 
     private void OnQuestClear()
     {
         cleared = true;
-        questProgressText.text = $"{questProgressText.text} Clear";
+        background.color = clearedColor;
+    }
+
+    private void SetQuestTargetReward()
+    {
+        background.color = notClearedColor;
+        var questData = GuideQuestManager.currentQuestData;
+
+        switch (questData.MissionClearType)
+        {
+            case GuideQuestTable.MissionType.Exterminate:
+                questDetailText.SetString(questData.DetailStringID);
+                break;
+            case GuideQuestTable.MissionType.StageClear:
+                var stageData = DataTableManager.StageTable.GetData(questData.Target);
+                questDetailText.SetString(questData.DetailStringID, stageData.Planet.ToString(), stageData.Stage.ToString());
+                break;
+            case GuideQuestTable.MissionType.DungeonClear:
+                var dungeonData = DataTableManager.DungeonTable.GetData(questData.Target);
+                questDetailText.SetString(questData.DetailStringID, dungeonData.Stage.ToString());
+                break;
+            case GuideQuestTable.MissionType.StatUpgrade:
+                var upgradeData = DataTableManager.UnitUpgradeTable.GetData(questData.Target);
+                var upgradeName = DataTableManager.StringTable.GetData(upgradeData.NameStringID);
+                questDetailText.SetString(questData.DetailStringID, upgradeName, questData.TargetCount.ToString());
+                break;
+            case GuideQuestTable.MissionType.Item:
+                var itemData = DataTableManager.ItemTable.GetData(questData.Target);
+                var itemName = DataTableManager.StringTable.GetData(itemData.NameStringID);
+                questDetailText.SetString(questData.DetailStringID, itemName, questData.TargetCount.ToString());
+                break;
+            case GuideQuestTable.MissionType.Building:
+                var buildingData = DataTableManager.BuildingTable.GetData(questData.Target);
+                questDetailText.SetString(questData.DetailStringID, buildingData.Level.ToString());
+                break;
+        }
+        var itemSprite = DataTableManager.ItemTable.GetData(questData.RewardItemID);
+        questRewardIcon.SetSprite(itemSprite.SpriteID);
+        int rewardCount = questData.RewardItemCount;
+        rewardCountText.text = rewardCount.ToString();
     }
 
     public void QuestSuccess()
@@ -69,7 +125,12 @@ public class GuideQuestWindow : MonoBehaviour
             cleared = false;
             stageManager.StageUiManager.IngameUIManager.GuideQuestRewardWindow.Show(GuideQuestManager.currentQuestData);
             GuideQuestManager.GetReward();
+            SetQuestTargetReward();
             UpdateProgress();
+            if (GuideQuestManager.isCleared)
+            {
+                background.color = clearedColor;
+            }
         }
     }
 }

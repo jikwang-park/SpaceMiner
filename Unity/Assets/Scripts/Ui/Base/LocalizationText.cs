@@ -5,15 +5,12 @@ using UnityEngine;
 [RequireComponent(typeof(TextMeshProUGUI))]
 public class LocalizationText : MonoBehaviour
 {
-    private const string notParsedFormat = "Not Parsed {0}";
     private const string notFoundFormat = "Not Found {0}";
 
     [SerializeField]
-    private string stringId;
+    private int stringId;
     [SerializeField]
     private string[] stringArgs;
-
-    private int parsedStringId;
 
 #if UNITY_EDITOR
     [SerializeField]
@@ -35,13 +32,13 @@ public class LocalizationText : MonoBehaviour
 
     private void OnEnable()
     {
-        if (int.TryParse(stringId, out parsedStringId))
+        if (stringId != 0)
         {
             OnChangedLanguage();
         }
         else
         {
-            text.text = string.Format(notParsedFormat, stringId);
+            text.text = string.Format(notFoundFormat, stringId);
         }
     }
 
@@ -49,8 +46,8 @@ public class LocalizationText : MonoBehaviour
     {
         var stringTableId = DataTableIds.stringTables[(int)lang];
         var stringTable = DataTableManager.GetTable<StringTable>(stringTableId);
-
-        if (string.IsNullOrEmpty(stringTable.GetData(parsedStringId)))
+        var gotString = stringTable.GetData(stringId);
+        if (string.IsNullOrEmpty(gotString))
         {
             text.text = string.Format(notFoundFormat, stringId);
             return;
@@ -58,11 +55,11 @@ public class LocalizationText : MonoBehaviour
 
         if (stringArgs != null && stringArgs.Length > 0)
         {
-            text.text = string.Format(stringTable.GetData(parsedStringId), stringArgs);
+            text.text = string.Format(gotString, stringArgs);
         }
         else
         {
-            text.text = stringTable.GetData(parsedStringId);
+            text.text = gotString;
         }
     }
 
@@ -80,25 +77,9 @@ public class LocalizationText : MonoBehaviour
 #endif
     }
 
-    public void SetString(string stringId)
-    {
-        this.stringId = stringId;
-        stringArgs = null;
-
-        if (int.TryParse(stringId, out parsedStringId))
-        {
-            OnChangedLanguage();
-        }
-        else
-        {
-            text.text = string.Format(notParsedFormat, stringId);
-        }
-    }
-
     public void SetString(int stringId)
     {
-        this.stringId = stringId.ToString();
-        parsedStringId = stringId;
+        this.stringId = stringId;
         stringArgs = null;
         OnChangedLanguage();
     }
@@ -109,39 +90,30 @@ public class LocalizationText : MonoBehaviour
         OnChangedLanguage();
     }
 
-    public void SetString(string stringId, params string[] stringArguments)
+    public void SetString(int stringId, params string[] stringArguments)
     {
         this.stringId = stringId;
         stringArgs = stringArguments;
 
-        if (int.TryParse(stringId, out parsedStringId))
-        {
-            OnChangedLanguage();
-        }
-        else
-        {
-            text.text = string.Format(notParsedFormat, stringId);
-        }
+        OnChangedLanguage();
     }
 
-    public void SetString(string stringId, params int[] stringIds)
+    public void SetString(int stringId, params int[] stringIds)
     {
         this.stringId = stringId;
 
-        if (int.TryParse(stringId, out parsedStringId))
+        stringArgs = new string[stringIds.Length];
+        var stringTableId = DataTableIds.stringTables[(int)Variables.currentLanguage];
+        var stringTable = DataTableManager.GetTable<StringTable>(stringTableId);
+        for (int i = 0; i < stringIds.Length; ++i)
         {
-            stringArgs = new string[stringIds.Length];
-            var stringTableId = DataTableIds.stringTables[(int)Variables.currentLanguage];
-            var stringTable = DataTableManager.GetTable<StringTable>(stringTableId);
-            for (int i = 0; i < stringIds.Length; ++i)
-            {
-                stringArgs[i] = stringTable.GetData(stringIds[i]);
-            }
-            OnChangedLanguage();
+            stringArgs[i] = stringTable.GetData(stringIds[i]);
         }
-        else
-        {
-            text.text = string.Format(notParsedFormat, stringId);
-        }
+        OnChangedLanguage();
+    }
+
+    public void SetColor(Color color)
+    {
+        text.color = color;
     }
 }

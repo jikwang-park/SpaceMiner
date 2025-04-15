@@ -17,6 +17,7 @@ public static class GuideQuestManager
 
     public static event System.Action OnClear;
     public static event System.Action OnQuestProgressChanged;
+    public static event System.Action OnQuestChanged;
 
     public static BigNumber Progress;
 
@@ -45,24 +46,47 @@ public static class GuideQuestManager
                 var stageData = DataTableManager.StageTable.GetData(currentQuestData.Target);
                 var stageSaveData = SaveLoadManager.Data.stageSaveData;
 
-                Progress = DataTableManager.StageTable.GetStageData(stageSaveData.clearedPlanet, stageSaveData.clearedStage).ID;
 
                 isClearedNow = (stageSaveData.clearedPlanet == stageData.Planet && stageSaveData.clearedStage >= stageData.Stage)
                     || (stageSaveData.clearedPlanet > stageData.Planet);
+
+                if (isClearedNow)
+                {
+                    Progress = 1;
+                }
+                else
+                {
+                    Progress = 0;
+                }
                 break;
 
             case GuideQuestTable.MissionType.DungeonClear:
                 var dungeonData = DataTableManager.DungeonTable.GetData(currentQuestData.Target);
                 var clearedDungeon = SaveLoadManager.Data.stageSaveData.clearedDungeon;
-                Progress = clearedDungeon[dungeonData.Type];
+                
                 isClearedNow = clearedDungeon[dungeonData.Type] >= dungeonData.Stage;
+                if (isClearedNow)
+                {
+                    Progress = 1;
+                }
+                else
+                {
+                    Progress = 0;
+                }
                 break;
 
             case GuideQuestTable.MissionType.StatUpgrade:
                 var statData = SaveLoadManager.Data.unitStatUpgradeData;
-
-                Progress = statData.upgradeLevels[(UnitUpgradeTable.UpgradeType)currentQuestData.Target];
-                isClearedNow = statData.upgradeLevels[(UnitUpgradeTable.UpgradeType)currentQuestData.Target] >= currentQuestData.TargetCount;
+                var upgradeData = DataTableManager.UnitUpgradeTable.GetData(currentQuestData.Target);
+                isClearedNow = statData.upgradeLevels[upgradeData.Type] >= currentQuestData.TargetCount;
+                if (isClearedNow)
+                {
+                    Progress = 1;
+                }
+                else
+                {
+                    Progress = 0;
+                }
                 break;
 
             case GuideQuestTable.MissionType.Item:
@@ -74,8 +98,18 @@ public static class GuideQuestManager
                 break;
 
             case GuideQuestTable.MissionType.Building:
-                Progress = SaveLoadManager.Data.buildingData.buildingLevels[(BuildingTable.BuildingType)currentQuestData.Target];
-                isClearedNow = Progress >= currentQuestData.TargetCount;
+                var buildingData = DataTableManager.BuildingTable.GetData(currentQuestData.Target);
+
+                isClearedNow = SaveLoadManager.Data.buildingData.buildingLevels[buildingData.Type] >= buildingData.Level;
+
+                if (isClearedNow)
+                {
+                    Progress = 1;
+                }
+                else
+                {
+                    Progress = 0;
+                }
                 break;
         }
 
@@ -92,6 +126,7 @@ public static class GuideQuestManager
     {
         ItemManager.AddItem(currentQuestData.RewardItemID, currentQuestData.RewardItemCount);
         ChangeQuest(currentQuestData.Turn + 1);
+        SaveLoadManager.Data.questProgressData.monsterCount = 0;
         SaveLoadManager.SaveGame();
     }
 
@@ -105,6 +140,7 @@ public static class GuideQuestManager
         isCleared = false;
         SaveLoadManager.Data.questProgressData.currentQuest = turn;
         currentQuestData = DataTableManager.GuideQuestTable.GetDataByOrder(turn);
+        OnQuestChanged?.Invoke();
         RefreshQuest();
     }
 }

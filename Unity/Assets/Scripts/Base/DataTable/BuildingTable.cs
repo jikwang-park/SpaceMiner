@@ -6,14 +6,14 @@ public class BuildingTable : DataTable
 {
     public enum BuildingType
     {
-        IdleTime = 1,
-        AttackPoint,
+        AttackPoint = 1,
         HealthPoint,
         DefensePoint,
         CriticalPossibility,
         CriticalDamages,
+        Mining,
         Gold,
-        Mining
+        IdleTime,
     }
 
     public class Data : ITableData

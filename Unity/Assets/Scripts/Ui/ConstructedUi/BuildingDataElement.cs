@@ -62,7 +62,6 @@ public class BuildingDataElement: MonoBehaviour
     public void Init(List<BuildingTable.Data> data)
     {
         this.data = data;
-        level = 0;
         SetLevelData(level);
     }
 

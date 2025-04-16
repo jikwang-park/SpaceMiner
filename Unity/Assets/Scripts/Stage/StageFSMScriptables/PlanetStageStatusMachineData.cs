@@ -5,5 +5,5 @@ using UnityEngine;
 [CreateAssetMenu(menuName = "Scriptables/PlanetStageData", fileName = "Planet Stage Data")]
 public class PlanetStageStatusMachineData : StageStatusMachineData
 {
-    public float stageEndDelay = 1f;
+    public float stageEndWindowDuration = 1f;
 }

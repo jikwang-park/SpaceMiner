@@ -102,9 +102,13 @@ public class Inventory : MonoBehaviour
     {
         selectedElement = element;
         var currentIndex = inventoryElements.IndexOf(selectedElement);
-        if(currentIndex < inventoryElements.Count && currentIndex >= 0)
+        if(currentIndex < inventoryElements.Count - 1 && currentIndex >= 0)
         {
             infoMergePanelUI.Initialize(inventoryElements[currentIndex], inventoryElements[currentIndex + 1]);
+        }
+        if(currentIndex == inventoryElements.Count - 1)
+        {
+            infoMergePanelUI.Initialize(inventoryElements[currentIndex], inventoryElements[currentIndex]);
         }
         selectedElement.Select();
     }
@@ -133,6 +137,7 @@ public class Inventory : MonoBehaviour
         equipElement.SetEquip();
         InventoryManager.Equip(type, equipElement.soldierId);
         unitPartyManager.SetUnitData(DataTableManager.SoldierTable.GetData(equipElement.soldierId), type);
+        SaveLoadManager.SaveGame();
     }
     private void UnEquip()
     {

@@ -8,11 +8,11 @@ using UnityEngine.UI;
 public class KeyShopElement : MonoBehaviour
 {
     [SerializeField]
-    private Image keyIcon;
+    private AddressableImage keyIcon;
     [SerializeField]
-    private Image currencyIcon;
+    private AddressableImage currencyIcon;
     [SerializeField]
-    private TextMeshProUGUI needItemCountText;
+    private LocalizationText needItemCountText;
     [SerializeField]
     private LocalizationText dailyPurchaseText;
     [SerializeField]
@@ -25,13 +25,9 @@ public class KeyShopElement : MonoBehaviour
     private int dailyResetHour;
     private int dailyResetMinute;
 
-    private string needItemCountFormat = "« ø‰«— {0} : {1}";
-
     private BigNumber paymentItemAmount;
     private BigNumber needItemAmount;
     private int dailyPurchaseLimitCount;
-
-    private string paymentItemString;
     private string needItemString;
 
     private DungeonKeyShopElementData currentData;
@@ -57,25 +53,39 @@ public class KeyShopElement : MonoBehaviour
 
         dailyResetHour = (shopData.ResetTime / 100) % 24;
         dailyResetMinute = shopData.ResetTime % 100;
-
-        int paymentItemStringId = DataTableManager.ItemTable.GetData(paymentItemId).NameStringID;
-        paymentItemString = DataTableManager.StringTable.GetData(paymentItemStringId);
-
         int needItemStringId = DataTableManager.ItemTable.GetData(needItemId).NameStringID;
         needItemString = DataTableManager.StringTable.GetData(needItemStringId);
+
+        int paymentItemSpriteId = DataTableManager.ItemTable.GetData(paymentItemId).SpriteID;
+        keyIcon.SetSprite(paymentItemSpriteId);
+
+        int needItemSpriteId = DataTableManager.ItemTable.GetData(needItemId).SpriteID;
+        currencyIcon.SetSprite(needItemSpriteId);
 
         CheckReset();
     }
     private void OnEnable()
     {
+        ItemManager.OnItemAmountChanged += DoItemChange;
         if(currentData != null)
         {
             CheckReset();
         }
     }
+    private void OnDisable()
+    {
+        ItemManager.OnItemAmountChanged -= DoItemChange;
+    }
+    private void DoItemChange(int itemId, BigNumber amount)
+    {
+        if(itemId == needItemId)
+        {
+            UpdateUI();
+        }
+    }
     private void UpdateUI()
     {
-        needItemCountText.text = string.Format(needItemCountFormat, needItemString, needItemAmount);
+        needItemCountText.SetStringArguments(needItemString, needItemAmount.ToString());
         dailyPurchaseText.SetStringArguments(currentData.dailyPurchaseCount.ToString(), dailyPurchaseLimitCount.ToString());
 
         purchaseButton.interactable = CanPurchase;

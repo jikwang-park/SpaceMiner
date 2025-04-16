@@ -8,7 +8,6 @@ public class DungeonStageStatusMachine : StageStatusMachine
     protected enum Status
     {
         Play,
-        SpawnWait,
         Clear,
         Timeout,
         Defeat,
@@ -32,7 +31,7 @@ public class DungeonStageStatusMachine : StageStatusMachine
 
     public DungeonStageStatusMachine(StageManager stageManager) : base(stageManager)
     {
-        status = Status.SpawnWait;
+
     }
 
     public override void SetStageData(StageStatusMachineData stageMachineData)
@@ -52,7 +51,7 @@ public class DungeonStageStatusMachine : StageStatusMachine
         }
 
         stageManager.CameraManager.SetCameraOffset();
-        SetNextWave(true);
+        NextWave(true);
         stageManager.StageMonsterManager.OnMonsterCleared += OnMonsterCleared;
     }
 
@@ -64,13 +63,6 @@ public class DungeonStageStatusMachine : StageStatusMachine
         {
             case Status.Play:
                 UpdateTimer(currentTime);
-                break;
-            case Status.SpawnWait:
-                UpdateTimer(currentTime);
-                if (currentTime > stepTimer)
-                {
-                    SpawnWave();
-                }
                 break;
         }
     }
@@ -113,23 +105,10 @@ public class DungeonStageStatusMachine : StageStatusMachine
         stageManager.StageUiManager.IngameUIManager.SetTimer(remainingTime);
     }
 
-    protected void SetNextWave(bool isFirstWave)
+    protected void NextWave(bool isFirstWave)
     {
-        status = Status.SpawnWait;
         stageManager.StageUiManager.IngameUIManager.SetWaveText(currentWave);
 
-        if (isFirstWave)
-        {
-            SpawnWave();
-        }
-        else
-        {
-            stepTimer = Time.time + stageMachineData.spawnDelay;
-        }
-    }
-
-    protected void SpawnWave()
-    {
         status = Status.Play;
 
         var corpsData = DataTableManager.CorpsTable.GetData(waveData.CorpsIDs[currentWave - 1]);
@@ -142,7 +121,7 @@ public class DungeonStageStatusMachine : StageStatusMachine
         Transform unit = stageManager.UnitPartyManager.GetFirstLineUnitTransform();
         if (unit != null)
         {
-            stageManager.StageMonsterManager.Spawn(unit.position + Vector3.forward * stageMachineData.spawnDistance, corpsData);
+            stageManager.StageMonsterManager.Spawn(unit.position + Vector3.forward * waveData.RespawnDistance, corpsData);
         }
         else
         {
@@ -175,7 +154,7 @@ public class DungeonStageStatusMachine : StageStatusMachine
             return;
         }
 
-        SetNextWave(false);
+        NextWave(false);
     }
 
     protected void OnStageEnd(Status status)
@@ -280,6 +259,6 @@ public class DungeonStageStatusMachine : StageStatusMachine
 
         stageManager.UnitPartyManager.UnitSpawn();
         stageManager.CameraManager.SetCameraOffset();
-        SetNextWave(true);
+        NextWave(true);
     }
 }

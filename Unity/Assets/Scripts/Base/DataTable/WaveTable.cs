@@ -11,6 +11,7 @@ public class WaveTable : DataTable
     {
         public int ID { get; set; }
         public string CorpsID { get; set; }
+        public float RespawnDistance { get; set; }
 
         public int[] CorpsIDs;
 

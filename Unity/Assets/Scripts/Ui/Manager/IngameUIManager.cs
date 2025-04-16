@@ -52,9 +52,9 @@ public class IngameUIManager : MonoBehaviour
         stageText.text = string.Format(dungeonTextFormat, dungeonId, stage);
     }
 
-    public void OpenStageEndWindow(string message)
+    public void OpenStageEndWindow(string message, float duration)
     {
-        stageEndWindow.Open(message);
+        stageEndWindow.Open(message,duration);
     }
 
     public void CloseStageEndWindow()
@@ -62,7 +62,7 @@ public class IngameUIManager : MonoBehaviour
         stageEndWindow.Close();
     }
 
-    public void OpenDungeonEndWindow(bool isCleared,bool firstCleared)
+    public void OpenDungeonEndWindow(bool isCleared, bool firstCleared)
     {
         dungeonEndWindow.Open(isCleared, firstCleared);
     }

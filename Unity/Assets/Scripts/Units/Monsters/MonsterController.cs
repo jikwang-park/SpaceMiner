@@ -19,8 +19,6 @@ public class MonsterController : MonoBehaviour, IObjectPoolGameObject
     [field: SerializeField]
     public MonsterStats Stats { get; private set; }
 
-    [SerializeField]
-    private Animation animations;
     private BehaviorTree<MonsterController> behaviorTree;
 
     public StageManager StageManager { get; private set; }

@@ -12,8 +12,6 @@ public class KeyShopElement : MonoBehaviour
     [SerializeField]
     private Image currencyIcon;
     [SerializeField]
-    private TextMeshProUGUI paymentItemCountText;
-    [SerializeField]
     private TextMeshProUGUI needItemCountText;
     [SerializeField]
     private LocalizationText dailyPurchaseText;
@@ -77,7 +75,6 @@ public class KeyShopElement : MonoBehaviour
     }
     private void UpdateUI()
     {
-        paymentItemCountText.text = $"{paymentItemString} * {paymentItemAmount}";
         needItemCountText.text = string.Format(needItemCountFormat, needItemString, needItemAmount);
         dailyPurchaseText.SetStringArguments(currentData.dailyPurchaseCount.ToString(), dailyPurchaseLimitCount.ToString());
 

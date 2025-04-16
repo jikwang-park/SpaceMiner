@@ -52,25 +52,13 @@ public class Inventory : MonoBehaviour
         this.type = type;
         var datas = InventoryManager.GetInventoryData(this.type);
         inventoryElements.Clear();
-        Dictionary<Grade, int> gradeCounters = new Dictionary<Grade, int>();
         int totalCount = datas.elements.Count;
         int instantiatedCount = 0;
 
         foreach (var data in datas.elements)
         {
-            int subIndex = 1;
-            if (gradeCounters.ContainsKey(data.grade))
-            {
-                subIndex = gradeCounters[data.grade] + 1;
-                gradeCounters[data.grade] = subIndex;
-            }
-            else
-            {
-                gradeCounters[data.grade] = 1;
-            }
 
             var soldierData = data;
-            int currentSubIndex = subIndex;
 
             Addressables.InstantiateAsync(prefabFormat, contentParent).Completed += (AsyncOperationHandle<GameObject> handle) =>
             {
@@ -89,7 +77,7 @@ public class Inventory : MonoBehaviour
                         inventoryElement.SetID(soldierData.soldierId);
                         inventoryElement.SetGrade(soldierData.grade);
                         inventoryElement.UpdateCount(soldierData.count);
-                        inventoryElement.SetLevel(currentSubIndex);
+                        inventoryElement.SetLevel(soldierData.level);
                         buttonElement.image.sprite = gradeSprites[(int)soldierData.grade - 1];
                         inventoryElements.Add(inventoryElement);
                     }

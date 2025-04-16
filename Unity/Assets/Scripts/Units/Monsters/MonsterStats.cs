@@ -11,6 +11,7 @@ public class MonsterStats : CharacterStats
         maxHp = monsterData.HP;
         Hp = maxHp;
         coolDown = 100f / monsterData.AttackSpeed;
+        GetComponent<AnimationControl>().SetSpeed(AnimationControl.AnimationClipID.Attack, monsterData.AttackSpeed / 100f);
         moveSpeed = monsterData.MoveSpeed;
     }
 

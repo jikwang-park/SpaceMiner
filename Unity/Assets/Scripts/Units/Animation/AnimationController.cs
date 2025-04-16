@@ -31,6 +31,7 @@ public class AnimationController : AnimationControl
 
     private void Start()
     {
+        animations.wrapMode = WrapMode.Loop;
         foreach (AnimationState state in animations)
         {
             switch (state.name)
@@ -57,6 +58,7 @@ public class AnimationController : AnimationControl
                     break;
                 case die:
                     animationDict.Add(AnimationClipID.Die, die);
+                    state.layer = 1;
                     state.wrapMode = WrapMode.Once;
                     break;
             }
@@ -96,12 +98,13 @@ public class AnimationController : AnimationControl
         {
             return;
         }
-        if (animations.IsPlaying(animationDict[clipID]))
+        if (animations.isPlaying && animations.IsPlaying(animationDict[clipID]))
         {
             return;
         }
 
-        animations.Blend(animationDict[clipID], targetWeight, fadeLength);
+        //animations.Blend(animationDict[clipID], targetWeight, fadeLength);
+        animations.CrossFade(animationDict[clipID]);
     }
 
     public override void Play(AnimationClipID clipID, bool isLoop)
@@ -124,15 +127,8 @@ public class AnimationController : AnimationControl
         {
             return;
         }
-
-        foreach (AnimationState state in animations)
-        {
-            if (state.name == animationDict[clipID])
-            {
-                state.speed = speed / state.length;
-                break;
-            }
-        }
+        var state = animations[animationDict[clipID]];
+        state.normalizedSpeed = speed;
     }
 
     public override float GetProgress(AnimationClipID clipID)

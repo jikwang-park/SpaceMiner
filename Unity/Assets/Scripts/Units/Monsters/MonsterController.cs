@@ -12,6 +12,7 @@ public class MonsterController : MonoBehaviour, IObjectPoolGameObject
         Wait,
         Attacking,
         SkillUsing,
+        Dead,
     }
 
     public Status status;
@@ -77,26 +78,33 @@ public class MonsterController : MonoBehaviour, IObjectPoolGameObject
         AnimationController = GetComponent<AnimationController>();
         AnimationFound = AnimationController;
         attackWait = new WaitUntil(() => AnimationController.GetProgress(AnimationControl.AnimationClipID.Attack) > attackTime);
-        attackEndWait = new WaitUntil(() => AnimationController.GetProgress(AnimationControl.AnimationClipID.Attack) >=1f);
+        attackEndWait = new WaitUntil(() => AnimationController.GetProgress(AnimationControl.AnimationClipID.Attack) >= 1f);
         status = Status.Wait;
     }
 
     private void OnEnable()
     {
         isDrawRegion = true;
+        TargetAcquired = false;
+        currentLine = -1;
         TargetDistance = float.PositiveInfinity;
+        GetComponent<DestructedDestroyEvent>().OnDestroyed += OnThisDie;
         StageManager = GameObject.FindGameObjectWithTag("GameController").GetComponent<StageManager>();
+        status = Status.Wait;
     }
 
     private void OnDisable()
     {
         isDrawRegion = false;
-        TargetAcquired = false;
-        currentLine = -1;
     }
 
     private void Update()
     {
+        if (status == Status.Dead)
+        {
+            return;
+        }
+
         if (!TargetAcquired && StageManager.UnitPartyManager.UnitCount > 0)
         {
             Target = StageManager.UnitPartyManager.GetFirstLineUnitTransform();
@@ -185,7 +193,10 @@ public class MonsterController : MonoBehaviour, IObjectPoolGameObject
     {
         AnimationController.Play(AnimationControl.AnimationClipID.Attack);
         yield return attackWait;
-        Stats.Execute(Target.gameObject);
+        if (Target is not null)
+        {
+            Stats.Execute(Target.gameObject);
+        }
         yield return attackEndWait;
         status = Status.Wait;
     }
@@ -198,6 +209,11 @@ public class MonsterController : MonoBehaviour, IObjectPoolGameObject
             Stats.Execute(Target.gameObject);
         yield return new WaitForSeconds(0.25f);
         status = Status.Wait;
+    }
+
+    private void OnThisDie(DestructedDestroyEvent sender)
+    {
+        status = Status.Dead;
     }
 
     private void OnTargetDie(DestructedDestroyEvent sender)

@@ -11,7 +11,7 @@ public class DestructedPlayDieAnimation : MonoBehaviour, IDestructable
     private void Awake()
     {
         animationControl = GetComponent<AnimationControl>();
-
+        
         waitDie = new WaitUntil(IsEnd);
     }
 

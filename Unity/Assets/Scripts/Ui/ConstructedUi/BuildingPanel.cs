@@ -18,7 +18,7 @@ public class BuildingPanel : MonoBehaviour
     private BuildingTable.BuildingType type;
 
 
-    private void Awake()
+    private void Start()
     {
         InIt();
     }
@@ -41,7 +41,6 @@ public class BuildingPanel : MonoBehaviour
                     {
                         buildingElement.Init(DataTableManager.BuildingTable.GetDatas(currentType));
                         buildingElement.SetData(currentType, data[currentType]);
-
                     }
                 }
                 else

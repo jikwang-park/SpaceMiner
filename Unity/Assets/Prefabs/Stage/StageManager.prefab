@@ -11,7 +11,6 @@ GameObject:
   - component: {fileID: 1181366133848322711}
   - component: {fileID: 7149126086526843196}
   - component: {fileID: 4004876687242717253}
-  - component: {fileID: 5459253944340646252}
   - component: {fileID: 2783601912933395742}
   - component: {fileID: 4185081511514637580}
   - component: {fileID: 7995440791310639809}
@@ -50,7 +49,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   <StageUiManager>k__BackingField: {fileID: 0}
-  ingameStatus: 0
   statusMachineDatas:
     _serializedList:
     - Key: 0
@@ -76,31 +74,6 @@ MonoBehaviour:
   unit: {fileID: 0}
   worldCamera: {fileID: 0}
   followingSpeed: 10
---- !u!114 &5459253944340646252
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8551117843900428423}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 7051c1290448293439bc500dbf036e33, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  <SpawnPoints>k__BackingField:
-  - {x: -3, y: 0, z: 2}
-  - {x: 0, y: 0, z: 2}
-  - {x: 3, y: 0, z: 2}
-  - {x: -3, y: 0, z: 6}
-  - {x: 0, y: 0, z: 6}
-  - {x: 3, y: 0, z: 6}
-  - {x: -3, y: 0, z: 10}
-  - {x: 0, y: 0, z: 10}
-  - {x: 3, y: 0, z: 10}
-  - {x: -3, y: 0, z: 14}
-  - {x: 0, y: 0, z: 14}
-  - {x: 3, y: 0, z: 14}
 --- !u!114 &2783601912933395742
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -114,6 +87,19 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   laneCount: 3
+  <SpawnPoints>k__BackingField:
+  - {x: -3, y: 0, z: 2}
+  - {x: 0, y: 0, z: 2}
+  - {x: 3, y: 0, z: 2}
+  - {x: -3, y: 0, z: 6}
+  - {x: 0, y: 0, z: 6}
+  - {x: 3, y: 0, z: 6}
+  - {x: -3, y: 0, z: 10}
+  - {x: 0, y: 0, z: 10}
+  - {x: 3, y: 0, z: 10}
+  - {x: -3, y: 0, z: 14}
+  - {x: 0, y: 0, z: 14}
+  - {x: 3, y: 0, z: 14}
 --- !u!114 &4185081511514637580
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -129,6 +115,7 @@ MonoBehaviour:
   tankerPrefab: {fileID: -4436353755833136303, guid: 15bae1c5e78b4bc4ea647b991319cec3, type: 3}
   dealerPrefab: {fileID: -4436353755833136303, guid: a36bb68f74b9969459c63daf74e0d400, type: 3}
   healerPrefab: {fileID: -4436353755833136303, guid: 18ca9f3c1217fcf40b0b1fdf4d0bbea1, type: 3}
+  buttonManager: {fileID: 0}
   unitOffset: {x: 0, y: 0, z: -5}
 --- !u!114 &7995440791310639809
 MonoBehaviour:

@@ -95,7 +95,7 @@ public class DungeonPopup : MonoBehaviour
         previousDifficultyButton.interactable = index > 0;
         nextDifficultyButton.interactable = index + 1 < maxStage && index < subStages.Count - 1;
 
-        bool powerCondition = Variables.powerLevel > curStage.NeedPower;
+        bool powerCondition = UnitCombatPowerCalculator.ToTalCombatPower > curStage.NeedPower;
         bool planetCondition = (SaveLoadManager.Data.stageSaveData.highPlanet > curStage.NeedClearPlanet)
                                  || (SaveLoadManager.Data.stageSaveData.highPlanet == SaveLoadManager.Data.stageSaveData.clearedPlanet
                                      && SaveLoadManager.Data.stageSaveData.highStage == SaveLoadManager.Data.stageSaveData.clearedStage);

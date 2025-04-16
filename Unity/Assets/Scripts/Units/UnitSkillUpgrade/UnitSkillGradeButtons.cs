@@ -15,7 +15,7 @@ public class UnitSkillGradeButtons : MonoBehaviour
     [SerializeField]
     private Button legendButton;
     [SerializeField]
-    private UnitSkillUpgradePanel manager;
+    private UnitSkillUpgradePanel panel;
 
     public Dictionary<Grade, Button> buttonDictionary = new Dictionary<Grade, Button>();
 
@@ -41,19 +41,19 @@ public class UnitSkillGradeButtons : MonoBehaviour
 
     private void OnClickNormalButton()
     {
-        manager.SetGrade(Grade.Normal);
+        panel.SetGrade(Grade.Normal);
     }
     private void OnClickRareButton()
     {
-        manager.SetGrade(Grade.Rare);
+        panel.SetGrade(Grade.Rare);
     }
     private void OnClickEpicButton()
     {
-        manager.SetGrade(Grade.Epic);
+        panel.SetGrade(Grade.Epic);
     }
     private void OnClickLegendButton()
     {
-        manager.SetGrade(Grade.Legend);
+        panel.SetGrade(Grade.Legend);
     }
 
   

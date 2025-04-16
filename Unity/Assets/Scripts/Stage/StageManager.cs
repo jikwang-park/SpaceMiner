@@ -3,9 +3,6 @@ using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
-using UnityEngine.AddressableAssets;
-using UnityEngine.SceneManagement;
-
 public class StageManager : MonoBehaviour
 {
     public StageMonsterManager StageMonsterManager { get; private set; }
@@ -24,8 +21,13 @@ public class StageManager : MonoBehaviour
 
     public LinkedList<IObjectPoolGameObject> backgrounds { get; private set; } = new LinkedList<IObjectPoolGameObject>();
 
+    public LinkedList<DamageText> damageTexts { get; private set; } = new LinkedList<DamageText>();
+
     private Dictionary<IngameStatus, StageStatusMachine> machines = new Dictionary<IngameStatus, StageStatusMachine>();
     //private StageStatusMachine stageStatusMachine;
+
+    public event System.Action<IngameStatus> OnIngameStatusChanged;
+
 
     private void Awake()
     {
@@ -34,6 +36,7 @@ public class StageManager : MonoBehaviour
         ObjectPoolManager = GetComponent<ObjectPoolManager>();
         CameraManager = GetComponent<CameraManager>();
         StageUiManager.OnExitButtonClicked += StageUiManager_OnExitButtonClicked;
+        ItemManager.OnItemAmountChanged += OnItemAmountChanged;
         InitStatusMachines();
 
         //switch (ingameStatus)
@@ -47,6 +50,14 @@ public class StageManager : MonoBehaviour
         //}
     }
 
+    private void OnItemAmountChanged(int itemID, BigNumber Amount)
+    {
+        if (itemID == (int)Currency.Gold)
+        {
+            StageUiManager.IngameUIManager.SetGoldText();
+        }
+    }
+
     private void StageUiManager_OnExitButtonClicked()
     {
         SetStatus(IngameStatus.Planet);
@@ -55,6 +66,7 @@ public class StageManager : MonoBehaviour
     private void Start()
     {
         machines[IngameStatus].Start();
+        StageUiManager.IngameUIManager.SetGoldText();
         //stageStatusMachine.Start();
     }
 
@@ -89,6 +101,7 @@ public class StageManager : MonoBehaviour
             return;
         }
 
+        ReleaseDamageTexts();
         StageUiManager.curtain.SetFade(true);
         StageUiManager.UIGroupStatusManager.SetUIStatus(status);
 
@@ -102,20 +115,20 @@ public class StageManager : MonoBehaviour
 
         IngameStatus = status;
 
-        //switch (status)
-        //{
-        //    case IngameStatus.Planet:
-        //        SceneManager.LoadScene(0);
-        //        break;
-        //    case IngameStatus.Dungeon:
-        //        Addressables.LoadSceneAsync("Scenes/DungeonScene").WaitForCompletion();
-        //        break;
-        //}
+        OnIngameStatusChanged?.Invoke(IngameStatus);
     }
 
     public void ResetStage()
     {
         machines[IngameStatus].Reset();
+    }
+
+    public void ReleaseDamageTexts()
+    {
+        while (damageTexts.Count > 0)
+        {
+            damageTexts.Last.Value.Release();
+        }
     }
 
     public void ReleaseBackground()

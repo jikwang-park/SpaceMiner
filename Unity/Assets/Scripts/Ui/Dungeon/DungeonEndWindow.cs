@@ -73,8 +73,8 @@ public class DungeonEndWindow : MonoBehaviour
             {
                 nextText.SetString(NextID);
                 var nextStage = DataTableManager.DungeonTable.GetData(Variables.currentDungeonType, Variables.currentDungeonStage + 1);
-
-                bool powerCondition = Variables.powerLevel > nextStage.NeedPower;
+                
+                bool powerCondition = UnitCombatPowerCalculator.ToTalCombatPower > nextStage.NeedPower;
                 bool planetCondition = (SaveLoadManager.Data.stageSaveData.highPlanet > nextStage.NeedClearPlanet)
                     || (SaveLoadManager.Data.stageSaveData.highPlanet == SaveLoadManager.Data.stageSaveData.clearedPlanet
                         && SaveLoadManager.Data.stageSaveData.highStage == SaveLoadManager.Data.stageSaveData.clearedStage);

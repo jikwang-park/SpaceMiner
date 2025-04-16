@@ -612,13 +612,14 @@ GameObject:
   m_Component:
   - component: {fileID: 1221950418163136080}
   - component: {fileID: 1009444111298437799}
+  - component: {fileID: 3339463743469201906}
   - component: {fileID: 7919964116292975663}
   - component: {fileID: -1784775955471848761}
   - component: {fileID: -4924988232214859658}
   - component: {fileID: 1243400258020795216}
   - component: {fileID: 2391461391975421742}
   - component: {fileID: -5615388240247403861}
-  - component: {fileID: 665948827809093906}
+  - component: {fileID: 5658753366972486557}
   - component: {fileID: 1079423364701767642}
   - component: {fileID: 5226211330050787195}
   - component: {fileID: -2008964614060615097}
@@ -664,10 +665,26 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   status: 0
   <Stats>k__BackingField: {fileID: 0}
-  animations: {fileID: 0}
+  attackTime: 0.5
   <minDistanceInMonster>k__BackingField: 2
   TargetAcquired: 0
   currentLine: -1
+--- !u!114 &3339463743469201906
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5193546522354876939}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 75cbe4a1b6a103140a808bbe7b3e9e1f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  animationDict:
+    _serializedList: []
+  targetWeight: 1
+  fadeLength: 0.3
 --- !u!114 &7919964116292975663
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -685,7 +702,7 @@ MonoBehaviour:
   damage:
     currentValue: 
   armor:
-    currentValue: 1
+    currentValue: 0
   coolDown: 0
   range: 0
   criticalChance: 0
@@ -703,6 +720,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9e7889334f4e429499ec56ac18c6eda1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  skillTime: 0.5
 --- !u!114 &-4924988232214859658
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -753,7 +771,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8aa1921a0dca5b34c8e13a04da6dfd7a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!114 &665948827809093906
+--- !u!114 &5658753366972486557
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -762,7 +780,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 5193546522354876939}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 01c571c7b0d3c9242a0169cc80cc27d6, type: 3}
+  m_Script: {fileID: 11500000, guid: a318b2369402152468a58d09351a9482, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!111 &1079423364701767642

@@ -6,7 +6,7 @@ public abstract class CharacterStats : MonoBehaviour
 {
     public BigNumber maxHp;
     public BigNumber damage;
-    public BigNumber armor = 1;
+    public BigNumber armor = 0;
 
     public float coolDown;
     public float range;

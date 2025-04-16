@@ -19,7 +19,12 @@ public class MonsterController : MonoBehaviour, IObjectPoolGameObject
     [field: SerializeField]
     public MonsterStats Stats { get; private set; }
 
+    [SerializeField]
+    private float attackTime = 0.5f;
+
     private BehaviorTree<MonsterController> behaviorTree;
+
+    public AnimationControl AnimationController { get; private set; }
 
     public StageManager StageManager { get; private set; }
 
@@ -43,6 +48,8 @@ public class MonsterController : MonoBehaviour, IObjectPoolGameObject
 
     private bool isDrawRegion;
 
+    public bool AnimationFound { get; private set; }
+
     public bool CanAttack
     {
         get
@@ -61,9 +68,16 @@ public class MonsterController : MonoBehaviour, IObjectPoolGameObject
 
     public IObjectPool<GameObject> ObjectPool { get; set; }
 
+    private WaitUntil attackWait;
+    private WaitUntil attackEndWait;
+
     private void Awake()
     {
         Stats = GetComponent<MonsterStats>();
+        AnimationController = GetComponent<AnimationController>();
+        AnimationFound = AnimationController;
+        attackWait = new WaitUntil(() => AnimationController.GetProgress(AnimationControl.AnimationClipID.Attack) > attackTime);
+        attackEndWait = new WaitUntil(() => AnimationController.GetProgress(AnimationControl.AnimationClipID.Attack) >=1f);
         status = Status.Wait;
     }
 
@@ -79,7 +93,6 @@ public class MonsterController : MonoBehaviour, IObjectPoolGameObject
         isDrawRegion = false;
         TargetAcquired = false;
         currentLine = -1;
-        StageManager = null;
     }
 
     private void Update()
@@ -137,6 +150,7 @@ public class MonsterController : MonoBehaviour, IObjectPoolGameObject
 
         rootSelector.AddChild(attackSequence);
         rootSelector.AddChild(rushSequence);
+        rootSelector.AddChild(new MonsterIdleAction(this));
 
         behaviorTree.SetRoot(rootSelector);
     }
@@ -157,7 +171,23 @@ public class MonsterController : MonoBehaviour, IObjectPoolGameObject
     {
         status = Status.Attacking;
         LastAttackTime = Time.time;
-        StartCoroutine(AttackTimer());
+        if (AnimationFound)
+        {
+            StartCoroutine(CoAnimationAttack());
+        }
+        else
+        {
+            StartCoroutine(AttackTimer());
+        }
+    }
+
+    private IEnumerator CoAnimationAttack()
+    {
+        AnimationController.Play(AnimationControl.AnimationClipID.Attack);
+        yield return attackWait;
+        Stats.Execute(Target.gameObject);
+        yield return attackEndWait;
+        status = Status.Wait;
     }
 
     private IEnumerator AttackTimer()
@@ -191,6 +221,7 @@ public class MonsterController : MonoBehaviour, IObjectPoolGameObject
 
     public void Release()
     {
+        StageManager.StageMonsterManager.RemoveFromMonsterSet(this);
         ObjectPool.Release(gameObject);
     }
 }

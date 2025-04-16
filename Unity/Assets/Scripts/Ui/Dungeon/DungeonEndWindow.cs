@@ -8,10 +8,10 @@ using UnityEngine.UI;
 
 public class DungeonEndWindow : MonoBehaviour
 {
-    private const int ClearID = 65;
-    private const int FailID = 65;
-    private const int NextID = 45;
-    private const int RetryID = 46;
+    private const int ClearID = 142;
+    private const int FailID = 143;
+    private const int NextID = 151;
+    private const int RetryID = 153;
 
     [SerializeField]
     private LocalizationText nextText;

@@ -79,7 +79,7 @@ public class DungeonPopup : MonoBehaviour
 
         selectedDifficulty.text = curStage.Stage.ToString();
         keyText.SetStringArguments(curStage.NeedKeyItemCount.ToString(), ItemManager.GetItemAmount(curStage.NeedKeyItemID).ToString());
-        conditionPowerText.SetStringArguments(curStage.NeedPower.ToString());
+        conditionPowerText.SetStringArguments(new BigNumber(curStage.NeedPower).ToString());
 
         int highplanet = SaveLoadManager.Data.stageSaveData.highPlanet;
         if (SaveLoadManager.Data.stageSaveData.highPlanet != SaveLoadManager.Data.stageSaveData.clearedPlanet

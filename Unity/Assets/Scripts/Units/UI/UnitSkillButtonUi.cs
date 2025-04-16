@@ -11,7 +11,8 @@ public class UnitSkillButtonUi : MonoBehaviour
     [SerializeField]
     public Button SkillButton;
 
-    
+    [SerializeField]
+    private GameObject target;
 
     [SerializeField]
     private Unit unit;
@@ -31,11 +32,19 @@ public class UnitSkillButtonUi : MonoBehaviour
     }
     private void ButtonUpdate()
     {
+        if(unit.IsDead)
+        {
+            SkillButton.interactable = false;
+            target.SetActive(false);
+        }
         if ((!unit.isAutoSkillMode && !unit.isAutoSkillMode) || !unit.IsSkillCoolTimeOn)
         {
             SkillButton.interactable = false;
         }
-        SkillButton.interactable = true;
+        else
+        {
+            SkillButton.interactable = true;
+        }
     }
     private void ShowCooltime()
     {

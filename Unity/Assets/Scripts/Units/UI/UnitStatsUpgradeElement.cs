@@ -62,7 +62,7 @@ public class UnitStatsUpgradeElement : MonoBehaviour
     {
         int index = (int)type;
 
-        StatsImage.sprite = statsSprite[index-1];
+        StatsImage.sprite = statsSprite[index - 1];
     }
 
     public void Init(UnitUpgradeTable.Data data)

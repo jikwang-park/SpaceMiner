@@ -6,6 +6,7 @@ using Unity.VisualScripting;
 using Unity.VisualScripting.Antlr3.Runtime.Misc;
 using UnityEditor;
 using UnityEngine;
+using UnityEngine.UI;
 
 
 
@@ -86,8 +87,6 @@ public class Unit : MonoBehaviour
 
     public Grade currentGrade;
 
-
-
     public bool isAutoSkillMode;
     private void Awake()
     {
@@ -105,10 +104,10 @@ public class Unit : MonoBehaviour
     {
         get
         {
-            if(targetPos == null)
+            if (targetPos == null)
                 return false;
 
-            float distance = targetPos.position.z - transform.position.z ;
+            float distance = targetPos.position.z - transform.position.z;
 
             return distance < 1f;
         }
@@ -431,7 +430,7 @@ public class Unit : MonoBehaviour
         {
             unitStats.Execute(targetPos.gameObject);
         }
-        yield return new WaitForSeconds(unitStats.attackSpeed/100);
+        yield return new WaitForSeconds(unitStats.attackSpeed / 100);
         currentStatus = UnitStatus.Wait;
     }
 

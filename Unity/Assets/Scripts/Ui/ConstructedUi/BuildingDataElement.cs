@@ -29,6 +29,8 @@ public class BuildingDataElement: MonoBehaviour
     [SerializeField]
     private int level;
     [SerializeField]
+    private int nextLevel;
+    [SerializeField]
     private int id;
     [SerializeField]
     private float value;
@@ -76,15 +78,32 @@ public class BuildingDataElement: MonoBehaviour
     {
         var data = DataTableManager.BuildingTable.GetDatas(type);
         var buildingExplanId = data[level].DetailStringID;
-        var bulidingExplanNextId = data[level + 1].DetailStringID;
         currentValueText.SetString(buildingExplanId, (data[level].Value).ToString());
-        nextValueText.SetString(bulidingExplanNextId, (data[level + 1].Value).ToString());
+        if (level <= maxLevel - 1)
+        {
+            var bulidingExplanNextId = data[level + 1].DetailStringID;
+            nextValueText.SetString(bulidingExplanNextId, (data[level + 1].Value).ToString());
+        }
+        else
+        {
+            nextValueText.SetString(60010);
+        }
+
     }
 
-
-
+    private void SetNextLevel(int level)
+    {
+        nextLevel = level + 1;
+    }
+   
     public void SetLevelData(int level)
     {
+        if (IsMaxLevel(level))
+        {
+            SetMaxLevel(level);
+            return;
+        }
+
         id = data[level].ID;
         this.level = data[level].Level;
         value = data[level].Value;
@@ -92,7 +111,10 @@ public class BuildingDataElement: MonoBehaviour
         maxLevel = data[level].MaxLevel;
         needItemCount = data[level].NeedItemCount;
         currentType = data[level].Type;
-        nextValue = data[level + 1].Value;
+        SetNextLevel(level);
+      
+
+        nextValue = data[nextLevel].Value;
         if (level == 0)
         {
             isLocked = true;
@@ -102,16 +124,27 @@ public class BuildingDataElement: MonoBehaviour
             isLocked = false;
         }
         SetFirstUpgrade(isLocked);
-        SetConstructionInfo();
+        SetConstructionInfo(level,currentType);
         SetBuildingExplanText(currentType, level);
     }
 
+    private void SetMaxLevel(int level)
+    {
+        id = data[level].ID;
+        this.level = data[level].Level;
+        value = data[level].Value;
+        itemId = data[level].NeedItemID;
+        maxLevel = data[level].MaxLevel;
+        needItemCount = data[level].NeedItemCount;
+        currentType = data[level].Type;
+        SetConstructionInfo(level, currentType);
+        SetBuildingExplanText(currentType, level);
+    }
 
-
-    private void SetConstructionInfo()
+    private void SetConstructionInfo(int level,BuildingTable.BuildingType type)
     {
         SetLevelText(level);
-        SetCountText(currentType);
+        SetCountText(type);
     }
 
     private void SetLevelText(int level)
@@ -125,7 +158,15 @@ public class BuildingDataElement: MonoBehaviour
     }
     private void SetCountText(BuildingTable.BuildingType type)
     {
-        upgradeButtonCountText.text = $"{needItemCount}";
+        if (level <= maxLevel - 1)
+        {
+            upgradeButtonCountText.text = $"{needItemCount}";
+        }
+        else
+        {
+            upgradeButtonCountText.text = $"최대레벨";
+        }
+
     }
     public void SetData(BuildingTable.BuildingType type,int level)
     {
@@ -145,7 +186,7 @@ public class BuildingDataElement: MonoBehaviour
 
     public void LevelUp()
     {
-        if (level == maxLevel)
+        if (level > maxLevel)
             return;
 
         level++;
@@ -154,7 +195,7 @@ public class BuildingDataElement: MonoBehaviour
         SetLevelText(level);
 
         stageManager.UnitPartyManager.AddBuildingStats(currentType,value);
-        SetConstructionInfo();
+        SetConstructionInfo(level, currentType);
 
         SaveLoadManager.Data.buildingData.buildingLevels[currentType] = level;
         SaveLoadManager.SaveGame();
@@ -169,20 +210,20 @@ public class BuildingDataElement: MonoBehaviour
    
     private bool IsMaxLevel(int level)
     {
-        if(level == maxLevel)
+        if(level >= maxLevel)
         {
-            //나중에 추가
-            buildingText.SetString(60010);
             return true;
+
         }
         return false;
     }
 
     private void Update()
     {
-        if (IsMaxLevel(level))
+        if(IsMaxLevel(level))
         {
             upgradeButton.interactable = false;
+
         }
     }
 

@@ -24,15 +24,12 @@ public class GuideQuestWindow : MonoBehaviour
     [SerializeField]
     private AddressableImage questRewardIcon;
 
-    private bool cleared;
-
     private Image background;
 
     private StageManager stageManager;
 
     private void Awake()
     {
-        cleared = false;
         background = GetComponent<Image>();
         GuideQuestManager.OnQuestChanged += SetQuestTargetReward;
         GuideQuestManager.OnQuestProgressChanged += UpdateProgress;
@@ -58,7 +55,6 @@ public class GuideQuestWindow : MonoBehaviour
         {
             return;
         }
-
         var questData = GuideQuestManager.currentQuestData;
         switch (questData.MissionClearType)
         {
@@ -77,7 +73,6 @@ public class GuideQuestWindow : MonoBehaviour
 
     private void OnQuestClear()
     {
-        cleared = true;
         background.color = clearedBackColor;
     }
 
@@ -122,17 +117,17 @@ public class GuideQuestWindow : MonoBehaviour
 
     public void QuestSuccess()
     {
-        if (cleared)
+        if (!GuideQuestManager.isCleared)
         {
-            cleared = false;
-            stageManager.StageUiManager.IngameUIManager.GuideQuestRewardWindow.Show(GuideQuestManager.currentQuestData);
-            GuideQuestManager.GetReward();
-            SetQuestTargetReward();
-            UpdateProgress();
-            if (GuideQuestManager.isCleared)
-            {
-                background.color = clearedBackColor;
-            }
+            return;
+        }
+        stageManager.StageUiManager.IngameUIManager.GuideQuestRewardWindow.Show(GuideQuestManager.currentQuestData);
+        GuideQuestManager.GetReward();
+        SetQuestTargetReward();
+        UpdateProgress();
+        if (GuideQuestManager.isCleared)
+        {
+            background.color = clearedBackColor;
         }
     }
 }

@@ -187,6 +187,7 @@ public class PlanetStageStatusMachine : StageStatusMachine
 
     protected void NextStage()
     {
+        
         if (status == Status.ClearPlanet
             || status == Status.Defeat
             || status == Status.Timeout
@@ -196,6 +197,10 @@ public class PlanetStageStatusMachine : StageStatusMachine
         }
         else
         {
+            stageManager.UnitPartyManager.ResetUnitHealth();
+            stageManager.UnitPartyManager.ResetSkillCoolTime();
+            stageManager.UnitPartyManager.ResetBehaviorTree();
+
             SetStageText();
             SetStageData();
             NextWave();

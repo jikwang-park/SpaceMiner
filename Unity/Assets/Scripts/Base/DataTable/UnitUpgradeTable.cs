@@ -20,7 +20,7 @@ public class UnitUpgradeTable : DataTable
         public UpgradeType Type { get; set; }
         public float Value { get; set; }
         public int NeedItemID { get; set; }
-        public int NeedItemCount { get; set; }
+        public string NeedItemCount { get; set; }
         public int MaxLevel { get; set; }
         public int NameStringID { get; set; }
 

@@ -13,12 +13,12 @@ public class DungeonTable : DataTable
         public int NameStringID { get; set; }
         public int Stage { get; set; }
         public int NeedKeyItemID { get; set; }
-        public int NeedKeyItemCount { get; set; }
+        public string NeedKeyItemCount { get; set; }
         public int RewardItemID { get; set; }
-        public int FirstClearRewardItemCount { get; set; }
-        public int ClearRewardItemCount { get; set; }
+        public string FirstClearRewardItemCount { get; set; }
+        public string ClearRewardItemCount { get; set; }
         public int NeedClearPlanet { get; set; }
-        public int NeedPower { get; set; }
+        public string NeedPower { get; set; }
         public int KeyPoint { get; set; }
         public float LimitTime { get; set; }
         public int WaveID { get; set; }
@@ -32,12 +32,12 @@ public class DungeonTable : DataTable
             NameStringID = int.Parse(argument[2]);
             Stage = int.Parse(argument[3]);
             NeedKeyItemID = int.Parse(argument[4]);
-            NeedKeyItemCount = int.Parse(argument[5]);
+            NeedKeyItemCount = argument[5];
             RewardItemID = int.Parse(argument[6]);
-            FirstClearRewardItemCount = int.Parse(argument[7]);
-            ClearRewardItemCount = int.Parse(argument[8]);
+            FirstClearRewardItemCount = argument[7];
+            ClearRewardItemCount = argument[8];
             NeedClearPlanet = int.Parse(argument[9]);
-            NeedPower = int.Parse(argument[10]);
+            NeedPower = argument[10];
             KeyPoint = int.Parse(argument[11]);
             LimitTime = float.Parse(argument[12]);
             WaveID = int.Parse(argument[13]);

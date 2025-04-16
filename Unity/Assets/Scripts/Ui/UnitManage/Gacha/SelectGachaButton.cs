@@ -29,7 +29,7 @@ public class SelectGachaButton : MonoBehaviour
         nameText.SetString(data.NameStringID);
         icon.SetSprite(DataTableManager.ItemTable.GetData(data.NeedItemID1).SpriteID);
     }
-    private void OnClickSelectButton()
+    public void OnClickSelectButton()
     {
         if(parent != null)
         {

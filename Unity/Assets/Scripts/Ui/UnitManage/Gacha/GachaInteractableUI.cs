@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.AddressableAssets;
 using UnityEngine.ResourceManagement.AsyncOperations;
@@ -15,7 +16,10 @@ public class GachaInteractableUI : MonoBehaviour
     private GachaPurchaseUI gachaPurchaseUI;
     [SerializeField]
     private Transform contentParent;
-    private List<SelectGachaButton> gachaButtons = new List<SelectGachaButton>();
+    [SerializeField]
+    private List<Sprite> backgroundSprites = new List<Sprite>();
+
+    private Dictionary<int, Sprite> gachaIdSpriteMapping = new Dictionary<int, Sprite>();
     private const string prefabFormat = "Prefabs/UI/SelectGachaButton";
     // Start is called before the first frame update
     void Awake()
@@ -46,13 +50,13 @@ public class GachaInteractableUI : MonoBehaviour
                     SelectGachaButton selectGachaButton = elementObj.GetComponent<SelectGachaButton>();
                     selectGachaButton.Initialize(gacha.Value);
                     selectGachaButton.parent = this;
-                    gachaButtons.Add(selectGachaButton);
+                    gachaIdSpriteMapping.Add(gacha.Value.ID, backgroundSprites[completedCount]);
                 }
 
                 completedCount++;
                 if(totalCount == completedCount)
                 {
-                    OnClickSelectGachaButton(1000); //250331 HKY 데이터형 변경
+                    OnClickSelectGachaButton(gachaIdSpriteMapping.First().Key);
                 }
             };
         }
@@ -61,6 +65,10 @@ public class GachaInteractableUI : MonoBehaviour
     public void OnClickSelectGachaButton(int gachaId)
     {
         gachaPurchaseUI.Initialize(DataTableManager.GachaTable.GetData(gachaId));
-        gachaDescribeUI.Initialize(DataTableManager.GachaTable.GetData(gachaId)); //250331 HKY 데이터형 변경
+        gachaDescribeUI.Initialize(DataTableManager.GachaTable.GetData(gachaId), gachaIdSpriteMapping[gachaId]); //250331 HKY 데이터형 변경
+    }
+    public Sprite GetBackgroundSprite(int gachaId)
+    {
+        return gachaIdSpriteMapping[gachaId];
     }
 }

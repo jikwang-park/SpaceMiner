@@ -49,8 +49,8 @@ public class SoldierInteractableUI : MonoBehaviour
         var currentElementSprite = currentElement.GetComponent<Image>().sprite;
         var nextElementSprite = nextElement.GetComponent<Image>().sprite;
 
-        currentSoldierInfo.Initialize(currentElement.Level.ToString(), "", currentElementSprite);
-        nextSoldierInfo.Initialize(nextElement.Level.ToString(), "", nextElementSprite);
+        currentSoldierInfo.Initialize(currentElement.Grade, currentElement.Level, "", currentElementSprite);
+        nextSoldierInfo.Initialize(nextElement.Grade, nextElement.Level, "", nextElementSprite);
 
         currentElementCount = currentElement.Count;
         nextElementCount = nextElement.Count;

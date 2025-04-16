@@ -7,7 +7,9 @@ using UnityEngine.UI;
 public class SoldierInfoImage : MonoBehaviour
 {
     [SerializeField]
-    private TextMeshProUGUI gradeText;
+    private LocalizationText gradeText;
+    [SerializeField]
+    private TextMeshProUGUI levelText;
     [SerializeField]
     private TextMeshProUGUI countText;
     private Image image;
@@ -16,9 +18,11 @@ public class SoldierInfoImage : MonoBehaviour
         image = GetComponent<Image>();
     }
 
-    public void Initialize(string grade, string count, Sprite sprite)
+    public void Initialize(Grade grade, int level, string count, Sprite sprite)
     {
-        gradeText.text = $"Grade {grade}";
+        int stringId = DataTableManager.DefaultDataTable.GetID(grade.ToString() + "StringID");
+        gradeText.SetString(stringId);
+        levelText.text = $"Lv. {level}";
         countText.text = count;
         if(image == null)
         {

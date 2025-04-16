@@ -9,7 +9,7 @@ public class BuildingDataElement: MonoBehaviour
     [SerializeField]
     private Button upgradeButton;
     [SerializeField]
-    private TextMeshProUGUI upgradeBuildingText;
+    private LocalizationText buildingText;
     [SerializeField]
     private TextMeshProUGUI upgradeButtonCountText;
     [SerializeField]
@@ -75,8 +75,8 @@ public class BuildingDataElement: MonoBehaviour
     private void SetBuildingExplanText(BuildingTable.BuildingType type , int level)
     {
         var data = DataTableManager.BuildingTable.GetDatas(type);
-        var buildingExplanId = data[level].NameStringID;
-        var bulidingExplanNextId = data[level + 1].NameStringID;
+        var buildingExplanId = data[level].DetailStringID;
+        var bulidingExplanNextId = data[level + 1].DetailStringID;
         currentValueText.SetString(buildingExplanId, (data[level].Value).ToString());
         nextValueText.SetString(bulidingExplanNextId, (data[level + 1].Value).ToString());
     }
@@ -103,12 +103,9 @@ public class BuildingDataElement: MonoBehaviour
         }
         SetFirstUpgrade(isLocked);
         SetConstructionInfo();
+        SetBuildingExplanText(currentType, level);
     }
 
-    private void SetValueText(int level)
-    {
-
-    }
 
 
     private void SetConstructionInfo()
@@ -123,8 +120,8 @@ public class BuildingDataElement: MonoBehaviour
     }
     private void SetBuildingText(BuildingTable.BuildingType type)
     {
-        //로컬라이제이션 텍스트로 변경처리 해야됌
-        upgradeBuildingText.text = "건물";
+        //나중에 추가해줘야됌 테이블
+        buildingText.SetString(90);
     }
     private void SetCountText(BuildingTable.BuildingType type)
     {
@@ -138,6 +135,7 @@ public class BuildingDataElement: MonoBehaviour
         SetImage(type, level);
         SetBuildingName(type, level);
         SetBuildingText(type);
+        SetBuildingExplanText(type, level);
     }
 
     public float GetCurrentValue()
@@ -173,7 +171,8 @@ public class BuildingDataElement: MonoBehaviour
     {
         if(level == maxLevel)
         {
-            upgradeBuildingText.text = "최대레벨달성";
+            //나중에 추가
+            buildingText.SetString(60010);
             return true;
         }
         return false;

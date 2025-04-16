@@ -274,7 +274,7 @@ public class UnitPartyManager : MonoBehaviour
     {
         var buildingStats = SaveLoadManager.Data.buildingData.buildingLevels;
 
-        for (int k = (int)BuildingTable.BuildingType.IdleTime; k <= (int)BuildingTable.BuildingType.Mining; ++k)
+        for (int k = (int)BuildingTable.BuildingType.AttackPoint; k <= (int)BuildingTable.BuildingType.IdleTime; ++k)
         {
             var currentBuildingType = (BuildingTable.BuildingType)k;
             var currentBuildingLevel = buildingStats[currentBuildingType];

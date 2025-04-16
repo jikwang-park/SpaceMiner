@@ -15,10 +15,15 @@ public class GachaResultPanelUI : MonoBehaviour
     private List<Sprite> gradeSprites;
     [SerializeField]
     private GachaPurchaseUI gachaPurchaseUI;
+    [SerializeField]
+    private GachaInteractableUI gachaInteractableUI;
+    [SerializeField]
+    private Image backgroundImage;
 
     private const string prefabFormat = "Prefabs/UI/SoldierInfoImage";
     private WaitForSeconds waitSecondsToNextResult = new WaitForSeconds(0.05f);
     private Coroutine coDisplayResult;
+
     private void Awake()
     {
         closeButton.onClick.AddListener(() => gameObject.SetActive(false));
@@ -29,6 +34,7 @@ public class GachaResultPanelUI : MonoBehaviour
         {
             StopCoroutine(coDisplayResult);
         }
+        backgroundImage.sprite = gachaInteractableUI.GetBackgroundSprite(gachaId);
         coDisplayResult = StartCoroutine(DisplayResult(datas));
         gachaPurchaseUI.Initialize(DataTableManager.GachaTable.GetData(gachaId));
     }
@@ -51,7 +57,7 @@ public class GachaResultPanelUI : MonoBehaviour
                     SoldierInfoImage soldierInfoImage = elementObj.GetComponent<SoldierInfoImage>();
                     if (soldierInfoImage != null)
                     {
-                        soldierInfoImage.Initialize(data.Level.ToString(), "", gradeSprites[(int)data.Grade - 1]);
+                        soldierInfoImage.Initialize(data.Grade, data.Level, "", gradeSprites[(int)data.Grade - 1]);
                     }
                 }
                 else

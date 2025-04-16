@@ -19,7 +19,7 @@ public class SoldierInfoUI : MonoBehaviour
     {
         var sprite = element.GetComponent<Image>().sprite;
         var data = DataTableManager.SoldierTable.GetData(element.soldierId);
-        soldierInfo.Initialize(element.Level.ToString(), element.Count.ToString(), sprite);
+        soldierInfo.Initialize(element.Grade, element.Level, element.Count.ToString(), sprite);
         gradeText.text = data.Grade.ToString();
         nameText.SetString(data.NameStringID);
     }

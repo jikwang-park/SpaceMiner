@@ -50,7 +50,10 @@ public class GachaPurchaseUI : MonoBehaviour
         if(gachaResults != null)
         {
             InventoryManager.Add(gachaResults);
-            gachaResultPanelUI.gameObject.SetActive(true);
+            if(!gachaResultPanelUI.gameObject.activeSelf)
+            {
+                gachaResultPanelUI.gameObject.SetActive(true);
+            }
             gachaResultPanelUI.SetResult(gachaResults, currentGachaId);
             Initialize(DataTableManager.GachaTable.GetData(currentGachaId));
         }

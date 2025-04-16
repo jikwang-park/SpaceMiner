@@ -9,7 +9,7 @@ public class BuildingDataElement: MonoBehaviour
     [SerializeField]
     private Button upgradeButton;
     [SerializeField]
-    private TextMeshProUGUI upgradeBuildingText;
+    private LocalizationText upgradeBuildingText;
     [SerializeField]
     private TextMeshProUGUI upgradeButtonCountText;
     [SerializeField]
@@ -123,8 +123,8 @@ public class BuildingDataElement: MonoBehaviour
     }
     private void SetBuildingText(BuildingTable.BuildingType type)
     {
-        //로컬라이제이션 텍스트로 변경처리 해야됌
-        upgradeBuildingText.text = "건물";
+        //나중에 추가해줘야됌 테이블
+        upgradeBuildingText.SetString(90);
     }
     private void SetCountText(BuildingTable.BuildingType type)
     {
@@ -173,7 +173,8 @@ public class BuildingDataElement: MonoBehaviour
     {
         if(level == maxLevel)
         {
-            upgradeBuildingText.text = "최대레벨달성";
+            //나중에 추가
+            upgradeBuildingText.SetString(60010);
             return true;
         }
         return false;

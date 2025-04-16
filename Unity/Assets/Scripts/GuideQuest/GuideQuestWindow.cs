@@ -116,7 +116,7 @@ public class GuideQuestWindow : MonoBehaviour
         }
         var itemSprite = DataTableManager.ItemTable.GetData(questData.RewardItemID);
         questRewardIcon.SetSprite(itemSprite.SpriteID);
-        int rewardCount = questData.RewardItemCount;
+        BigNumber rewardCount = questData.RewardItemCount;
         rewardCountText.text = rewardCount.ToString();
     }
 

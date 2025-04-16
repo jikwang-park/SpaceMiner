@@ -22,8 +22,8 @@ public class ShopTable : DataTable
         public int NeedItemID { get; set; }
         public string NeedItemCount { get; set; }
         public int PaymentItemID { get; set; }
-        public string PayCount { get; set; }
-        public string DailyPurchaseLimit { get; set; }
+        public int PayCount { get; set; }
+        public int DailyPurchaseLimit { get; set; }
         public int ResetTime { get; set; }
 
         public void Set(string[] argument)
@@ -41,8 +41,8 @@ public class ShopTable : DataTable
             NeedItemID = int.Parse(argument[3]);
             NeedItemCount = argument[4];
             PaymentItemID = int.Parse(argument[5]);
-            PayCount = argument[6];
-            DailyPurchaseLimit = argument[7];
+            PayCount = int.Parse(argument[6]);
+            DailyPurchaseLimit = int.Parse(argument[7]);
             ResetTime = int.Parse(argument[8]);
         }
     }

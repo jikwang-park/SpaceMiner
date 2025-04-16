@@ -43,7 +43,7 @@ public class UnitStatsUpgrade : MonoBehaviour
                     if (statsElement != null)
                     {
                         statsElement.SetData(data[currentType], DataTableManager.UnitUpgradeTable.GetData(currentType));
-                        statsElement.SetInitString();
+                        statsElement.SetInitString(currentType);
                         statsElement.SetImage(currentType, statsSprite);
                     }
 

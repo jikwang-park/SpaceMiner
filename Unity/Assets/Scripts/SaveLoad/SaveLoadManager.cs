@@ -115,7 +115,7 @@ public static class SaveLoadManager
                     isLocked = true,
                     grade = soldierData.Grade,
                     count = 0,
-                    level = 0
+                    level = soldierData.Level,
                 };
                 inventoryData.elements.Add(elementData);
             }

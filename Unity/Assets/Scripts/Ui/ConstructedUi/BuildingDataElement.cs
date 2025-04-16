@@ -9,17 +9,23 @@ public class BuildingDataElement: MonoBehaviour
     [SerializeField]
     private Button upgradeButton;
     [SerializeField]
-    private TextMeshProUGUI upgradeButtonText;
+    private TextMeshProUGUI upgradeBuildingText;
     [SerializeField]
-    private Image constructionImage;
+    private TextMeshProUGUI upgradeButtonCountText;
     [SerializeField]
     private TextMeshProUGUI levelText;
     [SerializeField]
-    private TextMeshProUGUI constructionExplanText;
-    [SerializeField]
     private Image lockedImage;
+    [SerializeField]
+    private LocalizationText buildingName;
+    [SerializeField]
+    private LocalizationText currentValueText;
+    [SerializeField]
+    private LocalizationText nextValueText;
 
 
+    [SerializeField]
+    private float nextValue;
     [SerializeField]
     private int level;
     [SerializeField]
@@ -36,8 +42,9 @@ public class BuildingDataElement: MonoBehaviour
     private int needItemCount;
     [SerializeField]
     private bool isLocked = true;
+ 
     [SerializeField]
-    private float currentValue = 0;
+    private AddressableImage buildingImage;
 
     [SerializeField]
     private BuildingTable.BuildingType currentType;
@@ -55,9 +62,26 @@ public class BuildingDataElement: MonoBehaviour
     public void Init(List<BuildingTable.Data> data)
     {
         this.data = data;
-        level = 0;
         SetLevelData(level);
     }
+
+    private void SetBuildingName(BuildingTable.BuildingType type , int level)
+    {
+        var data = DataTableManager.BuildingTable.GetDatas(type);
+        var nameId = data[level].NameStringID;
+        buildingName.SetString(nameId);
+    }
+    
+    private void SetBuildingExplanText(BuildingTable.BuildingType type , int level)
+    {
+        var data = DataTableManager.BuildingTable.GetDatas(type);
+        var buildingExplanId = data[level].NameStringID;
+        var bulidingExplanNextId = data[level + 1].NameStringID;
+        currentValueText.SetString(buildingExplanId, (data[level].Value).ToString());
+        nextValueText.SetString(bulidingExplanNextId, (data[level + 1].Value).ToString());
+    }
+
+
 
     public void SetLevelData(int level)
     {
@@ -68,7 +92,8 @@ public class BuildingDataElement: MonoBehaviour
         maxLevel = data[level].MaxLevel;
         needItemCount = data[level].NeedItemCount;
         currentType = data[level].Type;
-        if(level == 0)
+        nextValue = data[level + 1].Value;
+        if (level == 0)
         {
             isLocked = true;
         }
@@ -78,33 +103,41 @@ public class BuildingDataElement: MonoBehaviour
         }
         SetFirstUpgrade(isLocked);
         SetConstructionInfo();
-
     }
 
-    public void GetCurrentSequence()
+    private void SetValueText(int level)
     {
 
     }
+
 
     private void SetConstructionInfo()
     {
         SetLevelText(level);
-        SetConstructionExplanText(currentType);
+        SetCountText(currentType);
     }
 
     private void SetLevelText(int level)
     {
         levelText.text = $"LV.{level}";
     }
-    private void SetConstructionExplanText(BuildingTable.BuildingType type)
+    private void SetBuildingText(BuildingTable.BuildingType type)
     {
-        constructionExplanText.text = $"{type.ToString()} \n {itemId} 가 {needItemCount} 개 필요합니다";
+        //로컬라이제이션 텍스트로 변경처리 해야됌
+        upgradeBuildingText.text = "건물";
+    }
+    private void SetCountText(BuildingTable.BuildingType type)
+    {
+        upgradeButtonCountText.text = $"{needItemCount}";
     }
     public void SetData(BuildingTable.BuildingType type,int level)
     {
         currentType = type;
         this.level = level;
         SetLevelData(level);
+        SetImage(type, level);
+        SetBuildingName(type, level);
+        SetBuildingText(type);
     }
 
     public float GetCurrentValue()
@@ -118,6 +151,7 @@ public class BuildingDataElement: MonoBehaviour
             return;
 
         level++;
+        
         SetLevelData(level);
         SetLevelText(level);
 
@@ -128,12 +162,18 @@ public class BuildingDataElement: MonoBehaviour
         SaveLoadManager.SaveGame();
     }
 
+    public void SetImage(BuildingTable.BuildingType type, int level)
+    {
+        var data = DataTableManager.BuildingTable.GetDatas(type);
+        var spriteId = data[level].SpriteID;
+        buildingImage.SetSprite(spriteId);
+    }
    
     private bool IsMaxLevel(int level)
     {
         if(level == maxLevel)
         {
-            upgradeButtonText.text = "최대레벨달성";
+            upgradeBuildingText.text = "최대레벨달성";
             return true;
         }
         return false;

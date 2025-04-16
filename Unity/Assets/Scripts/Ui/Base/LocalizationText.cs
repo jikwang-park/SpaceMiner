@@ -44,9 +44,14 @@ public class LocalizationText : MonoBehaviour
 
     public void OnChangedLanguage(Languages lang)
     {
+        if(!gameObject.activeInHierarchy)
+        {
+            return;
+        }
         var stringTableId = DataTableIds.stringTables[(int)lang];
         var stringTable = DataTableManager.GetTable<StringTable>(stringTableId);
         var gotString = stringTable.GetData(stringId);
+
         if (string.IsNullOrEmpty(gotString))
         {
             text.text = string.Format(notFoundFormat, stringId);

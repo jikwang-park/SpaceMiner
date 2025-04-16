@@ -17,7 +17,7 @@ public class InventoryElement : MonoBehaviour
     [SerializeField]
     private Image equipImage;
     [SerializeField]
-    private TextMeshProUGUI gradeText;
+    private LocalizationText gradeText;
     [SerializeField]
     private TextMeshProUGUI countText;
     [SerializeField]
@@ -57,6 +57,11 @@ public class InventoryElement : MonoBehaviour
     public void SetGrade(Grade grade)
     {
         this.Grade = grade;
+        if(gradeText != null)
+        {
+            int stringId = DataTableManager.DefaultDataTable.GetID(Grade.ToString() + "StringID");
+            gradeText.SetString(stringId);
+        }
     }
 
     public void SetLevel(int level)

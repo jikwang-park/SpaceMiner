@@ -33,6 +33,7 @@ public class UnitSkillGradeButtons : MonoBehaviour
         buttonDictionary.Add(Grade.Epic, epicButton);
         buttonDictionary.Add(Grade.Rare, rareButton);
         buttonDictionary.Add(Grade.Legend, legendButton);
+        panel.SetGradeButtons();
     }
     public void SetButton(Grade grade, bool result)
     {

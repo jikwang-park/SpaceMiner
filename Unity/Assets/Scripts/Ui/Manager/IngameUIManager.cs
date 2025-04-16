@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class IngameUIManager : MonoBehaviour
 {
@@ -26,6 +27,9 @@ public class IngameUIManager : MonoBehaviour
     public StageSelectWindow StageSelectWindow { get; private set; }
     [field: SerializeField]
     public GuideQuestRewardWindow GuideQuestRewardWindow { get; private set; }
+
+    [field: SerializeField]
+    public Toggle RushSelectToggle { get; private set; }
 
     [SerializeField]
     private SerializedDictionary<IngameStatus, List<GameObject>> statusObjectLists;

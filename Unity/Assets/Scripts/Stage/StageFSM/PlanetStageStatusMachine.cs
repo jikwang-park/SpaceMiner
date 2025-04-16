@@ -189,7 +189,8 @@ public class PlanetStageStatusMachine : StageStatusMachine
     {
         if (status == Status.ClearPlanet
             || status == Status.Defeat
-            || status == Status.Timeout)
+            || status == Status.Timeout
+            || stageManager.UnitPartyManager.UnitCount != 3)
         {
             Reset();
         }
@@ -207,8 +208,7 @@ public class PlanetStageStatusMachine : StageStatusMachine
         {
             --stageLoadData.currentStage;
         }
-
-        Variables.stageMode = StageMode.Repeat;
+        stageManager.StageUiManager.IngameUIManager.RushSelectToggle.isOn = false;
     }
 
     protected void GetFirstReward()

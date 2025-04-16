@@ -9,6 +9,8 @@ public class SelectGachaButton : MonoBehaviour
 {
     [SerializeField]
     private LocalizationText nameText;
+    [SerializeField]
+    private AddressableImage icon;
     public int gachaId { get; private set; } //250331 HKY 데이터형 변경
     private Button button;
     public GachaInteractableUI parent;
@@ -23,8 +25,9 @@ public class SelectGachaButton : MonoBehaviour
 
     public void Initialize(GachaTable.Data data)
     {
-        nameText.SetString(data.NameStringID);
         gachaId = data.ID;
+        nameText.SetString(data.NameStringID);
+        icon.SetSprite(DataTableManager.ItemTable.GetData(data.NeedItemID1).SpriteID);
     }
     private void OnClickSelectButton()
     {

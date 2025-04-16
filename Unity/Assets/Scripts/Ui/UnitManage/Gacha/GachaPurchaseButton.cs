@@ -8,7 +8,7 @@ using UnityEngine.UI;
 public class GachaPurchaseButton : MonoBehaviour
 {
     [SerializeField]
-    private Image image;
+    private AddressableImage image;
     [SerializeField]
     private TextMeshProUGUI costText;
     [SerializeField]
@@ -20,7 +20,7 @@ public class GachaPurchaseButton : MonoBehaviour
     private void Awake()
     {
     }
-    public void Initialize(int count, BigNumber cost, Sprite sprite = null)
+    public void Initialize(int count, BigNumber cost, int itemId)
     {
         this.count = count;
         this.cost = cost;
@@ -28,6 +28,7 @@ public class GachaPurchaseButton : MonoBehaviour
         // iconImage.sprite = sprite;
         countText.SetStringArguments(count.ToString());
         costText.text = $"{this.cost}";
+        image.SetSprite(DataTableManager.ItemTable.GetData(itemId).SpriteID);
     }
 
     public void OnClickGachaButton()

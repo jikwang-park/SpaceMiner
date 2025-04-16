@@ -15,6 +15,7 @@ public class GachaInteractableUI : MonoBehaviour
     private GachaPurchaseUI gachaPurchaseUI;
     [SerializeField]
     private Transform contentParent;
+    private List<SelectGachaButton> gachaButtons = new List<SelectGachaButton>();
     private const string prefabFormat = "Prefabs/UI/SelectGachaButton";
     // Start is called before the first frame update
     void Awake()
@@ -45,6 +46,7 @@ public class GachaInteractableUI : MonoBehaviour
                     SelectGachaButton selectGachaButton = elementObj.GetComponent<SelectGachaButton>();
                     selectGachaButton.Initialize(gacha.Value);
                     selectGachaButton.parent = this;
+                    gachaButtons.Add(selectGachaButton);
                 }
 
                 completedCount++;

@@ -28,7 +28,7 @@ public class BuildingPanel : MonoBehaviour
     {
         var data = SaveLoadManager.Data.buildingData.buildingLevels;
 
-        for (int i = (int)BuildingTable.BuildingType.IdleTime; i <= (int)BuildingTable.BuildingType.Mining; ++i)
+        for (int i = (int)BuildingTable.BuildingType.AttackPoint; i <= (int)BuildingTable.BuildingType.IdleTime; ++i)
         {
             var currentType = (BuildingTable.BuildingType)i;
             Addressables.InstantiateAsync(formatPath, parentTransform).Completed += (AsyncOperationHandle<GameObject> handle) =>

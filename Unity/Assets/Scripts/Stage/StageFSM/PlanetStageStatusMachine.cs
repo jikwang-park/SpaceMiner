@@ -9,7 +9,6 @@ public class PlanetStageStatusMachine : StageStatusMachine
     protected enum Status
     {
         Play,
-        SpawnWait,
         Clear,
         ClearPlanet,
         Timeout,
@@ -31,13 +30,10 @@ public class PlanetStageStatusMachine : StageStatusMachine
 
     private Status status;
 
-    protected float stepTimer;
-
     protected float remainingTime;
 
     public PlanetStageStatusMachine(StageManager stageManager) : base(stageManager)
     {
-        status = Status.SpawnWait;
     }
 
     public override void SetStageData(StageStatusMachineData stageMachineData)
@@ -54,7 +50,7 @@ public class PlanetStageStatusMachine : StageStatusMachine
         UnitSpawn();
 
         stageManager.CameraManager.SetCameraOffset();
-        SetNextWave(true);
+        NextWave();
         SetEvent(true);
     }
 
@@ -67,21 +63,11 @@ public class PlanetStageStatusMachine : StageStatusMachine
             case Status.Play:
                 UpdateTimer(currentTime);
                 break;
-            case Status.SpawnWait:
-                UpdateTimer(currentTime);
-                if (currentTime > stepTimer)
-                {
-                    SpawnWave();
-                }
-                break;
             case Status.Clear:
             case Status.ClearPlanet:
             case Status.Timeout:
             case Status.Defeat:
-                if (currentTime > stepTimer)
-                {
-                    NextStage();
-                }
+                NextStage();
                 break;
         }
     }
@@ -121,22 +107,10 @@ public class PlanetStageStatusMachine : StageStatusMachine
         stageManager.StageUiManager.IngameUIManager.SetTimer(remainingTime);
     }
 
-    protected void SetNextWave(bool isFirstWave)
+    protected void NextWave()
     {
-        status = Status.SpawnWait;
         stageManager.StageUiManager.IngameUIManager.SetWaveText(CurrentWave);
-        if (isFirstWave)
-        {
-            SpawnWave();
-        }
-        else
-        {
-            stepTimer = Time.time + stageMachineData.spawnDelay;
-        }
-    }
 
-    protected void SpawnWave()
-    {
         status = Status.Play;
 
         var corpsData = DataTableManager.CorpsTable.GetData(waveData.CorpsIDs[CurrentWave - 1]);
@@ -150,7 +124,7 @@ public class PlanetStageStatusMachine : StageStatusMachine
 
         if (unit is not null)
         {
-            stageManager.StageMonsterManager.Spawn(unit.position + Vector3.forward * stageMachineData.spawnDistance, corpsData);
+            stageManager.StageMonsterManager.Spawn(unit.position + Vector3.forward * waveData.RespawnDistance, corpsData);
         }
         else
         {
@@ -177,7 +151,7 @@ public class PlanetStageStatusMachine : StageStatusMachine
             OnStageEnd(Status.Clear);
             return;
         }
-        SetNextWave(false);
+        NextWave();
     }
 
     protected void OnStageEnd(Status status)
@@ -187,7 +161,7 @@ public class PlanetStageStatusMachine : StageStatusMachine
         switch (this.status)
         {
             case Status.Clear:
-                stageManager.StageUiManager.IngameUIManager.OpenStageEndWindow("Clear");
+                stageManager.StageUiManager.IngameUIManager.OpenStageEndWindow("Clear", 1f);
 
                 bool ClearedStageChanged = CheckClearedStageChange();
                 if (ClearedStageChanged && stageData.FirstClearRewardID != 0)
@@ -200,21 +174,19 @@ public class PlanetStageStatusMachine : StageStatusMachine
                 }
                 break;
             case Status.Timeout:
-                stageManager.StageUiManager.IngameUIManager.OpenStageEndWindow("Time Over");
+                stageManager.StageUiManager.IngameUIManager.OpenStageEndWindow("Time Over", 1f);
                 FailStageSet();
                 break;
             case Status.Defeat:
-                stageManager.StageUiManager.IngameUIManager.OpenStageEndWindow("Defeat");
+                stageManager.StageUiManager.IngameUIManager.OpenStageEndWindow("Defeat", 1f);
                 FailStageSet();
                 break;
         }
-        stepTimer = Time.time + stageMachineData.stageEndDelay;
         SaveLoadManager.SaveGame();
     }
 
     protected void NextStage()
     {
-        stageManager.StageUiManager.IngameUIManager.CloseStageEndWindow();
         if (status == Status.ClearPlanet
             || status == Status.Defeat
             || status == Status.Timeout)
@@ -225,7 +197,7 @@ public class PlanetStageStatusMachine : StageStatusMachine
         {
             SetStageText();
             SetStageData();
-            SetNextWave(true);
+            NextWave();
         }
     }
 
@@ -366,7 +338,6 @@ public class PlanetStageStatusMachine : StageStatusMachine
     public override void Reset()
     {
         stageManager.ReleaseDamageTexts();
-        stageManager.StageUiManager.IngameUIManager.CloseStageEndWindow();
         stageManager.StageUiManager.curtain.SetFade(true);
         int previousPlanet = CurrentPlanet;
 
@@ -380,6 +351,6 @@ public class PlanetStageStatusMachine : StageStatusMachine
         UnitSpawn();
         stageManager.CameraManager.SetCameraOffset();
         stageManager.StageUiManager.curtain.SetFade(false);
-        SetNextWave(true);
+        NextWave();
     }
 }

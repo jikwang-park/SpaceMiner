@@ -94,7 +94,7 @@ public class UnitSkillUpgradeBoard : MonoBehaviour
                 var tankerData = DataTableManager.TankerSkillTable.GetData(id);
                 var stringId = tankerData.DetailStringID;
                 level = tankerData.Level;
-                currentText.SetString(stringId, tankerData.Duration.ToString(), tankerData.ShieldRatio.ToString(), tankerData.CoolTime.ToString());
+                currentText.SetString(stringId, tankerData.Duration.ToString(), (tankerData.ShieldRatio * 100).ToString(), tankerData.CoolTime.ToString());
                 if (level >= maxLevel)
                 {
                     nextText.SetString(60010);
@@ -106,7 +106,7 @@ public class UnitSkillUpgradeBoard : MonoBehaviour
                     nextId = data.SkillPaymentID;
                     var nextTankerData = DataTableManager.TankerSkillTable.GetData(nextId);
                     var nextstringId = nextTankerData.DetailStringID;
-                    nextText.SetString(nextstringId, nextTankerData.Duration.ToString(), nextTankerData.ShieldRatio.ToString(), nextTankerData.CoolTime.ToString());
+                    nextText.SetString(nextstringId, nextTankerData.Duration.ToString(), (nextTankerData.ShieldRatio * 100).ToString(), nextTankerData.CoolTime.ToString());
                 }
                 
                 break;
@@ -114,7 +114,7 @@ public class UnitSkillUpgradeBoard : MonoBehaviour
                 var dealerData = DataTableManager.DealerSkillTable.GetData(id);
                 var dealerStringId = dealerData.DetailStringID;
                 level = dealerData.Level;
-                currentText.SetString(dealerStringId, dealerData.MonsterMaxTarget.ToString(), dealerData.DamageRatio.ToString(), dealerData.CoolTime.ToString());
+                currentText.SetString(dealerStringId, dealerData.MonsterMaxTarget.ToString(), (dealerData.DamageRatio * 100).ToString(), dealerData.CoolTime.ToString());
                 if (level >= maxLevel)
                 {
                     nextText.SetString(60010);
@@ -126,14 +126,14 @@ public class UnitSkillUpgradeBoard : MonoBehaviour
                     nextId = data.SkillPaymentID;
                     var nextDealerData = DataTableManager.DealerSkillTable.GetData(nextId);
                     var nextdealerStringId = nextDealerData.DetailStringID;
-                    nextText.SetString(nextdealerStringId, nextDealerData.MonsterMaxTarget.ToString(), nextDealerData.DamageRatio.ToString(), nextDealerData.CoolTime.ToString());
+                    nextText.SetString(nextdealerStringId, nextDealerData.MonsterMaxTarget.ToString(), (nextDealerData.DamageRatio * 100).ToString(), nextDealerData.CoolTime.ToString());
                 }
                 break;
             case UnitTypes.Healer:
                 var healerData = DataTableManager.HealerSkillTable.GetData(id);
                 var healerStringId = healerData.DetailStringID;
                 level = healerData.Level;
-                currentText.SetString(healerStringId, healerData.HealRatio.ToString(), healerData.CoolTime.ToString());
+                currentText.SetString(healerStringId, (healerData.HealRatio*100).ToString(), healerData.CoolTime.ToString());
                 if (level >= maxLevel)
                 {
                     nextText.SetString(60010);
@@ -145,7 +145,7 @@ public class UnitSkillUpgradeBoard : MonoBehaviour
                     nextId = data.SkillPaymentID;
                     var nextHealerData = DataTableManager.HealerSkillTable.GetData(nextId);
                     var nextHealerStringId = nextHealerData.DetailStringID;
-                    nextText.SetString(nextHealerStringId, nextHealerData.HealRatio.ToString(), nextHealerData.CoolTime.ToString());
+                    nextText.SetString(nextHealerStringId, (nextHealerData.HealRatio*100).ToString(), nextHealerData.CoolTime.ToString());
                 }
                 break;
         }
@@ -159,12 +159,5 @@ public class UnitSkillUpgradeBoard : MonoBehaviour
         SaveLoadManager.Data.unitSkillUpgradeData.skillUpgradeId[currentType][currentGrade] = currentId;
         SaveLoadManager.SaveGame();
     }
-    private void Update()
-    {
-      
-    }
-    public void SetImage()
-    {
 
-    }
 }

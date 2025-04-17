@@ -94,7 +94,6 @@ public class UnitStatsUpgradeElement : MonoBehaviour
         currentValue = GetCurrentValue(level);
         currentGold = GetCurrentGold(level);
         SetStatsInfo();
-        Debug.Log(this.level);
     }
 
     public float GetCurrentValue(int level)

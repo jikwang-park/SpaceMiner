@@ -29,7 +29,6 @@ public class DealerSkill : UnitSkill
             coolTime = dealerSkillData.CoolTime;
             damageRatio = dealerSkillData.DamageRatio;
             targetCount = dealerSkillData.MonsterMaxTarget;
-            Debug.Log(damageRatio);
         }
     }
 

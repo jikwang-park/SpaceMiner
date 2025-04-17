@@ -11,8 +11,6 @@ public class IdleAction : ActionNode<Unit>
     protected override void OnStart()
     {
         base.OnStart();
-        Debug.Log("대기시작");
-        Debug.Log(context.UnitTypes);
     }
     protected override NodeStatus OnUpdate()
     {

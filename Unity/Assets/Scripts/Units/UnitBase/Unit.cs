@@ -97,7 +97,6 @@ public class Unit : MonoBehaviour
 
     private void Start()
     {
-        Debug.Log($"현재 타입 : {currentUnitType}, 현재 공격사거리 : {unitStats.range}");
     }
 
     public bool IsUnitExeedMonsterPosition
@@ -469,7 +468,6 @@ public class Unit : MonoBehaviour
 
     private void Update()
     {
-        Debug.Log(IsUnitExeedMonsterPosition);
         if (HasBarrier)
         {
             if (Time.time > skillEndTime)

@@ -69,7 +69,7 @@ public static class GachaManager
             }
         }
 
-        gachaResults = gachaResults.OrderByDescending((e) => e.Grade).ToList();
+        gachaResults = gachaResults.OrderByDescending((e) => e.Grade).ThenByDescending(e => e.Level).ToList();
 
         return gachaResults;
     }

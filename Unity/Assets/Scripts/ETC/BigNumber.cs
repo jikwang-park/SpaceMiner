@@ -17,6 +17,14 @@ public struct BigNumber : ISerializationCallbackReceiver
                                 "N", "O", "P", "Q", "R", "S", "T", "U", "V",  "W", "X", "Y", "Z"};
     public BigNumber(string input)
     {
+        if (string.IsNullOrEmpty(input))
+        {
+            parts = new List<int> { 0 };
+            sign = 1;
+            currentValue = "0";
+            return;
+        }
+
         parts = new List<int>();
         sign = 1;
         input = input.Trim();

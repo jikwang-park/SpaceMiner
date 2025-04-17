@@ -11,16 +11,13 @@ public class MonsterIdleAction : ActionNode<MonsterController>
     protected override void OnStart()
     {
         base.OnStart();
-        if (context.AnimationFound)
-        {
-            context.AnimationController.Play(AnimationControl.AnimationClipID.BattleIdle);
-        }
+        context.AnimationController.Play(AnimationControl.AnimationClipID.BattleIdle);
     }
 
     protected override NodeStatus OnUpdate()
     {
         if (context.CanAttack
-            || (context.TargetAcquired && context.CanMove))
+            || (context.hasTarget && context.CanMove))
         {
             return NodeStatus.Success;
         }

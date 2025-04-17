@@ -27,6 +27,7 @@ public class StageManager : MonoBehaviour
     //private StageStatusMachine stageStatusMachine;
 
     public event System.Action<IngameStatus> OnIngameStatusChanged;
+    public event System.Action OnStageEnd;
 
 
     private void Awake()
@@ -143,5 +144,10 @@ public class StageManager : MonoBehaviour
     public void OnExitClicked()
     {
         machines[IngameStatus].Exit();
+    }
+
+    public void StageEnd()
+    {
+        OnStageEnd?.Invoke();
     }
 }

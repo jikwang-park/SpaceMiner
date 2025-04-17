@@ -22,6 +22,8 @@ public class MiningRobotController : MonoBehaviour, IObjectPoolGameObject
     [HideInInspector]
     public Transform currentTarget;
 
+    public float Speed { get; private set; }
+
     private void Awake()
     {
         InitBehaviourTree();
@@ -56,6 +58,18 @@ public class MiningRobotController : MonoBehaviour, IObjectPoolGameObject
         this.ore = ore;
         currentTarget = this.ore;
         this.storage = storage;
+
+        float distance = Vector3.Distance(ore.position, storage.position);
+        Speed = RobotData.MoveSpeed * distance;
+        switch (Slot)
+        {
+            case 0:
+                Speed /= PlanetData.Distance1;
+                break;
+            case 1:
+                Speed /= PlanetData.Distance2;
+                break;
+        }
     }
 
     private void InitBehaviourTree()

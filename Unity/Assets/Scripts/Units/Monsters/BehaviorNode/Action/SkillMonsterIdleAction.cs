@@ -14,16 +14,20 @@ public class SkillMonsterIdleAction : ActionNode<MonsterController>
     protected override void OnStart()
     {
         base.OnStart();
-        if (context.AnimationFound)
+
+        if(context.status == MonsterController.Status.Dead)
         {
-            context.AnimationController.Play(AnimationControl.AnimationClipID.BattleIdle);
+            return;
         }
+
+        context.AnimationController.Play(AnimationControl.AnimationClipID.BattleIdle);
     }
 
     protected override NodeStatus OnUpdate()
     {
-        if (context.CanAttack
-            || (context.TargetAcquired && context.CanMove)
+        if (context.status == MonsterController.Status.Dead
+            || context.CanAttack
+            || (context.hasTarget && context.CanMove)
             || (skill.IsCoolTime && skill.IsTargetExist))
         {
             return NodeStatus.Success;

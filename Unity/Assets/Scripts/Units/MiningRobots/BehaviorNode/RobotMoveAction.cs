@@ -22,17 +22,17 @@ public class RobotMoveAction : ActionNode<MiningRobotController>
         if (context.sqrDistance > 0.001f
             && Vector3.Dot(direction, context.currentTarget.position - context.transform.position) >= 0f)
         {
-            var moving = Time.deltaTime * direction * context.RobotData.MoveSpeed;
+            var moving = Time.deltaTime * direction * context.Speed;
             if (context.sqrDistance > moving.sqrMagnitude)
             {
                 context.transform.position += moving;
+                context.transform.rotation = Quaternion.Lerp(context.transform.rotation, Quaternion.LookRotation(direction), Time.deltaTime * context.Speed);
                 return NodeStatus.Running;
             }
             else
             {
                 context.transform.position = context.currentTarget.position;
             }
-
         }
 
         return NodeStatus.Success;

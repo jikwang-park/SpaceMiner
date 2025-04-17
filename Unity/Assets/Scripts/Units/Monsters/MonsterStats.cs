@@ -45,11 +45,6 @@ public class MonsterStats : CharacterStats
 
         BigNumber damage = this.damage;
 
-        attack.isCritical = criticalChance >= Random.value;
-        if (attack.isCritical)
-        {
-            damage *= criticalMultiplier;
-        }
         attack.damage = damage;
 
         if (defenderStats is not null)

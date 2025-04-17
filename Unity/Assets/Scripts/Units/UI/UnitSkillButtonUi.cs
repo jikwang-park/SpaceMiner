@@ -36,14 +36,26 @@ public class UnitSkillButtonUi : MonoBehaviour
         {
             SkillButton.interactable = false;
             target.SetActive(false);
+            return;
         }
-        if ((!unit.isAutoSkillMode && !unit.isAutoSkillMode) || !unit.IsSkillCoolTimeOn)
+
+        target.SetActive(true);
+        if (unit.isAutoSkillMode)
+        {
+            SkillButton.interactable = true;
+            
+        }
+        else if(!unit.IsSkillCoolTimeOn)
         {
             SkillButton.interactable = false;
         }
         else
         {
             SkillButton.interactable = true;
+        }
+        if (!unit.IsSkillCoolTimeOn && unit.isAutoSkillMode)
+        {
+            SkillButton.interactable = false;
         }
     }
     private void ShowCooltime()

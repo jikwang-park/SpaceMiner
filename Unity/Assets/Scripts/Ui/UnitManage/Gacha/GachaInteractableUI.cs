@@ -30,6 +30,13 @@ public class GachaInteractableUI : MonoBehaviour
     {
         gachaResultPanel.gameObject.SetActive(false);
     }
+    private void OnEnable()
+    {
+        if (GachaManager.useTicket)
+        {
+            GachaManager.ToggleUseTicket();
+        }
+    }
     public void Initialize()
     {
         var gachas = DataTableManager.GachaTable.GetDict();

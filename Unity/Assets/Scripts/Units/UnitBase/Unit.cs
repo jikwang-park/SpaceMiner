@@ -118,7 +118,6 @@ public class Unit : MonoBehaviour
         {
             if (unitStats.Hp <= 0)
             {
-                currentUnitNum++;
                 return true;
             }
             return false;

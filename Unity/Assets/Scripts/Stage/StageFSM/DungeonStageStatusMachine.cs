@@ -29,9 +29,11 @@ public class DungeonStageStatusMachine : StageStatusMachine
 
     protected float remainingTime;
 
+    protected event System.Action onStageEnd;
+
     public DungeonStageStatusMachine(StageManager stageManager) : base(stageManager)
     {
-
+        onStageEnd += stageManager.StageEnd;
     }
 
     public override void SetStageData(StageStatusMachineData stageMachineData)
@@ -161,6 +163,9 @@ public class DungeonStageStatusMachine : StageStatusMachine
     {
         this.status = status;
         Time.timeScale = 0f;
+
+        onStageEnd?.Invoke();
+
         switch (this.status)
         {
             case Status.Clear:

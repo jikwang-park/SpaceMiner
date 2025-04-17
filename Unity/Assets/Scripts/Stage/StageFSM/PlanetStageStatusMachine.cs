@@ -31,8 +31,11 @@ public class PlanetStageStatusMachine : StageStatusMachine
 
     protected float remainingTime;
 
+    protected event System.Action onStageEnd;
+
     public PlanetStageStatusMachine(StageManager stageManager) : base(stageManager)
     {
+        onStageEnd += stageManager.StageEnd;
     }
 
     public override void SetStageData(StageStatusMachineData stageMachineData)
@@ -156,6 +159,7 @@ public class PlanetStageStatusMachine : StageStatusMachine
     protected void OnStageEnd(Status status)
     {
         this.status = status;
+        onStageEnd?.Invoke();
 
         switch (this.status)
         {

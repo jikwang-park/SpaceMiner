@@ -6,6 +6,12 @@ using UnityEngine.UI;
 [RequireComponent(typeof(Toggle))]
 public class ToggleColorChange : MonoBehaviour
 {
+    public enum ColorMode
+    {
+        Tint,
+        Set,
+    }
+
     [SerializeField]
     private Color onColor;
 
@@ -13,6 +19,9 @@ public class ToggleColorChange : MonoBehaviour
     private Color offColor;
 
     private Toggle toggle;
+
+    [SerializeField]
+    private ColorMode colorMode;
 
     private void Awake()
     {
@@ -29,15 +38,29 @@ public class ToggleColorChange : MonoBehaviour
     {
         if (isOn)
         {
-            var colors = toggle.colors;
-            colors.normalColor = onColor;
-            toggle.colors = colors;
+            if (colorMode == ColorMode.Tint)
+            {
+                var colors = toggle.colors;
+                colors.normalColor = onColor;
+                toggle.colors = colors;
+            }
+            else
+            {
+                toggle.image.color = onColor;
+            }
         }
         else
         {
-            var colors = toggle.colors;
-            colors.normalColor = offColor;
-            toggle.colors = colors;
+            if (colorMode == ColorMode.Tint)
+            {
+                var colors = toggle.colors;
+                colors.normalColor = offColor;
+                toggle.colors = colors;
+            }
+            else
+            {
+                toggle.image.color = offColor;
+            }
         }
     }
 }

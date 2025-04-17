@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.UI;
 using static MiningRobotInventoryManager;
@@ -9,6 +10,8 @@ public class MiningPanelUI : MonoBehaviour
 {
     [SerializeField]
     private List<Button> planetButtons;
+    [SerializeField]
+    private Button moveButton;
     [SerializeField]
     private MiningRobotMergePopupUI robotMergePopupUI;
     [SerializeField]
@@ -58,6 +61,8 @@ public class MiningPanelUI : MonoBehaviour
     public void CheckPlanetsOpen()
     {
         var checkResults = MiningRobotInventoryManager.CheckPlanetsOpen();
+        var openedPlanets = checkResults.Where((e) => e.Value == true).ToList();
+        moveButton.interactable = openedPlanets.Count > 0;
         for (int i = 0; i < planetIds.Count; i++)
         {
             planetButtons[i].interactable = checkResults[planetIds[i]];

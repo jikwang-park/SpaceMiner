@@ -6,6 +6,14 @@ public class MiningAccumulator : MonoBehaviour
 {
     private Dictionary<int, BigNumber> accumulatedMines = new Dictionary<int, BigNumber>();
     private List<int> planetIds;
+    private StageManager stageManager;
+    private bool isAccumulating = true;
+    private void Awake()
+    {
+        stageManager = GetComponent<StageManager>();
+        stageManager.OnIngameStatusChanged += DoIngameStatusChanged;
+        stageManager.OnStageEnd += DoStageEnd;
+    }
     void Start()
     {
         planetIds = DataTableManager.PlanetTable.GetIds();
@@ -18,11 +26,10 @@ public class MiningAccumulator : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (Input.GetKeyDown(KeyCode.Escape))
+        if(!isAccumulating)
         {
-            DoStageClear();
+            return;
         }
-
         float delta = Time.deltaTime;
 
         foreach (var planet in planetIds)
@@ -34,7 +41,7 @@ public class MiningAccumulator : MonoBehaviour
             accumulatedMines[planet] += productionThisFrame;
         }
     }
-    public void DoStageClear()
+    public void DoStageEnd()
     {
         foreach(var accumulatedMine in accumulatedMines)
         {
@@ -51,5 +58,9 @@ public class MiningAccumulator : MonoBehaviour
         {
             accumulatedMines[planetId] = 0;
         }
+    }
+    public void DoIngameStatusChanged(IngameStatus ingameStatus)
+    {
+        isAccumulating = (ingameStatus != IngameStatus.Mine);
     }
 }

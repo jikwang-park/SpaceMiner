@@ -7,14 +7,15 @@ using UnityEngine.UI;
 public class IdleRewardElement : MonoBehaviour
 {
     [SerializeField]
-    private Image icon;
+    private AddressableImage icon;
     [SerializeField]
     private TextMeshProUGUI amountText;
 
     public void Initialize(int itemId, BigNumber amount)
     {
-        // icon.sprite = ;
-
-        amountText.text = $"{(Currency)itemId} : {amount.ToString()}";
+        var itemData = DataTableManager.ItemTable.GetData(itemId);
+        icon.SetSprite(itemData.SpriteID);
+        string itemString = DataTableManager.StringTable.GetData(itemData.NameStringID);
+        amountText.text = $"{itemString} : {amount.ToString()} È¹µæ";
     }
 }

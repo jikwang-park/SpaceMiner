@@ -228,7 +228,7 @@ MonoBehaviour:
   <Stats>k__BackingField: {fileID: 0}
   attackTime: 0.5
   <minDistanceInMonster>k__BackingField: 2
-  TargetAcquired: 0
+  hasTarget: 0
   currentLine: -1
 --- !u!114 &-6154634928850670923
 MonoBehaviour:
@@ -244,8 +244,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   animationDict:
     _serializedList: []
-  targetWeight: 1
-  fadeLength: 0.5
+  fadeLength: 0.2
 --- !u!114 &7418222383424218534
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -294,6 +293,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1fed17400599b764f8362d3bc865d7c5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  textPrefabAddress: Assets/Addressables/Prefabs/UI/DamageText/MonsterDamageText.prefab
   showingDuration: 1.5
   risingSpeed: 2
 --- !u!114 &5536806684789985320

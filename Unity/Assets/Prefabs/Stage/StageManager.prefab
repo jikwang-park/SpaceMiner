@@ -88,18 +88,18 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   laneCount: 3
   <SpawnPoints>k__BackingField:
-  - {x: -3, y: 0, z: 2}
+  - {x: -2, y: 0, z: 2}
   - {x: 0, y: 0, z: 2}
-  - {x: 3, y: 0, z: 2}
-  - {x: -3, y: 0, z: 6}
+  - {x: 2, y: 0, z: 2}
+  - {x: -2, y: 0, z: 6}
   - {x: 0, y: 0, z: 6}
-  - {x: 3, y: 0, z: 6}
-  - {x: -3, y: 0, z: 10}
+  - {x: 2, y: 0, z: 6}
+  - {x: -2, y: 0, z: 10}
   - {x: 0, y: 0, z: 10}
-  - {x: 3, y: 0, z: 10}
-  - {x: -3, y: 0, z: 14}
+  - {x: 2, y: 0, z: 10}
+  - {x: -2, y: 0, z: 14}
   - {x: 0, y: 0, z: 14}
-  - {x: 3, y: 0, z: 14}
+  - {x: 2, y: 0, z: 14}
 --- !u!114 &4185081511514637580
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -112,9 +112,34 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 19d7a40562ed5cc4181e9704f608e786, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  tankerPrefab: {fileID: -4436353755833136303, guid: 15bae1c5e78b4bc4ea647b991319cec3, type: 3}
-  dealerPrefab: {fileID: -4436353755833136303, guid: a36bb68f74b9969459c63daf74e0d400, type: 3}
-  healerPrefab: {fileID: -4436353755833136303, guid: 18ca9f3c1217fcf40b0b1fdf4d0bbea1, type: 3}
+  characters:
+    _serializedList:
+    - Key: 1
+      Value: {fileID: -1241691657197019413, guid: 88f33f84a7ec69e4ab2a27ab774affa8, type: 3}
+    - Key: 2
+      Value: {fileID: -8581352914904821547, guid: a724900ed44310742a2dd8756121a55b, type: 3}
+    - Key: 3
+      Value: {fileID: 1805213108878449883, guid: b32d9ad69e454a044a2436a9903757fe, type: 3}
+  weapons:
+    _serializedList:
+    - Key: 1
+      Value:
+      - {fileID: 2475217429032373104, guid: 1d19154427985c449a801e83f5501c6a, type: 3}
+      - {fileID: 8527966883527858917, guid: 41941a2f418d72940b0cd928ce991671, type: 3}
+      - {fileID: 367456512235249607, guid: 3de1faca8b4a0da4784df013908494f0, type: 3}
+      - {fileID: 7954543468006055213, guid: 6e22b79f4c929c04588a5e7814b25203, type: 3}
+    - Key: 2
+      Value:
+      - {fileID: 1502278841745905271, guid: 6fdcc11a63c560449ad8c38bd97b26a4, type: 3}
+      - {fileID: 3325074529744165479, guid: 29cd6a6deac16a945895ec1e85a7f398, type: 3}
+      - {fileID: 2273198757697523447, guid: 2b7aefddb7e53884b8d8035331537dba, type: 3}
+      - {fileID: 9211169576244359208, guid: 87b9475544649bc4e94f296ea039af68, type: 3}
+    - Key: 3
+      Value:
+      - {fileID: 7028296381568595463, guid: 79cbef814c007824c9bf23ec5ba2ec06, type: 3}
+      - {fileID: 1135121510423390029, guid: bed75b55ccdb0db4b852e543ccb7f19b, type: 3}
+      - {fileID: 4819814733012498166, guid: 3442303fc83fe6c448281f3962f13038, type: 3}
+      - {fileID: 3117261621620580733, guid: 0c4770ec48b8b7943a17fa6caf401831, type: 3}
   buttonManager: {fileID: 0}
   unitOffset: {x: 0, y: 0, z: -5}
 --- !u!114 &7995440791310639809

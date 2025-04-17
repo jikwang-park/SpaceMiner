@@ -16,10 +16,6 @@ public class MonsterSkill : MonoBehaviour
     [SerializeField]
     private float skillTime = 0.5f;
 
-
-    private WaitUntil skillWait;
-    private WaitUntil skillEndWait;
-
     public bool IsTargetExist
     {
         get
@@ -56,11 +52,13 @@ public class MonsterSkill : MonoBehaviour
     private void Awake()
     {
         controller = GetComponent<MonsterController>();
-
-        skillWait = new WaitUntil(() => controller.AnimationController.GetProgress(AnimationControl.AnimationClipID.Skill) > skillTime);
-        skillEndWait = new WaitUntil(() => controller.AnimationController.GetProgress(AnimationControl.AnimationClipID.Skill) >= 1f);
     }
 
+    private void Start()
+    {
+        controller.AnimationController.AddEvent(AnimationControl.AnimationClipID.Skill, skillTime, Execute);
+        controller.AnimationController.AddEvent(AnimationControl.AnimationClipID.Skill, 1f, OnSkillEnd);
+    }
 
     private void OnEnable()
     {
@@ -77,31 +75,11 @@ public class MonsterSkill : MonoBehaviour
     {
         controller.status = MonsterController.Status.SkillUsing;
         lastSkillTime = Time.time;
-        if (controller.AnimationFound)
-        {
-            StartCoroutine(CoAnimationSkill());
-        }
-        else
-        {
-            StartCoroutine(CoSkill());
-        }
-    }
-
-    private IEnumerator CoAnimationSkill()
-    {
         controller.AnimationController.Play(AnimationControl.AnimationClipID.Skill);
-        yield return skillWait;
-        Execute();
-        yield return skillEndWait;
-        lastSkillTime = Time.time;
-        controller.status = MonsterController.Status.Wait;
     }
 
-    private IEnumerator CoSkill()
+    private void OnSkillEnd()
     {
-        yield return new WaitForSeconds(0.25f);
-        Execute();
-        yield return new WaitForSeconds(0.25f);
         lastSkillTime = Time.time;
         controller.status = MonsterController.Status.Wait;
     }

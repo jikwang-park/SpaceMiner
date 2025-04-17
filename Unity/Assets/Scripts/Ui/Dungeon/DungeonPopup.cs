@@ -89,7 +89,9 @@ public class DungeonPopup : MonoBehaviour
         }
 
         conditionStageText.SetStringArguments(subStages[index].NeedClearPlanet.ToString());
-        clearRewardText.SetStringArguments(curStage.RewardItemID.ToString(), curStage.ClearRewardItemCount.ToString());
+        var itemNameID = DataTableManager.ItemTable.GetData(curStage.RewardItemID).NameStringID;
+        var itemName = DataTableManager.StringTable.GetData(itemNameID);
+        clearRewardText.SetStringArguments(itemName, curStage.ClearRewardItemCount.ToString());
 
 
         previousDifficultyButton.interactable = index > 0;

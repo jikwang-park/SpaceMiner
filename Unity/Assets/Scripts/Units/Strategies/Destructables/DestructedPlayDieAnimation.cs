@@ -11,24 +11,20 @@ public class DestructedPlayDieAnimation : MonoBehaviour, IDestructable
     private void Awake()
     {
         animationControl = GetComponent<AnimationControl>();
-        
-        waitDie = new WaitUntil(IsEnd);
+    }
+
+    private void Start()
+    {
+        animationControl.AddEvent(AnimationControl.AnimationClipID.Die, 1f, OnEnd);
     }
 
     public void OnDestruction(GameObject Attacker)
     {
-        StartCoroutine(CoDie());
-    }
-
-    private bool IsEnd()
-    {
-        return animationControl.GetProgress(AnimationControl.AnimationClipID.Die) >= 1f;
-    }
-
-    private IEnumerator CoDie()
-    {
         animationControl.Play(AnimationControl.AnimationClipID.Die);
-        yield return waitDie;
+    }
+
+    private void OnEnd()
+    {
         gameObject.GetComponent<IObjectPoolGameObject>().Release();
     }
 }

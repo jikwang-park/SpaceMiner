@@ -30,7 +30,7 @@ public class AddressableImage : MonoBehaviour
 
     private void LoadSprite()
     {
-        if (!gameObject.activeInHierarchy)
+        if (image is null)
         {
             return;
         }

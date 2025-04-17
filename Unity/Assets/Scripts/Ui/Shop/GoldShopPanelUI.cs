@@ -13,7 +13,9 @@ public class GoldShopPanelUI : MonoBehaviour
     [SerializeField]
     private Slider sellAmountSlider;
     [SerializeField]
-    private TextMeshProUGUI describeText;
+    private LocalizationText sellAmountText;
+    [SerializeField]
+    private LocalizationText totalPriceText;
 
     private Currency currentCurrency;
     private int currentSellPrice;
@@ -92,7 +94,8 @@ public class GoldShopPanelUI : MonoBehaviour
     }
     public void UpdateUI()
     {
-        describeText.text = $"Sell Amount - {SellAmount}\nTotal Price - {TotalPrice}";
+        sellAmountText.SetStringArguments(SellAmount.ToString());
+        totalPriceText.SetStringArguments(TotalPrice.ToString());
         sellAmountSlider.interactable = ItemManager.GetItemAmount((int)currentCurrency) > 0;
     }
     public void OnClickSellButton()

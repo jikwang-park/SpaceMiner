@@ -25,7 +25,6 @@ public class GachaPurchaseButton : MonoBehaviour
         this.count = count;
         this.cost = cost;
 
-        // iconImage.sprite = sprite;
         countText.SetStringArguments(count.ToString());
         costText.text = $"{this.cost}";
         image.SetSprite(DataTableManager.ItemTable.GetData(itemId).SpriteID);

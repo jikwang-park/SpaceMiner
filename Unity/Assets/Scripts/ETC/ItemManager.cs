@@ -37,13 +37,15 @@ public static class ItemManager
         OnItemAmountChanged?.Invoke(itemId, items[itemId]);
         return true;
     }
-    public static void ConsumeItem(int itemId, BigNumber amount)
+    public static bool ConsumeItem(int itemId, BigNumber amount)
     {
         if(CanConsume(itemId, amount))
         {
             items[itemId] -= amount;
             OnItemAmountChanged?.Invoke(itemId, items[itemId]);
+            return true;
         }
+        return false;
     }
     public static bool CanConsume(int itemId, BigNumber amount)
     {

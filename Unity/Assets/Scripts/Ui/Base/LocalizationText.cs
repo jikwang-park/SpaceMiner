@@ -44,7 +44,7 @@ public class LocalizationText : MonoBehaviour
 
     public void OnChangedLanguage(Languages lang)
     {
-        if(!gameObject.activeInHierarchy)
+        if(text is null)
         {
             return;
         }
@@ -116,6 +116,50 @@ public class LocalizationText : MonoBehaviour
         }
         OnChangedLanguage();
     }
+
+
+    public void SetString(int stringId, params float[] values)
+    {
+        this.stringId = stringId;
+
+        SetStringArguments(values);
+    }
+
+    public void SetStringArguments(params float[] values)
+    {
+        if (text is null)
+        {
+            return;
+        }
+
+        string stringTableId;
+
+        if (Application.isPlaying)
+        {
+            stringTableId = DataTableIds.stringTables[(int)Variables.currentLanguage];
+        }
+#if UNITY_EDITOR
+        else
+        {
+            stringTableId = DataTableIds.stringTables[(int)editorLang];
+        }
+#endif
+
+        var stringTable = DataTableManager.GetTable<StringTable>(stringTableId);
+        var gotString = stringTable.GetData(stringId);
+
+        if (string.IsNullOrEmpty(gotString))
+        {
+            text.text = string.Format(notFoundFormat, stringId);
+            return;
+        }
+
+        if (values != null && values.Length > 0)
+        {
+            text.text = string.Format(gotString, values);
+        }
+    }
+
 
     public void SetColor(Color color)
     {

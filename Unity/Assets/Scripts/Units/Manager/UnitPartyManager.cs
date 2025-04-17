@@ -1,3 +1,4 @@
+using AYellowpaper.SerializedCollections;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -8,13 +9,11 @@ using UnityEngine.AddressableAssets;
 public class UnitPartyManager : MonoBehaviour
 {
     [SerializeField]
-    private Unit tankerPrefab;
-    [SerializeField]
-    private Unit dealerPrefab;
-    [SerializeField]
-    private Unit healerPrefab;
+    private SerializedDictionary<UnitTypes, Unit> characters;
 
-    private Dictionary<UnitTypes, Unit> prefabs = new Dictionary<UnitTypes, Unit>();
+    [SerializeField]
+    private SerializedDictionary<UnitTypes, GameObject[]> weapons;
+
     private Dictionary<UnitTypes, Unit> party = new Dictionary<UnitTypes, Unit>();
 
     public event System.Action OnUnitCreated;
@@ -29,26 +28,6 @@ public class UnitPartyManager : MonoBehaviour
     private Vector3 unitOffset = Vector3.back * 5f;
 
     public int UnitCount => party.Count;
-
-
-   
-    private void Awake()
-    {
-        if (tankerPrefab is not null)
-        {
-            prefabs.Add(UnitTypes.Tanker, tankerPrefab);
-        }
-        if (dealerPrefab is not null)
-        {
-            prefabs.Add(UnitTypes.Dealer, dealerPrefab);
-        }
-        if (healerPrefab is not null)
-        {
-            prefabs.Add(UnitTypes.Healer, healerPrefab);
-        }
-    }
-
-   
 
     public void ResetSkillCoolTime()
     {
@@ -119,14 +98,14 @@ public class UnitPartyManager : MonoBehaviour
             return;
 
         var unit = party[type];
-        
+
 
         unit.unitSkill.UpgradeUnitSkillStats(id);
     }
 
-    public void AddBuildingStats(BuildingTable.BuildingType type,float amount)
+    public void AddBuildingStats(BuildingTable.BuildingType type, float amount)
     {
-        foreach(var unit in party)
+        foreach (var unit in party)
         {
             unit.Value.unitStats.AddBuildingStats(type, amount);
         }
@@ -180,7 +159,7 @@ public class UnitPartyManager : MonoBehaviour
         return null;
     }
 
-    // 250403 HKY ÇöÀç À¯´Ö Å¸ÀÔÀ» ³ÖÀ¸¸é ¾ÕÀÇ À¯´Ö À¯¹«¸¦ ¹ÝÈ¯ÇØÁÖ´Â ¸Þ¼Òµå Ãß°¡
+    // 250403 HKY ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ Å¸ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½È¯ï¿½ï¿½ï¿½Ö´ï¿½ ï¿½Þ¼Òµï¿½ ï¿½ß°ï¿½
     public bool IsUnitExistFront(UnitTypes myType)
     {
         for (int i = (int)myType - 1; i >= (int)UnitTypes.Tanker; --i)
@@ -205,7 +184,7 @@ public class UnitPartyManager : MonoBehaviour
         return false;
     }
 
-    // 250403 HKY ÇöÀç À¯´Ö Å¸ÀÔÀ» ³ÖÀ¸¸é ³» ¾ÕÀÇ À¯´ÖÀ» ¹ÝÈ¯ÇØÁÖ´Â ¸Þ¼Òµå Ãß°¡
+    // 250403 HKY ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ Å¸ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½È¯ï¿½ï¿½ï¿½Ö´ï¿½ ï¿½Þ¼Òµï¿½ ï¿½ß°ï¿½
     public Unit GetFrontUnit(UnitTypes myType)
     {
         for (int i = (int)myType - 1; i >= (int)UnitTypes.Tanker; --i)
@@ -234,24 +213,19 @@ public class UnitPartyManager : MonoBehaviour
     {
         Vector3 position = startPos;
 
-       
+
 
         for (int i = (int)UnitTypes.Tanker; i <= (int)UnitTypes.Healer; ++i)
         {
             var currentType = (UnitTypes)i;
 
-
-            if (!prefabs.ContainsKey(currentType))
-            {
-                position += unitOffset;
-                continue;
-            }
-
-            var unit = Instantiate(prefabs[currentType], position, Quaternion.identity);
+            var unit = Instantiate(characters[currentType], position, Quaternion.identity);
             unit.GetComponent<DestructedDestroyEvent>().OnDestroyed += OnUnitDie;
             position += unitOffset;
             var currentSoilderId = InventoryManager.GetInventoryData(currentType).equipElementID;
             var currentSoilderData = DataTableManager.SoldierTable.GetData(currentSoilderId);
+            var weaponSocket = unit.transform.Find("Bip001").Find("Bip001 Prop1");
+            Instantiate(weapons[currentType][(int)currentSoilderData.Grade - 1], weaponSocket);
             party.Add(currentType, unit);
             unit.SetData(currentSoilderData, currentType);
             GetCurrentStats(unit);

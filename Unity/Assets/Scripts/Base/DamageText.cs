@@ -12,6 +12,12 @@ public class DamageText : MonoBehaviour, IObjectPoolGameObject
     private float showingDuration;
     private float risingSpeed;
 
+    [SerializeField]
+    private Color hitColor;
+    [SerializeField]
+    private Color critColor;
+        
+
     private void Awake()
     {
         text = GetComponent<TextMeshPro>();
@@ -32,7 +38,7 @@ public class DamageText : MonoBehaviour, IObjectPoolGameObject
     public void SetText(Attack attack)
     {
         text.text = attack.damage.ToString();
-        text.color = attack.isCritical ? Color.red : Color.blue;
+        text.color = attack.isCritical ? critColor : hitColor;
     }
 
     public void SetSpeed(float duration, float speed)

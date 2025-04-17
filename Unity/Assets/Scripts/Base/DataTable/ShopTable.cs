@@ -20,7 +20,7 @@ public class ShopTable : DataTable
         public int NameStringID { get; set; }
         public ShopType Type { get; set; }
         public int NeedItemID { get; set; }
-        public int NeedItemCount { get; set; }
+        public string NeedItemCount { get; set; }
         public int PaymentItemID { get; set; }
         public int PayCount { get; set; }
         public int DailyPurchaseLimit { get; set; }
@@ -39,7 +39,7 @@ public class ShopTable : DataTable
                 Type = Enum.Parse<ShopType>(argument[2]);
             }
             NeedItemID = int.Parse(argument[3]);
-            NeedItemCount = int.Parse(argument[4]);
+            NeedItemCount = argument[4];
             PaymentItemID = int.Parse(argument[5]);
             PayCount = int.Parse(argument[6]);
             DailyPurchaseLimit = int.Parse(argument[7]);

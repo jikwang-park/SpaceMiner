@@ -11,9 +11,9 @@ public class GachaTable : DataTable
         public int ID { get; set; }
         public int NameStringID { get; set; }
         public int NeedItemID1 { get; set; }
-        public int NeedItemCount1 { get; set; }
+        public string NeedItemCount1 { get; set; }
         public int NeedItemID2 { get; set; }
-        public int NeedItemCount2 { get; set; }
+        public string NeedItemCount2 { get; set; }
         public int RepeatCount1 { get; set; }
         public int RepeatCount2 { get; set; }
         public int DetailStringID { get; set; }
@@ -23,9 +23,9 @@ public class GachaTable : DataTable
             ID = int.Parse(argument[0]);
             NameStringID = int.Parse(argument[1]);
             NeedItemID1 = int.Parse(argument[2]);
-            NeedItemCount1 = int.Parse(argument[3]);
+            NeedItemCount1 = argument[3];
             NeedItemID2 = int.Parse(argument[4]);
-            NeedItemCount2 = int.Parse(argument[5]);
+            NeedItemCount2 = argument[5];
             RepeatCount1 = int.Parse(argument[6]);
             RepeatCount2 = int.Parse(argument[7]);
             DetailStringID = int.Parse(argument[8]);

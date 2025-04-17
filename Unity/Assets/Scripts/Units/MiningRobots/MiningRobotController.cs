@@ -27,11 +27,6 @@ public class MiningRobotController : MonoBehaviour, IObjectPoolGameObject
         InitBehaviourTree();
     }
 
-    private void Start()
-    {
-        currentTarget = ore;
-    }
-
     private void Update()
     {
         UpdateDistance();
@@ -59,6 +54,7 @@ public class MiningRobotController : MonoBehaviour, IObjectPoolGameObject
     public void SetOreStorage(Transform ore, Transform storage)
     {
         this.ore = ore;
+        currentTarget = this.ore;
         this.storage = storage;
     }
 
@@ -78,9 +74,15 @@ public class MiningRobotController : MonoBehaviour, IObjectPoolGameObject
 
     public void Init(int planetID, int robotID, int slot)
     {
+        ResetBehaviorTree();
         Slot = slot;
         PlanetData = DataTableManager.PlanetTable.GetData(planetID);
         RobotData = DataTableManager.RobotTable.GetData(robotID);
+    }
+
+    public void ResetBehaviorTree()
+    {
+        behaviorTree.Reset();
     }
 
     public void Release()
@@ -88,7 +90,6 @@ public class MiningRobotController : MonoBehaviour, IObjectPoolGameObject
         Slot = 0;
         PlanetData = null;
         RobotData = null;
-        behaviorTree.Reset();
         ObjectPool.Release(gameObject);
     }
 }

@@ -22,9 +22,9 @@ public class GuideQuestTable : DataTable
         public int Turn { get; set; }
         public MissionType MissionClearType { get; set; }
         public int Target { get; set; }
-        public int TargetCount { get; set; }
+        public string TargetCount { get; set; }
         public int RewardItemID { get; set; }
-        public int RewardItemCount { get; set; }
+        public string RewardItemCount { get; set; }
 
         public void Set(string[] argument)
         {
@@ -40,9 +40,9 @@ public class GuideQuestTable : DataTable
                 MissionClearType = System.Enum.Parse<MissionType>(argument[3]);
             }
             Target = int.Parse(argument[4]);
-            TargetCount = int.Parse(argument[5]);
+            TargetCount = argument[5];
             RewardItemID = int.Parse(argument[6]);
-            RewardItemCount = int.Parse(argument[7]);
+            RewardItemCount = argument[7];
         }
     }
 

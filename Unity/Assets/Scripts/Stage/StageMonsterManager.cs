@@ -1,6 +1,8 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
+using System.Threading;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
@@ -37,8 +39,7 @@ public class StageMonsterManager : MonoBehaviour
 
     private int[] laneMonsterCounts;
     public int LaneCount => laneCount;
-    private int monsterCount => monsterControllers.Count;
-
+    private int monsterCount;
     private ObjectPoolManager objectPoolManager;
 
     private void Awake()
@@ -48,6 +49,7 @@ public class StageMonsterManager : MonoBehaviour
         monsterLines = new Dictionary<int, Dictionary<int, MonsterController>>();
         monsterControllers = new HashSet<MonsterController>();
         laneMonsterCounts = new int[laneCount];
+        monsterCount = 0;
     }
 
     public void AddMonster(int lane, MonsterController monster)
@@ -55,6 +57,7 @@ public class StageMonsterManager : MonoBehaviour
         var destructedEvent = monster.GetComponent<DestructedDestroyEvent>();
         if (destructedEvent != null)
         {
+            ++monsterCount;
             monsterControllers.Add(monster);
             if (!monsterLines.ContainsKey(currentLastLine))
             {
@@ -92,9 +95,11 @@ public class StageMonsterManager : MonoBehaviour
         {
             laneMonsterCounts[i] = 0;
         }
+        monsterCount = 0;
 
-        foreach (var monster in monsterControllers)
+        while (monsterControllers.Count > 0)
         {
+            var monster = monsterControllers.First();
             monster.Release();
         }
 
@@ -125,7 +130,7 @@ public class StageMonsterManager : MonoBehaviour
 
         OnMonsterDie?.Invoke();
 
-        monsterControllers.Remove(monster);
+        --monsterCount;
 
         if (monsterCount == 0)
         {
@@ -151,6 +156,11 @@ public class StageMonsterManager : MonoBehaviour
                 nextMonster.Value.currentLine = -1;
             }
         }
+    }
+
+    public void RemoveFromMonsterSet(MonsterController monster)
+    {
+        monsterControllers.Remove(monster);
     }
 
     public int GetMonsterCount(int lane)

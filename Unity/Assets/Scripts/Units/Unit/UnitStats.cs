@@ -51,6 +51,7 @@ public class UnitStats : CharacterStats
 
     private void Start()
     {
+
     }
     public void AddStats(UpgradeType type, float amount)
     {

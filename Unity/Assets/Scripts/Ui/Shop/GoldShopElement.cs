@@ -8,7 +8,7 @@ using UnityEngine.UI;
 public class GoldShopElement : MonoBehaviour
 {
     [SerializeField]
-    private Image icon;
+    private AddressableImage icon;
     [SerializeField]
     private LocalizationText mineralNameText;
     [SerializeField]
@@ -21,19 +21,26 @@ public class GoldShopElement : MonoBehaviour
     private BigNumber payAmount;
     public event Action<int> onClickGoldShopElement;
 
-    private string sellRatioFormat = "1 : {0}";
-
+    private bool isInitialized = false;
     public void Initialize(ShopTable.Data data)
     {
+        int itemSpriteId = DataTableManager.ItemTable.GetData(data.NeedItemID).SpriteID;
+
+        icon.SetSprite(itemSpriteId);
         shopId = data.ID;
         currencyType = (Currency)data.NeedItemID;
         payAmount = data.PayCount;
+        isInitialized = true;
 
         UpdateUI();
     }
     private void OnEnable()
     {
         ItemManager.OnItemAmountChanged += DoItemChange;
+        if(isInitialized)
+        {
+            UpdateUI();
+        }
     }
     private void OnDisable()
     {
@@ -41,9 +48,10 @@ public class GoldShopElement : MonoBehaviour
     }
     private void UpdateUI()
     {
-        mineralNameText.SetString(DataTableManager.ItemTable.GetData((int)currencyType).NameStringID);
+        var data = DataTableManager.ItemTable.GetData((int)currencyType);
+        mineralNameText.SetString(data.NameStringID);
         NeedAmountText.text = $"{ItemManager.GetItemAmount((int)currencyType)}";
-        SellRatioText.text = string.Format(sellRatioFormat, payAmount);
+        SellRatioText.text = payAmount.ToString();
     }
 
     public void OnClickGoldShopElement()
@@ -54,7 +62,7 @@ public class GoldShopElement : MonoBehaviour
     {
         if((int)currencyType == itemId)
         {
-            NeedAmountText.text = $"{amount}";
+            UpdateUI();
         }
     }
 }

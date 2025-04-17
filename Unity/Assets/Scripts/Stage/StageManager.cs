@@ -108,6 +108,7 @@ public class StageManager : MonoBehaviour
 
         machines[IngameStatus].SetActive(false);
 
+        OnIngameStatusChanged?.Invoke(status);
         StageUiManager.IngameUIManager.SetStatus(status);
 
         machines[status].SetActive(true);
@@ -116,7 +117,6 @@ public class StageManager : MonoBehaviour
 
         IngameStatus = status;
 
-        OnIngameStatusChanged?.Invoke(IngameStatus);
     }
 
     public void ResetStage()

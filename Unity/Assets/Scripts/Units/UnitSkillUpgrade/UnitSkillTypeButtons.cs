@@ -1,39 +1,67 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
 public class UnitSkillTypeButtons : MonoBehaviour
 {
     [SerializeField]
-    public Button tankerButton;
-    [SerializeField]
-    public Button dealerButton;
-    [SerializeField]
-    public Button healerButton;
-    [SerializeField]
     private UnitSkillUpgradePanel manager;
+    [SerializeField]
+    private Color defaultColor = Color.white;
+
+    [SerializeField]
+    private Toggle tankerToggle;
+    [SerializeField]
+    private Toggle dealerToggle;
+    [SerializeField]
+    private Toggle healerToggle;
+
+    [SerializeField]
+    private Sprite selectedSprite;
+    [SerializeField]
+    private Sprite deselectedSprite;
+
+    [SerializeField]
+    private Image tankerImage;
+    [SerializeField]
+    private Image dealerImage;
+    [SerializeField]
+    private Image healerImage;
+
     
     private void Awake()
     {
-        tankerButton.onClick.AddListener(() => OnClickTankerButton());
-        dealerButton.onClick.AddListener(() => OnClickDealerButton());
-        healerButton.onClick.AddListener(() => OnClickHealerButton());
+
+    }
+
+   
+
+
+    public void OnClickToggle()
+    {
+        if(tankerToggle.isOn)
+        {
+            manager.SetType(UnitTypes.Tanker);
+        }
+        else if (dealerToggle.isOn)
+        {
+            manager.SetType(UnitTypes.Dealer);
+
+        }
+        else if(healerToggle.isOn)
+        {
+            manager.SetType(UnitTypes.Healer);
+
+        }
+        tankerImage.sprite = tankerToggle.isOn ? selectedSprite : deselectedSprite;
+        dealerImage.sprite = dealerToggle.isOn ? selectedSprite : deselectedSprite;
+        healerImage.sprite = healerToggle.isOn ? selectedSprite : deselectedSprite;
+
     }
 
 
 
-    private void OnClickTankerButton()
-    {
-        manager.SetType(UnitTypes.Tanker);
-    }
-    
-    private void OnClickDealerButton()
-    {
-        manager.SetType(UnitTypes.Dealer);
-    }
-    private void OnClickHealerButton()
-    {
-        manager.SetType(UnitTypes.Healer);
-    }
 }

@@ -117,7 +117,12 @@ public class UnitPartyManager : MonoBehaviour
 
     public void UpgradeSkillStats(int id, UnitTypes type)
     {
+        if (!party.ContainsKey(type))
+            return;
+
         var unit = party[type];
+        
+
         unit.unitSkill.UpgradeUnitSkillStats(id);
     }
 

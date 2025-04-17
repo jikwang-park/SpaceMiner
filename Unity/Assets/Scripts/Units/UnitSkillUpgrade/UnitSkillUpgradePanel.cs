@@ -30,6 +30,8 @@ public class UnitSkillUpgradePanel : MonoBehaviour
 
         id = unitSkillDictionary[currentType][currentGrade];
     }
+
+   
     private void Start()
     {
         board.ShowFirstOpened(id, currentType);

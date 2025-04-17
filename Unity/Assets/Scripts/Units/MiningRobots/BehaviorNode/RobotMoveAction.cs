@@ -26,13 +26,13 @@ public class RobotMoveAction : ActionNode<MiningRobotController>
             if (context.sqrDistance > moving.sqrMagnitude)
             {
                 context.transform.position += moving;
+                context.transform.rotation = Quaternion.Lerp(context.transform.rotation, Quaternion.LookRotation(direction), Time.deltaTime * context.Speed);
                 return NodeStatus.Running;
             }
             else
             {
                 context.transform.position = context.currentTarget.position;
             }
-
         }
 
         return NodeStatus.Success;

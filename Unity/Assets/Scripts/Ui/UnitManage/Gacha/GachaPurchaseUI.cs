@@ -14,18 +14,18 @@ public class GachaPurchaseUI : MonoBehaviour
     [SerializeField]
     private GachaPurchaseButton gachaRepeat2Button;
 
-    private bool useTicket = false;
     private int currentGachaId;
     private void Awake()
     {
         gachaOneButton.onClickGachaButton += DoGacha;
         gachaRepeatButton.onClickGachaButton += DoGacha;
         gachaRepeat2Button.onClickGachaButton += DoGacha;
+        GachaManager.onUseTicketChanged += DoUseTicketChanged;
     }
     public void Initialize(GachaTable.Data data)
     {
         currentGachaId = data.ID;
-        if(useTicket)
+        if(GachaManager.useTicket)
         {
             gachaOneButton.Initialize(1, 1, data.NeedItemID2);
             gachaRepeatButton.Initialize(data.RepeatCount1, data.RepeatCount1, data.NeedItemID2);
@@ -39,14 +39,29 @@ public class GachaPurchaseUI : MonoBehaviour
         }
 
     }
+    private void OnEnable()
+    {
+        GachaManager.onUseTicketChanged += DoUseTicketChanged;
+        if(currentGachaId != default)
+        {
+            Initialize(DataTableManager.GachaTable.GetData(currentGachaId));
+        }
+    }
+    private void OnDisable()
+    {
+        GachaManager.onUseTicketChanged -= DoUseTicketChanged;
+    }
     public void ToggleUseTicket()
     {
-        useTicket = !useTicket;
+        GachaManager.ToggleUseTicket();
+    }
+    private void DoUseTicketChanged()
+    {
         Initialize(DataTableManager.GachaTable.GetData(currentGachaId));
     }
     private void DoGacha(int count)
     {
-        var gachaResults = GachaManager.Gacha(currentGachaId, count, useTicket);
+        var gachaResults = GachaManager.Gacha(currentGachaId, count, GachaManager.useTicket);
         if(gachaResults != null)
         {
             InventoryManager.Add(gachaResults);

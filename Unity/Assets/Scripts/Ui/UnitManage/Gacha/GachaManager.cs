@@ -7,7 +7,9 @@ using Random = UnityEngine.Random;
 
 public static class GachaManager
 {
+    public static bool useTicket { get; private set; } = false;
     private static Dictionary<int, BigNumber> gachaCostDict;
+    public static event Action onUseTicketChanged; 
     static GachaManager()
     {
         gachaCostDict = new Dictionary<int, BigNumber>();
@@ -20,7 +22,11 @@ public static class GachaManager
             }
         }
     }
-
+    public static void ToggleUseTicket()
+    {
+        useTicket = !useTicket;
+        onUseTicketChanged?.Invoke();
+    }
     public static BigNumber CalCulateCost(int gachaId, int count)
     {
         if(gachaCostDict.ContainsKey(gachaId))

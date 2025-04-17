@@ -103,21 +103,45 @@ public class BuildingDataElement : MonoBehaviour
     {
         var data = DataTableManager.BuildingTable.GetDatas(type);
         var buildingExplanId = data[level].DetailStringID;
-
-
-        currentValueText.SetString(buildingExplanId, (data[level].Value).ToString("P2"));
-        if (level <= maxLevel - 1)
-        {
-            var bulidingExplanNextId = data[level + 1].DetailStringID;
-            nextValueText.SetString(bulidingExplanNextId, data[level + 1].Value.ToString("P2"));
-        }
-        else
-        {
-            nextValueText.SetString(maxlevelText);
-        }
-
-
         
+        switch (type)
+        {
+            case BuildingTable.BuildingType.AttackPoint:
+            case BuildingTable.BuildingType.HealthPoint:
+            case BuildingTable.BuildingType.DefensePoint:
+            case BuildingTable.BuildingType.CriticalPossibility:
+            case BuildingTable.BuildingType.CriticalDamages:
+            case BuildingTable.BuildingType.Mining:
+            case BuildingTable.BuildingType.Gold:
+                currentValueText.SetString(buildingExplanId, (data[level].Value).ToString("P2"));
+                if (level <= maxLevel - 1)
+                {
+                    var bulidingExplanNextId = data[level + 1].DetailStringID;
+                    nextValueText.SetString(bulidingExplanNextId, (data[level+1].Value).ToString("P2"));
+                }
+                else
+                {
+                    nextValueText.SetString(maxlevelText);
+                }
+                break;
+            case BuildingTable.BuildingType.IdleTime:
+                currentValueText.SetString(buildingExplanId, (data[level].Value).ToString());
+                if (level <= maxLevel - 1)
+                {
+                    var bulidingExplanNextId = data[level + 1].DetailStringID;
+                    nextValueText.SetString(bulidingExplanNextId, (data[level+1].Value).ToString());
+                }
+                else
+                {
+                    nextValueText.SetString(maxlevelText);
+                }
+                break;
+        }
+
+
+
+
+
 
     }
 

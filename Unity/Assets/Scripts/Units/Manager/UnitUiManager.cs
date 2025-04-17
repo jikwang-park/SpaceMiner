@@ -1,18 +1,27 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class UnitUiManager : MonoBehaviour
 {
-    // Start is called before the first frame update
-    void Start()
+    private Dictionary<UnitTypes,Slider> hpDic = new Dictionary<UnitTypes,Slider>();
+
+    [SerializeField]
+    private StageManager stageManager;
+
+
+
+    private void Awake()
     {
+        stageManager = GameObject.FindGameObjectWithTag("GameController").GetComponent<StageManager>();
         
     }
 
-    // Update is called once per frame
-    void Update()
+    private void Start()
     {
-        
     }
+
+
+   
 }

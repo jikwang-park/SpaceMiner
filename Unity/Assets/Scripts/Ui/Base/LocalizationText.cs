@@ -44,7 +44,7 @@ public class LocalizationText : MonoBehaviour
 
     public void OnChangedLanguage(Languages lang)
     {
-        if(!gameObject.activeInHierarchy)
+        if(text is null)
         {
             return;
         }

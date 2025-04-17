@@ -12,6 +12,7 @@ public class MiningAccumulator : MonoBehaviour
     {
         stageManager = GetComponent<StageManager>();
         stageManager.OnIngameStatusChanged += DoIngameStatusChanged;
+        stageManager.OnStageEnd += DoStageEnd;
     }
     void Start()
     {
@@ -40,13 +41,14 @@ public class MiningAccumulator : MonoBehaviour
             accumulatedMines[planet] += productionThisFrame;
         }
     }
-    public void DoStageClear()
+    public void DoStageEnd()
     {
         foreach(var accumulatedMine in accumulatedMines)
         {
             var itemId = DataTableManager.PlanetTable.GetData(accumulatedMine.Key).ItemID;
             var value = accumulatedMine.Value / MiningRobotInventoryManager.ScaleFactor;
             ItemManager.AddItem(itemId, value);
+            Debug.Log($"{(Currency)itemId} : {value} Get");
         }
         ResetAccumulator();
     }

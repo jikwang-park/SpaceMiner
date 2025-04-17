@@ -31,18 +31,24 @@ public class UnitSkillTypeButtons : MonoBehaviour
     [SerializeField]
     private Image healerImage;
 
-    
+
     private void Awake()
     {
 
     }
 
-   
+    private void OnEnable()
+    {
+        tankerToggle.isOn = false;
+        dealerToggle.isOn = false;
+        healerToggle.isOn = false;
+        tankerToggle.isOn = true;
+    }
 
 
     public void OnClickToggle()
     {
-        if(tankerToggle.isOn)
+        if (tankerToggle.isOn)
         {
             manager.SetType(UnitTypes.Tanker);
         }
@@ -51,17 +57,12 @@ public class UnitSkillTypeButtons : MonoBehaviour
             manager.SetType(UnitTypes.Dealer);
 
         }
-        else if(healerToggle.isOn)
+        else if (healerToggle.isOn)
         {
             manager.SetType(UnitTypes.Healer);
-
         }
         tankerImage.sprite = tankerToggle.isOn ? selectedSprite : deselectedSprite;
         dealerImage.sprite = dealerToggle.isOn ? selectedSprite : deselectedSprite;
         healerImage.sprite = healerToggle.isOn ? selectedSprite : deselectedSprite;
-
     }
-
-
-
 }

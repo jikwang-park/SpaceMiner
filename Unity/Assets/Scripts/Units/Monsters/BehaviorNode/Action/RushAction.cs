@@ -8,6 +8,16 @@ public class RushAction : ActionNode<MonsterController>
     {
     }
 
+    protected override void OnStart()
+    {
+        base.OnStart();
+
+        if (context.AnimationFound)
+        {
+            context.AnimationController.Play(AnimationControl.AnimationClipID.Run);
+        }
+    }
+
     protected override NodeStatus OnUpdate()
     {
         // TODO: 이후 이동방식 수정 혹은 검토 필요 - 250323 HKY

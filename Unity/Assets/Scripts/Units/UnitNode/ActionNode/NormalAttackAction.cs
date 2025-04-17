@@ -13,14 +13,12 @@ public class NormalAttackAction : ActionNode<Unit>
     {
         base.OnStart();
         context.AttackCorutine();
-        Debug.Log("공격시작");
     }
 
     protected override NodeStatus OnUpdate()
     {
         if(context.currentStatus == Unit.UnitStatus.Attacking)
         {
-            Debug.Log("공격중");
             return NodeStatus.Running;
         }
 

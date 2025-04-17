@@ -20,7 +20,7 @@ public class TimeManager : Singleton<TimeManager>
             if (serverTime != DateTime.MinValue)
             {
                 serverTimeOffset = serverTime - DateTime.Now;
-                Debug.Log("서버 동기화 완료, 오프셋: " + serverTimeOffset);
+                Debug.Log("서버 동기화 완료, 오프셋: " + serverTimeOffset);  
             }
             else
             {

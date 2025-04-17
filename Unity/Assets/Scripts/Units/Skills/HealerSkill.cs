@@ -33,7 +33,6 @@ public class HealerSkill : UnitSkill
             coolTime = healerSkillData.CoolTime;
             healRatio = healerSkillData.HealRatio;
             buffId = healerSkillData.BuffID;
-            Debug.Log(healRatio);
         }
         GetTarget();
     }

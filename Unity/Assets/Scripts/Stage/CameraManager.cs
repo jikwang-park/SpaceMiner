@@ -33,11 +33,11 @@ public class CameraManager : MonoBehaviour
 
     private void Update()
     {
-        unit = unitPartyManager.GetFirstLineUnitTransform();
-        if (unit is null)
+        if (unitPartyManager.UnitCount == 0)
         {
             return;
         }
+        unit = unitPartyManager.GetFirstLineUnitTransform();
         if (Vector3.SqrMagnitude(unit.position + Offset - worldCamera.position) < 0.001f)
         {
             return;

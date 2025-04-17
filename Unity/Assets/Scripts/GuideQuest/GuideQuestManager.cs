@@ -39,7 +39,7 @@ public static class GuideQuestManager
         {
             case GuideQuestTable.MissionType.Exterminate:
                 Progress = SaveLoadManager.Data.questProgressData.monsterCount;
-                isClearedNow = currentQuestData.TargetCount <= SaveLoadManager.Data.questProgressData.monsterCount;
+                isClearedNow = new BigNumber(currentQuestData.TargetCount) <= SaveLoadManager.Data.questProgressData.monsterCount;
                 break;
 
             case GuideQuestTable.MissionType.StageClear:
@@ -78,7 +78,7 @@ public static class GuideQuestManager
             case GuideQuestTable.MissionType.StatUpgrade:
                 var statData = SaveLoadManager.Data.unitStatUpgradeData;
                 var upgradeData = DataTableManager.UnitUpgradeTable.GetData(currentQuestData.Target);
-                isClearedNow = statData.upgradeLevels[upgradeData.Type] >= currentQuestData.TargetCount;
+                isClearedNow = statData.upgradeLevels[upgradeData.Type] >= new BigNumber(currentQuestData.TargetCount);
                 if (isClearedNow)
                 {
                     Progress = 1;

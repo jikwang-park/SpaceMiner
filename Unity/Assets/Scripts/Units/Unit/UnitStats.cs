@@ -293,10 +293,10 @@ public class UnitStats : CharacterStats
         }
 
 
-        if (defenderStats != null)
-        {
-            attack.damage -= defenderStats.armor;
-        }
+        //if (defenderStats != null)
+        //{
+        //    attack.damage -= defenderStats.armor;
+        //}
 
         return attack;
     }
@@ -349,10 +349,10 @@ public class UnitStats : CharacterStats
         }
 
 
-        if (defenderStats != null)
-        {
-            attack.damage -= defenderStats.armor;
-        }
+        //if (defenderStats != null)
+        //{
+        //    attack.damage -= defenderStats.armor;
+        //}
 
         return attack;
     }

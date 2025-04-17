@@ -11,19 +11,19 @@ public class MonsterRewardTable : DataTable
     {
         public int ID { get; set; }
         public int RewardItemID1 { get; set; }
-        public int RewardItemCount1 { get; set; }
+        public string RewardItemCount1 { get; set; }
         public int RewardItemID2 { get; set; }
         public string RewardItemCount2 { get; set; }
         public string RewardItemProbability2 { get; set; }
 
-        public int[] counts;
+        public BigNumber[] counts;
         public float[] probabilities;
 
         public void Set(string[] argument)
         {
             ID = int.Parse(argument[0]);
             RewardItemID1 = int.Parse(argument[1]);
-            RewardItemCount1 = int.Parse(argument[2]);
+            RewardItemCount1 = argument[2];
             RewardItemID2 = int.Parse(argument[3]);
             RewardItemCount2 = argument[4];
             RewardItemProbability2 = argument[5];
@@ -71,7 +71,7 @@ public class MonsterRewardTable : DataTable
                 TableData.Add(item.ID, item);
                 var strCounts = item.RewardItemCount2.Split('_');
                 int countLength = strCounts.Length;
-                item.counts = new int[countLength];
+                item.counts = new BigNumber[countLength];
                 for (int i = 0; i < countLength; ++i)
                 {
                     item.counts[i] = int.Parse(strCounts[i]);

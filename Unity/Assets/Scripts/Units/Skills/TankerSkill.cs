@@ -31,7 +31,6 @@ public class TankerSkill : UnitSkill
             duration = tankerSkillData.Duration;
             buffId = tankerSkillData.BuffID;
 
-            Debug.Log(shieldRatio);
         }
     }
 
@@ -40,7 +39,6 @@ public class TankerSkill : UnitSkill
     {
         var tankerSkillData = DataTableManager.TankerSkillTable.GetData(currentSkillId); //250331 HKY 데이터형 변경
         string soliderTarget = tankerSkillData.SoldierTarget;
-        Debug.Log(soliderTarget);
         string[] targetStrings = soliderTarget.Split("_");
         foreach(string target in targetStrings)
         {

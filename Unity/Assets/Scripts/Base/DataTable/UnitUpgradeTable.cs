@@ -20,7 +20,7 @@ public class UnitUpgradeTable : DataTable
         public UpgradeType Type { get; set; }
         public float Value { get; set; }
         public int NeedItemID { get; set; }
-        public int NeedItemCount { get; set; }
+        public string NeedItemCount { get; set; }
         public int MaxLevel { get; set; }
         public int NameStringID { get; set; }
 
@@ -37,7 +37,7 @@ public class UnitUpgradeTable : DataTable
             }
             Value = float.Parse(argument[2]);
             NeedItemID = int.Parse(argument[3]);
-            NeedItemCount = int.Parse(argument[4]);
+            NeedItemCount = argument[4];
             MaxLevel = int.Parse(argument[5]);
             NameStringID = int.Parse(argument[6]);
         }

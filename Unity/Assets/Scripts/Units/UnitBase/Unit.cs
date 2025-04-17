@@ -6,6 +6,7 @@ using Unity.VisualScripting;
 using Unity.VisualScripting.Antlr3.Runtime.Misc;
 using UnityEditor;
 using UnityEngine;
+using UnityEngine.UI;
 
 
 
@@ -86,8 +87,6 @@ public class Unit : MonoBehaviour
 
     public Grade currentGrade;
 
-
-
     public bool isAutoSkillMode;
     private void Awake()
     {
@@ -98,17 +97,16 @@ public class Unit : MonoBehaviour
 
     private void Start()
     {
-        Debug.Log($"현재 타입 : {currentUnitType}, 현재 공격사거리 : {unitStats.range}");
     }
 
     public bool IsUnitExeedMonsterPosition
     {
         get
         {
-            if(targetPos == null)
+            if (targetPos == null)
                 return false;
 
-            float distance = targetPos.position.z - transform.position.z ;
+            float distance = targetPos.position.z - transform.position.z;
 
             return distance < 1f;
         }
@@ -431,7 +429,7 @@ public class Unit : MonoBehaviour
         {
             unitStats.Execute(targetPos.gameObject);
         }
-        yield return new WaitForSeconds(unitStats.attackSpeed/100);
+        yield return new WaitForSeconds(unitStats.attackSpeed / 100);
         currentStatus = UnitStatus.Wait;
     }
 
@@ -470,7 +468,6 @@ public class Unit : MonoBehaviour
 
     private void Update()
     {
-        Debug.Log(IsUnitExeedMonsterPosition);
         if (HasBarrier)
         {
             if (Time.time > skillEndTime)

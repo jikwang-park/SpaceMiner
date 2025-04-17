@@ -9,7 +9,7 @@ public class SkillUpgradeTable : DataTable
         public int ID { get; set; }
         public int NameStringID { get; set; }
         public int NeedItemID { get; set; }
-        public int NeedItemCount { get; set; }
+        public string NeedItemCount { get; set; }
         public int NeedSkillID { get; set; }
         public int SkillPaymentID { get; set; }
 
@@ -18,7 +18,7 @@ public class SkillUpgradeTable : DataTable
             ID = int.Parse(argument[0]);
             NeedItemID = int.Parse(argument[1]);
             NameStringID = int.Parse(argument[2]);
-            NeedItemCount = int.Parse(argument[3]);
+            NeedItemCount = argument[3];
             NeedSkillID = int.Parse(argument[4]);
             SkillPaymentID = int.Parse(argument[5]);
         }

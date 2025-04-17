@@ -90,7 +90,7 @@ public class DungeonStageStatusMachine : StageStatusMachine
 
     protected void UpdateTimer(float currentTime)
     {
-        remainingTime = currentTime - remainingTime;
+        remainingTime = stageEndTime - currentTime;
 
         if (remainingTime <= 0f)
         {
@@ -248,16 +248,16 @@ public class DungeonStageStatusMachine : StageStatusMachine
     public override void Reset()
     {
         stageManager.ReleaseDamageTexts();
+        SetStageText();
+        SetDungeonData();
 
         Time.timeScale = 1f;
         stageManager.StageMonsterManager.ClearMonster();
 
-        UnitSpawn();
-
         stageManager.ReleaseBackground();
         InstantiateBackground();
+        UnitSpawn();
 
-        stageManager.UnitPartyManager.UnitSpawn();
         stageManager.CameraManager.SetCameraOffset();
         NextWave(true);
     }

@@ -41,13 +41,14 @@ GameObject:
   m_Component:
   - component: {fileID: 3423962102613496954}
   - component: {fileID: -5461280870685024526}
+  - component: {fileID: -4623745556639016477}
   - component: {fileID: 7440033759378763347}
   - component: {fileID: -2317629366726999601}
   - component: {fileID: -2976868251144256773}
   - component: {fileID: 8093572881432867289}
   - component: {fileID: -8587870876288884322}
   - component: {fileID: 8926993181462593796}
-  - component: {fileID: -874191992593159967}
+  - component: {fileID: -5256364058396251050}
   - component: {fileID: 8185596989103494304}
   - component: {fileID: 2792753724228369894}
   - component: {fileID: 1002232495234656748}
@@ -93,10 +94,26 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   status: 0
   <Stats>k__BackingField: {fileID: 0}
-  animations: {fileID: 0}
+  attackTime: 0.5
   <minDistanceInMonster>k__BackingField: 2
   TargetAcquired: 0
   currentLine: -1
+--- !u!114 &-4623745556639016477
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 68694922099096127}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 75cbe4a1b6a103140a808bbe7b3e9e1f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  animationDict:
+    _serializedList: []
+  targetWeight: 1
+  fadeLength: 0.5
 --- !u!114 &7440033759378763347
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -114,7 +131,7 @@ MonoBehaviour:
   damage:
     currentValue: 
   armor:
-    currentValue: 1
+    currentValue: 0
   coolDown: 0
   range: 0
   criticalChance: 0
@@ -132,6 +149,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9e7889334f4e429499ec56ac18c6eda1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  skillTime: 0.5
 --- !u!114 &-2976868251144256773
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -182,7 +200,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8aa1921a0dca5b34c8e13a04da6dfd7a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!114 &-874191992593159967
+--- !u!114 &-5256364058396251050
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -191,7 +209,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 68694922099096127}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 01c571c7b0d3c9242a0169cc80cc27d6, type: 3}
+  m_Script: {fileID: 11500000, guid: a318b2369402152468a58d09351a9482, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!111 &8185596989103494304
@@ -212,7 +230,7 @@ Animation:
   - {fileID: 8435452027487919885, guid: 5cd0ae15ea0baa645a025f98bea62543, type: 3}
   - {fileID: -4630339522487117836, guid: 5cd0ae15ea0baa645a025f98bea62543, type: 3}
   m_WrapMode: 0
-  m_PlayAutomatically: 1
+  m_PlayAutomatically: 0
   m_AnimatePhysics: 0
   m_CullingType: 1
 --- !u!65 &2792753724228369894

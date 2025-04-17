@@ -6,14 +6,14 @@ public class BuildingTable : DataTable
 {
     public enum BuildingType
     {
-        IdleTime = 1,
-        AttackPoint,
+        AttackPoint = 1,
         HealthPoint,
         DefensePoint,
         CriticalPossibility,
         CriticalDamages,
+        Mining,
         Gold,
-        Mining
+        IdleTime,
     }
 
     public class Data : ITableData
@@ -27,6 +27,7 @@ public class BuildingTable : DataTable
         public int NeedItemCount { get; set; }
         public int MaxLevel { get; set; }
         public int SpriteID { get; set; }
+        public int DetailStringID { get; set; }
 
         public void Set(string[] argument)
         {
@@ -46,6 +47,7 @@ public class BuildingTable : DataTable
             NeedItemCount = int.Parse(argument[6]);
             MaxLevel = int.Parse(argument[7]);
             SpriteID = int.Parse(argument[8]);
+            DetailStringID = int.Parse(argument[9]);
         }
     }
 

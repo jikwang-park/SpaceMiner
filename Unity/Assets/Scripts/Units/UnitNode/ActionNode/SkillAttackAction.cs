@@ -12,13 +12,11 @@ public class SkillAttackAction : ActionNode<Unit>
     {
         base.OnStart();
         context.UseSkill();
-        Debug.Log("스킬 사용시작");
     }
     protected override NodeStatus OnUpdate()
     {
         if (context.currentStatus == Unit.UnitStatus.UsingSkill)
         {
-            Debug.Log("스킬사용중");
             return NodeStatus.Running;
 
         }

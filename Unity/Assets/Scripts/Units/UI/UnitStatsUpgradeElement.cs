@@ -52,34 +52,17 @@ public class UnitStatsUpgradeElement : MonoBehaviour
         addStatButton.onClick.AddListener(() => OnClickAddStatsButton());
     }
 
-    public void SetInitString()
+    public void SetInitString(UpgradeType type)
     {
-        //유닛 업그레이드 테이블에 stringid에 맞게끔 컬럼으로 있어야함
-        switch (currentType)
-        {
-            case UpgradeType.AttackPoint:
-                titleText.SetString(55);
-                break;
-            case UpgradeType.HealthPoint:
-                titleText.SetString(56);
-                break;
-            case UpgradeType.DefensePoint:
-                titleText.SetString(57);
-                break;
-            case UpgradeType.CriticalPossibility:
-                titleText.SetString(58);
-                break;
-            case UpgradeType.CriticalDamages:
-                titleText.SetString(59);
-                break;
-        }
+        var stringId = DataTableManager.UnitUpgradeTable.GetData(type).NameStringID;
+        titleText.SetString(stringId);
     }
     //임시 처리
     public void SetImage(UpgradeType type, List<Sprite> statsSprite)
     {
         int index = (int)type;
 
-        StatsImage.sprite = statsSprite[index-1];
+        StatsImage.sprite = statsSprite[index - 1];
     }
 
     public void Init(UnitUpgradeTable.Data data)
@@ -111,7 +94,6 @@ public class UnitStatsUpgradeElement : MonoBehaviour
         currentValue = GetCurrentValue(level);
         currentGold = GetCurrentGold(level);
         SetStatsInfo();
-        Debug.Log(this.level);
     }
 
     public float GetCurrentValue(int level)

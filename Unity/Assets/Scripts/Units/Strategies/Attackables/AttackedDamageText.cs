@@ -6,7 +6,8 @@ using UnityEngine.AddressableAssets;
 
 public class AttackedDamageText : MonoBehaviour, IAttackable
 {
-    private const string textPrefabAddress = "Assets/Addressables/Prefabs/UI/DamageText.prefab";
+    [SerializeField]
+    private string textPrefabAddress = "Assets/Addressables/Prefabs/UI/DamageText/UnitDamageText.prefab";
 
     public float showingDuration = 1.5f;
     public float risingSpeed = 2f;

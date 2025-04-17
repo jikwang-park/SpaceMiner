@@ -29,7 +29,10 @@ public class ShopPanelUI : MonoBehaviour
         keyShopToggleImage = keyShopToggle.GetComponent<Image>();
         robotShopToggleImage = robotShopToggle.GetComponent<Image>();
         goldShopToggleImage = goldShopToggle.GetComponent<Image>();
-        DisplayPanel((int)ShopTable.ShopType.DungeonKey);
+    }
+    private void OnEnable()
+    {
+        keyShopToggle.isOn = true;
     }
     private void DisplayPanel(int index)
     {

@@ -22,6 +22,8 @@ public abstract class AnimationControl : MonoBehaviour
 
     public abstract void Play(AnimationClipID clipID, bool isLoop);
 
+    public abstract void Stop();
+
     public abstract void SetSpeed(AnimationClipID clipID, float speed);
     public abstract void SetSpeed(float speed);
 

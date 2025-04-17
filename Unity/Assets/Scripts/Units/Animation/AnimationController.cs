@@ -91,6 +91,10 @@ public class AnimationController : AnimationControl
 
     private void Update()
     {
+        if (!animations.isPlaying)
+        {
+            return;
+        }
         ProcessEvent();
     }
 
@@ -168,6 +172,29 @@ public class AnimationController : AnimationControl
         state.normalizedSpeed = speed;
     }
 
+
+    public override void SetLoop(AnimationClipID clipID, bool isLoop)
+    {
+        if (!animationDict.ContainsKey(clipID))
+        {
+            return;
+        }
+
+        if (isLoop)
+        {
+            animations[animationDict[clipID]].wrapMode = WrapMode.Loop;
+        }
+        else
+        {
+            animations[animationDict[clipID]].wrapMode = WrapMode.ClampForever;
+        }
+    }
+
+    public override void Stop()
+    {
+        animations.Stop();
+    }
+
     private float GetProgress(AnimationClipID clipID)
     {
         if (!animationDict.ContainsKey(clipID))
@@ -216,20 +243,4 @@ public class AnimationController : AnimationControl
     }
 
 
-    public override void SetLoop(AnimationClipID clipID, bool isLoop)
-    {
-        if (!animationDict.ContainsKey(clipID))
-        {
-            return;
-        }
-
-        if (isLoop)
-        {
-            animations[animationDict[clipID]].wrapMode = WrapMode.Loop;
-        }
-        else
-        {
-            animations[animationDict[clipID]].wrapMode = WrapMode.Once;
-        }
-    }
 }

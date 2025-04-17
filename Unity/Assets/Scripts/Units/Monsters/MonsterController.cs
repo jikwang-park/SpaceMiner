@@ -219,6 +219,7 @@ public class MonsterController : MonoBehaviour, IObjectPoolGameObject
 
     public void Release()
     {
+        AnimationController.Stop();
         StageManager.StageMonsterManager.RemoveFromMonsterSet(this);
         ObjectPool.Release(gameObject);
     }

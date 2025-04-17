@@ -4,7 +4,7 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class BuildingDataElement: MonoBehaviour
+public class BuildingDataElement : MonoBehaviour
 {
     [SerializeField]
     private Button upgradeButton;
@@ -53,7 +53,9 @@ public class BuildingDataElement: MonoBehaviour
     private int needItemCount;
     [SerializeField]
     private bool isLocked = true;
- 
+
+    private const int maxlevelText = 60010;
+
     [SerializeField]
     private AddressableImage buildingImage;
 
@@ -70,25 +72,25 @@ public class BuildingDataElement: MonoBehaviour
         upgradeButton.onClick.AddListener(() => OnClickUpgradeButton());
     }
 
-    public void Init(List<BuildingTable.Data> data,int level)
+    public void Init(List<BuildingTable.Data> data, int level)
     {
         this.data = data;
         currentLevel = level;
         SetLevelData(currentLevel);
     }
 
-    private void SetBuildingName(BuildingTable.BuildingType type , int level)
+    private void SetBuildingName(BuildingTable.BuildingType type, int level)
     {
         var data = DataTableManager.BuildingTable.GetDatas(type);
         var nameId = data[level].NameStringID;
         buildingName.SetString(nameId);
     }
-    private void SetCurrentNeedImage(BuildingTable.BuildingType type , int level)
+    private void SetCurrentNeedImage(BuildingTable.BuildingType type, int level)
     {
         var data = DataTableManager.BuildingTable.GetDatas(type);
         var buildingSpirteId = data[level].NeedItemID;
         var id = DataTableManager.ItemTable.GetData(buildingSpirteId).SpriteID;
-        if(level <= maxLevel-1)
+        if (level <= maxLevel - 1)
         {
             currentNeedItemImage.SetSprite(id);
         }
@@ -97,20 +99,25 @@ public class BuildingDataElement: MonoBehaviour
             currentNeedItemImage = null;
         }
     }
-    private void SetBuildingExplanText(BuildingTable.BuildingType type , int level)
+    private void SetBuildingExplanText(BuildingTable.BuildingType type, int level)
     {
         var data = DataTableManager.BuildingTable.GetDatas(type);
         var buildingExplanId = data[level].DetailStringID;
-        currentValueText.SetString(buildingExplanId, (data[level].Value).ToString());
+
+
+        currentValueText.SetString(buildingExplanId, (data[level].Value).ToString("P2"));
         if (level <= maxLevel - 1)
         {
             var bulidingExplanNextId = data[level + 1].DetailStringID;
-            nextValueText.SetString(bulidingExplanNextId, (data[level + 1].Value).ToString());
+            nextValueText.SetString(bulidingExplanNextId, data[level + 1].Value.ToString("P2"));
         }
         else
         {
-            nextValueText.SetString(60010);
+            nextValueText.SetString(maxlevelText);
         }
+
+
+        
 
     }
 
@@ -118,7 +125,7 @@ public class BuildingDataElement: MonoBehaviour
     {
         nextLevel = level + 1;
     }
-   
+
     public void SetLevelData(int level)
     {
         id = data[level].ID;
@@ -152,7 +159,7 @@ public class BuildingDataElement: MonoBehaviour
             isLocked = false;
         }
         SetFirstUpgrade(isLocked);
-        SetConstructionInfo(level,currentType);
+        SetConstructionInfo(level, currentType);
         SetBuildingExplanText(currentType, level);
     }
 
@@ -171,7 +178,7 @@ public class BuildingDataElement: MonoBehaviour
 
     private void UpdateButtonState()
     {
-        if(ItemManager.CanConsume(itemId, needItemCount))
+        if (ItemManager.CanConsume(itemId, needItemCount))
         {
             upgradeButton.interactable = true;
             buttonImage.color = activeColor;
@@ -183,7 +190,7 @@ public class BuildingDataElement: MonoBehaviour
         }
     }
 
-    private void SetConstructionInfo(int level,BuildingTable.BuildingType type)
+    private void SetConstructionInfo(int level, BuildingTable.BuildingType type)
     {
         SetLevelText(level);
         SetCountText(type);
@@ -210,14 +217,14 @@ public class BuildingDataElement: MonoBehaviour
         }
 
     }
-    public void SetData(BuildingTable.BuildingType type,int level)
+    public void SetData(BuildingTable.BuildingType type, int level)
     {
         currentType = type;
         this.currentLevel = level;
         SetLevelData(level);
     }
 
-  
+
 
     public void LevelUp()
     {
@@ -225,11 +232,11 @@ public class BuildingDataElement: MonoBehaviour
             return;
 
         currentLevel++;
-        
+
         SetLevelData(currentLevel);
         SetLevelText(currentLevel);
 
-        stageManager.UnitPartyManager.AddBuildingStats(currentType,value);
+        stageManager.UnitPartyManager.AddBuildingStats(currentType, value);
         SetConstructionInfo(currentLevel, currentType);
 
         SaveLoadManager.Data.buildingData.buildingLevels[currentType] = currentLevel;
@@ -243,10 +250,10 @@ public class BuildingDataElement: MonoBehaviour
         var spriteId = data[level].SpriteID;
         buildingImage.SetSprite(spriteId);
     }
-   
+
     private bool IsMaxLevel(int level)
     {
-        if(level >= maxLevel)
+        if (level >= maxLevel)
         {
             return true;
 
@@ -262,12 +269,12 @@ public class BuildingDataElement: MonoBehaviour
         }
         UpdateButtonState();
 
-        
+
     }
 
     private void SetFirstUpgrade(bool isLocked)
     {
-        if(isLocked)
+        if (isLocked)
         {
             lockedImage.gameObject.SetActive(true);
         }
@@ -280,11 +287,11 @@ public class BuildingDataElement: MonoBehaviour
     private void OnClickUpgradeButton()
     {
         ItemManager.ConsumeItem(itemId, needItemCount);
-        if(isLocked)
+        if (isLocked)
         {
             isLocked = false;
         }
-       
+
         LevelUp();
 
     }

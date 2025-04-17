@@ -10,8 +10,8 @@ public class DungeonEndWindow : MonoBehaviour
 {
     private const int ClearID = 142;
     private const int FailID = 143;
-    private const int NextID = 151;
-    private const int RetryID = 153;
+    private const int NextID = 144;
+    private const int RetryID = 151;
 
     [SerializeField]
     private LocalizationText nextText;

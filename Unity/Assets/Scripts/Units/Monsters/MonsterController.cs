@@ -5,14 +5,13 @@ using UnityEngine.Pool;
 
 public class MonsterController : MonoBehaviour, IObjectPoolGameObject
 {
-    private readonly int hashAttack = Animator.StringToHash("Attack");
-
     public enum Status
     {
         Wait,
         Attacking,
         SkillUsing,
         Dead,
+        Run,
     }
 
     public Status status;
@@ -21,7 +20,7 @@ public class MonsterController : MonoBehaviour, IObjectPoolGameObject
     public MonsterStats Stats { get; private set; }
 
     [SerializeField]
-    private float attackTime = 0.5f;
+    private float attackTime = 0.4f;
 
     private BehaviorTree<MonsterController> behaviorTree;
 
@@ -35,7 +34,7 @@ public class MonsterController : MonoBehaviour, IObjectPoolGameObject
     public float TargetDistance { get; private set; }
     public Transform Target { get; private set; }
 
-    public bool TargetAcquired = false;
+    public bool hasTarget = false;
     public MonsterTable.Data MonsterData { get; private set; }
     public MonsterRewardTable.Data RewardData { get; private set; }
 
@@ -48,8 +47,6 @@ public class MonsterController : MonoBehaviour, IObjectPoolGameObject
     public float LastAttackTime { get; private set; }
 
     private bool isDrawRegion;
-
-    public bool AnimationFound { get; private set; }
 
     public bool CanAttack
     {
@@ -69,23 +66,24 @@ public class MonsterController : MonoBehaviour, IObjectPoolGameObject
 
     public IObjectPool<GameObject> ObjectPool { get; set; }
 
-    private WaitUntil attackWait;
-    private WaitUntil attackEndWait;
 
     private void Awake()
     {
         Stats = GetComponent<MonsterStats>();
-        AnimationController = GetComponent<AnimationController>();
-        AnimationFound = AnimationController;
-        attackWait = new WaitUntil(() => AnimationController.GetProgress(AnimationControl.AnimationClipID.Attack) > attackTime);
-        attackEndWait = new WaitUntil(() => AnimationController.GetProgress(AnimationControl.AnimationClipID.Attack) >= 1f);
+        AnimationController = GetComponent<AnimationControl>();
         status = Status.Wait;
+    }
+
+    private void Start()
+    {
+        AnimationController.AddEvent(AnimationControl.AnimationClipID.Attack, attackTime, OnAttack);
+        AnimationController.AddEvent(AnimationControl.AnimationClipID.Attack, 1f, OnAttackEnd);
     }
 
     private void OnEnable()
     {
         isDrawRegion = true;
-        TargetAcquired = false;
+        hasTarget = false;
         currentLine = -1;
         TargetDistance = float.PositiveInfinity;
         GetComponent<DestructedDestroyEvent>().OnDestroyed += OnThisDie;
@@ -105,14 +103,14 @@ public class MonsterController : MonoBehaviour, IObjectPoolGameObject
             return;
         }
 
-        if (!TargetAcquired && StageManager.UnitPartyManager.UnitCount > 0)
+        if (!hasTarget && StageManager.UnitPartyManager.UnitCount > 0)
         {
             Target = StageManager.UnitPartyManager.GetFirstLineUnitTransform();
             Target.GetComponent<DestructedDestroyEvent>().OnDestroyed += OnTargetDie;
-            TargetAcquired = true;
+            hasTarget = true;
         }
 
-        if (TargetAcquired)
+        if (hasTarget)
         {
             TargetDistance = -(Target.position.z - transform.position.z);
         }
@@ -179,35 +177,19 @@ public class MonsterController : MonoBehaviour, IObjectPoolGameObject
     {
         status = Status.Attacking;
         LastAttackTime = Time.time;
-        if (AnimationFound)
-        {
-            StartCoroutine(CoAnimationAttack());
-        }
-        else
-        {
-            StartCoroutine(AttackTimer());
-        }
+        AnimationController.Play(AnimationControl.AnimationClipID.Attack);
     }
 
-    private IEnumerator CoAnimationAttack()
+    private void OnAttack()
     {
-        AnimationController.Play(AnimationControl.AnimationClipID.Attack);
-        yield return attackWait;
         if (Target is not null)
         {
             Stats.Execute(Target.gameObject);
         }
-        yield return attackEndWait;
-        status = Status.Wait;
     }
 
-    private IEnumerator AttackTimer()
+    private void OnAttackEnd()
     {
-        //TODO: 애니메이션 정의되거나 공격 정의 후 수정 필요
-        yield return new WaitForSeconds(0.25f);
-        if (Target != null)
-            Stats.Execute(Target.gameObject);
-        yield return new WaitForSeconds(0.25f);
         status = Status.Wait;
     }
 
@@ -223,7 +205,7 @@ public class MonsterController : MonoBehaviour, IObjectPoolGameObject
             Target.GetComponent<DestructedDestroyEvent>().OnDestroyed -= OnTargetDie;
         }
         Target = null;
-        TargetAcquired = false;
+        hasTarget = false;
     }
 
     void OnDrawGizmos()

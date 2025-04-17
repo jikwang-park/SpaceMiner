@@ -89,8 +89,6 @@ public class UnitPartyManager : MonoBehaviour
         if (party.ContainsKey(type))
         {
             party[type].SetData(data, type);
-            GetCurrentStats(party[type]);
-            GetCurrentBulidngStats(party[type]);
             UnitCombatPowerCalculator.CalculateTotalCombatPower();
         }
     }

@@ -1812,9 +1812,9 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
-      - m_Target: {fileID: 3347164185700034978}
+      - m_Target: {fileID: 5432001742468857274}
         m_TargetAssemblyTypeName: UnitSkillUpgradeBoard, Assembly-CSharp
-        m_MethodName: ShowFirstOpened
+        m_MethodName: 
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -3205,8 +3205,8 @@ MonoBehaviour:
       m_Calls: []
   m_text: Stats Upgrade
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
-  m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: de4e1cff8241dd048bb995c542c75043, type: 2}
+  m_sharedMaterial: {fileID: -2857929540059472502, guid: de4e1cff8241dd048bb995c542c75043, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -5884,6 +5884,30 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 6597073936313511848}
     m_Modifications:
+    - target: {fileID: 118356221455362747, guid: b2c2aee192c129d4abd86e863daa433a, type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 118356221455362747, guid: b2c2aee192c129d4abd86e863daa433a, type: 3}
+      propertyPath: m_AnchorMin.y
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 118356221455362747, guid: b2c2aee192c129d4abd86e863daa433a, type: 3}
+      propertyPath: m_SizeDelta.x
+      value: 150.68182
+      objectReference: {fileID: 0}
+    - target: {fileID: 118356221455362747, guid: b2c2aee192c129d4abd86e863daa433a, type: 3}
+      propertyPath: m_SizeDelta.y
+      value: 75.2
+      objectReference: {fileID: 0}
+    - target: {fileID: 118356221455362747, guid: b2c2aee192c129d4abd86e863daa433a, type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: 135.34091
+      objectReference: {fileID: 0}
+    - target: {fileID: 118356221455362747, guid: b2c2aee192c129d4abd86e863daa433a, type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: -57.6
+      objectReference: {fileID: 0}
     - target: {fileID: 957424076176956450, guid: b2c2aee192c129d4abd86e863daa433a, type: 3}
       propertyPath: m_Pivot.x
       value: 0.5
@@ -5968,20 +5992,32 @@ PrefabInstance:
       propertyPath: m_Name
       value: SkillUpgradePanel
       objectReference: {fileID: 0}
+    - target: {fileID: 3543144042901734988, guid: b2c2aee192c129d4abd86e863daa433a, type: 3}
+      propertyPath: dealerToggle
+      value: 
+      objectReference: {fileID: 6373133105405929075}
+    - target: {fileID: 3543144042901734988, guid: b2c2aee192c129d4abd86e863daa433a, type: 3}
+      propertyPath: healerToggle
+      value: 
+      objectReference: {fileID: 6910154436916002894}
+    - target: {fileID: 3543144042901734988, guid: b2c2aee192c129d4abd86e863daa433a, type: 3}
+      propertyPath: tankerToggle
+      value: 
+      objectReference: {fileID: 3512021832521221195}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: b2c2aee192c129d4abd86e863daa433a, type: 3}
---- !u!114 &3347164185700034978 stripped
+--- !u!114 &3512021832521221195 stripped
 MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 7221439719048340434, guid: b2c2aee192c129d4abd86e863daa433a, type: 3}
+  m_CorrespondingSourceObject: {fileID: 8861118148121890363, guid: b2c2aee192c129d4abd86e863daa433a, type: 3}
   m_PrefabInstance: {fileID: 5351456400139258480}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 3acb7a19089890146b443c1cbd074c36, type: 3}
+  m_Script: {fileID: 11500000, guid: 9085046f02f69544eb97fd06b6048fe2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!224 &5119824362759099986 stripped
@@ -5989,6 +6025,33 @@ RectTransform:
   m_CorrespondingSourceObject: {fileID: 957424076176956450, guid: b2c2aee192c129d4abd86e863daa433a, type: 3}
   m_PrefabInstance: {fileID: 5351456400139258480}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &5432001742468857274 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 82870123309971402, guid: b2c2aee192c129d4abd86e863daa433a, type: 3}
+  m_PrefabInstance: {fileID: 5351456400139258480}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &6373133105405929075 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 1312196712421010435, guid: b2c2aee192c129d4abd86e863daa433a, type: 3}
+  m_PrefabInstance: {fileID: 5351456400139258480}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9085046f02f69544eb97fd06b6048fe2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &6910154436916002894 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 1558806116408576574, guid: b2c2aee192c129d4abd86e863daa433a, type: 3}
+  m_PrefabInstance: {fileID: 5351456400139258480}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9085046f02f69544eb97fd06b6048fe2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &6934974817774497211 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 3060701604755859403, guid: b2c2aee192c129d4abd86e863daa433a, type: 3}
@@ -6085,10 +6148,6 @@ PrefabInstance:
     - target: {fileID: 5472200832040816929, guid: b26093237704ee346bba86090c74159d, type: 3}
       propertyPath: m_Name
       value: ConstructePanel
-      objectReference: {fileID: 0}
-    - target: {fileID: 5702567648976698177, guid: b26093237704ee346bba86090c74159d, type: 3}
-      propertyPath: m_SizeDelta.y
-      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []

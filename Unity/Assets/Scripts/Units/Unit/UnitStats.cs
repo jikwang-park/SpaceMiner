@@ -117,10 +117,10 @@ public class UnitStats : CharacterStats
             case BuildingTable.BuildingType.IdleTime:
                 break;
             case BuildingTable.BuildingType.AttackPoint:
-                buildingAttackDamage += (int)amount;
+                buildingAttackDamage += amount;
                 break;
             case BuildingTable.BuildingType.HealthPoint:
-                buildingHp += (int)amount;
+                buildingHp += amount;
                 RecalculateHpWithIncrease();
                 break;
             case BuildingTable.BuildingType.DefensePoint:

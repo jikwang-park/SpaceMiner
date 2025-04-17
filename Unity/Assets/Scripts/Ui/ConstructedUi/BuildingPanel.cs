@@ -37,10 +37,9 @@ public class BuildingPanel : MonoBehaviour
                 {
                     GameObject element = handle.Result;
                     BuildingDataElement buildingElement = element.GetComponent<BuildingDataElement>();
-                    if (buildingElement != null)
+                    if (buildingElement != null)      
                     {
-                        buildingElement.Init(DataTableManager.BuildingTable.GetDatas(currentType));
-                        buildingElement.SetData(currentType, data[currentType]);
+                        buildingElement.Init(DataTableManager.BuildingTable.GetDatas(currentType),data[currentType]);
                     }
                 }
                 else

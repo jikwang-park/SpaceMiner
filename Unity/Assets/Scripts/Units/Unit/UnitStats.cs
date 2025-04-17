@@ -1,7 +1,5 @@
 using System.Collections;
 using System.Collections.Generic;
-using Unity.VisualScripting;
-using UnityEditor;
 using UnityEngine;
 using static UnitUpgradeTable;
 
@@ -13,6 +11,18 @@ public class UnitStats : CharacterStats
 
     private Grade currentGrade;
     private float criticalPercent;
+
+    public override BigNumber Hp
+    {
+        get => base.Hp;
+        set
+        {
+            base.Hp = value;
+            onHpChanged?.Invoke(base.Hp.DivideToFloat(maxHp));
+        }
+    }
+
+    public event System.Action<float> onHpChanged;
 
     public BigNumber FinialDamage
     {
@@ -68,7 +78,7 @@ public class UnitStats : CharacterStats
                 RecalculateArmor();
                 break;
             case UpgradeType.CriticalPossibility:
-                 accountCriticalChance += (int)amount;
+                accountCriticalChance += (int)amount;
                 break;
             case UpgradeType.CriticalDamages:
                 accountCriticalDamage += (int)amount;
@@ -96,7 +106,7 @@ public class UnitStats : CharacterStats
     private void RecalculateHpWithRatio()
     {
         float ratio = 0f;
-        if(maxHp>0)
+        if (maxHp > 0)
         {
             ratio = Hp.DivideToFloat(maxHp);
         }
@@ -110,7 +120,7 @@ public class UnitStats : CharacterStats
 
     public void AddBuildingStats(BuildingTable.BuildingType type, float amount)
     {
-        
+
 
         switch (type)
         {
@@ -228,7 +238,7 @@ public class UnitStats : CharacterStats
     {
         BigNumber stat = 0;
         var data = DataTableManager.UnitUpgradeTable.GetData(upgradeType);
-        for(int i = 1; i <= level; i++)
+        for (int i = 1; i <= level; i++)
         {
             stat += data.Value * i;
         }
@@ -285,7 +295,7 @@ public class UnitStats : CharacterStats
         {
             criticalPercent = (2 + (accountCriticalDamage + buildingCriticalDamage));
 
-            attack.damage = FinialDamage * criticalPercent; 
+            attack.damage = FinialDamage * criticalPercent;
         }
         else
         {

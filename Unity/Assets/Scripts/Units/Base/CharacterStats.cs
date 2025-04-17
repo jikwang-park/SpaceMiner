@@ -15,7 +15,7 @@ public abstract class CharacterStats : MonoBehaviour
 
     public float moveSpeed;
 
-    public BigNumber Hp { get; set; }
+    public virtual BigNumber Hp { get; set; }
 
     protected virtual void OnEnable()
     {

@@ -17,7 +17,7 @@ public class MiningRobotInventorySlot : MonoBehaviour, IPointerDownHandler, IPoi
     public int index { get; set; }
     private int miningRobotId;
 
-    private float holdThreshold = 0.5f;
+    private float holdThreshold = 0.1f;
     private Coroutine holdCoroutine;
     private bool isDragging = false;
     private Canvas parentCanvas;
@@ -145,12 +145,7 @@ public class MiningRobotInventorySlot : MonoBehaviour, IPointerDownHandler, IPoi
         if(draggedObject != null)
         {
             MiningRobotInventorySlot draggedSlot = draggedObject.GetComponent<MiningRobotInventorySlot>();
-            if(draggedSlot == null)
-            {
-                return;
-            }
-
-            if(draggedSlot.IsEmpty)
+            if(draggedSlot == null || draggedSlot.IsEmpty)
             {
                 return;
             }

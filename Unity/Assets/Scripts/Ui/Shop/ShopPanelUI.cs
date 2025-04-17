@@ -23,7 +23,7 @@ public class ShopPanelUI : MonoBehaviour
     private Image keyShopToggleImage;
     private Image robotShopToggleImage;
     private Image goldShopToggleImage;
-    private int currentIndex;
+    private int currentIndex = -1;
     private void Awake()
     {
         keyShopToggleImage = keyShopToggle.GetComponent<Image>();
@@ -32,26 +32,29 @@ public class ShopPanelUI : MonoBehaviour
     }
     private void OnEnable()
     {
+        keyShopToggle.isOn = false;
+        robotShopToggle.isOn = false;
+        goldShopToggle.isOn = false;
         keyShopToggle.isOn = true;
     }
     private void DisplayPanel(int index)
     {
         int newIndex = index - 1;
-        if (index <= 0 || index > shopPanels.Count)
+        if (newIndex < 0 || newIndex >= shopPanels.Count)
         {
             return;
         }
 
-        if (shopPanels[newIndex].activeSelf)
+        if (currentIndex == newIndex && shopPanels[currentIndex].activeSelf)
         {
             return;
         }
 
-        if (currentIndex < shopPanels.Count)
+        if (currentIndex >= 0 && currentIndex < shopPanels.Count)
         {
             shopPanels[currentIndex].SetActive(false);
         }
-        shopPanels[currentIndex].SetActive(false);
+
         currentIndex = newIndex;
         shopPanels[currentIndex].SetActive(true);
     }
@@ -70,6 +73,10 @@ public class ShopPanelUI : MonoBehaviour
             DisplayPanel((int)ShopTable.ShopType.Gold);
         }
 
+        UpdateToggleSprites();
+    }
+    private void UpdateToggleSprites()
+    {
         keyShopToggleImage.sprite = keyShopToggle.isOn ? selectedSprite : deselectedSprite;
         robotShopToggleImage.sprite = robotShopToggle.isOn ? selectedSprite : deselectedSprite;
         goldShopToggleImage.sprite = goldShopToggle.isOn ? selectedSprite : deselectedSprite;

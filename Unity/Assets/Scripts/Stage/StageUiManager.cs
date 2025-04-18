@@ -7,6 +7,7 @@ using UnityEngine;
 public class StageUiManager : MonoBehaviour
 {
     public ObjectPoolManager ObjectPoolManager { get; private set; }
+    public HPBarManager HPBarManager { get; private set; }
 
     [field: SerializeField]
     public IngameUIManager IngameUIManager { get; private set; }
@@ -17,11 +18,13 @@ public class StageUiManager : MonoBehaviour
     [field: SerializeField]
     public ScreenCurtain curtain { get; private set; }
 
+
     public event System.Action OnExitButtonClicked;
 
     private void Awake()
     {
         ObjectPoolManager = GetComponent<ObjectPoolManager>();
+        HPBarManager = GetComponent<HPBarManager>();
     }
 
     public void ExitButtonClicked()

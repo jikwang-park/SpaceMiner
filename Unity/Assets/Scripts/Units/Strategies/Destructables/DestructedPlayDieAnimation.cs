@@ -5,7 +5,6 @@ using UnityEngine;
 public class DestructedPlayDieAnimation : MonoBehaviour, IDestructable
 {
     private AnimationControl animationControl;
-    private WaitUntil waitDie;
 
 
     private void Awake()

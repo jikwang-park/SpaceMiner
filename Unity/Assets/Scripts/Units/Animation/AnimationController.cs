@@ -149,7 +149,6 @@ public class AnimationController : AnimationControl
             }
         }
 
-
         CurrentClip = clipID;
         animations.CrossFade(animationDict[clipID], fadeLength);
     }
@@ -192,6 +191,7 @@ public class AnimationController : AnimationControl
 
     public override void Stop()
     {
+        CurrentClip = AnimationClipID.None;
         animations.Stop();
     }
 

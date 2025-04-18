@@ -15,7 +15,7 @@ public class InventoryPanelUI : MonoBehaviour
 
 
     private Dictionary<UnitTypes, Inventory> inventories = new Dictionary<UnitTypes, Inventory>();
-    private UnitTypes currentType = UnitTypes.Tanker;
+    private UnitTypes currentType = UnitTypes.Healer;
     public void Awake()
     {
         InitializeInventories();
@@ -23,7 +23,6 @@ public class InventoryPanelUI : MonoBehaviour
         inventories.Add(UnitTypes.Tanker, tankerInventory);
         inventories.Add(UnitTypes.Dealer, dealerInventory);
         inventories.Add(UnitTypes.Healer, healerInventory);
-        inventories[currentType].gameObject.SetActive(true);
     }
     public void OnEnable()
     {

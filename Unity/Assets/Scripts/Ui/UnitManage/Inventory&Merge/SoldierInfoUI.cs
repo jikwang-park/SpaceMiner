@@ -9,9 +9,11 @@ public class SoldierInfoUI : MonoBehaviour
     [SerializeField]
     private SoldierInfoImage soldierInfo;
     [SerializeField]
-    private TextMeshProUGUI gradeText;
+    private TextMeshProUGUI attackAmount;
     [SerializeField]
-    private LocalizationText nameText;
+    private TextMeshProUGUI armorAmount;
+    [SerializeField]
+    private TextMeshProUGUI hpAmount;
     [SerializeField]
     private Button equipButton;
 
@@ -20,7 +22,8 @@ public class SoldierInfoUI : MonoBehaviour
         var sprite = element.GetComponent<Image>().sprite;
         var data = DataTableManager.SoldierTable.GetData(element.soldierId);
         soldierInfo.Initialize(element.Grade, element.Level, element.Count.ToString(), sprite);
-        gradeText.text = data.Grade.ToString();
-        nameText.SetString(data.NameStringID);
+        attackAmount.text = $"공격력: {(BigNumber)data.Attack}";
+        armorAmount.text = $"방어력: {(BigNumber)data.Defence}";
+        hpAmount.text = $"체력: {(BigNumber)data.HP}";
     }
 }

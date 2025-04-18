@@ -91,7 +91,7 @@ public static class InventoryManager
         }
 
         int index = inventoryData.elements.FindIndex((e) => e.soldierId == data.ID);
-        if(index < 0 || index >= inventoryData.elements.Count)
+        if(index < 0 || index >= inventoryData.elements.Count - 1)
         {
             return;
         }

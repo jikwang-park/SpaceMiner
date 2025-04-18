@@ -34,19 +34,23 @@ public class AddressableImage : MonoBehaviour
         {
             return;
         }
-
         var imageAddress = DataTableManager.AddressTable.GetData(spriteID);
         if (string.IsNullOrEmpty(imageAddress))
         {
             return;
         }
 
-        var sprite = Addressables.LoadAssetAsync<Sprite>(imageAddress).WaitForCompletion();
-        if (sprite is not null)
+        Addressables.LoadAssetAsync<Sprite>(imageAddress).Completed += AddressableIcon_Completed;
+    }
+
+    private void AddressableIcon_Completed(AsyncOperationHandle<Sprite> handle)
+    {
+        if (handle.Status != AsyncOperationStatus.Succeeded)
         {
-            image.sprite = sprite;
-            image.type = type;
+            return;
         }
+        image.sprite = handle.Result;
+        image.type = type;
     }
 
     public void SetSprite(int spriteID)
@@ -54,6 +58,7 @@ public class AddressableImage : MonoBehaviour
         this.spriteID = spriteID;
         LoadSprite();
     }
+
 
     public void SetSprite(int spriteID, Image.Type type)
     {

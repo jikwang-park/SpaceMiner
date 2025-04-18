@@ -78,8 +78,21 @@ public class UnitStatsUpgradeElement : MonoBehaviour
     {
         nextLevel = level + 1;
         levelText.text = $"Level + {level}";
-        beforeStatsInfo.text = $"{currentValue:F2}";
-        afterStatsInfo.text = $"{currentValue + value:F2}";
+        switch (currentType)
+        {
+            case UpgradeType.AttackPoint:
+            case UpgradeType.HealthPoint:
+            case UpgradeType.DefensePoint:
+                beforeStatsInfo.text = $"{currentValue:F2}";
+                afterStatsInfo.text = $"{currentValue + value:F2}";
+                break;
+            case UpgradeType.CriticalPossibility:
+            case UpgradeType.CriticalDamages:
+                beforeStatsInfo.text = $"{(currentValue*100):F2}%";
+                afterStatsInfo.text = $"{((currentValue + value)*100):F2}%";
+                break;
+        }
+        
         addStartButtonText.text = $" +{currentGold + gold}";
     }
 

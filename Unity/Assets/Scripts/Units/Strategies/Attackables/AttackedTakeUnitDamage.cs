@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -7,6 +8,8 @@ public class AttackedTakeUnitDamage : MonoBehaviour,IAttackable
     private CharacterStats stats;
     private bool gameObjectEnabled;
     private Unit unit;
+
+    public event Action<float> OnHpChanged;
 
     private void Awake()
     {

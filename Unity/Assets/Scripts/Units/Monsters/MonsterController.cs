@@ -190,6 +190,7 @@ public class MonsterController : MonoBehaviour, IObjectPoolGameObject
 
     private void OnAttackEnd()
     {
+        AnimationController.Play(AnimationControl.AnimationClipID.BattleIdle);
         status = Status.Wait;
     }
 

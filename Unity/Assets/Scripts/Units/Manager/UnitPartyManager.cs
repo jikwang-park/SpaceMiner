@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using UnityEngine.AddressableAssets;
+using UnityEngine.UI;
 
 public class UnitPartyManager : MonoBehaviour
 {
@@ -68,8 +69,6 @@ public class UnitPartyManager : MonoBehaviour
         if (party.ContainsKey(type))
         {
             party[type].SetData(data, type);
-            //GetCurrentStats(party[type]);
-            GetCurrentBulidngStats(party[type]);
             UnitCombatPowerCalculator.CalculateTotalCombatPower();
         }
     }
@@ -161,7 +160,7 @@ public class UnitPartyManager : MonoBehaviour
         return null;
     }
 
-    // 250403 HKY ÇöÀç À¯´Ö Å¸ÀÔÀ» ³ÖÀ¸¸é ¾ÕÀÇ À¯´Ö À¯¹«¸¦ ¹ÝÈ¯ÇØÁÖ´Â ¸Þ¼Òµå Ãß°¡
+    // 250403 HKY ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ Å¸ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½È¯ï¿½ï¿½ï¿½Ö´ï¿½ ï¿½Þ¼Òµï¿½ ï¿½ß°ï¿½
     public bool IsUnitExistFront(UnitTypes myType)
     {
         for (int i = (int)myType - 1; i >= (int)UnitTypes.Tanker; --i)
@@ -186,7 +185,7 @@ public class UnitPartyManager : MonoBehaviour
         return false;
     }
 
-    // 250403 HKY ÇöÀç À¯´Ö Å¸ÀÔÀ» ³ÖÀ¸¸é ³» ¾ÕÀÇ À¯´ÖÀ» ¹ÝÈ¯ÇØÁÖ´Â ¸Þ¼Òµå Ãß°¡
+    // 250403 HKY ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ Å¸ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½È¯ï¿½ï¿½ï¿½Ö´ï¿½ ï¿½Þ¼Òµï¿½ ï¿½ß°ï¿½
     public Unit GetFrontUnit(UnitTypes myType)
     {
         for (int i = (int)myType - 1; i >= (int)UnitTypes.Tanker; --i)
@@ -210,6 +209,8 @@ public class UnitPartyManager : MonoBehaviour
         }
         return null;
     }
+    
+
 
     public void ResetUnits(Vector3 startPos)
     {

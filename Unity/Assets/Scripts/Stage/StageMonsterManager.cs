@@ -41,10 +41,12 @@ public class StageMonsterManager : MonoBehaviour
     public int LaneCount => laneCount;
     private int monsterCount;
     private ObjectPoolManager objectPoolManager;
+    private StageManager stageManager;
 
     private void Awake()
     {
         objectPoolManager = GetComponent<ObjectPoolManager>();
+        stageManager = GetComponent<StageManager>();
 
         monsterLines = new Dictionary<int, Dictionary<int, MonsterController>>();
         monsterControllers = new HashSet<MonsterController>();
@@ -344,6 +346,9 @@ public class StageMonsterManager : MonoBehaviour
         monster.transform.parent = null;
         monster.transform.position = frontPosition + SpawnPoints[index];
         monster.transform.rotation = Quaternion.LookRotation(Vector3.back, Vector3.up);
+
+        stageManager.StageUiManager.HPBarManager.SetHPBar(monster.transform);
+
         AddMonster(lane, monsterController);
     }
 }

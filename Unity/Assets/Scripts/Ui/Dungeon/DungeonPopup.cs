@@ -28,7 +28,7 @@ public class DungeonPopup : MonoBehaviour
     private LocalizationText keyText;
 
     [SerializeField]
-    private LocalizationText clearRewardText;
+    private TextMeshProUGUI clearRewardText;
 
     [SerializeField]
     private Button nextDifficultyButton;
@@ -38,6 +38,12 @@ public class DungeonPopup : MonoBehaviour
 
     [SerializeField]
     private Button enterButton;
+
+    [SerializeField]
+    private AddressableImage needKeyIcon;
+
+    [SerializeField]
+    private AddressableImage clearRewardIcon;
 
     private int maxStage;
 
@@ -78,6 +84,8 @@ public class DungeonPopup : MonoBehaviour
         nameText.SetString(curStage.NameStringID);
 
         selectedDifficulty.text = curStage.Stage.ToString();
+        var keyItemData = DataTableManager.ItemTable.GetData(curStage.NeedKeyItemID);
+        needKeyIcon.SetSprite(keyItemData.SpriteID);
         keyText.SetStringArguments(curStage.NeedKeyItemCount.ToString(), ItemManager.GetItemAmount(curStage.NeedKeyItemID).ToString());
         conditionPowerText.SetStringArguments(new BigNumber(curStage.NeedPower).ToString());
 
@@ -89,9 +97,9 @@ public class DungeonPopup : MonoBehaviour
         }
 
         conditionStageText.SetStringArguments(subStages[index].NeedClearPlanet.ToString());
-        var itemNameID = DataTableManager.ItemTable.GetData(curStage.RewardItemID).NameStringID;
-        var itemName = DataTableManager.StringTable.GetData(itemNameID);
-        clearRewardText.SetStringArguments(itemName, curStage.ClearRewardItemCount.ToString());
+        var itemData = DataTableManager.ItemTable.GetData(curStage.RewardItemID);
+        clearRewardIcon.SetSprite(itemData.SpriteID);
+        clearRewardText.text = curStage.ClearRewardItemCount.ToString();
 
 
         previousDifficultyButton.interactable = index > 0;

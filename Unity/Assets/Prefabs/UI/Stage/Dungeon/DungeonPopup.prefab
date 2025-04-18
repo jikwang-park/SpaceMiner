@@ -11,6 +11,7 @@ GameObject:
   - component: {fileID: 2829196691328212383}
   - component: {fileID: 5045691422787214940}
   - component: {fileID: 1734503743730249615}
+  - component: {fileID: 1789681818369650256}
   m_Layer: 5
   m_Name: Icon
   m_TagString: Untagged
@@ -75,6 +76,20 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
+--- !u!114 &1789681818369650256
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 17328409894386403}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ff92eb57f213b9c4e875edaab18b759a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  spriteID: 0
+  type: 0
 --- !u!1 &880960041911204860
 GameObject:
   m_ObjectHideFlags: 0
@@ -1891,6 +1906,7 @@ GameObject:
   - component: {fileID: 4467129567320773741}
   - component: {fileID: 3917991006664280993}
   - component: {fileID: 2856358790500537418}
+  - component: {fileID: 2206420885365410251}
   m_Layer: 5
   m_Name: Icon
   m_TagString: Untagged
@@ -1955,6 +1971,20 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
+--- !u!114 &2206420885365410251
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4963079580525812558}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ff92eb57f213b9c4e875edaab18b759a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  spriteID: 0
+  type: 0
 --- !u!1 &5287179897355317636
 GameObject:
   m_ObjectHideFlags: 0
@@ -2653,7 +2683,6 @@ GameObject:
   - component: {fileID: 1886753141637802999}
   - component: {fileID: 9029947607990606044}
   - component: {fileID: 6366234459463472045}
-  - component: {fileID: 4782530666576433669}
   m_Layer: 5
   m_Name: Text
   m_TagString: Untagged
@@ -2777,21 +2806,6 @@ MonoBehaviour:
   m_hasFontAssetChanged: 0
   m_baseMaterial: {fileID: 0}
   m_maskOffset: {x: 0, y: 0, z: 0, w: 0}
---- !u!114 &4782530666576433669
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8668556161532596749}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 5cdb4262f099c7847ad5860ea281b377, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  stringId: 131
-  stringArgs: []
-  editorLang: 0
 --- !u!1 &8787631333165277148
 GameObject:
   m_ObjectHideFlags: 0
@@ -3130,7 +3144,9 @@ MonoBehaviour:
   conditionStageText: {fileID: 3274788258318012509}
   conditionPowerText: {fileID: 4261201986652736251}
   keyText: {fileID: 1730556020782091326}
-  clearRewardText: {fileID: 4782530666576433669}
+  clearRewardText: {fileID: 6366234459463472045}
   nextDifficultyButton: {fileID: 6863072860052127193}
   previousDifficultyButton: {fileID: 1559292164681338181}
   enterButton: {fileID: 8908641562759057070}
+  needKeyIcon: {fileID: 1789681818369650256}
+  clearRewardIcon: {fileID: 2206420885365410251}

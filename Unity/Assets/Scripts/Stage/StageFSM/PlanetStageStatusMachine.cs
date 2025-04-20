@@ -340,7 +340,6 @@ public class PlanetStageStatusMachine : StageStatusMachine
     {
         stageManager.StageMonsterManager.StopMonster();
         stageManager.UnitPartyManager.UnitDespawn();
-        stageManager.StopAllCoroutines();
         stageManager.StageMonsterManager.ClearMonster();
     }
 

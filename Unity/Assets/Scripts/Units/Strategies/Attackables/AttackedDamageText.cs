@@ -21,14 +21,13 @@ public class AttackedDamageText : MonoBehaviour, IAttackable
 
     public void OnAttack(GameObject attacker, Attack attack)
     {
-        var textObject = stageManager.ObjectPoolManager.Get(textPrefabAddress);
-        textObject.transform.SetParent(null);
-        textObject.transform.position = transform.position;
-        textObject.transform.rotation = Quaternion.LookRotation(Camera.main.transform.forward);
+        var textObject = stageManager.StageUiManager.ObjectPoolManager.Get(textPrefabAddress);
+        textObject.transform.SetParent(stageManager.StageUiManager.DamageParent);
+        //textObject.transform.rotation = Quaternion.LookRotation(Camera.main.transform.forward);
         DamageText damageText = textObject.GetComponent<DamageText>();
         damageText.SetSpeed(showingDuration, risingSpeed);
         damageText.SetText(attack);
-        damageText.Show();
+        damageText.Show(transform.position);
     }
 }
 

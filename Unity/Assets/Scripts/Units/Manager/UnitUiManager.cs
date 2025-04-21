@@ -23,16 +23,15 @@ public class UnitUiManager : MonoBehaviour
     private void Awake()
     {
         stageManager = GameObject.FindGameObjectWithTag("GameController").GetComponent<StageManager>();
-        stageManager.UnitPartyManager.OnUnitCreated += DoUnitCreated;
     }
 
     private void Start()
     {
+        stageManager.UnitPartyManager.OnUnitCreated += DoUnitCreated;
     }
 
     public void DoUnitCreated()
     {
-        Debug.Log("1");
         foreach (UnitTypes type in Enum.GetValues(typeof(UnitTypes)))
         {
             var unit = stageManager.UnitPartyManager.GetUnit(type);

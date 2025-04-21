@@ -197,6 +197,11 @@ public class MonsterController : MonoBehaviour, IObjectPoolGameObject
 
     private void OnAttack()
     {
+        if (status != Status.Attacking)
+        {
+            return;
+        }
+
         if (Target is not null)
         {
             Stats.Execute(Target.gameObject);
@@ -205,6 +210,11 @@ public class MonsterController : MonoBehaviour, IObjectPoolGameObject
 
     private void OnAttackEnd()
     {
+        if (status != Status.Attacking)
+        {
+            return;
+        }
+
         AnimationController.Play(AnimationControl.AnimationClipID.BattleIdle);
         status = Status.Wait;
     }

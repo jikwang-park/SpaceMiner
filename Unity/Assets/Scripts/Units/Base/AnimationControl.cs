@@ -18,6 +18,8 @@ public abstract class AnimationControl : MonoBehaviour
 
     public AnimationClipID CurrentClip { get; protected set; }
 
+    public abstract bool ContainsClip(AnimationClipID clipID);
+
     public abstract void Play(AnimationClipID clipID);
 
     public abstract void Play(AnimationClipID clipID, bool isLoop);

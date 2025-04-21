@@ -125,6 +125,11 @@ public class AnimationController : AnimationControl
         }
     }
 
+    public override bool ContainsClip(AnimationClipID clipID)
+    {
+        return animationDict.ContainsKey(clipID);
+    }
+
     public override void Play(AnimationClipID clipID)
     {
         Play(clipID, false);

@@ -56,8 +56,16 @@ public class MonsterSkill : MonoBehaviour
 
     private void Start()
     {
-        controller.AnimationController.AddEvent(AnimationControl.AnimationClipID.Skill, skillTime, Execute);
-        controller.AnimationController.AddEvent(AnimationControl.AnimationClipID.Skill, 1f, OnSkillEnd);
+        if (controller.AnimationController.ContainsClip(AnimationControl.AnimationClipID.Skill))
+        {
+            controller.AnimationController.AddEvent(AnimationControl.AnimationClipID.Skill, skillTime, Execute);
+            controller.AnimationController.AddEvent(AnimationControl.AnimationClipID.Skill, 1f, OnSkillEnd);
+        }
+        else
+        {
+            controller.AnimationController.AddEvent(AnimationControl.AnimationClipID.Attack, skillTime, Execute);
+            controller.AnimationController.AddEvent(AnimationControl.AnimationClipID.Attack, 1f, OnSkillEnd);
+        }
     }
 
     private void OnEnable()
@@ -75,18 +83,34 @@ public class MonsterSkill : MonoBehaviour
     {
         controller.status = MonsterController.Status.SkillUsing;
         lastSkillTime = Time.time;
-        controller.AnimationController.Play(AnimationControl.AnimationClipID.Skill);
+        if (controller.AnimationController.ContainsClip(AnimationControl.AnimationClipID.Skill))
+        {
+            controller.AnimationController.Play(AnimationControl.AnimationClipID.Skill);
+        }
+        else
+        {
+            controller.AnimationController.Play(AnimationControl.AnimationClipID.Attack);
+        }
     }
 
     private void OnSkillEnd()
     {
+        if(controller.status != MonsterController.Status.SkillUsing)
+        {
+            return;
+        }
+
         lastSkillTime = Time.time;
+        controller.AnimationController.Play(AnimationControl.AnimationClipID.BattleIdle);
         controller.status = MonsterController.Status.Wait;
     }
 
     public void Execute()
     {
-        controller.status = MonsterController.Status.SkillUsing;
+        if (controller.status != MonsterController.Status.SkillUsing)
+        {
+            return;
+        }
 
         List<Transform> targets = new List<Transform>();
 

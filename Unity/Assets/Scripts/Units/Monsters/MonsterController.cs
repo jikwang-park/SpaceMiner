@@ -105,14 +105,14 @@ public class MonsterController : MonoBehaviour, IObjectPoolGameObject
 
         if (StageManager.UnitPartyManager.UnitCount > 0)
         {
-            hasTarget = true;
             var newTarget = StageManager.UnitPartyManager.GetFirstLineUnitTransform();
             if (newTarget != Target)
             {
-                if (Target is not null)
+                if (hasTarget && Target is not null)
                 {
                     Target.GetComponent<DestructedDestroyEvent>().OnDestroyed -= OnTargetDie;
                 }
+                hasTarget = true;
                 newTarget.GetComponent<DestructedDestroyEvent>().OnDestroyed += OnTargetDie;
                 Target = newTarget;
             }

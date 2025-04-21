@@ -38,6 +38,25 @@ public class DungeonEndWindow : MonoBehaviour
         stageManager = GameObject.FindGameObjectWithTag("GameController").GetComponent<StageManager>();
     }
 
+    public void Open(BigNumber damage)
+    {
+        gameObject.SetActive(true);
+        messageText.SetString(60011, damage.ToString());
+
+        var rewardData = DataTableManager.DamageDungeonRewardTable.GetData(damage);
+        if (rewardData is not null)
+        {
+            rewardRow.SetActive(true);
+
+            var itemData = DataTableManager.ItemTable.GetData(rewardData.RewardItemID);
+            icon.SetSprite(itemData.SpriteID);
+            countText.text = rewardData.RewardItemCount.ToString();
+        }
+
+        twoButtons.SetActive(true);
+        threeButtons.SetActive(false);
+    }
+
     public void Open(bool isCleared, bool firstCleared)
     {
         this.isCleared = isCleared;

@@ -65,6 +65,16 @@ public class DungeonPopup : MonoBehaviour
     public void ShowPopup()
     {
         subStages = DataTableManager.DungeonTable.GetDungeonList(Variables.currentDungeonType);
+
+        if (!SaveLoadManager.Data.stageSaveData.highestDungeon.ContainsKey(Variables.currentDungeonType))
+        {
+            SaveLoadManager.Data.stageSaveData.highestDungeon.Add(Variables.currentDungeonType, 1);
+        }
+        if(!SaveLoadManager.Data.stageSaveData.clearedDungeon.ContainsKey(Variables.currentDungeonType))
+        {
+            SaveLoadManager.Data.stageSaveData.clearedDungeon.Add(Variables.currentDungeonType, 0);
+        }
+
         maxStage = SaveLoadManager.Data.stageSaveData.highestDungeon[Variables.currentDungeonType];
         SetIndex(maxStage - 1);
     }

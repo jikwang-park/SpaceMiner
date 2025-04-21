@@ -26,8 +26,7 @@ public class UnitPartyManager : MonoBehaviour
     [SerializeField]
     public UnitSkillButtonManager buttonManager;
 
-    [SerializeField]
-    private Vector3 unitOffset = Vector3.back * 5f;
+    private Vector3 unitOffset = Vector3.left* 1f;
 
     public int UnitCount => party.Count;
 
@@ -133,15 +132,23 @@ public class UnitPartyManager : MonoBehaviour
             return null;
         }
 
-        for (int i = (int)UnitTypes.Tanker; i <= (int)UnitTypes.Healer; ++i)
+        Transform frontMostZPos = null;
+        float maxZ = float.MinValue;
+
+        foreach ( var unit in party.Values)
         {
-            if (party.ContainsKey((UnitTypes)i))
+            if (unit == null)
+                continue;
+
+            float currentUnitZpos = unit.transform.position.z;
+            if(currentUnitZpos > maxZ)
             {
-                return party[(UnitTypes)i].transform;
+                maxZ = currentUnitZpos;
+                frontMostZPos = unit.transform;
             }
         }
 
-        return null;
+       return frontMostZPos;
     }
 
   

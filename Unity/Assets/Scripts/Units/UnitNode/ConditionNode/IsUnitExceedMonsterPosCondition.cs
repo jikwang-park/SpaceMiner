@@ -10,6 +10,6 @@ public class IsUnitExceedMonsterPosCondition : ConditionNode<Unit>
 
     protected override NodeStatus OnUpdate()
     {
-        return context.IsUnitExeedMonsterPosition ? NodeStatus.Failure : NodeStatus.Success;
+        return context.IsUnitExeedMonsterPosition ? NodeStatus.Success : NodeStatus.Failure;
     }
 }

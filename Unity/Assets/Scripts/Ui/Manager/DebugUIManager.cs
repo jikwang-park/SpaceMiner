@@ -15,14 +15,7 @@ public class DebugUIManager : MonoBehaviour
 
     private void Start()
     {
-        var ids = DataTableManager.ItemTable.GetIds();
-
-        foreach (var id in ids)
-        {
-            var row = Instantiate(itemRowPrefab,itemViewContent);
-            row.Set(id);
-            itemRows.Add(row);
-        }
+        StartCoroutine(CoRowSet());
     }
 
     public void RefreshItem()
@@ -30,6 +23,56 @@ public class DebugUIManager : MonoBehaviour
         foreach (var row in itemRows)
         {
             row.Refresh();
+        }
+    }
+
+    private void OnEnable()
+    {
+        StartCoroutine(CoRowActive());
+    }
+
+    private void OnDisable()
+    {
+        foreach (var row in itemRows)
+        {
+            row.gameObject.SetActive(false);
+        }
+    }
+
+    private IEnumerator CoRowSet()
+    {
+        var ids = DataTableManager.ItemTable.GetIds();
+        for (int i = 0; i < ids.Count; ++i)
+        {
+            var row = Instantiate(itemRowPrefab, itemViewContent);
+            row.Set(ids[i]);
+            itemRows.Add(row);
+            yield return null;
+        }
+    }
+
+    private IEnumerator CoRowActive()
+    {
+        foreach (var row in itemRows)
+        {
+            row.gameObject.SetActive(true);
+            yield return null;
+        }
+        var ids = DataTableManager.ItemTable.GetIds();
+        if (ids.Count == itemRows.Count)
+        {
+            yield break;
+        }
+        for (int i = 0; i < ids.Count; ++i)
+        {
+            if (i < itemRows.Count && itemRows[i].ItemID == ids[i])
+            {
+                continue;
+            }
+            var row = Instantiate(itemRowPrefab, itemViewContent);
+            row.Set(ids[i]);
+            itemRows.Add(row);
+            yield return null;
         }
     }
 }

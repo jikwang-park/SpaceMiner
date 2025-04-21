@@ -18,6 +18,9 @@ public class StageUiManager : MonoBehaviour
     [field: SerializeField]
     public ScreenCurtain curtain { get; private set; }
 
+    [field:SerializeField]
+    public Transform DamageParent { get; private set; }
+
 
     public event System.Action OnExitButtonClicked;
 

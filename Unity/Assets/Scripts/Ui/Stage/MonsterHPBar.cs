@@ -6,6 +6,7 @@ using UnityEngine.UI;
 
 public class MonsterHPBar : MonoBehaviour, IObjectPoolGameObject
 {
+    private static readonly Vector2 defaultPosition = Vector2.up * 10f;
     private Transform target;
 
     private Slider slider;
@@ -17,9 +18,12 @@ public class MonsterHPBar : MonoBehaviour, IObjectPoolGameObject
 
     private HPBarManager hpbarManager;
 
+    private RectTransform rectTransform;
+
     private void Awake()
     {
         slider = GetComponent<Slider>();
+        rectTransform = GetComponent<RectTransform>();
     }
 
     private void Update()
@@ -33,6 +37,7 @@ public class MonsterHPBar : MonoBehaviour, IObjectPoolGameObject
 
     public void Release()
     {
+        rectTransform.anchoredPosition = defaultPosition;
         hpbarManager.RemoveHPBar(this);
         ObjectPool.Release(gameObject);
     }
@@ -48,10 +53,11 @@ public class MonsterHPBar : MonoBehaviour, IObjectPoolGameObject
         Release();
     }
 
-    public void SetTarget(Transform target,HPBarManager hpbarManager)
+    public void SetTarget(Transform target, HPBarManager hpbarManager)
     {
         this.hpbarManager = hpbarManager;
         this.target = target;
+
         OnTargetHPChanged(1f);
         target.GetComponent<DestructedDestroyEvent>().OnDestroyed += OnTargetRelease;
         target.GetComponent<MonsterStats>().onHPChanged += OnTargetHPChanged;

@@ -121,6 +121,7 @@ public class StageManager : MonoBehaviour
 
     public void ResetStage()
     {
+        StageUiManager.HPBarManager.ClearHPBar();
         machines[IngameStatus].Reset();
     }
 

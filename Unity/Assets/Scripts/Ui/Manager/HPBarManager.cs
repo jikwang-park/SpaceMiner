@@ -28,6 +28,11 @@ public class HPBarManager : MonoBehaviour
 
     private void OnIngameStatusChanged(IngameStatus status)
     {
+        ClearHPBar();
+    }
+
+    public void ClearHPBar()
+    {
         while (monsterHPBars.Count > 0)
         {
             var enumerator = monsterHPBars.GetEnumerator();

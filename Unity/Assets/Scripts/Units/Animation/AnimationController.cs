@@ -149,7 +149,6 @@ public class AnimationController : AnimationControl
             }
         }
 
-
         CurrentClip = clipID;
         animations.CrossFade(animationDict[clipID], fadeLength);
     }
@@ -192,6 +191,7 @@ public class AnimationController : AnimationControl
 
     public override void Stop()
     {
+        CurrentClip = AnimationClipID.None;
         animations.Stop();
     }
 
@@ -219,15 +219,16 @@ public class AnimationController : AnimationControl
 
     private void ProcessEvent()
     {
-        if (!events.ContainsKey(CurrentClip))
+        var currentClip = CurrentClip;
+        if (!events.ContainsKey(currentClip))
         {
             return;
         }
-        float progress = GetProgress(CurrentClip);
+        float progress = GetProgress(currentClip);
 
-        for (int i = 0; i < events[CurrentClip].Count; ++i)
+        for (int i = 0; i < events[currentClip].Count; ++i)
         {
-            var pair = events[CurrentClip][i];
+            var pair = events[currentClip][i];
 
             if (progress < pair.normalizedTime)
             {
@@ -241,6 +242,4 @@ public class AnimationController : AnimationControl
             pair.ev.Invoke();
         }
     }
-
-
 }

@@ -23,29 +23,31 @@ public class UnitUiManager : MonoBehaviour
     private void Awake()
     {
         stageManager = GameObject.FindGameObjectWithTag("GameController").GetComponent<StageManager>();
+        stageManager.UnitPartyManager.OnUnitCreated += DoUnitCreated;
     }
 
     private void Start()
     {
-        stageManager.UnitPartyManager.OnUnitCreated += DoUnitCreated;
     }
 
     public void DoUnitCreated()
     {
+        Debug.Log("1");
         foreach (UnitTypes type in Enum.GetValues(typeof(UnitTypes)))
         {
             var unit = stageManager.UnitPartyManager.GetUnit(type);
+            var stats = unit.GetComponent<UnitStats>();
             switch (type)
             {
                 case UnitTypes.Tanker:
-                    unit.GetComponent<UnitStats>().onHpChanged += (amount) => { tankerSlider.value = amount; };
+                    stats.onHpChanged += (amount) => { tankerSlider.value = amount; };
                     break;
                 case UnitTypes.Dealer:
-                    unit.GetComponent<UnitStats>().onHpChanged += (amount) => { dealerSlider.value = amount; };
+                    stats.onHpChanged += (amount) => { dealerSlider.value = amount; };
 
                     break;
                 case UnitTypes.Healer:
-                    unit.GetComponent<UnitStats>().onHpChanged += (amount) => { healerSlider.value = amount; };
+                    stats.onHpChanged += (amount) => { healerSlider.value = amount; };
 
                     break;
             }

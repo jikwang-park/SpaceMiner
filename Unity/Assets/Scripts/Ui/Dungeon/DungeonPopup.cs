@@ -40,10 +40,16 @@ public class DungeonPopup : MonoBehaviour
     private Button enterButton;
 
     [SerializeField]
+    private Button exterminateButton;
+
+    [SerializeField]
     private AddressableImage needKeyIcon;
 
     [SerializeField]
     private AddressableImage clearRewardIcon;
+
+    [SerializeField]
+    private GameObject notEnoughKeyWindow;
 
     private int maxStage;
 
@@ -53,6 +59,7 @@ public class DungeonPopup : MonoBehaviour
     private void Start()
     {
         stageManager = GameObject.FindGameObjectWithTag("GameController").GetComponent<StageManager>();
+        ItemManager.OnItemAmountChanged += OnItemAmountChanged;
     }
 
     public void ShowPopup()
@@ -109,9 +116,23 @@ public class DungeonPopup : MonoBehaviour
         bool planetCondition = (SaveLoadManager.Data.stageSaveData.highPlanet > curStage.NeedClearPlanet)
                                  || (SaveLoadManager.Data.stageSaveData.highPlanet == SaveLoadManager.Data.stageSaveData.clearedPlanet
                                      && SaveLoadManager.Data.stageSaveData.highStage == SaveLoadManager.Data.stageSaveData.clearedStage);
-        bool keyCondition = ItemManager.GetItemAmount(curStage.NeedKeyItemID) >= curStage.NeedKeyItemCount;
 
-        enterButton.interactable = powerCondition && planetCondition && keyCondition;
+        enterButton.interactable = powerCondition && planetCondition;
+
+        exterminateButton.interactable = SaveLoadManager.Data.stageSaveData.clearedDungeon[Variables.currentDungeonType] >= 1;
+    }
+
+    private void OnItemAmountChanged(int itemId, BigNumber amount)
+    {
+        if (Disabled || subStages is null)
+        {
+            return;
+        }
+        if (subStages[index].NeedKeyItemID != itemId)
+        {
+            return;
+        }
+        keyText.SetStringArguments(subStages[index].NeedKeyItemCount.ToString(), amount.ToString());
     }
 
     private void SetIndex(int index)
@@ -146,13 +167,19 @@ public class DungeonPopup : MonoBehaviour
     //TODO: 인스펙터에서 엔터 버튼과 연결
     public void OnClickEnter()
     {
+        if (ItemManager.GetItemAmount(subStages[index].NeedKeyItemID) < subStages[index].NeedKeyItemCount)
+        {
+            notEnoughKeyWindow.SetActive(true);
+            return;
+        }
+
         Variables.currentDungeonStage = index + 1;
         stageManager.SetStatus(IngameStatus.Dungeon);
     }
 
-    public void OnClickKeyGet()
+    public void MoveToShop()
     {
-        ItemManager.AddItem(subStages[index].NeedKeyItemID, 1);
-        ShowData(index);
+        gameObject.SetActive(false);
+        stageManager.StageUiManager.UIGroupStatusManager.UiDict[IngameStatus.Planet].SetTabActive(3);
     }
 }

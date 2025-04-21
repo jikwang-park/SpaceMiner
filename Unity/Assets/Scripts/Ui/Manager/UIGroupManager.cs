@@ -45,7 +45,7 @@ public class UIGroupManager : MonoBehaviour
         popups[index].gameObject.SetActive(true);
     }
 
-    public void SetPopUpInActive(int index)
+    public void SetPopUpInactive(int index)
     {
         if (index < 0 || index >= popups.Length)
         {

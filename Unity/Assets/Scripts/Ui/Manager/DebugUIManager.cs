@@ -48,16 +48,22 @@ public class DebugUIManager : MonoBehaviour
 
     private IEnumerator CoRowActive()
     {
+        int count = 0;
         foreach (var row in itemRows)
         {
             row.gameObject.SetActive(true);
-            yield return null;
+            if (++count == 5)
+            {
+                count = 0;
+                yield return null;
+            }
         }
         var ids = DataTableManager.ItemTable.GetIds();
         if (ids.Count == itemRows.Count)
         {
             yield break;
         }
+        count = 0;
         for (int i = 0; i < ids.Count; ++i)
         {
             if (itemids.Contains(ids[i]))
@@ -68,7 +74,11 @@ public class DebugUIManager : MonoBehaviour
             var row = Instantiate(itemRowPrefab, itemViewContent);
             row.Set(ids[i]);
             itemRows.Add(row);
-            yield return null;
+            if (++count == 5)
+            {
+                count = 0;
+                yield return null;
+            }
         }
     }
 }

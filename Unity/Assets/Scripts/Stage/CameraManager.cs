@@ -42,7 +42,9 @@ public class CameraManager : MonoBehaviour
         {
             return;
         }
-        worldCamera.position = Vector3.Lerp(worldCamera.position, unit.position + Offset, Time.deltaTime * followingSpeed);
+        var targetPos = Offset;
+        targetPos.z += unit.position.z;
+        worldCamera.position = Vector3.Lerp(worldCamera.position, targetPos, Time.deltaTime * followingSpeed);
     }
 
     public void SetCameraOffset()

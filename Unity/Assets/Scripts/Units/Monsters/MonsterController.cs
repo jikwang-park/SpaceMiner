@@ -103,16 +103,30 @@ public class MonsterController : MonoBehaviour, IObjectPoolGameObject
             return;
         }
 
-        if (!hasTarget && StageManager.UnitPartyManager.UnitCount > 0)
+        if (StageManager.UnitPartyManager.UnitCount > 0)
         {
-            Target = StageManager.UnitPartyManager.GetFirstLineUnitTransform();
-            Target.GetComponent<DestructedDestroyEvent>().OnDestroyed += OnTargetDie;
             hasTarget = true;
-        }
-
-        if (hasTarget)
-        {
+            var newTarget = StageManager.UnitPartyManager.GetFirstLineUnitTransform();
+            if (newTarget != Target)
+            {
+                if (Target is not null)
+                {
+                    Target.GetComponent<DestructedDestroyEvent>().OnDestroyed -= OnTargetDie;
+                }
+                newTarget.GetComponent<DestructedDestroyEvent>().OnDestroyed += OnTargetDie;
+                Target = newTarget;
+            }
             TargetDistance = -(Target.position.z - transform.position.z);
+        }
+        else
+        {
+            hasTarget = false;
+            if (Target is not null)
+            {
+                Target.GetComponent<DestructedDestroyEvent>().OnDestroyed -= OnTargetDie;
+            }
+            Target = null;
+            TargetDistance = float.PositiveInfinity;
         }
 
 #if UNITY_EDITOR

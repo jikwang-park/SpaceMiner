@@ -84,6 +84,7 @@ public class MonsterController : MonoBehaviour, IObjectPoolGameObject
     {
         isDrawRegion = true;
         hasTarget = false;
+        Target = null;
         currentLine = -1;
         TargetDistance = float.PositiveInfinity;
         GetComponent<DestructedDestroyEvent>().OnDestroyed += OnThisDie;
@@ -112,10 +113,10 @@ public class MonsterController : MonoBehaviour, IObjectPoolGameObject
                 {
                     Target.GetComponent<DestructedDestroyEvent>().OnDestroyed -= OnTargetDie;
                 }
-                hasTarget = true;
                 newTarget.GetComponent<DestructedDestroyEvent>().OnDestroyed += OnTargetDie;
                 Target = newTarget;
             }
+            hasTarget = true;
             TargetDistance = -(Target.position.z - transform.position.z);
         }
         else

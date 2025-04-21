@@ -49,7 +49,7 @@ public class DungeonPopup : MonoBehaviour
     private AddressableImage clearRewardIcon;
 
     [SerializeField]
-    private GameObject notEnoughKeyWindow;
+    private DungeonRequirementWindow requirementWindow;
 
     private int maxStage;
 
@@ -111,15 +111,6 @@ public class DungeonPopup : MonoBehaviour
 
         previousDifficultyButton.interactable = index > 0;
         nextDifficultyButton.interactable = index + 1 < maxStage && index < subStages.Count - 1;
-
-        bool powerCondition = UnitCombatPowerCalculator.ToTalCombatPower > curStage.NeedPower;
-        bool planetCondition = (SaveLoadManager.Data.stageSaveData.highPlanet > curStage.NeedClearPlanet)
-                                 || (SaveLoadManager.Data.stageSaveData.highPlanet == SaveLoadManager.Data.stageSaveData.clearedPlanet
-                                     && SaveLoadManager.Data.stageSaveData.highStage == SaveLoadManager.Data.stageSaveData.clearedStage);
-
-        enterButton.interactable = powerCondition && planetCondition;
-
-        exterminateButton.interactable = SaveLoadManager.Data.stageSaveData.clearedDungeon[Variables.currentDungeonType] >= 1;
     }
 
     private void OnItemAmountChanged(int itemId, BigNumber amount)
@@ -169,9 +160,25 @@ public class DungeonPopup : MonoBehaviour
     {
         if (ItemManager.GetItemAmount(subStages[index].NeedKeyItemID) < subStages[index].NeedKeyItemCount)
         {
-            notEnoughKeyWindow.SetActive(true);
+            requirementWindow.Open(DungeonRequirementWindow.Status.KeyCount);
             return;
         }
+
+        if ((SaveLoadManager.Data.stageSaveData.highPlanet < subStages[index].NeedClearPlanet)
+           || (SaveLoadManager.Data.stageSaveData.highPlanet == subStages[index].NeedClearPlanet
+               && SaveLoadManager.Data.stageSaveData.highStage != SaveLoadManager.Data.stageSaveData.clearedStage))
+        {
+            requirementWindow.Open(DungeonRequirementWindow.Status.StageClear);
+            return;
+        }
+
+        if(UnitCombatPowerCalculator.ToTalCombatPower < subStages[index].NeedPower)
+        {
+            requirementWindow.Open(DungeonRequirementWindow.Status.Power);
+            return;
+        }
+
+
 
         Variables.currentDungeonStage = index + 1;
         stageManager.SetStatus(IngameStatus.Dungeon);

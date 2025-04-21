@@ -2,16 +2,12 @@ using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
-using UnityEngine.AddressableAssets;
-using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 public class DungeonEndWindow : MonoBehaviour
 {
     private const int ClearID = 142;
     private const int FailID = 143;
-    private const int NextID = 144;
-    private const int RetryID = 151;
 
     [SerializeField]
     private LocalizationText nextText;
@@ -24,12 +20,15 @@ public class DungeonEndWindow : MonoBehaviour
     [SerializeField]
     private GameObject rewardRow;
     [SerializeField]
-    private GameObject notEnoughKeyWindow;
+    private DungeonRequirementWindow requirementWindow;
 
     private float closeTime;
 
     [SerializeField]
-    private Button nextButton;
+    private GameObject twoButtons;
+    [SerializeField]
+    private GameObject threeButtons;
+
     private bool isCleared;
 
     private StageManager stageManager;
@@ -66,25 +65,21 @@ public class DungeonEndWindow : MonoBehaviour
 
             if (lastStageCondition)
             {
-                nextText.SetString(RetryID);
+                twoButtons.SetActive(true);
+                threeButtons.SetActive(false);
             }
             else
             {
-                nextText.SetString(NextID);
-                var nextStage = DataTableManager.DungeonTable.GetData(Variables.currentDungeonType, Variables.currentDungeonStage + 1);
-
-                bool powerCondition = UnitCombatPowerCalculator.ToTalCombatPower > nextStage.NeedPower;
-                bool planetCondition = (SaveLoadManager.Data.stageSaveData.highPlanet > nextStage.NeedClearPlanet)
-                    || (SaveLoadManager.Data.stageSaveData.highPlanet == SaveLoadManager.Data.stageSaveData.clearedPlanet
-                        && SaveLoadManager.Data.stageSaveData.highStage == SaveLoadManager.Data.stageSaveData.clearedStage);
-                nextButton.interactable = powerCondition && planetCondition;
+                twoButtons.SetActive(false);
+                threeButtons.SetActive(true);
             }
         }
         else
         {
             messageText.SetColor(Color.red);
             messageText.SetString(FailID);
-            nextText.SetString(RetryID);
+            twoButtons.SetActive(true);
+            threeButtons.SetActive(false);
         }
     }
 
@@ -100,37 +95,48 @@ public class DungeonEndWindow : MonoBehaviour
         gameObject.SetActive(false);
     }
 
-    public void RightButton()
+    public void Lift()
     {
         var curStage = DataTableManager.DungeonTable.GetData(Variables.currentDungeonType, Variables.currentDungeonStage);
+        var stageSaveData = SaveLoadManager.Data.stageSaveData;
         if (ItemManager.GetItemAmount(curStage.NeedKeyItemID) < curStage.NeedKeyItemCount)
         {
-            notEnoughKeyWindow.SetActive(true);
+            requirementWindow.Open(DungeonRequirementWindow.Status.KeyCount);
             return;
         }
 
-        if (isCleared
-            && Variables.currentDungeonStage < DataTableManager.DungeonTable.CountOfStage(Variables.currentDungeonType))
+        var nextStage = DataTableManager.DungeonTable.GetData(Variables.currentDungeonType, Variables.currentDungeonStage + 1);
+        if ((stageSaveData.highPlanet < nextStage.NeedClearPlanet)
+            || (stageSaveData.highPlanet == nextStage.NeedClearPlanet
+                && stageSaveData.highStage != stageSaveData.clearedStage))
         {
-            Lift();
-        }
-        else
-        {
-            Retry();
+            requirementWindow.Open(DungeonRequirementWindow.Status.StageClear);
+            return;
         }
 
-        gameObject.SetActive(false);
-    }
+        if (UnitCombatPowerCalculator.ToTalCombatPower < nextStage.NeedPower)
+        {
+            requirementWindow.Open(DungeonRequirementWindow.Status.Power);
+            return;
+        }
 
-    public void Lift()
-    {
         ++Variables.currentDungeonStage;
-        Retry();
+        stageManager.ResetStage();
+        gameObject.SetActive(false);
     }
 
     public void Retry()
     {
+        var curStage = DataTableManager.DungeonTable.GetData(Variables.currentDungeonType, Variables.currentDungeonStage);
+        var stageSaveData = SaveLoadManager.Data.stageSaveData;
+        if (ItemManager.GetItemAmount(curStage.NeedKeyItemID) < curStage.NeedKeyItemCount)
+        {
+            requirementWindow.Open(DungeonRequirementWindow.Status.KeyCount);
+            return;
+        }
+
         stageManager.ResetStage();
+        gameObject.SetActive(false);
     }
 
     public void MoveToShop()

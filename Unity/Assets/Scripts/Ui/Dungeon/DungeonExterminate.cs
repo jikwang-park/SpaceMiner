@@ -13,7 +13,7 @@ public class DungeonExterminate : MonoBehaviour
     private TextMeshProUGUI rewardText;
 
     [SerializeField]
-    private GameObject notEnoughKeyWindow;
+    private DungeonRequirementWindow requirementWindow;
 
     private DungeonTable.Data stageData;
 
@@ -38,7 +38,7 @@ public class DungeonExterminate : MonoBehaviour
         }
         else
         {
-            notEnoughKeyWindow.SetActive(true);
+            requirementWindow.Open(DungeonRequirementWindow.Status.KeyCount);
         }
     }
 }

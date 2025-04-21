@@ -4,10 +4,10 @@ using UnityEngine;
 public class DungeonExterminate : MonoBehaviour
 {
     [SerializeField]
-    private TextMeshProUGUI diffText;
+    private AddressableImage rewardImage;
 
     [SerializeField]
-    private AddressableImage rewardImage;
+    private LocalizationText rewardItemName;
 
     [SerializeField]
     private TextMeshProUGUI rewardText;
@@ -22,16 +22,9 @@ public class DungeonExterminate : MonoBehaviour
         var subStages = DataTableManager.DungeonTable.GetDungeonList(Variables.currentDungeonType);
         int maxStage = SaveLoadManager.Data.stageSaveData.clearedDungeon[Variables.currentDungeonType];
         stageData = subStages[maxStage - 1];
-        if (stageData.Stage == maxStage)
-        {
-            diffText.text = maxStage.ToString();
-        }
-        else
-        {
-            diffText.text = "";
-        }
         var itemdata = DataTableManager.ItemTable.GetData(stageData.RewardItemID);
         rewardImage.SetSprite(itemdata.SpriteID);
+        rewardItemName.SetString(itemdata.NameStringID);
         rewardText.text = stageData.ClearRewardItemCount.ToString();
     }
 

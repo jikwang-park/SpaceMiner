@@ -37,6 +37,7 @@ public class DealerSkill : UnitSkill
 
     public override void ExecuteSkill()
     {
+        base.ExecuteSkill();
         List<Transform> targetTransforms = new List<Transform>();
         targetTransforms = stageManager.StageMonsterManager.GetMonsters(targetCount);
         for(int i = 0; i < targetTransforms.Count; ++i)
@@ -45,6 +46,10 @@ public class DealerSkill : UnitSkill
         }
     }
 
+    public override void Update()
+    {
+        base.Update();
+    }
     public override void UpgradeUnitSkillStats(int id)
     {
         var data = DataTableManager.DealerSkillTable.GetData(id);

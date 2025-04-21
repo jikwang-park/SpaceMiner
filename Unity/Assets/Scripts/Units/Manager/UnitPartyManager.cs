@@ -1,4 +1,5 @@
 using AYellowpaper.SerializedCollections;
+using JetBrains.Annotations;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -25,8 +26,7 @@ public class UnitPartyManager : MonoBehaviour
     [SerializeField]
     public UnitSkillButtonManager buttonManager;
 
-    [SerializeField]
-    private Vector3 unitOffset = Vector3.back * 5f;
+    private Vector3 unitOffset = Vector3.left* 1f;
 
     public int UnitCount => party.Count;
 
@@ -122,6 +122,8 @@ public class UnitPartyManager : MonoBehaviour
         party.Clear();
     }
 
+
+
     public Transform GetFirstLineUnitTransform()
     {
         if (party.Count == 0)
@@ -130,17 +132,26 @@ public class UnitPartyManager : MonoBehaviour
             return null;
         }
 
-        for (int i = (int)UnitTypes.Tanker; i <= (int)UnitTypes.Healer; ++i)
+        Transform frontMostZPos = null;
+        float maxZ = float.MinValue;
+
+        foreach ( var unit in party.Values)
         {
-            if (party.ContainsKey((UnitTypes)i))
+            if (unit == null)
+                continue;
+
+            float currentUnitZpos = unit.transform.position.z;
+            if(currentUnitZpos > maxZ)
             {
-                return party[(UnitTypes)i].transform;
+                maxZ = currentUnitZpos;
+                frontMostZPos = unit.transform;
             }
         }
 
-        return null;
+       return frontMostZPos;
     }
 
+  
     public Transform GetUnit(UnitTypes type)
     {
         if (party.ContainsKey(type))
@@ -209,7 +220,7 @@ public class UnitPartyManager : MonoBehaviour
         }
         return null;
     }
-    
+
 
 
     public void ResetUnits(Vector3 startPos)

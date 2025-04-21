@@ -37,12 +37,22 @@ public class UIGroupManager : MonoBehaviour
     //TODO: 팝업 윈도우로 사용할 패널을 인스펙터에서 OnClick 이벤트에 연결 후 패널인덱스 할당
     public void SetPopUpActive(int index)
     {
-        if (tabs.Length <= index)
+        if (index < 0 || index >= popups.Length)
         {
             return;
         }
 
         popups[index].gameObject.SetActive(true);
+    }
+
+    public void SetPopUpInActive(int index)
+    {
+        if (index < 0 || index >= popups.Length)
+        {
+            return;
+        }
+
+        popups[index].gameObject.SetActive(false);
     }
 
     public void SetTimeScale()

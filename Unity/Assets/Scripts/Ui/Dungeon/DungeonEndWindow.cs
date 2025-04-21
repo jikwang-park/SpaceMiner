@@ -23,9 +23,10 @@ public class DungeonEndWindow : MonoBehaviour
     private TextMeshProUGUI countText;
     [SerializeField]
     private GameObject rewardRow;
+    [SerializeField]
+    private GameObject notEnoughKeyWindow;
 
     private float closeTime;
-    private WaitForSeconds wait = new WaitForSeconds(1f);
 
     [SerializeField]
     private Button nextButton;
@@ -65,21 +66,18 @@ public class DungeonEndWindow : MonoBehaviour
 
             if (lastStageCondition)
             {
-                nextButton.interactable = ItemManager.GetItemAmount(curStage.NeedKeyItemID) >= curStage.NeedKeyItemCount;
-
                 nextText.SetString(RetryID);
             }
             else
             {
                 nextText.SetString(NextID);
                 var nextStage = DataTableManager.DungeonTable.GetData(Variables.currentDungeonType, Variables.currentDungeonStage + 1);
-                
+
                 bool powerCondition = UnitCombatPowerCalculator.ToTalCombatPower > nextStage.NeedPower;
                 bool planetCondition = (SaveLoadManager.Data.stageSaveData.highPlanet > nextStage.NeedClearPlanet)
                     || (SaveLoadManager.Data.stageSaveData.highPlanet == SaveLoadManager.Data.stageSaveData.clearedPlanet
                         && SaveLoadManager.Data.stageSaveData.highStage == SaveLoadManager.Data.stageSaveData.clearedStage);
-                keyCondition = ItemManager.GetItemAmount(nextStage.NeedKeyItemID) >= nextStage.NeedKeyItemCount;
-                nextButton.interactable = powerCondition && planetCondition && keyCondition;
+                nextButton.interactable = powerCondition && planetCondition;
             }
         }
         else
@@ -104,6 +102,13 @@ public class DungeonEndWindow : MonoBehaviour
 
     public void RightButton()
     {
+        var curStage = DataTableManager.DungeonTable.GetData(Variables.currentDungeonType, Variables.currentDungeonStage);
+        if (ItemManager.GetItemAmount(curStage.NeedKeyItemID) < curStage.NeedKeyItemCount)
+        {
+            notEnoughKeyWindow.SetActive(true);
+            return;
+        }
+
         if (isCleared
             && Variables.currentDungeonStage < DataTableManager.DungeonTable.CountOfStage(Variables.currentDungeonType))
         {
@@ -126,5 +131,13 @@ public class DungeonEndWindow : MonoBehaviour
     public void Retry()
     {
         stageManager.ResetStage();
+    }
+
+    public void MoveToShop()
+    {
+        stageManager.StageUiManager.UIGroupStatusManager.UiDict[IngameStatus.Planet].SetPopUpInActive(1);
+        stageManager.SetStatus(IngameStatus.Planet);
+        stageManager.StageUiManager.UIGroupStatusManager.UiDict[IngameStatus.Planet].SetTabActive(3);
+        gameObject.SetActive(false);
     }
 }

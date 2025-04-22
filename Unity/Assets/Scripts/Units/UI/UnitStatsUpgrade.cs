@@ -4,6 +4,8 @@ using Unity.VisualScripting.Antlr3.Runtime.Misc;
 using UnityEngine;
 using UnityEngine.AddressableAssets;
 using UnityEngine.ResourceManagement.AsyncOperations;
+using UnityEngine.UI;
+
 
 
 
@@ -21,10 +23,40 @@ public class UnitStatsUpgrade : MonoBehaviour
     [SerializeField]
     private List<Sprite> statsSprite;
 
+    [SerializeField]
+    private Toggle x1Toggle;
+    [SerializeField]
+    private Toggle x10Toggle;
+    [SerializeField]
+    private Toggle x100Toggle;
+
+    public int currentMultiplier { get; private set; } = 1;
+    private List<UnitStatsUpgradeElement> allElements = new List<UnitStatsUpgradeElement>();
+
+    private void OnEnable()
+    {
+        x1Toggle.isOn = false;
+        x10Toggle.isOn = false;
+        x100Toggle.isOn = false;
+        x1Toggle.isOn = true;
+    }
 
     private void Awake()
     {
+
+        x1Toggle.onValueChanged.AddListener((isOn) => { if (isOn) SetMultiplier(1); });
+        x10Toggle.onValueChanged.AddListener((isOn) => { if (isOn) SetMultiplier(10); });
+        x100Toggle.onValueChanged.AddListener((isOn) => { if (isOn) SetMultiplier(100); });
         Init();
+    }
+
+    private void SetMultiplier(int multiplier)
+    {
+        currentMultiplier = multiplier;
+        foreach(var element in allElements)
+        {
+            element.SetMultiplier(multiplier);
+        }
     }
     private void Init()
     {
@@ -45,6 +77,8 @@ public class UnitStatsUpgrade : MonoBehaviour
                         statsElement.SetData(data[currentType], DataTableManager.UnitUpgradeTable.GetData(currentType));
                         statsElement.SetInitString(currentType);
                         statsElement.SetImage(currentType, statsSprite);
+                        statsElement.SetMultiplier(currentMultiplier);
+                        allElements.Add(statsElement);
                     }
 
                 }
@@ -54,16 +88,6 @@ public class UnitStatsUpgrade : MonoBehaviour
                 }
             };
         };
-        //if (data !=null)
-        //{
-        //    for (int i = (int)UnitUpgradeTable.UpgradeType.AttackPoint; i <= (int)UnitUpgradeTable.UpgradeType.CriticalDamages; i++)
-        //    {
-        //        var stats = Instantiate(statsUpgradeElements, parentTransform);
-        //        stats.Init(DataTableManager.UnitUpgradeTable.GetData(1000 * i + 1)); // 디폴트 테이블 추가해달라해야댐
-        //        stats.SetData(data[(UnitUpgradeTable.UpgradeType)i]);
-        //        stats.SetInitString();
-        //    }
-        //}
-
+      
     }
 }

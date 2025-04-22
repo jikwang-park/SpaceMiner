@@ -71,8 +71,7 @@ public static class UnitBTManager
 
         var moveSequence = new SquenceNode<Unit>(context);
         moveSequence.AddChild(new IsUnitExceedMonsterPosCondition(context));
-        //frontUnitMoveSequence.AddChild(new IsUnitFrontLineCondition(context));
-        //frontUnitMoveSequence.AddChild(new IsUnitInSafeDistanceCondition(context));
+    
         moveSequence.AddChild(new MoveAction(context));
 
      
@@ -193,6 +192,7 @@ public static class UnitBTManager
         attackSelectorNode.AddChild(normalAttackSequence);
 
         rootSelectorNode.AddChild(moveSequence);
+
 
 
         rootSelectorNode.AddChild(idleSequence);

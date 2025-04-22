@@ -46,10 +46,23 @@ public class UnitStatsUpgradeElement : MonoBehaviour
     [SerializeField]
     private Image StatsImage;
 
+
+
+    private int statsMultiplier = 1;
+
     private void Awake()
     {
         stageManager = GameObject.FindGameObjectWithTag("GameController").GetComponent<StageManager>();
         addStatButton.onClick.AddListener(() => OnClickAddStatsButton());
+
+    }
+
+
+
+    public void SetMultiplier(int multiplier)
+    {
+        statsMultiplier = multiplier;
+        SetStatsInfo();
     }
 
     public void SetInitString(UpgradeType type)
@@ -76,26 +89,43 @@ public class UnitStatsUpgradeElement : MonoBehaviour
 
     private void SetStatsInfo()
     {
-        nextLevel = level + 1;
-        levelText.text = $"Level + {level}";
+        nextLevel = level + statsMultiplier;
+        levelText.text = $"Level + {level} -> {nextLevel}";
+        float beforeValue = level * value;
+        float afterValue = nextLevel * value;
+
+        BigNumber afterGold = GetCurrentGold(nextLevel);
+
         switch (currentType)
         {
             case UpgradeType.AttackPoint:
             case UpgradeType.HealthPoint:
             case UpgradeType.DefensePoint:
-                beforeStatsInfo.text = $"{currentValue:F2}";
-                afterStatsInfo.text = $"{currentValue + value:F2}";
+                beforeStatsInfo.text = $"{beforeValue:F2}";
+                afterStatsInfo.text = $"{afterValue:F2}";
                 break;
             case UpgradeType.CriticalPossibility:
             case UpgradeType.CriticalDamages:
-                beforeStatsInfo.text = $"{(currentValue*100):F2}%";
-                afterStatsInfo.text = $"{((currentValue + value)*100):F2}%";
+                beforeStatsInfo.text = $"{(beforeValue * 100):F2}%";
+                afterStatsInfo.text = $"{((afterValue) * 100):F2}%";
                 break;
         }
-        
-        addStartButtonText.text = $" +{currentGold + gold}";
-    }
+        BigNumber neededGold = GetGoldForMultipleLevels(level, statsMultiplier);
 
+        addStartButtonText.text = $" +{neededGold}";
+    }
+    public BigNumber GetGoldForMultipleLevels(int currentLevel, int multiplier)
+    {
+        int start = currentLevel + 1;
+        int end = Mathf.Min(currentLevel + multiplier, maxLevel);
+
+        BigNumber result = 0;
+        for (int i = start; i <= end; ++i)
+        {
+            result += gold * i;
+        }
+        return result;
+    }
     public void SetData(int level, UnitUpgradeTable.Data data)
     {
         currentType = data.Type;
@@ -133,22 +163,28 @@ public class UnitStatsUpgradeElement : MonoBehaviour
             addStatButton.interactable = false;
         }
 
-        level++;
+        int addLevel = statsMultiplier;
+
+        level += addLevel;
+        currentValue += level * value;
+        currentGold += GetCurrentGold(level);
 
 
-        currentValue += value;
-        currentGold += gold * (level + 1);
+
+
+
         SaveLoadManager.Data.unitStatUpgradeData.upgradeLevels[currentType] = level;
         GuideQuestManager.QuestProgressChange(GuideQuestTable.MissionType.StatUpgrade);
     }
     private void OnClickAddStatsButton()
     {
-        if (ItemManager.CanConsume((int)Currency.Gold, currentGold))
+        BigNumber totalGold = GetGoldForMultipleLevels(level , statsMultiplier);
+        if (ItemManager.CanConsume((int)Currency.Gold, totalGold))
         {
-            ItemManager.ConsumeCurrency(Currency.Gold, currentGold);
+            ItemManager.ConsumeCurrency(Currency.Gold, totalGold);
             LevelUp();
             SetStatsInfo();
-            stageManager.UnitPartyManager.AddStats(currentType, level * value);
+            stageManager.UnitPartyManager.AddStats(currentType, value * statsMultiplier);
             SaveLoadManager.SaveGame();
         }
     }

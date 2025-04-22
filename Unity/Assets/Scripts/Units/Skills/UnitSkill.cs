@@ -29,7 +29,7 @@ public class UnitSkill : MonoBehaviour
 
     public int nextId;
 
-
+    public float remainCooltime = 0;
 
     public bool CanSaerchTarget;
 
@@ -59,6 +59,15 @@ public class UnitSkill : MonoBehaviour
 
     public virtual void ExecuteSkill()
     {
+        remainCooltime = coolTime;
+    }
+    public virtual void Update()
+    {
+        if(remainCooltime >0)
+        {
+            remainCooltime -= Time.deltaTime;
+            remainCooltime = Mathf.Max(remainCooltime, 0f);
+        }
 
     }
 

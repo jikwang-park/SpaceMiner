@@ -51,11 +51,16 @@ public class TankerSkill : UnitSkill
 
     public override void ExecuteSkill()
     {
+        base.ExecuteSkill();
         foreach(var target in targetList)
         {
             var amount = unit.unitStats.armor * shieldRatio;
             target.SetBarrier(duration, amount);
         }
+    }
+    public override void Update()
+    {
+        base.Update();
     }
 
     public override void UpgradeUnitSkillStats(int id)

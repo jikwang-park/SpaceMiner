@@ -21,8 +21,8 @@ public class IngameUIManager : MonoBehaviour
     private TextMeshProUGUI goldText;
     [SerializeField]
     private StageEndWindow stageEndWindow;
-    [SerializeField]
-    private DungeonEndWindow dungeonEndWindow;
+    [field: SerializeField]
+    public DungeonEndWindow DungeonEndWindow { get; private set; }
     [field: SerializeField]
     public StageSelectWindow StageSelectWindow { get; private set; }
     [field: SerializeField]
@@ -58,22 +58,12 @@ public class IngameUIManager : MonoBehaviour
 
     public void OpenStageEndWindow(string message, float duration)
     {
-        stageEndWindow.Open(message,duration);
+        stageEndWindow.Open(message, duration);
     }
 
     public void CloseStageEndWindow()
     {
         stageEndWindow.Close();
-    }
-
-    public void OpenDungeonEndWindow(bool isCleared, bool firstCleared)
-    {
-        dungeonEndWindow.Open(isCleared, firstCleared);
-    }
-
-    public void CloseDungeonEndWindow()
-    {
-        dungeonEndWindow.Close();
     }
 
     public void SetGoldText()

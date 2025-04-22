@@ -84,6 +84,7 @@ public class MonsterController : MonoBehaviour, IObjectPoolGameObject
     {
         isDrawRegion = true;
         hasTarget = false;
+        Target = null;
         currentLine = -1;
         TargetDistance = float.PositiveInfinity;
         GetComponent<DestructedDestroyEvent>().OnDestroyed += OnThisDie;
@@ -103,16 +104,30 @@ public class MonsterController : MonoBehaviour, IObjectPoolGameObject
             return;
         }
 
-        if (!hasTarget && StageManager.UnitPartyManager.UnitCount > 0)
+        if (StageManager.UnitPartyManager.UnitCount > 0)
         {
-            Target = StageManager.UnitPartyManager.GetFirstLineUnitTransform();
-            Target.GetComponent<DestructedDestroyEvent>().OnDestroyed += OnTargetDie;
+            var newTarget = StageManager.UnitPartyManager.GetFirstLineUnitTransform();
+            if (newTarget != Target)
+            {
+                if (hasTarget && Target is not null)
+                {
+                    Target.GetComponent<DestructedDestroyEvent>().OnDestroyed -= OnTargetDie;
+                }
+                newTarget.GetComponent<DestructedDestroyEvent>().OnDestroyed += OnTargetDie;
+                Target = newTarget;
+            }
             hasTarget = true;
-        }
-
-        if (hasTarget)
-        {
             TargetDistance = -(Target.position.z - transform.position.z);
+        }
+        else
+        {
+            hasTarget = false;
+            if (Target is not null)
+            {
+                Target.GetComponent<DestructedDestroyEvent>().OnDestroyed -= OnTargetDie;
+            }
+            Target = null;
+            TargetDistance = float.PositiveInfinity;
         }
 
 #if UNITY_EDITOR
@@ -182,6 +197,11 @@ public class MonsterController : MonoBehaviour, IObjectPoolGameObject
 
     private void OnAttack()
     {
+        if (status != Status.Attacking)
+        {
+            return;
+        }
+
         if (Target is not null)
         {
             Stats.Execute(Target.gameObject);
@@ -190,6 +210,11 @@ public class MonsterController : MonoBehaviour, IObjectPoolGameObject
 
     private void OnAttackEnd()
     {
+        if (status != Status.Attacking)
+        {
+            return;
+        }
+
         AnimationController.Play(AnimationControl.AnimationClipID.BattleIdle);
         status = Status.Wait;
     }

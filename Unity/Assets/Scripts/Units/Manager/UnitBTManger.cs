@@ -68,13 +68,12 @@ public static class UnitBTManager
         normalAttackSequence.AddChild(new IsUnitCanNormalAttackCondition(context));
         normalAttackSequence.AddChild(new NormalAttackAction(context));
         //
-        var moveSelector = new SelectorNode<Unit>(context);
 
-        var frontUnitMoveSequence = new SquenceNode<Unit>(context);
-        frontUnitMoveSequence.AddChild(new IsUnitExceedMonsterPosCondition(context));
-        frontUnitMoveSequence.AddChild(new IsUnitFrontLineCondition(context));
-        frontUnitMoveSequence.AddChild(new IsUnitInSafeDistanceCondition(context));
-        frontUnitMoveSequence.AddChild(new MoveAction(context));
+        var moveSequence = new SquenceNode<Unit>(context);
+        moveSequence.AddChild(new IsUnitExceedMonsterPosCondition(context));
+        //frontUnitMoveSequence.AddChild(new IsUnitFrontLineCondition(context));
+        //frontUnitMoveSequence.AddChild(new IsUnitInSafeDistanceCondition(context));
+        moveSequence.AddChild(new MoveAction(context));
 
      
         var idleSequence = new SquenceNode<Unit>(context);
@@ -89,9 +88,7 @@ public static class UnitBTManager
         attackSelectorNode.AddChild(skillAttackSequence);
         attackSelectorNode.AddChild(normalAttackSequence);
 
-        rootSelectorNode.AddChild(moveSelector);
-        moveSelector.AddChild(frontUnitMoveSequence);
-
+        rootSelectorNode.AddChild(moveSequence);
 
         rootSelectorNode.AddChild(idleSequence);
 
@@ -121,16 +118,12 @@ public static class UnitBTManager
         normalAttackSequence.AddChild(new IsUnitCanNormalAttackCondition(context));
         normalAttackSequence.AddChild(new NormalAttackAction(context));
         //
-        var moveSelector = new SelectorNode<Unit>(context);
 
 
 
-        var notFrontUnitMoveSequence = new SquenceNode<Unit>(context);
-
-        notFrontUnitMoveSequence.AddChild(new IsUnitExceedMonsterPosCondition(context));
-
-        notFrontUnitMoveSequence.AddChild(new IsUnitInSafeDistanceCondition(context));
-        notFrontUnitMoveSequence.AddChild(new MoveAction(context));
+        var moveSequence = new SquenceNode<Unit>(context);
+        moveSequence.AddChild(new IsUnitExceedMonsterPosCondition(context));
+        moveSequence.AddChild(new MoveAction(context));
 
         var idleSequence = new SquenceNode<Unit>(context);
         idleSequence.AddChild(new IsUnitCanIdleCondition(context));
@@ -144,9 +137,7 @@ public static class UnitBTManager
         attackSelectorNode.AddChild(skillAttackSequence);
         attackSelectorNode.AddChild(normalAttackSequence);
 
-        rootSelectorNode.AddChild(moveSelector);
-        moveSelector.AddChild(notFrontUnitMoveSequence);
-
+        rootSelectorNode.AddChild(moveSequence);
 
         rootSelectorNode.AddChild(idleSequence);
 
@@ -175,15 +166,19 @@ public static class UnitBTManager
         var normalAttackSequence = new SquenceNode<Unit>(context);
         normalAttackSequence.AddChild(new IsUnitCanNormalAttackCondition(context));
         normalAttackSequence.AddChild(new NormalAttackAction(context));
+
+        var moveSequence = new SquenceNode<Unit>(context);
+        moveSequence.AddChild(new IsUnitExceedMonsterPosCondition(context));
+        moveSequence.AddChild(new MoveAction(context));
         //
-        var moveSelector = new SelectorNode<Unit>(context);
+        //var moveSelector = new SelectorNode<Unit>(context);
 
 
-        var notFrontUnitMoveSequence = new SquenceNode<Unit>(context);
-        notFrontUnitMoveSequence.AddChild(new IsUnitExceedMonsterPosCondition(context));
+        //var notFrontUnitMoveSequence = new SquenceNode<Unit>(context);
+        //notFrontUnitMoveSequence.AddChild(new IsUnitExceedMonsterPosCondition(context));
 
-        notFrontUnitMoveSequence.AddChild(new IsUnitInSafeDistanceCondition(context));
-        notFrontUnitMoveSequence.AddChild(new MoveAction(context));
+        //notFrontUnitMoveSequence.AddChild(new IsUnitInSafeDistanceCondition(context));
+        //notFrontUnitMoveSequence.AddChild(new MoveAction(context));
 
         var idleSequence = new SquenceNode<Unit>(context);
         idleSequence.AddChild(new IsUnitCanIdleCondition(context));
@@ -197,8 +192,7 @@ public static class UnitBTManager
         attackSelectorNode.AddChild(skillAttackSequence);
         attackSelectorNode.AddChild(normalAttackSequence);
 
-        rootSelectorNode.AddChild(moveSelector);
-        moveSelector.AddChild(notFrontUnitMoveSequence);
+        rootSelectorNode.AddChild(moveSequence);
 
 
         rootSelectorNode.AddChild(idleSequence);

@@ -19,11 +19,14 @@ public class DebugItemRow : MonoBehaviour
 
     private ItemTable.Data data;
 
+    public int ItemID { get; private set; }
+
     public void Set(int itemId)
     {
         data = DataTableManager.ItemTable.GetData(itemId);
         idText.text = itemId.ToString();
         nameText.SetString(data.NameStringID);
+        ItemID = itemId;
         Refresh();
     }
 

@@ -99,16 +99,17 @@ public class Unit : MonoBehaviour
     {
     }
 
+    
+
     public bool IsUnitExeedMonsterPosition
     {
         get
         {
             if (targetPos == null)
-                return false;
+                return true;
 
-            float distance = targetPos.position.z - transform.position.z;
 
-            return distance < 1f;
+            return transform.position.z < targetPos.position.z;
         }
     }
 

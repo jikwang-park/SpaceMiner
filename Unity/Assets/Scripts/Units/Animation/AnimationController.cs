@@ -125,6 +125,11 @@ public class AnimationController : AnimationControl
         }
     }
 
+    public override bool ContainsClip(AnimationClipID clipID)
+    {
+        return animationDict.ContainsKey(clipID);
+    }
+
     public override void Play(AnimationClipID clipID)
     {
         Play(clipID, false);
@@ -148,7 +153,6 @@ public class AnimationController : AnimationControl
                 events[clipID][i].isInvoked = false;
             }
         }
-
 
         CurrentClip = clipID;
         animations.CrossFade(animationDict[clipID], fadeLength);
@@ -192,6 +196,7 @@ public class AnimationController : AnimationControl
 
     public override void Stop()
     {
+        CurrentClip = AnimationClipID.None;
         animations.Stop();
     }
 

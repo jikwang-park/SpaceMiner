@@ -19,6 +19,7 @@ public class DataTableIds
     public const string waveTable = "WaveTable";
 
     public const string dungeonTable = "DungeonTable";
+    public const string damageDungeonRewardTable = "DamageDungeonRewardTable";
 
     public const string soldierTable = "SoldierTable";
     public const string tankerSkillTable = "TankerSkillTable";

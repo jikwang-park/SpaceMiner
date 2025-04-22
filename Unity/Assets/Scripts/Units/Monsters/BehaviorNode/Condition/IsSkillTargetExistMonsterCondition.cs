@@ -2,11 +2,11 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class IsMonsterSkillTargetExistCondition : ConditionNode<MonsterController>
+public class IsSkillTargetExistMonsterCondition : ConditionNode<MonsterController>
 {
     private MonsterSkill skill;
 
-    public IsMonsterSkillTargetExistCondition(MonsterController context) : base(context)
+    public IsSkillTargetExistMonsterCondition(MonsterController context) : base(context)
     {
         skill = context.GetComponent<MonsterSkill>();
     }

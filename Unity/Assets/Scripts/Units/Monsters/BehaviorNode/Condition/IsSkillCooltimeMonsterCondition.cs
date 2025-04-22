@@ -2,11 +2,11 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class IsMonsterSkillCooltimeCondition : ConditionNode<MonsterController>
+public class IsSkillCooltimeMonsterCondition : ConditionNode<MonsterController>
 {
     private MonsterSkill skill;
 
-    public IsMonsterSkillCooltimeCondition(MonsterController context) : base(context)
+    public IsSkillCooltimeMonsterCondition(MonsterController context) : base(context)
     {
         skill = context.GetComponent<MonsterSkill>();
     }

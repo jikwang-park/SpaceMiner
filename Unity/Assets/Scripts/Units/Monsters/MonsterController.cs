@@ -48,11 +48,19 @@ public class MonsterController : MonoBehaviour, IObjectPoolGameObject
 
     private bool isDrawRegion;
 
+    public bool IsTargetInRange
+    {
+        get
+        {
+            return Stats.range > TargetDistance;
+        }
+    }
+
     public bool CanAttack
     {
         get
         {
-            return Stats.range > TargetDistance && LastAttackTime + Stats.coolDown < Time.time;
+            return LastAttackTime + Stats.coolDown < Time.time;
         }
     }
 
@@ -154,18 +162,22 @@ public class MonsterController : MonoBehaviour, IObjectPoolGameObject
         if (MonsterData.MonsterSkillID != 0)
         {
             var skillSequence = new SquenceNode<MonsterController>(this);
-            skillSequence.AddChild(new IsMonsterSkillCooltimeCondition(this));
-            skillSequence.AddChild(new IsMonsterSkillTargetExistCondition(this));
+            skillSequence.AddChild(new IsSkillCooltimeMonsterCondition(this));
+            skillSequence.AddChild(new IsSkillTargetExistMonsterCondition(this));
             skillSequence.AddChild(new SkillMonsterAction(this));
             rootSelector.AddChild(skillSequence);
         }
 
         var attackSequence = new SquenceNode<MonsterController>(this);
+        attackSequence.AddChild(new IsTargetInRangeMonsterCondition(this));
         attackSequence.AddChild(new CanAttackMonsterCondition(this));
         attackSequence.AddChild(new AttackMonsterAction(this));
 
         var rushSequence = new SquenceNode<MonsterController>(this);
         rushSequence.AddChild(new IsUnitExistCondition(this));
+        var outcondition = new InverterNode<MonsterController>(this);
+        outcondition.SetChild(new IsTargetInRangeMonsterCondition(this));
+        rushSequence.AddChild(outcondition);
         rushSequence.AddChild(new CanMonsterMoveCondition(this));
         rushSequence.AddChild(new RushAction(this));
 
@@ -231,6 +243,7 @@ public class MonsterController : MonoBehaviour, IObjectPoolGameObject
             Target.GetComponent<DestructedDestroyEvent>().OnDestroyed -= OnTargetDie;
         }
         Target = null;
+        TargetDistance = float.PositiveInfinity;
         hasTarget = false;
     }
 

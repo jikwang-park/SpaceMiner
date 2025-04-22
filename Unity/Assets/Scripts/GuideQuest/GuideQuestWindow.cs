@@ -42,8 +42,7 @@ public class GuideQuestWindow : MonoBehaviour
         if (GuideQuestManager.currentQuestData is not null)
         {
             SetQuestTargetReward();
-            var itemSprite = DataTableManager.ItemTable.GetData(GuideQuestManager.currentQuestData.RewardItemID);
-            questRewardIcon.SetSprite(itemSprite.SpriteID);
+            questRewardIcon.SetItemSprite(GuideQuestManager.currentQuestData.RewardItemID);
             UpdateProgress();
             GuideQuestManager.RefreshQuest();
         }
@@ -109,8 +108,7 @@ public class GuideQuestWindow : MonoBehaviour
                 questDetailText.SetString(questData.DetailStringID, buildingData.Level.ToString());
                 break;
         }
-        var itemSprite = DataTableManager.ItemTable.GetData(questData.RewardItemID);
-        questRewardIcon.SetSprite(itemSprite.SpriteID);
+        questRewardIcon.SetItemSprite(questData.RewardItemID);
         BigNumber rewardCount = questData.RewardItemCount;
         rewardCountText.text = rewardCount.ToString();
     }

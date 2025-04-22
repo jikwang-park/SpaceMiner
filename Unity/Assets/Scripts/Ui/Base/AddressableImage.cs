@@ -1,7 +1,3 @@
-using System;
-using System.Collections;
-using System.Collections.Generic;
-using TMPro;
 using UnityEngine;
 using UnityEngine.AddressableAssets;
 using UnityEngine.ResourceManagement.AsyncOperations;
@@ -59,6 +55,15 @@ public class AddressableImage : MonoBehaviour
         LoadSprite();
     }
 
+    public void SetItemSprite(int itemID)
+    {
+        var itemData = DataTableManager.ItemTable.GetData(itemID);
+        if (itemData is not null)
+        {
+            this.spriteID = itemData.SpriteID;
+            LoadSprite();
+        }
+    }
 
     public void SetSprite(int spriteID, Image.Type type)
     {

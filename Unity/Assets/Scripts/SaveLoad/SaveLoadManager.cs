@@ -9,7 +9,7 @@ using SaveDataVC = SaveDataV3;
 public static class SaveLoadManager
 {
     public static int SaveDataVersion { get; private set; } = 3;
-    public static SaveDataVC Data { get; set; }
+    public static SaveDataVC Data { get; private set; }
 
     public static string fileName = "SaveData.json";
     public static event Action onSaveRequested;
@@ -29,7 +29,7 @@ public static class SaveLoadManager
     {
         if (!LoadGame())
         {
-            Data = GetDefaultData();
+            SetDefaultData();
             SaveGame();
         }
     }
@@ -66,12 +66,12 @@ public static class SaveLoadManager
         }
         catch
         {
-            Data = GetDefaultData();
+            SetDefaultData();
         }
 
         return true;
     }
-    public static SaveDataVC GetDefaultData()
+    public static void SetDefaultData()
     {
         SaveDataVC defaultSaveData = new SaveDataVC();
 
@@ -84,7 +84,8 @@ public static class SaveLoadManager
             clearedPlanet = 1,
             clearedStage = 0,
             highestDungeon = new Dictionary<int, int>(),
-            clearedDungeon = new Dictionary<int, int>()
+            clearedDungeon = new Dictionary<int, int>(),
+            dungeonTwoDamage = new BigNumber(0)
         };
 
         List<int> dungeons = DataTableManager.DungeonTable.DungeonTypes;
@@ -131,6 +132,7 @@ public static class SaveLoadManager
         defaultSaveData.buildingData = BuildingData.CreateDefault();
         defaultSaveData.dungeonKeyShopData = DungeonKeyShopData.CreateDefault();
         defaultSaveData.quitTime = DateTime.Now;
-        return defaultSaveData;
+
+        Data = defaultSaveData;
     }
 }

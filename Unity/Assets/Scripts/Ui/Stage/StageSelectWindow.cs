@@ -14,13 +14,10 @@ public class StageSelectWindow : MonoBehaviour
 
     private int currentPlanet = 1;
 
-    private StageSaveData stageLoadData;
-
     private void Start()
     {
         planetScroll.OnPlanetSelected += OnPlanetSelected;
-        stageLoadData = SaveLoadManager.Data.stageSaveData;
-        OnPlanetSelected(stageLoadData.currentPlanet);
+        OnPlanetSelected(SaveLoadManager.Data.stageSaveData.currentPlanet);
     }
 
     private void OnPlanetSelected(int planet)

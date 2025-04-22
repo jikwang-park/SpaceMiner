@@ -81,4 +81,9 @@ public class DebugUIManager : MonoBehaviour
             }
         }
     }
+
+    public void ResetSaveData()
+    {
+        SaveLoadManager.SetDefaultData();
+    }
 }

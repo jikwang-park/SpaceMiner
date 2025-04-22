@@ -30,6 +30,7 @@ public class StageSaveData
     public int clearedStage;
     public Dictionary<int, int> highestDungeon = new Dictionary<int, int>();
     public Dictionary<int, int> clearedDungeon = new Dictionary<int, int>();
+    public BigNumber dungeonTwoDamage = new BigNumber();
 }
 [Serializable]
 public class MiningRobotInventorySlotData

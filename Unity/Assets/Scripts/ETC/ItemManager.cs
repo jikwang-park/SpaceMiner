@@ -91,6 +91,10 @@ public static class ItemManager
     {
         ConsumeItem((int)currency, amount);
     }
+    public static void AddCurrency(Currency currency, BigNumber amount)
+    {
+        AddItem((int)currency, amount);
+    }
     public static BigNumber GetItemAmount(int itemId)
     {
         return items.ContainsKey(itemId)? items[itemId] : 0;

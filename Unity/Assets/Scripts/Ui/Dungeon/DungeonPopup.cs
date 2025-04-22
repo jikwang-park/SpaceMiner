@@ -84,7 +84,6 @@ public class DungeonPopup : MonoBehaviour
 
         bool clearedAny = SaveLoadManager.Data.stageSaveData.clearedDungeon[Variables.currentDungeonType] > 0;
         exterminateButton.interactable = clearedAny;
-
     }
 
     private void OnDisable()

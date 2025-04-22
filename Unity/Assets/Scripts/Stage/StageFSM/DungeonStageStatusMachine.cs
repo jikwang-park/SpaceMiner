@@ -146,6 +146,13 @@ public class DungeonStageStatusMachine : StageStatusMachine
 
     public override void Exit()
     {
+        if (dungeonData.Type == 2 && remainingTime > 0f)
+        {
+            remainingTime = 0f;
+            OnStageEnd(Status.Timeout);
+            return;
+        }
+
         stageManager.SetStatus(IngameStatus.Planet);
     }
 
@@ -207,22 +214,7 @@ public class DungeonStageStatusMachine : StageStatusMachine
                 }
                 else if (dungeonData.Type == 2)
                 {
-                    //TODO: 던전 타입2
-                    var boss = stageManager.StageMonsterManager.GetMonsters(1)[0].GetComponent<MonsterStats>();
-                    var damage = -boss.Hp;
-                    var rewardsData = DataTableManager.DamageDungeonRewardTable.GetRewards(damage);
-                    if (rewardsData.Count > 0)
-                    {
-                        foreach (var reward in rewardsData)
-                        {
-                            ItemManager.AddItem(reward.Key, reward.Value);
-                        }
-                        stageManager.StageUiManager.IngameUIManager.DamageDungeonEndWindow.Open(damage, rewardsData);
-                    }
-                    else
-                    {
-                        stageManager.StageUiManager.IngameUIManager.DamageDungeonEndWindow.Open(damage);
-                    }
+                    Dungeon2End();
                 }
                 break;
             case Status.Defeat:
@@ -281,5 +273,32 @@ public class DungeonStageStatusMachine : StageStatusMachine
 
         stageManager.CameraManager.SetCameraOffset();
         NextWave(true);
+    }
+
+    private void Dungeon2End()
+    {
+        var boss = stageManager.StageMonsterManager.GetMonsters(1)[0].GetComponent<MonsterStats>();
+        var damage = -boss.Hp;
+        if (SaveLoadManager.Data.stageSaveData.dungeonTwoDamage < damage)
+        {
+            SaveLoadManager.Data.stageSaveData.dungeonTwoDamage = damage;
+        }
+        var rewardsData = DataTableManager.DamageDungeonRewardTable.GetRewards(damage);
+        if (rewardsData.Count > 0)
+        {
+            foreach (var reward in rewardsData)
+            {
+                ItemManager.AddItem(reward.Key, reward.Value);
+            }
+            if (SaveLoadManager.Data.stageSaveData.clearedDungeon[currentType] < currentStage)
+            {
+                SaveLoadManager.Data.stageSaveData.clearedDungeon[currentType] = currentStage;
+            }
+            stageManager.StageUiManager.IngameUIManager.DamageDungeonEndWindow.Open(damage, rewardsData);
+        }
+        else
+        {
+            stageManager.StageUiManager.IngameUIManager.DamageDungeonEndWindow.Open(damage);
+        }
     }
 }

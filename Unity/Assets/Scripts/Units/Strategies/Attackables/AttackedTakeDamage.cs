@@ -21,7 +21,7 @@ public class AttackedTakeDamage : MonoBehaviour, IAttackable
     {
         stats.Hp -= attack.damage;
 
-        if (stats.Hp < 0 && gameObjectEnabled)
+        if (stats.maxHp != 0 && stats.Hp < 0 && gameObjectEnabled)
         {
             stats.Hp = new BigNumber("0");
             IDestructable[] destructables = GetComponents<IDestructable>();

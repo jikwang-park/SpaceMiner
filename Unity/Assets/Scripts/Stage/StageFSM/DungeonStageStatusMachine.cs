@@ -209,7 +209,7 @@ public class DungeonStageStatusMachine : StageStatusMachine
                 {
                     //TODO: 던전 타입2
                     var boss = stageManager.StageMonsterManager.GetMonsters(1)[0].GetComponent<MonsterStats>();
-                    stageManager.StageUiManager.IngameUIManager.DungeonEndWindow.Open(boss.maxHp - boss.Hp);
+                    stageManager.StageUiManager.IngameUIManager.DungeonEndWindow.Open(-boss.Hp);
                 }
                 break;
             case Status.Defeat:

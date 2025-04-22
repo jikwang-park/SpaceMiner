@@ -1,5 +1,6 @@
 using System;
 using System.Collections;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.Networking;
 
@@ -7,31 +8,32 @@ public class TimeManager : Singleton<TimeManager>
 {
     public string url = "www.google.com";
     private TimeSpan serverTimeOffset = TimeSpan.Zero;
+    public bool isDebug = false;
 
     private void Awake()
     {
         Screen.sleepTimeout = SleepTimeout.NeverSleep;
+        isDebug = PlayerPrefs.GetInt("TimeManager.isDebug", 0) == 1;
     }
-
     public IEnumerator SyncWithServer()
     {
+        if(isDebug)
+        {
+            yield break;
+        }
+
         yield return StartCoroutine(GetServerTime((DateTime serverTime) =>
         {
             if (serverTime != DateTime.MinValue)
             {
-                serverTimeOffset = serverTime - DateTime.Now;
-                Debug.Log("서버 동기화 완료, 오프셋: " + serverTimeOffset);  
-            }
-            else
-            {
-                Debug.LogWarning("서버 시간 동기화 실패");
+                serverTimeOffset = serverTime - DateTime.Now;  
             }
         }));
     }
 
     public IEnumerator GetServerTime(Action<DateTime> onTimeFetched)
     {
-        UnityWebRequest request = UnityWebRequest.Get("http://www.google.com");
+        UnityWebRequest request = UnityWebRequest.Get(url);
         yield return request.SendWebRequest();
 
         if (request.result == UnityWebRequest.Result.Success)
@@ -48,7 +50,7 @@ public class TimeManager : Singleton<TimeManager>
     }
     public DateTime GetEstimatedServerTime()
     {
-        return DateTime.Now + serverTimeOffset;
+        return isDebug ? DateTime.Now : DateTime.Now + serverTimeOffset;
     }
     private void OnApplicationFocus(bool focus)
     {
@@ -72,5 +74,11 @@ public class TimeManager : Singleton<TimeManager>
     {
         SaveLoadManager.Data.quitTime = GetEstimatedServerTime();
         SaveLoadManager.SaveGame();
+    }
+    public void ToggleDebugMode()
+    {
+        isDebug = !isDebug;
+        PlayerPrefs.SetInt("TimeManager.isDebug", isDebug ? 1 : 0);
+        PlayerPrefs.Save();
     }
 }

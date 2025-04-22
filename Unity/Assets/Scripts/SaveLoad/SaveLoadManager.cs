@@ -3,6 +3,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
+using Unity.VisualScripting;
 using UnityEngine;
 using SaveDataVC = SaveDataV3;
 
@@ -75,26 +76,7 @@ public static class SaveLoadManager
     {
         SaveDataVC defaultSaveData = new SaveDataVC();
 
-        defaultSaveData.stageSaveData = new StageSaveData
-        {
-            currentPlanet = 1,
-            currentStage = 1,
-            highPlanet = 1,
-            highStage = 1,
-            clearedPlanet = 1,
-            clearedStage = 0,
-            highestDungeon = new Dictionary<int, int>(),
-            clearedDungeon = new Dictionary<int, int>(),
-            dungeonTwoDamage = new BigNumber(0)
-        };
-
-        List<int> dungeons = DataTableManager.DungeonTable.DungeonTypes;
-
-        foreach (var type in dungeons)
-        {
-            defaultSaveData.stageSaveData.highestDungeon.Add(type, 1);
-            defaultSaveData.stageSaveData.clearedDungeon.Add(type, 0);
-        }
+        defaultSaveData.stageSaveData = StageSaveData.CreateDefault();
 
         defaultSaveData.questProgressData = QuestProgressData.CreateDefault();
 
@@ -105,25 +87,7 @@ public static class SaveLoadManager
 
         foreach (var type in datasByType.Keys)
         {
-            SoldierInventoryData inventoryData = new SoldierInventoryData();
-            inventoryData.inventoryType = type;
-
-            foreach (var soldierData in datasByType[type])
-            {
-                SoldierInventoryElementData elementData = new SoldierInventoryElementData()
-                {
-                    soldierId = soldierData.ID,
-                    isLocked = true,
-                    grade = soldierData.Grade,
-                    count = 0,
-                    level = soldierData.Level,
-                };
-                inventoryData.elements.Add(elementData);
-            }
-            inventoryData.elements[0].isLocked = false;
-            inventoryData.elements[0].count = 1;
-            inventoryData.equipElementID = inventoryData.elements[0].soldierId;
-            defaultSaveData.soldierInventorySaveData[type] = inventoryData;
+            defaultSaveData.soldierInventorySaveData[type] = SoldierInventoryData.CreateDefault(type, datasByType[type]);
         }
         defaultSaveData.miningRobotInventorySaveData = MiningRobotInventoryData.CreateDefault();
 
@@ -134,5 +98,58 @@ public static class SaveLoadManager
         defaultSaveData.quitTime = DateTime.Now;
 
         Data = defaultSaveData;
+    }
+    public static void ResetStatUpgradeData()
+    {
+        Data.unitStatUpgradeData = UnitStatUpgradeData.CreateDefault();
+    }
+    public static void ResetSoldierInventoryData()
+    {
+        Data.soldierInventorySaveData = new Dictionary<UnitTypes, SoldierInventoryData>();
+        var datasByType = DataTableManager.SoldierTable.GetTypeDictionary();
+
+        foreach (var type in datasByType.Keys)
+        {
+            Data.soldierInventorySaveData[type] = SoldierInventoryData.CreateDefault(type, datasByType[type]);
+        }
+    }
+    public static void ResetSkillUpgradeData()
+    {
+        Data.unitSkillUpgradeData = UnitSkillUpgradeData.CreateDefault();
+    }
+    public static void ResetBuildingUpgradeData()
+    {
+        Data.buildingData = BuildingData.CreateDefault();
+    }
+    public static void ResetMiningRobotInventoryData()
+    {
+        Data.miningRobotInventorySaveData = MiningRobotInventoryData.CreateDefault();
+    }
+    public static void ResetDungeonKeyShopData()
+    {
+        Data.dungeonKeyShopData = DungeonKeyShopData.CreateDefault();
+    }
+    public static void ResetStageSaveData()
+    {
+        Data.stageSaveData = StageSaveData.CreateDefault();
+    }
+    public static void ResetItemSaveData()
+    {
+        Data.itemSaveData = new Dictionary<int, BigNumber>();
+    }
+    public static void UnlockAllStage()
+    {
+        var lastStageData = DataTableManager.StageTable.GetLastStage();
+
+        Data.stageSaveData.clearedPlanet = lastStageData.Planet;
+        Data.stageSaveData.clearedStage = lastStageData.Stage;
+        Data.stageSaveData.highPlanet = lastStageData.Planet;
+        Data.stageSaveData.highStage = lastStageData.Stage;
+
+        var lastDungeonData = DataTableManager.DungeonTable.GetLastStages();
+        foreach(var data in lastDungeonData)
+        {
+            Data.stageSaveData.highestDungeon[data.Key] = data.Value.Stage;
+        }
     }
 }

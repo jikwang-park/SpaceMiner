@@ -53,11 +53,18 @@ public class HealerSkill : UnitSkill
 
     public override void ExecuteSkill()
     {
-        foreach(var target in targetList)
+        base.ExecuteSkill();
+        foreach (var target in targetList)
         {
-            var amount = unit.unitStats.maxHp * healRatio;
-            unit.unitStats.Hp += amount;
+            var amount = target.unitStats.maxHp * healRatio;
+            target.unitStats.Hp += amount;
+            Debug.Log(amount);
         }
+    }
+
+    public override void Update()
+    {
+        base.Update();
     }
 
     public override void UpgradeUnitSkillStats(int id)

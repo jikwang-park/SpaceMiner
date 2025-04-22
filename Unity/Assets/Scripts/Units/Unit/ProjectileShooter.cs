@@ -18,6 +18,11 @@ public class ProjectileShooter : MonoBehaviour, IObjectPoolGameObject
         unit = GetComponent<Unit>();
     }
 
+    private void Start()
+    {
+        
+    }
+
     public void Fire(Transform startPos , Transform hitPos , Attack damage)
     {
         

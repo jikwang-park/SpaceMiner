@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -18,6 +19,10 @@ public class UnitSkillButtonUi : MonoBehaviour
     private Unit unit;
 
     private StageManager stageManager;
+
+    [SerializeField]
+    private TextMeshProUGUI coolTimeText;
+
 
     private void Start()
     {
@@ -63,19 +68,42 @@ public class UnitSkillButtonUi : MonoBehaviour
         if (unit.IsSkillCoolTimeOn)
         {
             skillCoolImage.fillAmount = 0f;
+            coolTimeText.text = null;
         }
         else
         {
             skillCoolImage.fillAmount = 1.0f - unit.RemainSkillCoolTime;
+            coolTimeText.text = unit.unitSkill.remainCooltime.ToString("F1");
         }
     }
     private void OnClickSkill()
     {
-        if (!unit.isAutoSkillMode && unit.IsSkillCoolTimeOn)
+        if (unit.UnitTypes == UnitTypes.Dealer)
         {
-            Debug.Log("수동 스킬 사용!");
-            unit.UseSkill();
+            if(unit.targetDistance <= unit.unitStats.range)
+            {
+                unit.UseSkill();
+            }
+            if (unit.IsSkillCoolTimeOn && !unit.isAutoSkillMode)
+            {
+                unit.UseSkill();
+            }
         }
+        else
+        {
+            if (unit.IsSkillCoolTimeOn)
+            {
+                Debug.Log("수동 스킬 사용!");
+                unit.UseSkill();
+            }
+        }
+        
+        //if(unit.IsSkillCoolTimeOn)
+        //{
+        //    unit.isSkillButtonPressed = true;
+        //    unit.UseSkill();
+        //    unit.isSkillButtonPressed = false;
+        //}
     }
 
     public void SetUnit(Unit unit)

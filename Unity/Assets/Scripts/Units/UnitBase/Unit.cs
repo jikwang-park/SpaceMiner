@@ -82,6 +82,8 @@ public class Unit : MonoBehaviour
     public float maxDis = 6.0f;
     public float minDis = 4.0f;
 
+    public bool isSkillButtonPressed = false;
+
 
     public float lastSkillUsedTime;
 
@@ -95,11 +97,7 @@ public class Unit : MonoBehaviour
         isAutoSkillMode = true;
     }
 
-    private void Start()
-    {
-    }
 
-    
 
     public bool IsUnitExeedMonsterPosition
     {
@@ -179,6 +177,18 @@ public class Unit : MonoBehaviour
                 return true;
 
             return false;
+        }
+    }
+
+    public bool isAutoModeCanUseSkill
+    {
+        get
+        {
+            if ( Time.time < unitSkill.coolTime + lastSkillUsedTime)
+                return false;
+
+            return true;
+
         }
     }
 
@@ -425,6 +435,11 @@ public class Unit : MonoBehaviour
 
     public IEnumerator NormalAttackCor()
     {
+        //if(currentUnitType == UnitTypes.Dealer || currentUnitType == UnitTypes.Healer)
+        //{
+        //    bullet.fire(targetPos, 4);
+
+        //}
         if (targetPos.gameObject != null)
         {
             unitStats.Execute(targetPos.gameObject);
@@ -491,10 +506,11 @@ public class Unit : MonoBehaviour
         float value = DataTableManager.UnitUpgradeTable.GetData(type).Value;
         float stats = 0;
 
-        for (int i = 1; i <= level; ++i)
-        {
-            stats += value * i;
-        }
+        stats = value * level;
+        //for (int i = 1; i <= level; ++i)
+        //{
+        //    stats = value * i;
+        //}
         unitStats.AddStats(type, stats);
     }
 

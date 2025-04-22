@@ -16,6 +16,9 @@ public class UnitPartyManager : MonoBehaviour
     [SerializeField]
     private SerializedDictionary<UnitTypes, GameObject[]> weapons;
 
+    [SerializeField]
+    private List<Vector3> unitSpawnPos;
+
     private Dictionary<UnitTypes, Unit> party = new Dictionary<UnitTypes, Unit>();
 
     public event System.Action OnUnitCreated;
@@ -152,7 +155,7 @@ public class UnitPartyManager : MonoBehaviour
     }
 
   
-    public Transform GetUnit(UnitTypes type)
+    public Transform GetUnit(UnitTypes type) 
     {
         if (party.ContainsKey(type))
         {

@@ -6,6 +6,8 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using UnityEngine;
+using UnityEngine.AddressableAssets;
+using UnityEngine.SceneManagement;
 
 public class FirebaseManager : Singleton<FirebaseManager>
 {
@@ -35,9 +37,19 @@ public class FirebaseManager : Singleton<FirebaseManager>
 
         auth = FirebaseAuth.DefaultInstance;
         root = FirebaseDatabase.DefaultInstance.RootReference;
-
-
+        SaveLoadManager.onSaveRequested += SaveToFirebase;
+    }
+    public async void OnClickStartButton()
+    {
         await SignInAnonymously();
+        await LoadFromFirebase();
+        var handle = Addressables.LoadSceneAsync(
+        "Assets/Scenes/DevSeol_Scene.unity",                
+        LoadSceneMode.Single        
+        );
+
+        await handle.Task;
+        Debug.Log(Firebase.Database.ServerValue.Timestamp);
     }
     private async Task SignInAnonymously()
     {
@@ -55,7 +67,6 @@ public class FirebaseManager : Singleton<FirebaseManager>
 
             AuthResult result = task.Result;
             this.userId = result.User.UserId;
-            SaveLoadManager.onSaveRequested += SaveToFirebase;
             Debug.LogFormat("User signed in successfully: {0} ({1})",
                 result.User.DisplayName, result.User.UserId);
         });
@@ -69,9 +80,33 @@ public class FirebaseManager : Singleton<FirebaseManager>
         string json = JsonConvert.SerializeObject(SaveLoadManager.Data,
             new JsonSerializerSettings
             {
-                Formatting = Formatting.Indented
+                Formatting = Formatting.Indented,
             });
 
        await root.Child("users").Child(userId).Child("SaveData").SetRawJsonValueAsync(json);
+    }
+    private async Task LoadFromFirebase()
+    {
+        if (string.IsNullOrEmpty(userId))
+        {
+            return;
+        }
+
+        try
+        {
+            var snapshot = await root.Child("users").Child(userId).Child("SaveData").GetValueAsync();
+            if(snapshot.Exists)
+            {
+                string json = snapshot.GetRawJsonValue();
+                if(!string.IsNullOrEmpty(json))
+                {
+                    SaveLoadManager.LoadGame(json);
+                }
+            }
+        }
+        catch
+        {
+
+        }
     }
 }

@@ -1,4 +1,5 @@
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -24,16 +25,7 @@ public static class SaveLoadManager
     private static JsonSerializerSettings settings = new JsonSerializerSettings
     {
         Formatting = Formatting.Indented,
-        TypeNameHandling = TypeNameHandling.All,
     };
-    static SaveLoadManager()
-    {
-        if (!LoadGame())
-        {
-            SetDefaultData();
-            SaveGame();
-        }
-    }
     public static void SaveGame()
     {
         if (!Directory.Exists(SaveDirectory))
@@ -56,21 +48,46 @@ public static class SaveLoadManager
             return false;
         }
         string json = File.ReadAllText(filePath);
+
+        LoadGame(json);
+
+        return true;
+    }
+    public static void LoadGame(string json)
+    {
         try
         {
-            var saveData = JsonConvert.DeserializeObject<SaveData>(json, settings);
+            var jObj = JObject.Parse(json);
+
+            int version = jObj.Value<int>("Version");
+            SaveData saveData;
+            switch (version)
+            {
+                case 1:
+                    saveData = JsonConvert.DeserializeObject<SaveDataV1>(json);
+                    break;
+                case 2:
+                    saveData = JsonConvert.DeserializeObject<SaveDataV2>(json);
+                    break;
+                case 3:
+                    saveData = JsonConvert.DeserializeObject<SaveDataV3>(json);
+                    break;
+                default:
+                    Debug.LogWarning($"Unknown SaveData version {version}, creating fresh default.");
+                    SetDefaultData();
+                    return;
+            }
             while (saveData.Version < SaveDataVersion)
             {
                 saveData = saveData.VersionUp();
             }
             Data = saveData as SaveDataVC;
         }
-        catch
+        catch(Exception e)
         {
+            Debug.LogError(e.Message);
             SetDefaultData();
         }
-
-        return true;
     }
     public static void SetDefaultData()
     {

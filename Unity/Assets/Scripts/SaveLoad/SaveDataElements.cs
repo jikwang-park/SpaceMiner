@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System;
 using JetBrains.Annotations;
+using Newtonsoft.Json;
 
 [Serializable]
 public class SoldierInventoryElementData
@@ -67,7 +68,9 @@ public class StageSaveData
     public int highStage;
     public int clearedPlanet;
     public int clearedStage;
+    [JsonConverter(typeof(IntKeyDictionaryConverter<int>))]
     public Dictionary<int, int> highestDungeon = new Dictionary<int, int>();
+    [JsonConverter(typeof(IntKeyDictionaryConverter<int>))]
     public Dictionary<int, int> clearedDungeon = new Dictionary<int, int>();
     public BigNumber dungeonTwoDamage = new BigNumber();
 
@@ -120,6 +123,7 @@ public class MiningRobotInventorySlotData
 public class MiningRobotInventoryData
 {
     public List<MiningRobotInventorySlotData> slots = new List<MiningRobotInventorySlotData>();
+    [JsonConverter(typeof(IntKeyDictionaryConverter<MiningRobotInventorySlotData[]>))]
     public Dictionary<int, MiningRobotInventorySlotData[]> equipmentSlotsToPlanet = new Dictionary<int, MiningRobotInventorySlotData[]>();
     public MiningRobotInventoryData() { }
     public static MiningRobotInventoryData CreateDefault(int totalSlots = 60)

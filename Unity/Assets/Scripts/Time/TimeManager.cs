@@ -54,7 +54,7 @@ public class TimeManager : Singleton<TimeManager>
     }
     private void OnApplicationFocus(bool focus)
     {
-        if (focus)
+        if (focus && !isDebug)
         {
             StartCoroutine(SyncWithServer());
         }

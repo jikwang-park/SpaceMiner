@@ -1,12 +1,15 @@
 using System.Collections;
 using System.Collections.Generic;
 using TMPro;
+using Unity.VisualScripting;
 using Unity.VisualScripting.Antlr3.Runtime.Misc;
 using UnityEngine;
+using UnityEngine.EventSystems;
+using UnityEngine.Rendering;
 using UnityEngine.UI;
 using static UnitUpgradeTable;
 
-public class UnitStatsUpgradeElement : MonoBehaviour
+public class UnitStatsUpgradeElement : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
 {
     public UpgradeType currentType;
 
@@ -20,10 +23,11 @@ public class UnitStatsUpgradeElement : MonoBehaviour
 
     public int nextLevel = 0;
 
+
     [SerializeField]
-    private Button addStatButton;
+    private TextMeshProUGUI needGoldText;
     [SerializeField]
-    private TextMeshProUGUI addStartButtonText;
+    private LocalizationText goldText;
     [SerializeField]
     private UnitPartyManager unitPartyManager;
     [SerializeField]
@@ -45,15 +49,25 @@ public class UnitStatsUpgradeElement : MonoBehaviour
     private LocalizationText titleText;
     [SerializeField]
     private Image StatsImage;
+    [SerializeField]
+    private Image goldImage;
+    [SerializeField]
+    private Image buttonImage;
 
+    [SerializeField]
+    private Transform buttonTransform;
 
+    private Vector3 defaultScale = Vector3.one;
+    private Vector3 pressedScale = new Vector3(0.9f, 0.9f, 1.0f);
+    [SerializeField]
+    private GameObject target;
 
     private int statsMultiplier = 1;
 
     private void Awake()
     {
         stageManager = GameObject.FindGameObjectWithTag("GameController").GetComponent<StageManager>();
-        addStatButton.onClick.AddListener(() => OnClickAddStatsButton());
+        //addStatButton.onClick.AddListener(() => OnClickAddStatsButton());
 
     }
 
@@ -112,7 +126,7 @@ public class UnitStatsUpgradeElement : MonoBehaviour
         }
         BigNumber neededGold = GetGoldForMultipleLevels(level, statsMultiplier);
 
-        addStartButtonText.text = $" +{neededGold}";
+        needGoldText.text = $" +{neededGold}";
     }
     public BigNumber GetGoldForMultipleLevels(int currentLevel, int multiplier)
     {
@@ -154,13 +168,17 @@ public class UnitStatsUpgradeElement : MonoBehaviour
         }
         return result;
     }
+    private void Update()
+    {
+        ButtonUpdate();
+    }
 
     private void LevelUp()
     {
 
         if (level > 1000)
         {
-            addStatButton.interactable = false;
+            return;
         }
 
         int addLevel = statsMultiplier;
@@ -170,15 +188,41 @@ public class UnitStatsUpgradeElement : MonoBehaviour
         currentGold += GetCurrentGold(level);
 
 
-
-
-
         SaveLoadManager.Data.unitStatUpgradeData.upgradeLevels[currentType] = level;
         GuideQuestManager.QuestProgressChange(GuideQuestTable.MissionType.StatUpgrade);
     }
+
+    private bool CanUpgrade()
+    {
+        if (level >= maxLevel)
+            return false;
+
+        BigNumber totalGold = GetGoldForMultipleLevels(level, statsMultiplier);
+        return ItemManager.CanConsume((int)Currency.Gold, totalGold);
+    }
+
+    private void ButtonUpdate()
+    {
+        BigNumber totalGold = GetGoldForMultipleLevels(level, statsMultiplier);
+        if (ItemManager.CanConsume((int)Currency.Gold, totalGold))
+        {
+            needGoldText.color = Color.white;
+            goldText.SetColor(Color.white);
+            goldImage.color = Color.white;
+            buttonImage.color = Color.white;
+        }
+        else
+        {
+            needGoldText.color = new Color(1f, 1f, 1f, 0.3f);
+            goldText.SetColor(new Color(1f, 1f, 1f, 0.3f));
+            goldImage.color = new Color(1f, 1f, 1f, 0.3f);
+            buttonImage.color = new Color(1f, 1f, 1f, 0.3f);
+        }
+    }
+
     private void OnClickAddStatsButton()
     {
-        BigNumber totalGold = GetGoldForMultipleLevels(level , statsMultiplier);
+        BigNumber totalGold = GetGoldForMultipleLevels(level, statsMultiplier);
         if (ItemManager.CanConsume((int)Currency.Gold, totalGold))
         {
             ItemManager.ConsumeCurrency(Currency.Gold, totalGold);
@@ -186,6 +230,77 @@ public class UnitStatsUpgradeElement : MonoBehaviour
             SetStatsInfo();
             stageManager.UnitPartyManager.AddStats(currentType, value * statsMultiplier);
             SaveLoadManager.SaveGame();
+        }
+    }
+    private bool isLongPressed = false;
+    private Coroutine longPressedCor = null;
+    private float longPressedDealyTime = 1f;
+    private float longPressedReapeatDealyTime = 0.2f;
+    private float pressedStartTime = 0f;
+    private bool isPressing = false;
+
+    private bool IsPointerOnButton(PointerEventData eventData)
+    {
+        return RectTransformUtility.RectangleContainsScreenPoint(buttonImage.rectTransform, eventData.position, eventData.pressEventCamera);
+    }
+    public void OnPointerDown(PointerEventData eventData)
+    {
+        if (!IsPointerOnButton(eventData))
+            return;
+
+        buttonTransform.localScale = pressedScale;
+        isPressing = true;
+        pressedStartTime = Time.time;
+        if (longPressedCor == null)
+        {
+            longPressedCor = StartCoroutine(LongPressedCoroutine());
+        }
+
+
+    }
+
+    public void OnPointerUp(PointerEventData eventData)
+    {
+
+
+        buttonTransform.localScale = defaultScale;
+        isPressing = false;
+        if (longPressedCor != null)
+        {
+            StopCoroutine(longPressedCor);
+            longPressedCor = null;
+        }
+
+        if (Time.time - pressedStartTime < longPressedDealyTime)
+        {
+            if (CanUpgrade())
+            {
+                OnClickAddStatsButton();
+            }
+        }
+    }
+
+    private IEnumerator LongPressedCoroutine()
+    {
+        yield return new WaitForSeconds(longPressedDealyTime);
+
+        while (CanUpgrade())
+        {
+            BigNumber totalGold = GetGoldForMultipleLevels(level, statsMultiplier);
+            if (ItemManager.CanConsume((int)Currency.Gold, totalGold))
+            {
+                ItemManager.ConsumeCurrency(Currency.Gold, totalGold);
+                LevelUp();
+                SetStatsInfo();
+                stageManager.UnitPartyManager.AddStats(currentType, value * statsMultiplier);
+                SaveLoadManager.SaveGame();
+            }
+            else
+            {
+                break;
+            }
+
+            yield return new WaitForSeconds(longPressedReapeatDealyTime);
         }
     }
 }

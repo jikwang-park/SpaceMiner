@@ -36,8 +36,7 @@ public class Unit : MonoBehaviour, IObjectPoolGameObject
 
 
     [field: SerializeField]
-    public UnitSkill Skill { get; private set; }
-
+    public UnitSkillBase Skill { get; private set; }
 
     public StageManager StageManager { get; private set; }
 
@@ -51,20 +50,6 @@ public class Unit : MonoBehaviour, IObjectPoolGameObject
 
     public float lastSkillTime;
 
-//public UnitSkillBase baseSkill;
-/*case UnitTypes.Tanker:
-                baseSkill = new UnitTankerSkill();
-                baseSkill.InitSkill(this);
-                break;
-            case UnitTypes.Dealer:
-                baseSkill = new UnitDealerSkill();
-                baseSkill.InitSkill(this);
-                break;
-            case UnitTypes.Healer:
-                baseSkill = new UnitHealerSkill();
-                baseSkill.InitSkill(this);
-                break;
-        }*/
     public float SkillCoolTimeRatio
     {
         get
@@ -74,7 +59,7 @@ public class Unit : MonoBehaviour, IObjectPoolGameObject
                 return 0f;
             }
 
-            return Mathf.Min((Time.time - lastSkillTime) / Skill.coolTime, 1f);
+            return Mathf.Min((Time.time - lastSkillTime) / Skill.CoolTime, 1f);
         }
     }
 
@@ -84,9 +69,9 @@ public class Unit : MonoBehaviour, IObjectPoolGameObject
         {
             if (UnitStatus == Status.SkillUsing)
             {
-                return Skill.coolTime;
+                return Skill.CoolTime;
             }
-            return Mathf.Max(Skill.coolTime + lastSkillTime - Time.time, 0f);
+            return Mathf.Max(Skill.CoolTime + lastSkillTime - Time.time, 0f);
         }
     }
 
@@ -172,7 +157,7 @@ public class Unit : MonoBehaviour, IObjectPoolGameObject
 
     public void EnqueueSkill()
     {
-        if (Time.time > Skill.coolTime + lastSkillTime)
+        if (Time.time > Skill.CoolTime + lastSkillTime)
         {
             isSkillInQueue = true;
         }
@@ -186,29 +171,18 @@ public class Unit : MonoBehaviour, IObjectPoolGameObject
         switch (UnitTypes)
         {
             case UnitTypes.Tanker:
-                if (Skill is null)
-                {
-                    Skill = gameObject.AddComponent<TankerSkill>();
-                }
-                Skill.TankerInit(UnitTypes, Grade);
+                Skill = new UnitTankerSkill();
+                Skill.InitSkill(this);
                 break;
             case UnitTypes.Dealer:
-                if (Skill is null)
-                {
-                    Skill = gameObject.AddComponent<DealerSkill>();
-                }
-                Skill.DealerInit(UnitTypes, Grade);
+                Skill = new UnitDealerSkill();
+                Skill.InitSkill(this);
                 break;
             case UnitTypes.Healer:
-                if (Skill is null)
-                {
-                    Skill = gameObject.AddComponent<HealerSkill>();
-                }
-                Skill.HealerInit(UnitTypes, Grade);
+                Skill = new UnitHealerSkill();
+                Skill.InitSkill(this);
                 break;
         }
-        Skill.currentType = UnitTypes;
-        Skill.currentSkillGrade = Grade;
     }
 
     private void OnTargetDie(DestructedDestroyEvent sender)
@@ -229,17 +203,7 @@ public class Unit : MonoBehaviour, IObjectPoolGameObject
 
     private void ExecuteSkill()
     {
-        switch (UnitTypes)
-        {
-            case UnitTypes.Tanker:
-                Skill.GetTarget();
-                Skill.ExecuteSkill();
-                break;
-            case UnitTypes.Dealer:
-            case UnitTypes.Healer:
-                Skill.ExecuteSkill();
-                break;
-        }
+        Skill.ExecuteSkill();
     }
 
     private void OnAttackEnd()

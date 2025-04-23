@@ -86,7 +86,7 @@ public class PlanetStageStatusMachine : StageStatusMachine
         {
             stageManager.ReleaseBackground();
             stageManager.StageUiManager.IngameUIManager.CloseStageEndWindow();
-
+            stageManager.StageMonsterManager.SetWeight(1f);
             SetEvent(false);
             ClearStage();
         }
@@ -190,7 +190,7 @@ public class PlanetStageStatusMachine : StageStatusMachine
 
     protected void NextStage()
     {
-        
+
         if (status == Status.ClearPlanet
             || status == Status.Defeat
             || status == Status.Timeout
@@ -306,6 +306,7 @@ public class PlanetStageStatusMachine : StageStatusMachine
     {
         stageEndTime = Time.time + 60f;
         stageData = DataTableManager.StageTable.GetStageData(CurrentPlanet, CurrentStage);
+        stageManager.StageMonsterManager.SetWeight(stageData.Weight);
         waveData = DataTableManager.WaveTable.GetData(stageData.WaveID);
     }
 

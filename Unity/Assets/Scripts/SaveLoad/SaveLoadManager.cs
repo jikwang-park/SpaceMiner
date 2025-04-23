@@ -40,19 +40,6 @@ public static class SaveLoadManager
         File.WriteAllText(filePath, json);
         Debug.Log("Game saved to: " + filePath);
     }
-    public static bool LoadGame()
-    {
-        string filePath = Path.Combine(SaveDirectory, fileName);
-        if (!File.Exists(filePath))
-        {
-            return false;
-        }
-        string json = File.ReadAllText(filePath);
-
-        LoadGame(json);
-
-        return true;
-    }
     public static void LoadGame(string json)
     {
         try

@@ -2,6 +2,7 @@ using Firebase.Auth;
 using Firebase.Database;
 using Firebase.Extensions;
 using Newtonsoft.Json;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -14,7 +15,7 @@ public class FirebaseManager : Singleton<FirebaseManager>
     private FirebaseAuth auth;
     private DatabaseReference root;
     private string userId;
-
+    private long serverTimeOffsetMs;
     private async void Awake()
     {
         await Firebase.FirebaseApp.CheckAndFixDependenciesAsync().ContinueWithOnMainThread(task => {
@@ -37,7 +38,15 @@ public class FirebaseManager : Singleton<FirebaseManager>
 
         auth = FirebaseAuth.DefaultInstance;
         root = FirebaseDatabase.DefaultInstance.RootReference;
-        SaveLoadManager.onSaveRequested += SaveToFirebase;
+
+        var offsetRef = FirebaseDatabase.DefaultInstance.GetReference(".info/serverTimeOffset");
+
+        offsetRef.ValueChanged += (s, e) => {
+            if (long.TryParse(e.Snapshot.Value?.ToString(), out var ms))
+            {
+                serverTimeOffsetMs = ms;
+            }
+        };
     }
     public async void OnClickStartButton()
     {
@@ -49,7 +58,6 @@ public class FirebaseManager : Singleton<FirebaseManager>
         );
 
         await handle.Task;
-        Debug.Log(Firebase.Database.ServerValue.Timestamp);
     }
     private async Task SignInAnonymously()
     {
@@ -67,6 +75,7 @@ public class FirebaseManager : Singleton<FirebaseManager>
 
             AuthResult result = task.Result;
             this.userId = result.User.UserId;
+            SaveLoadManager.onSaveRequested += SaveToFirebase;
             Debug.LogFormat("User signed in successfully: {0} ({1})",
                 result.User.DisplayName, result.User.UserId);
         });
@@ -83,7 +92,7 @@ public class FirebaseManager : Singleton<FirebaseManager>
                 Formatting = Formatting.Indented,
             });
 
-       await root.Child("users").Child(userId).Child("SaveData").SetRawJsonValueAsync(json);
+        await root.Child("users").Child(userId).Child("SaveData").SetRawJsonValueAsync(json);
     }
     private async Task LoadFromFirebase()
     {
@@ -92,21 +101,31 @@ public class FirebaseManager : Singleton<FirebaseManager>
             return;
         }
 
-        try
+        var snapshot = await root.Child("users").Child(userId).Child("SaveData").GetValueAsync();
+        if (snapshot.Exists)
         {
-            var snapshot = await root.Child("users").Child(userId).Child("SaveData").GetValueAsync();
-            if(snapshot.Exists)
+            string json = snapshot.GetRawJsonValue();
+            if (!string.IsNullOrEmpty(json))
             {
-                string json = snapshot.GetRawJsonValue();
-                if(!string.IsNullOrEmpty(json))
-                {
-                    SaveLoadManager.LoadGame(json);
-                }
+                SaveLoadManager.LoadGame(json);
             }
         }
-        catch
+        else
         {
-
+            SaveLoadManager.SetDefaultData();
         }
+    }
+    private void OnApplicationQuit()
+    {
+        SetQuitTime();
+    }
+    public void SetQuitTime()
+    {
+        SaveLoadManager.Data.quitTime = GetFirebaseServerTime().ToLocalTime();
+        SaveLoadManager.SaveGame();
+    }
+    public DateTime GetFirebaseServerTime()
+    {
+        return DateTime.UtcNow.AddMilliseconds(serverTimeOffsetMs);
     }
 }

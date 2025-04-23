@@ -112,7 +112,6 @@ public class Unit : MonoBehaviour, IObjectPoolGameObject
         if (HasTarget)
         {
             TargetDistance = target.position.z - transform.position.z;
-
         }
         else if (StageManager.StageMonsterManager.MonsterCount > 0)
         {
@@ -192,7 +191,10 @@ public class Unit : MonoBehaviour, IObjectPoolGameObject
 
     private void ExecuteSkill()
     {
-        Skill.ExecuteSkill();
+        if (UnitStatus == Status.SkillUsing)
+        {
+            Skill.ExecuteSkill();
+        }
     }
 
     private void OnAttackEnd()
@@ -309,8 +311,8 @@ public class Unit : MonoBehaviour, IObjectPoolGameObject
 
     public void ResetStatus()
     {
-        SetStatus(Status.Wait);
         HasTarget = false;
         target = null;
+        SetStatus(Status.Wait);
     }
 }

@@ -34,6 +34,10 @@ public class UnitStats : CharacterStats
     }
 
     private BigNumber defalutValue = 1;
+
+
+    public BigNumber barrier;
+
     //�⺻
     public BigNumber baseDamage { get; private set; } = 0;
     public BigNumber accountDamage { get; private set; } = 0;

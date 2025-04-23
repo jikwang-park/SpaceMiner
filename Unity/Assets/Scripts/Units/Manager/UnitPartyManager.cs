@@ -37,7 +37,7 @@ public class UnitPartyManager : MonoBehaviour
     {
         foreach (var unit in party.Values)
         {
-            unit.lastSkillUsedTime = -unit.unitSkill.coolTime;
+            unit.lastSkillUsedTime = -unit.baseSkill.CoolTime;
         }
     }
 
@@ -173,6 +173,8 @@ public class UnitPartyManager : MonoBehaviour
         }
         return null;
     }
+
+   
 
     // 250403 HKY ���� ���� Ÿ���� ������ ���� ���� ������ ��ȯ���ִ� �޼ҵ� �߰�
     public bool IsUnitExistFront(UnitTypes myType)

@@ -26,13 +26,12 @@ public class AttackedTakeUnitDamage : MonoBehaviour,IAttackable
     {
         if (unit.HasBarrier)
         {
-            unit.barrier -= attack.damage;
-            if (unit.barrier < 0 )
+            unit.unitStats.barrier -= attack.damage;
+            if (unit.unitStats.barrier < 0 )
             {
-                unit.unitStats.Hp += unit.barrier;
-                unit.barrier = 0;
+                unit.unitStats.Hp += unit.unitStats.barrier;
+                unit.unitStats.barrier = 0;
             }
-            
         }
         else
         {

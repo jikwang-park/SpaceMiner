@@ -5,8 +5,7 @@ using UnityEngine;
 public class TankerSkill : UnitSkill
 {
     private float shieldRatio;
-    private int buffId; //250331 HKY µ¥ÀÌÅÍÇü º¯°æ
-
+    private int buffId; 
     
     protected override void Awake()
     {
@@ -24,7 +23,7 @@ public class TankerSkill : UnitSkill
         var data = SaveLoadManager.Data.unitSkillUpgradeData.skillUpgradeId;
 
         currentSkillId = data[currentType][currentSkillGrade];
-        var tankerSkillData = DataTableManager.TankerSkillTable.GetData(currentSkillId); //250331 HKY µ¥ÀÌÅÍÇü º¯°æ
+        var tankerSkillData = DataTableManager.TankerSkillTable.GetData(currentSkillId); //250331 HKY ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
         if (tankerSkillData != null)
         {
             coolTime = tankerSkillData.CoolTime;
@@ -38,7 +37,7 @@ public class TankerSkill : UnitSkill
 
     public override void GetTarget()
     {
-        var tankerSkillData = DataTableManager.TankerSkillTable.GetData(currentSkillId); //250331 HKY µ¥ÀÌÅÍÇü º¯°æ
+        var tankerSkillData = DataTableManager.TankerSkillTable.GetData(currentSkillId); //250331 HKY ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
         string soliderTarget = tankerSkillData.SoldierTarget;
         string[] targetStrings = soliderTarget.Split("_");
         foreach(string target in targetStrings)

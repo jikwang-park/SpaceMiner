@@ -15,4 +15,8 @@ public class Variables
     public static int planetMiningID = 1;
 
     public static readonly BigNumber DefenceBase = 200;
+
+    public static bool isAutoSkillMode = true;
+    public static float healerSkillHPRatio = 0.5f;
+
 }

@@ -255,7 +255,7 @@ public class DungeonStageStatusMachine : StageStatusMachine
         stageManager.UnitPartyManager.UnitSpawn();
         stageManager.UnitPartyManager.ResetUnitHealth();
         stageManager.UnitPartyManager.ResetSkillCoolTime();
-        stageManager.UnitPartyManager.ResetBehaviorTree();
+        stageManager.UnitPartyManager.ResetStatus();
     }
 
     public override void Reset()

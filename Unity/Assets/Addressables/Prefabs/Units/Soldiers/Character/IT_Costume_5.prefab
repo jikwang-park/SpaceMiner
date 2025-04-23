@@ -5413,9 +5413,10 @@ GameObject:
   m_Component:
   - component: {fileID: 5479210156180961840}
   - component: {fileID: 5479210156171410662}
+  - component: {fileID: -80062600664260258}
+  - component: {fileID: 6726073769812888076}
   - component: {fileID: 5641857416142403835}
   - component: {fileID: -3577165946738163975}
-  - component: {fileID: 1805213108878449883}
   - component: {fileID: 3164069211453775031}
   - component: {fileID: 7237940390982639947}
   - component: {fileID: 1461338210302681842}
@@ -5467,10 +5468,47 @@ Animation:
   - {fileID: -429102654490215198, guid: bf8a452e153935c4689e642e68352a10, type: 3}
   - {fileID: -2732418184704881721, guid: bf8a452e153935c4689e642e68352a10, type: 3}
   - {fileID: 1827226128182048838, guid: bf8a452e153935c4689e642e68352a10, type: 3}
+  - {fileID: 1827226128182048838, guid: 2f5284999fda70e4188813e8cb7511eb, type: 3}
+  - {fileID: -6888281341947538476, guid: 6192518c61ed6d44eaf0f004191ed653, type: 3}
   m_WrapMode: 0
   m_PlayAutomatically: 1
   m_AnimatePhysics: 0
   m_CullingType: 1
+--- !u!114 &-80062600664260258
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5479210156181383120}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c5f65e04d166a784bbad4bca4f5db4cf, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  <UnitTypes>k__BackingField: 0
+  <Grade>k__BackingField: 0
+  attackTime: 0.3
+  skillTime: 0.2
+  <Skill>k__BackingField: {fileID: 0}
+  target: {fileID: 0}
+  lastAttackTime: 0
+  lastSkillTime: 0
+--- !u!114 &6726073769812888076
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5479210156181383120}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 75cbe4a1b6a103140a808bbe7b3e9e1f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  animationDict:
+    _serializedList: []
+  fadeLength: 0.2
 --- !u!65 &5641857416142403835
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -5519,36 +5557,6 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 0
   m_CollisionDetection: 3
---- !u!114 &1805213108878449883
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5479210156181383120}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 2acae83752c74ec40a8d4711671c70d2, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  currentStatus: 0
-  barrier:
-    currentValue: 0
-  stageManger: {fileID: 0}
-  unitStats: {fileID: 0}
-  targetDistance: 0
-  attackUsingTime: 0.4
-  unitAliveCount: 0
-  unitSkill: {fileID: 0}
-  targetPos: {fileID: 0}
-  maxDis: 6
-  minDis: 4
-  lastSkillUsedTime: 0
-  currentGrade: 0
-  isAutoSkillMode: 0
-  IsNormalAttacking: 0
-  IsUnitHit: 0
-  lastAttackTime: 0
 --- !u!114 &3164069211453775031
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5623,6 +5631,8 @@ MonoBehaviour:
   criticalChance: 0
   criticalMultiplier: 0
   moveSpeed: 0
+  hp:
+    currentValue: 
 --- !u!1 &5633826525206660655
 GameObject:
   m_ObjectHideFlags: 0

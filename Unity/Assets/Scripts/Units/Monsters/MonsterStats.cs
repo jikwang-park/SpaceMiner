@@ -4,25 +4,9 @@ using UnityEngine;
 
 public class MonsterStats : CharacterStats
 {
-    public event System.Action<float> onHPChanged;
-
-    public override BigNumber Hp
+    protected override void OnDisable()
     {
-        get => base.Hp;
-
-        set
-        {
-            base.Hp = value;
-            if (maxHp != 0)
-            {
-                onHPChanged?.Invoke(Hp.DivideToFloat(maxHp));
-            }
-        }
-    }
-
-    private void OnDisable()
-    {
-        onHPChanged = null;
+        base.OnDisable();
     }
 
     public void SetData(MonsterTable.Data monsterData)

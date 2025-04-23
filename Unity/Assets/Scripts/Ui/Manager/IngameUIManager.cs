@@ -24,6 +24,8 @@ public class IngameUIManager : MonoBehaviour
     [field: SerializeField]
     public DungeonEndWindow DungeonEndWindow { get; private set; }
     [field: SerializeField]
+    public DamageDungeonEndWindow DamageDungeonEndWindow { get; private set; }
+    [field: SerializeField]
     public StageSelectWindow StageSelectWindow { get; private set; }
     [field: SerializeField]
     public GuideQuestRewardWindow GuideQuestRewardWindow { get; private set; }

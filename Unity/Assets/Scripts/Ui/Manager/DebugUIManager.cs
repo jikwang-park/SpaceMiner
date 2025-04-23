@@ -85,5 +85,6 @@ public class DebugUIManager : MonoBehaviour
     public void ResetSaveData()
     {
         SaveLoadManager.SetDefaultData();
+        GuideQuestManager.ChangeQuest(SaveLoadManager.Data.questProgressData.currentQuest);
     }
 }

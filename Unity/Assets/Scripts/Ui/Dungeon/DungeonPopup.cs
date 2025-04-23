@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using TMPro;
@@ -55,10 +56,13 @@ public class DungeonPopup : MonoBehaviour
 
     private bool Disabled;
 
+    private bool Opened;
+
 
     private void Start()
     {
         stageManager = GameObject.FindGameObjectWithTag("GameController").GetComponent<StageManager>();
+        stageManager.OnIngameStatusChanged += OnIngameStatusChanged;
         ItemManager.OnItemAmountChanged += OnItemAmountChanged;
     }
 
@@ -70,13 +74,16 @@ public class DungeonPopup : MonoBehaviour
         {
             SaveLoadManager.Data.stageSaveData.highestDungeon.Add(Variables.currentDungeonType, 1);
         }
-        if(!SaveLoadManager.Data.stageSaveData.clearedDungeon.ContainsKey(Variables.currentDungeonType))
+        if (!SaveLoadManager.Data.stageSaveData.clearedDungeon.ContainsKey(Variables.currentDungeonType))
         {
             SaveLoadManager.Data.stageSaveData.clearedDungeon.Add(Variables.currentDungeonType, 0);
         }
 
         maxStage = SaveLoadManager.Data.stageSaveData.highestDungeon[Variables.currentDungeonType];
         SetIndex(maxStage - 1);
+
+        bool clearedAny = SaveLoadManager.Data.stageSaveData.clearedDungeon[Variables.currentDungeonType] > 0;
+        exterminateButton.interactable = clearedAny;
     }
 
     private void OnDisable()
@@ -101,8 +108,7 @@ public class DungeonPopup : MonoBehaviour
         nameText.SetString(curStage.NameStringID);
 
         selectedDifficulty.text = curStage.Stage.ToString();
-        var keyItemData = DataTableManager.ItemTable.GetData(curStage.NeedKeyItemID);
-        needKeyIcon.SetSprite(keyItemData.SpriteID);
+        needKeyIcon.SetItemSprite(curStage.NeedKeyItemID);
         keyText.SetStringArguments(curStage.NeedKeyItemCount.ToString(), ItemManager.GetItemAmount(curStage.NeedKeyItemID).ToString());
         conditionPowerText.SetStringArguments(new BigNumber(curStage.NeedPower).ToString());
 
@@ -114,8 +120,7 @@ public class DungeonPopup : MonoBehaviour
         }
 
         conditionStageText.SetStringArguments(subStages[index].NeedClearPlanet.ToString());
-        var itemData = DataTableManager.ItemTable.GetData(curStage.RewardItemID);
-        clearRewardIcon.SetSprite(itemData.SpriteID);
+        clearRewardIcon.SetItemSprite(curStage.RewardItemID);
         clearRewardText.text = curStage.ClearRewardItemCount.ToString();
 
 
@@ -182,17 +187,33 @@ public class DungeonPopup : MonoBehaviour
             return;
         }
 
-        if(UnitCombatPowerCalculator.ToTalCombatPower < subStages[index].NeedPower)
+        if (UnitCombatPowerCalculator.ToTalCombatPower < subStages[index].NeedPower)
         {
             requirementWindow.Open(DungeonRequirementWindow.Status.Power);
             return;
         }
 
-
-
         Variables.currentDungeonStage = index + 1;
         stageManager.SetStatus(IngameStatus.Dungeon);
+        Opened = true;
+        gameObject.SetActive(false);
     }
+
+
+    private void OnIngameStatusChanged(IngameStatus status)
+    {
+        if (status != IngameStatus.Planet)
+        {
+            return;
+        }
+        if (!Opened)
+        {
+            return;
+        }
+        Opened = false;
+        gameObject.SetActive(true);
+    }
+
 
     public void MoveToShop()
     {

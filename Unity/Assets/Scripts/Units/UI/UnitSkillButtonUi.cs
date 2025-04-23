@@ -37,7 +37,7 @@ public class UnitSkillButtonUi : MonoBehaviour
     }
     private void ButtonUpdate()
     {
-        if(unit.IsDead)
+        if (unit.UnitStatus == Unit.Status.Dead)
         {
             SkillButton.interactable = false;
             target.SetActive(false);
@@ -45,59 +45,32 @@ public class UnitSkillButtonUi : MonoBehaviour
         }
 
         target.SetActive(true);
-        if (unit.isAutoSkillMode)
-        {
-            SkillButton.interactable = true;
-            
-        }
-        else if(!unit.IsSkillCoolTimeOn)
-        {
-            SkillButton.interactable = false;
-        }
-        else
-        {
-            SkillButton.interactable = true;
-        }
-        if (!unit.IsSkillCoolTimeOn && unit.isAutoSkillMode)
-        {
-            SkillButton.interactable = false;
-        }
+
+        SkillButton.interactable = unit.SkillCoolTimeRatio >= 1f;
+
     }
     private void ShowCooltime()
     {
-        if (unit.IsSkillCoolTimeOn)
+        if (unit.SkillCoolTimeRatio >= 1f)
         {
             skillCoolImage.fillAmount = 0f;
             coolTimeText.text = null;
         }
         else
         {
-            skillCoolImage.fillAmount = 1.0f - unit.RemainSkillCoolTime;
-            coolTimeText.text = unit.unitSkill.remainCooltime.ToString("F1");
+            skillCoolImage.fillAmount = 1.0f - unit.SkillCoolTimeRatio;
+            coolTimeText.text = unit.RemainCooltime.ToString("F1");
         }
     }
     private void OnClickSkill()
     {
-        if (unit.UnitTypes == UnitTypes.Dealer)
+        if (unit is null)
         {
-            if(unit.targetDistance <= unit.unitStats.range)
-            {
-                unit.UseSkill();
-            }
-            if (unit.IsSkillCoolTimeOn && !unit.isAutoSkillMode)
-            {
-                unit.UseSkill();
-            }
+            return;
         }
-        else
-        {
-            if (unit.IsSkillCoolTimeOn)
-            {
-                Debug.Log("수동 스킬 사용!");
-                unit.UseSkill();
-            }
-        }
-        
+        unit.EnqueueSkill();
+
+
         //if(unit.IsSkillCoolTimeOn)
         //{
         //    unit.isSkillButtonPressed = true;

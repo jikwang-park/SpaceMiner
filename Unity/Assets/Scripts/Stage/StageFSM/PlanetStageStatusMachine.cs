@@ -202,7 +202,7 @@ public class PlanetStageStatusMachine : StageStatusMachine
         {
             stageManager.UnitPartyManager.ResetUnitHealth();
             stageManager.UnitPartyManager.ResetSkillCoolTime();
-            stageManager.UnitPartyManager.ResetBehaviorTree();
+            stageManager.UnitPartyManager.ResetStatus();
 
             SetStageText();
             SetStageData();
@@ -315,7 +315,7 @@ public class PlanetStageStatusMachine : StageStatusMachine
         stageManager.UnitPartyManager.UnitSpawn();
         stageManager.UnitPartyManager.ResetUnitHealth();
         stageManager.UnitPartyManager.ResetSkillCoolTime();
-        stageManager.UnitPartyManager.ResetBehaviorTree();
+        stageManager.UnitPartyManager.ResetStatus();
     }
 
     protected void SetEvent(bool set)

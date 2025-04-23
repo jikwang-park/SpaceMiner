@@ -39,7 +39,7 @@ public class StageMonsterManager : MonoBehaviour
 
     private int[] laneMonsterCounts;
     public int LaneCount => laneCount;
-    private int monsterCount;
+    public int MonsterCount { get; private set; }
     private ObjectPoolManager objectPoolManager;
     private StageManager stageManager;
 
@@ -53,7 +53,7 @@ public class StageMonsterManager : MonoBehaviour
         monsterLines = new Dictionary<int, Dictionary<int, MonsterController>>();
         monsterControllers = new HashSet<MonsterController>();
         laneMonsterCounts = new int[laneCount];
-        monsterCount = 0;
+        MonsterCount = 0;
     }
 
     public void AddMonster(int lane, MonsterController monster)
@@ -61,7 +61,7 @@ public class StageMonsterManager : MonoBehaviour
         var destructedEvent = monster.GetComponent<DestructedDestroyEvent>();
         if (destructedEvent != null)
         {
-            ++monsterCount;
+            ++MonsterCount;
             monsterControllers.Add(monster);
             if (!monsterLines.ContainsKey(currentLastLine))
             {
@@ -99,7 +99,7 @@ public class StageMonsterManager : MonoBehaviour
         {
             laneMonsterCounts[i] = 0;
         }
-        monsterCount = 0;
+        MonsterCount = 0;
 
         while (monsterControllers.Count > 0)
         {
@@ -134,9 +134,9 @@ public class StageMonsterManager : MonoBehaviour
 
         OnMonsterDie?.Invoke();
 
-        --monsterCount;
+        --MonsterCount;
 
-        if (monsterCount == 0)
+        if (MonsterCount == 0)
         {
             OnMonsterCleared?.Invoke();
         }

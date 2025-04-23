@@ -29,7 +29,7 @@ public class UnitPartyManager : MonoBehaviour
     [SerializeField]
     public UnitSkillButtonManager buttonManager;
 
-    private Vector3 unitOffset = Vector3.left* 1f;
+    private Vector3 unitOffset = Vector3.left * 1f;
 
     public int UnitCount => party.Count;
 
@@ -37,7 +37,7 @@ public class UnitPartyManager : MonoBehaviour
     {
         foreach (var unit in party.Values)
         {
-            unit.lastSkillUsedTime = -unit.unitSkill.coolTime;
+            unit.lastSkillTime = float.MinValue;
         }
     }
 
@@ -49,11 +49,11 @@ public class UnitPartyManager : MonoBehaviour
         }
     }
 
-    public void ResetBehaviorTree()
+    public void ResetStatus()
     {
         foreach (var unit in party.Values)
         {
-            unit.behaviorTree.Reset();
+            unit.ResetStatus();
         }
     }
     public void UnitSpawn()
@@ -71,7 +71,7 @@ public class UnitPartyManager : MonoBehaviour
     {
         if (party.ContainsKey(type))
         {
-            party[type].SetData(data, type);
+            party[type].SetData(data);
             UnitCombatPowerCalculator.CalculateTotalCombatPower();
         }
     }
@@ -104,7 +104,7 @@ public class UnitPartyManager : MonoBehaviour
         var unit = party[type];
 
 
-        unit.unitSkill.UpgradeUnitSkillStats(id);
+        unit.Skill.UpgradeUnitSkillStats(id);
     }
 
     public void AddBuildingStats(BuildingTable.BuildingType type, float amount)
@@ -138,24 +138,24 @@ public class UnitPartyManager : MonoBehaviour
         Transform frontMostZPos = null;
         float maxZ = float.MinValue;
 
-        foreach ( var unit in party.Values)
+        foreach (var unit in party.Values)
         {
             if (unit == null)
                 continue;
 
             float currentUnitZpos = unit.transform.position.z;
-            if(currentUnitZpos > maxZ)
+            if (currentUnitZpos > maxZ)
             {
                 maxZ = currentUnitZpos;
                 frontMostZPos = unit.transform;
             }
         }
 
-       return frontMostZPos;
+        return frontMostZPos;
     }
 
-  
-    public Transform GetUnit(UnitTypes type) 
+
+    public Transform GetUnit(UnitTypes type)
     {
         if (party.ContainsKey(type))
         {
@@ -244,7 +244,7 @@ public class UnitPartyManager : MonoBehaviour
             var weaponSocket = unit.transform.Find("Bip001").Find("Bip001 Prop1");
             Instantiate(weapons[currentType][(int)currentSoilderData.Grade - 1], weaponSocket);
             party.Add(currentType, unit);
-            unit.SetData(currentSoilderData, currentType);
+            unit.SetData(currentSoilderData);
             GetCurrentStats(unit);
             GetCurrentBulidngStats(unit);
         }
@@ -276,4 +276,15 @@ public class UnitPartyManager : MonoBehaviour
         }
     }
 
+    public bool NeedHealUnit()
+    {
+        foreach (var unit in party)
+        {
+            if (unit.Value.unitStats.HPRate < Variables.healerSkillHPRatio)
+            {
+                return true;
+            }
+        }
+        return false;
+    }
 }

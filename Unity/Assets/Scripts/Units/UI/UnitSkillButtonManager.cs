@@ -25,15 +25,15 @@ public class UnitSkillButtonManager : MonoBehaviour
 
     private const string Auto = "자동";
     private const string Manual = "수동";
- 
+
     [SerializeField]
     private Toggle autoToggle;
     [SerializeField]
     private TextMeshProUGUI text;
     [SerializeField]
     public float currentValue { get; private set; }
-   
-    
+
+
     private StageManager stageManager;
 
 
@@ -50,6 +50,7 @@ public class UnitSkillButtonManager : MonoBehaviour
     private void OnHealthSilderholdChanaged(float value)
     {
         currentValue = value * 100;
+        Variables.healerSkillHPRatio = value;
     }
     private void Init()
     {
@@ -64,14 +65,8 @@ public class UnitSkillButtonManager : MonoBehaviour
         unitList.Add(dealerUnit);
         unitList.Add(healerUnit);
 
+        autoToggle.isOn = Variables.isAutoSkillMode;
 
-        foreach (var unit in unitList)
-        {
-            if (unit.isAutoSkillMode)
-            {
-                autoToggle.isOn = true;
-            }
-        }
     }
 
     private void OnClickHealthSliderButton()
@@ -85,21 +80,15 @@ public class UnitSkillButtonManager : MonoBehaviour
     }
     public void OnAutoToggleChanaged(bool isOn)
     {
-        if(isOn)
+        Variables.isAutoSkillMode = isOn;
+        if (isOn)
         {
+            //TODO: 스트링테이블
             text.text = Auto;
-            foreach(var unit in unitList)
-            {
-                unit.isAutoSkillMode = true;
-            }
         }
         else
         {
             text.text = Manual;
-            foreach(var unit in unitList)
-            {
-                unit.isAutoSkillMode = false;
-            }
         }
     }
 

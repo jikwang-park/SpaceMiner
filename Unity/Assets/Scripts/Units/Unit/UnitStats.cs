@@ -12,18 +12,6 @@ public class UnitStats : CharacterStats
     private Grade currentGrade;
     private float criticalPercent;
 
-    public override BigNumber Hp
-    {
-        get => base.Hp;
-        set
-        {
-            base.Hp = value;
-            onHpChanged?.Invoke(base.Hp.DivideToFloat(maxHp));
-        }
-    }
-
-    public event System.Action<float> onHpChanged;
-
     public BigNumber FinialDamage
     {
         get

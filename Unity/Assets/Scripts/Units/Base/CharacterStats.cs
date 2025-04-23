@@ -4,7 +4,8 @@ using UnityEngine;
 
 public abstract class CharacterStats : MonoBehaviour
 {
-    public BigNumber maxHp;
+    public BigNumber maxHp = 0;
+
     public BigNumber damage;
     public BigNumber armor = 0;
 
@@ -15,12 +16,38 @@ public abstract class CharacterStats : MonoBehaviour
 
     public float moveSpeed;
 
-    [field: SerializeField]
-    public virtual BigNumber Hp { get; set; }
+    public float HPRate { get; protected set; }
+
+    [SerializeField]
+    private BigNumber hp;
+
+    public virtual BigNumber Hp
+    {
+        get
+        {
+            return hp;
+        }
+        set
+        {
+            hp = value;
+            if (maxHp != 0)
+            {
+                HPRate = hp.DivideToFloat(maxHp);
+                OnHpChanged?.Invoke(HPRate);
+            }
+        }
+    }
+
+    public event System.Action<float> OnHpChanged;
 
     protected virtual void OnEnable()
     {
         Hp = maxHp;
+    }
+
+    protected virtual void OnDisable()
+    {
+        OnHpChanged = null;
     }
 
     public abstract Attack CreateAttack(CharacterStats defenderStats);

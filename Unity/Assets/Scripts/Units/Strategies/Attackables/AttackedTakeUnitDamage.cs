@@ -24,20 +24,23 @@ public class AttackedTakeUnitDamage : MonoBehaviour,IAttackable
 
     public void OnAttack(GameObject attacker, Attack attack)
     {
-        if (unit.HasBarrier)
-        {
-            unit.barrier -= attack.damage;
-            if (unit.barrier < 0 )
-            {
-                unit.unitStats.Hp += unit.barrier;
-                unit.barrier = 0;
-            }
+        //TODO: 유닛 스탯으로 배리어 이동 후 작업 필요
+
+
+        //if (unit.HasBarrier)
+        //{
+        //    unit.barrier -= attack.damage;
+        //    if (unit.barrier < 0 )
+        //    {
+        //        unit.unitStats.Hp += unit.barrier;
+        //        unit.barrier = 0;
+        //    }
             
-        }
-        else
-        {
+        //}
+        //else
+        //{
             unit.unitStats.Hp -= attack.damage;
-        }
+        //}
 
         if (unit.unitStats.Hp < 0 && gameObjectEnabled)
         {

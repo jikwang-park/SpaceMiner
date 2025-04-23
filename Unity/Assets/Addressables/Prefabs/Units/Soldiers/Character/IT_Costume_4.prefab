@@ -5903,14 +5903,16 @@ GameObject:
   m_Component:
   - component: {fileID: 8244869779910250660}
   - component: {fileID: 8244869779899848306}
+  - component: {fileID: -3255252327654793088}
+  - component: {fileID: 3910398740380761863}
   - component: {fileID: 8082376485120610927}
   - component: {fileID: -7669613038144960290}
-  - component: {fileID: -1241691657197019413}
   - component: {fileID: 8214377326965549092}
   - component: {fileID: -5108289915499673198}
   - component: {fileID: 8924462458815491879}
   - component: {fileID: -2277023920832842371}
   - component: {fileID: 3435174734178585312}
+  - component: {fileID: -5703478487033736709}
   m_Layer: 0
   m_Name: IT_Costume_4
   m_TagString: Player
@@ -5957,10 +5959,46 @@ Animation:
   - {fileID: 457796991906702257, guid: 72dd442ce31fa34488c816ce39eb5287, type: 3}
   - {fileID: 1827226128182048838, guid: 72dd442ce31fa34488c816ce39eb5287, type: 3}
   - {fileID: -429102654490215198, guid: 72dd442ce31fa34488c816ce39eb5287, type: 3}
+  - {fileID: 1827226128182048838, guid: 2f5284999fda70e4188813e8cb7511eb, type: 3}
   m_WrapMode: 0
   m_PlayAutomatically: 1
   m_AnimatePhysics: 0
   m_CullingType: 1
+--- !u!114 &-3255252327654793088
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8244869779909823812}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c5f65e04d166a784bbad4bca4f5db4cf, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  <UnitTypes>k__BackingField: 0
+  <Grade>k__BackingField: 0
+  attackTime: 0.3
+  skillTime: 0.2
+  <Skill>k__BackingField: {fileID: 0}
+  target: {fileID: 0}
+  lastAttackTime: 0
+  lastSkillTime: 0
+--- !u!114 &3910398740380761863
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8244869779909823812}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 75cbe4a1b6a103140a808bbe7b3e9e1f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  animationDict:
+    _serializedList: []
+  fadeLength: 0.2
 --- !u!65 &8082376485120610927
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -6009,38 +6047,6 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 0
   m_CollisionDetection: 3
---- !u!114 &-1241691657197019413
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8244869779909823812}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 2acae83752c74ec40a8d4711671c70d2, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  currentStatus: 0
-  bullet: {fileID: 0}
-  barrier:
-    currentValue: 0
-  stageManger: {fileID: 0}
-  unitStats: {fileID: 0}
-  targetDistance: 0
-  attackUsingTime: 0.4
-  unitAliveCount: 0
-  unitSkill: {fileID: 0}
-  targetPos: {fileID: 0}
-  maxDis: 6
-  minDis: 4
-  isSkillButtonPressed: 0
-  lastSkillUsedTime: 0
-  currentGrade: 0
-  isAutoSkillMode: 0
-  IsNormalAttacking: 0
-  IsUnitHit: 0
-  lastAttackTime: 0
 --- !u!114 &8214377326965549092
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -6115,6 +6121,20 @@ MonoBehaviour:
   criticalChance: 0
   criticalMultiplier: 0
   moveSpeed: 0
+  hp:
+    currentValue: 
+--- !u!114 &-5703478487033736709
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8244869779909823812}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 17ac85f176f92534dbaee844b7e20e94, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &8270054284325154443
 GameObject:
   m_ObjectHideFlags: 0

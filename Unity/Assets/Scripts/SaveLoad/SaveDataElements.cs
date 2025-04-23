@@ -11,6 +11,17 @@ public class SoldierInventoryElementData
     public Grade grade;
     public int count;
     public int level;
+    public static SoldierInventoryElementData CreateDefault()
+    {
+        var data = new SoldierInventoryElementData();
+        data.soldierId = 0;
+        data.isLocked = true;
+        data.grade = Grade.None;
+        data.count = 0;
+        data.level = 0;
+
+        return data;
+    }
 }
 [Serializable]
 public class SoldierInventoryData
@@ -18,6 +29,34 @@ public class SoldierInventoryData
     public List<SoldierInventoryElementData> elements = new List<SoldierInventoryElementData>();
     public int equipElementID; //250331 HKY 데이터형 변경
     public UnitTypes inventoryType;
+
+    public static SoldierInventoryData CreateDefault(UnitTypes type, IEnumerable<SoldierTable.Data> soldiers)
+    {
+        var data = new SoldierInventoryData
+        {
+            inventoryType = type
+        };
+
+        foreach (var soldierData in soldiers)
+        {
+            var element = SoldierInventoryElementData.CreateDefault();
+            element.soldierId = soldierData.ID;
+            element.isLocked = true;
+            element.grade = soldierData.Grade;
+            element.level = soldierData.Level;
+            element.count = 0;
+            data.elements.Add(element);
+        }
+
+        if (data.elements.Count > 0)
+        {
+            data.elements[0].isLocked = false;
+            data.elements[0].count = 1;
+            data.equipElementID = data.elements[0].soldierId;
+        }
+
+        return data;
+    }
 }
 [Serializable]
 public class StageSaveData
@@ -31,6 +70,31 @@ public class StageSaveData
     public Dictionary<int, int> highestDungeon = new Dictionary<int, int>();
     public Dictionary<int, int> clearedDungeon = new Dictionary<int, int>();
     public BigNumber dungeonTwoDamage = new BigNumber();
+
+    public static StageSaveData CreateDefault()
+    {
+        var data = new StageSaveData();
+
+        data.currentPlanet = 1;
+        data.currentStage = 1;
+        data.highPlanet = 1;
+        data.highStage = 1;
+        data.clearedPlanet = 1;
+        data.clearedStage = 0;
+        data.highestDungeon = new Dictionary<int, int>();
+        data.clearedDungeon = new Dictionary<int, int>();
+        data.dungeonTwoDamage = new BigNumber(0);
+
+        List<int> dungeons = DataTableManager.DungeonTable.DungeonTypes;
+
+        foreach (var type in dungeons)
+        {
+            data.highestDungeon.Add(type, 1);
+            data.clearedDungeon.Add(type, 0);
+        }
+
+        return data;
+    }
 }
 [Serializable]
 public class MiningRobotInventorySlotData
@@ -39,6 +103,18 @@ public class MiningRobotInventorySlotData
     public int miningRobotId;
     public Grade grade = Grade.None;
     public SlotType slotType = SlotType.Inventory;
+
+    public static MiningRobotInventorySlotData CreateDefault()
+    {
+        var data = new MiningRobotInventorySlotData();
+
+        data.isEmpty = true;
+        data.miningRobotId = 0;
+        data.grade = Grade.None;
+        data.slotType = SlotType.Inventory;
+
+        return data;
+    }
 }
 [Serializable]
 public class MiningRobotInventoryData

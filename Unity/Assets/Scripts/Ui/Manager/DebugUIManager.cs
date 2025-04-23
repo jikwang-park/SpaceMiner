@@ -13,9 +13,13 @@ public class DebugUIManager : MonoBehaviour
 
     private List<DebugItemRow> itemRows = new List<DebugItemRow>();
 
+    private HashSet<int> itemids = new HashSet<int>();
+
+    private Coroutine coRowSet;
+
     private void Start()
     {
-        StartCoroutine(CoRowSet());
+        coRowSet = StartCoroutine(CoRowActive());
     }
 
     public void RefreshItem()
@@ -28,7 +32,10 @@ public class DebugUIManager : MonoBehaviour
 
     private void OnEnable()
     {
-        StartCoroutine(CoRowActive());
+        if (coRowSet is not null)
+        {
+            StartCoroutine(CoRowActive());
+        }
     }
 
     private void OnDisable()
@@ -39,40 +46,44 @@ public class DebugUIManager : MonoBehaviour
         }
     }
 
-    private IEnumerator CoRowSet()
-    {
-        var ids = DataTableManager.ItemTable.GetIds();
-        for (int i = 0; i < ids.Count; ++i)
-        {
-            var row = Instantiate(itemRowPrefab, itemViewContent);
-            row.Set(ids[i]);
-            itemRows.Add(row);
-            yield return null;
-        }
-    }
-
     private IEnumerator CoRowActive()
     {
+        int count = 0;
         foreach (var row in itemRows)
         {
             row.gameObject.SetActive(true);
-            yield return null;
+            if (++count == 5)
+            {
+                count = 0;
+                yield return null;
+            }
         }
         var ids = DataTableManager.ItemTable.GetIds();
         if (ids.Count == itemRows.Count)
         {
             yield break;
         }
+        count = 0;
         for (int i = 0; i < ids.Count; ++i)
         {
-            if (i < itemRows.Count && itemRows[i].ItemID == ids[i])
+            if (itemids.Contains(ids[i]))
             {
                 continue;
             }
+
             var row = Instantiate(itemRowPrefab, itemViewContent);
             row.Set(ids[i]);
             itemRows.Add(row);
-            yield return null;
+            if (++count == 5)
+            {
+                count = 0;
+                yield return null;
+            }
         }
+    }
+
+    public void ResetSaveData()
+    {
+        SaveLoadManager.SetDefaultData();
     }
 }

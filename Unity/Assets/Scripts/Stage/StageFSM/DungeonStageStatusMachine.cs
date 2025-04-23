@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -196,21 +197,23 @@ public class DungeonStageStatusMachine : StageStatusMachine
                     ItemManager.ConsumeItem(dungeonData.NeedKeyItemID, dungeonData.NeedKeyItemCount);
                 }
 
-                stageManager.StageUiManager.IngameUIManager.OpenDungeonEndWindow(true, firstCleared);
+                stageManager.StageUiManager.IngameUIManager.DungeonEndWindow.Open(true, firstCleared);
 
                 break;
             case Status.Timeout:
                 if (dungeonData.Type == 1)
                 {
-                    stageManager.StageUiManager.IngameUIManager.OpenDungeonEndWindow(false, false);
+                    stageManager.StageUiManager.IngameUIManager.DungeonEndWindow.Open(false, false);
                 }
                 else if (dungeonData.Type == 2)
                 {
                     //TODO: 던전 타입2
+                    var boss = stageManager.StageMonsterManager.GetMonsters(1)[0].GetComponent<MonsterStats>();
+                    stageManager.StageUiManager.IngameUIManager.DungeonEndWindow.Open(-boss.Hp);
                 }
                 break;
             case Status.Defeat:
-                stageManager.StageUiManager.IngameUIManager.OpenDungeonEndWindow(false, false);
+                stageManager.StageUiManager.IngameUIManager.DungeonEndWindow.Open(false, false);
                 break;
         }
 

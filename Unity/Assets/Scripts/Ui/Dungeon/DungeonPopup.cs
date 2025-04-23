@@ -40,10 +40,16 @@ public class DungeonPopup : MonoBehaviour
     private Button enterButton;
 
     [SerializeField]
+    private Button exterminateButton;
+
+    [SerializeField]
     private AddressableImage needKeyIcon;
 
     [SerializeField]
     private AddressableImage clearRewardIcon;
+
+    [SerializeField]
+    private DungeonRequirementWindow requirementWindow;
 
     private int maxStage;
 
@@ -53,11 +59,22 @@ public class DungeonPopup : MonoBehaviour
     private void Start()
     {
         stageManager = GameObject.FindGameObjectWithTag("GameController").GetComponent<StageManager>();
+        ItemManager.OnItemAmountChanged += OnItemAmountChanged;
     }
 
     public void ShowPopup()
     {
         subStages = DataTableManager.DungeonTable.GetDungeonList(Variables.currentDungeonType);
+
+        if (!SaveLoadManager.Data.stageSaveData.highestDungeon.ContainsKey(Variables.currentDungeonType))
+        {
+            SaveLoadManager.Data.stageSaveData.highestDungeon.Add(Variables.currentDungeonType, 1);
+        }
+        if(!SaveLoadManager.Data.stageSaveData.clearedDungeon.ContainsKey(Variables.currentDungeonType))
+        {
+            SaveLoadManager.Data.stageSaveData.clearedDungeon.Add(Variables.currentDungeonType, 0);
+        }
+
         maxStage = SaveLoadManager.Data.stageSaveData.highestDungeon[Variables.currentDungeonType];
         SetIndex(maxStage - 1);
     }
@@ -104,14 +121,19 @@ public class DungeonPopup : MonoBehaviour
 
         previousDifficultyButton.interactable = index > 0;
         nextDifficultyButton.interactable = index + 1 < maxStage && index < subStages.Count - 1;
+    }
 
-        bool powerCondition = UnitCombatPowerCalculator.ToTalCombatPower > curStage.NeedPower;
-        bool planetCondition = (SaveLoadManager.Data.stageSaveData.highPlanet > curStage.NeedClearPlanet)
-                                 || (SaveLoadManager.Data.stageSaveData.highPlanet == SaveLoadManager.Data.stageSaveData.clearedPlanet
-                                     && SaveLoadManager.Data.stageSaveData.highStage == SaveLoadManager.Data.stageSaveData.clearedStage);
-        bool keyCondition = ItemManager.GetItemAmount(curStage.NeedKeyItemID) >= curStage.NeedKeyItemCount;
-
-        enterButton.interactable = powerCondition && planetCondition && keyCondition;
+    private void OnItemAmountChanged(int itemId, BigNumber amount)
+    {
+        if (Disabled || subStages is null)
+        {
+            return;
+        }
+        if (subStages[index].NeedKeyItemID != itemId)
+        {
+            return;
+        }
+        keyText.SetStringArguments(subStages[index].NeedKeyItemCount.ToString(), amount.ToString());
     }
 
     private void SetIndex(int index)
@@ -146,13 +168,35 @@ public class DungeonPopup : MonoBehaviour
     //TODO: 인스펙터에서 엔터 버튼과 연결
     public void OnClickEnter()
     {
+        if (ItemManager.GetItemAmount(subStages[index].NeedKeyItemID) < subStages[index].NeedKeyItemCount)
+        {
+            requirementWindow.Open(DungeonRequirementWindow.Status.KeyCount);
+            return;
+        }
+
+        if ((SaveLoadManager.Data.stageSaveData.highPlanet < subStages[index].NeedClearPlanet)
+           || (SaveLoadManager.Data.stageSaveData.highPlanet == subStages[index].NeedClearPlanet
+               && SaveLoadManager.Data.stageSaveData.highStage != SaveLoadManager.Data.stageSaveData.clearedStage))
+        {
+            requirementWindow.Open(DungeonRequirementWindow.Status.StageClear);
+            return;
+        }
+
+        if(UnitCombatPowerCalculator.ToTalCombatPower < subStages[index].NeedPower)
+        {
+            requirementWindow.Open(DungeonRequirementWindow.Status.Power);
+            return;
+        }
+
+
+
         Variables.currentDungeonStage = index + 1;
         stageManager.SetStatus(IngameStatus.Dungeon);
     }
 
-    public void OnClickKeyGet()
+    public void MoveToShop()
     {
-        ItemManager.AddItem(subStages[index].NeedKeyItemID, 1);
-        ShowData(index);
+        gameObject.SetActive(false);
+        stageManager.StageUiManager.UIGroupStatusManager.UiDict[IngameStatus.Planet].SetTabActive(3);
     }
 }

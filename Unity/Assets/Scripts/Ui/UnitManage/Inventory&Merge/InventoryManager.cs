@@ -124,4 +124,15 @@ public static class InventoryManager
     {
          return Inventories[type].elements.Where((e) => e.grade == grade && !e.isLocked).Count() > 0;
     }
+    public static void UnlockAllDatas()
+    {
+        foreach(UnitTypes type in Enum.GetValues(typeof(UnitTypes)))
+        {
+            foreach(var data in Inventories[type].elements)
+            {
+                data.isLocked = false;
+            }
+        }
+        onChangedInventory?.Invoke();
+    }
 }

@@ -148,6 +148,10 @@ public static class DataTableManager
         var planetTable = new PlanetTable();
         planetTable.Load(DataTableIds.planetTable);
         tables.Add(DataTableIds.planetTable, planetTable);
+
+        var damageDungeonRewardTable = new DamageDungeonRewardTable();
+        damageDungeonRewardTable.Load(DataTableIds.damageDungeonRewardTable);
+        tables.Add(DataTableIds.damageDungeonRewardTable, damageDungeonRewardTable);
     }
 
 
@@ -242,4 +246,7 @@ public static class DataTableManager
 
     public static BuffTable BuffTable
         => GetTable<BuffTable>(DataTableIds.buffTable);
+
+    public static DamageDungeonRewardTable DamageDungeonRewardTable
+        => GetTable<DamageDungeonRewardTable>(DataTableIds.damageDungeonRewardTable);
 }

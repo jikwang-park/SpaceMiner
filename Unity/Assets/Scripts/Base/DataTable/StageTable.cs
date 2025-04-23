@@ -109,6 +109,13 @@ public class StageTable : DataTable
         return planetDict.Keys.ToList();
     }
 
+    public Data GetLastStage()
+    {
+        var maxplanet = planetDict.Keys.Max();
+        var maxstage = planetDict[maxplanet].Max(p => p.Value.Stage);
+        return GetStageData(maxplanet, maxstage);
+    }
+
     public override void Set(List<string[]> data)
     {
         var tableData = new Dictionary<int, ITableData>();

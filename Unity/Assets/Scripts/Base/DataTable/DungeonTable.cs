@@ -1,4 +1,3 @@
-using JetBrains.Annotations;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -126,6 +125,19 @@ public class DungeonTable : DataTable
             }
         }
         return null;
+    }
+
+    public Dictionary<int, Data> GetLastStages()
+    {
+        Dictionary<int, Data> laststages = new Dictionary<int, Data>();
+
+        for (int i = 0; i < types.Count; ++i)
+        {
+            int last = typeDict[types[i]].Count - 1;
+            laststages.Add(types[i], typeDict[types[i]][last]);
+        }
+
+        return laststages;
     }
 
     public List<int> DungeonTypes => types;

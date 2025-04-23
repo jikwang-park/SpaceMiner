@@ -25,12 +25,11 @@ public abstract class DecoratorNode<T> : BehaviorNode<T> where T : MonoBehaviour
 
     protected override NodeStatus OnUpdate()
     {
-        if (child != null)
+        if (child == null)
             return NodeStatus.Failure;
 
         return ProcessChild();
     }
 
     protected abstract NodeStatus ProcessChild();
-
 }

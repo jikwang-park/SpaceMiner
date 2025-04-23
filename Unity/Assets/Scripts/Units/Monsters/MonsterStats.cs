@@ -13,7 +13,10 @@ public class MonsterStats : CharacterStats
         set
         {
             base.Hp = value;
-            onHPChanged?.Invoke(Hp.DivideToFloat(maxHp));
+            if (maxHp != 0)
+            {
+                onHPChanged?.Invoke(Hp.DivideToFloat(maxHp));
+            }
         }
     }
 

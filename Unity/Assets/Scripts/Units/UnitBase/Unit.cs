@@ -50,18 +50,7 @@ public class Unit : MonoBehaviour, IObjectPoolGameObject
 
     public float lastSkillTime;
 
-    public float SkillCoolTimeRatio
-    {
-        get
-        {
-            if (UnitStatus == Status.SkillUsing)
-            {
-                return 0f;
-            }
 
-            return Mathf.Min((Time.time - lastSkillTime) / Skill.CoolTime, 1f);
-        }
-    }
 
     public float RemainCooltime
     {
@@ -114,7 +103,7 @@ public class Unit : MonoBehaviour, IObjectPoolGameObject
 
     private void Update()
     {
-//baseSkill.UpdateCoolTime();
+        Skill.UpdateCoolTime();
         if (UnitStatus == Status.Dead)
         {
             return;

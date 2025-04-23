@@ -46,20 +46,20 @@ public class UnitSkillButtonUi : MonoBehaviour
 
         target.SetActive(true);
 
-        SkillButton.interactable = unit.SkillCoolTimeRatio >= 1f;
+        SkillButton.interactable = unit.Skill.SkillCoolTimeRatio >= 1f;
 
     }
     private void ShowCooltime()
     {
-        if (unit.SkillCoolTimeRatio >= 1f)
+        if (unit.Skill.SkillCoolTimeRatio >= 1f)
         {
             skillCoolImage.fillAmount = 0f;
             coolTimeText.text = null;
         }
         else
         {
-            skillCoolImage.fillAmount = 1.0f - unit.RemainSkillCoolTime;
-            coolTimeText.text = unit.baseSkill.remainCoolTime.ToString("F1");
+            skillCoolImage.fillAmount = 1.0f - unit.RemainCooltime;
+            coolTimeText.text = unit.Skill.remainCoolTime.ToString("F1");
         }
     }
     private void OnClickSkill()

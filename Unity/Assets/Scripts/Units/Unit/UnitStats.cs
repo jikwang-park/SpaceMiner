@@ -24,7 +24,7 @@ public class UnitStats : CharacterStats
     private BigNumber defalutValue = 1;
 
 
-    public BigNumber barrier;
+    public BigNumber barrier=0;
 
     //�⺻
     public BigNumber baseDamage { get; private set; } = 0;
@@ -359,6 +359,20 @@ public class UnitStats : CharacterStats
 
         return attack;
     }
+    public void UseShiled(float duration, BigNumber amount)
+    {
+        barrier += amount;
+        StartCoroutine(RemoveBarrierAfterDuration(duration, amount));
+    }
 
 
+    private IEnumerator RemoveBarrierAfterDuration(float duration, BigNumber amount)
+    {
+        yield return new WaitForSeconds(duration);
+        barrier -= amount;
+
+        if(barrier < 0)
+            barrier = 0;
+    }
+   
 }

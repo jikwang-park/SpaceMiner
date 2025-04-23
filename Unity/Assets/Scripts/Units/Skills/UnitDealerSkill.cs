@@ -6,20 +6,22 @@ public class UnitDealerSkill : UnitSkillBase
 {
     private DealerSkillTable.Data data;
 
-    protected override void ExcuteSkill()
+    public override void ExecuteSkill()
     {
         List<Transform> targetTransforms = new List<Transform>();
-        targetTransforms = unit.stageManager.StageMonsterManager.GetMonsters(data.MonsterMaxTarget);
+        targetTransforms = unit.StageManager.StageMonsterManager.GetMonsters(data.MonsterMaxTarget);
         for (int i = 0; i < targetTransforms.Count; ++i)
         {
             unit.unitStats.SkillExecute(targetTransforms[i].gameObject);
         }
+        remainCoolTime = CoolTime;
+        unit.lastSkillTime = Time.time;
     }
 
     public override void InitSkill(Unit unit)
     {
         this.unit = unit;
-        skillId = SaveLoadManager.Data.unitSkillUpgradeData.skillUpgradeId[unit.UnitTypes][unit.currentGrade];
+        skillId = SaveLoadManager.Data.unitSkillUpgradeData.skillUpgradeId[unit.UnitTypes][unit.Grade];
         data = DataTableManager.DealerSkillTable.GetData(skillId);
         CoolTime = data.CoolTime;
         Ratio = data.DamageRatio;
@@ -28,14 +30,7 @@ public class UnitDealerSkill : UnitSkillBase
 
 
 
-    public override IEnumerator SkillRoutine()
-    {
-        remainCoolTime = CoolTime;
-        ExcuteSkill();
-        unit.currentStatus = Unit.UnitStatus.Wait;
-        unit.lastSkillUsedTime = Time.time;
-        yield return new WaitForSeconds(0.25f);
-    }
+  
 
 
 

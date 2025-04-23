@@ -6,20 +6,23 @@ public class UnitTankerSkill : UnitSkillBase
 {
     private TankerSkillTable.Data data;
 
-    protected override void ExcuteSkill()
+    public override void ExecuteSkill()
     {
         GetTarget();
         foreach (var target in targetList)
         {
             var barrierAmount = unit.unitStats.armor * Ratio;
-            target.SetBarrier(data.Duration, barrierAmount);
+            target.unitStats.UseShiled(data.Duration, barrierAmount);
+            
         }
+        remainCoolTime = CoolTime;
+        unit.lastSkillTime = Time.time;
     }
 
     public override void InitSkill(Unit unit)
     {
         this.unit = unit;
-        skillId = SaveLoadManager.Data.unitSkillUpgradeData.skillUpgradeId[unit.UnitTypes][unit.currentGrade];
+        skillId = SaveLoadManager.Data.unitSkillUpgradeData.skillUpgradeId[unit.UnitTypes][unit.Grade];
         data = DataTableManager.TankerSkillTable.GetData(skillId);
         CoolTime = data.CoolTime;
         Ratio = data.ShieldRatio;
@@ -33,19 +36,12 @@ public class UnitTankerSkill : UnitSkillBase
         string[] targetStrings = soliderTarget.Split("_");
         foreach (string target in targetStrings)
         {
-            var targetUnit = unit.stageManager.UnitPartyManager.GetCurrentTargetType(target);
+            var targetUnit = unit.StageManager.UnitPartyManager.GetCurrentTargetType(target);
             targetList.Add(targetUnit);
         }
     }
 
-    public override IEnumerator SkillRoutine()
-    {
-        ExcuteSkill();
-        remainCoolTime = CoolTime;
-        unit.currentStatus = Unit.UnitStatus.Wait;
-        unit.lastSkillUsedTime = Time.time;
-        yield return new WaitForSeconds(0.25f);
-    }
+    
 
 
     public override void UpgradeUnitSkillStats(int id)

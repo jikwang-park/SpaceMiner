@@ -82,6 +82,34 @@ public class SaveDataV3 : SaveDataV2
     }
     public override SaveData VersionUp()
     {
+        return new SaveDataV4(this);
+    }
+}
+public class SaveDataV4 : SaveDataV3
+{
+    public Dictionary<int, AttendanceData> attendanceStates;
+    public SaveDataV4() : base()
+    {
+        attendanceStates = new Dictionary<int, AttendanceData>();
+        foreach (var entry in DataTableManager.AttendanceTable.GetList())
+        {
+            attendanceStates[entry.ID] = AttendanceData.CreateDefault(entry.ID);
+        }
+
+        Version = 4;
+    }
+    public SaveDataV4(SaveDataV3 oldData) : base(oldData)
+    {
+        attendanceStates = new Dictionary<int, AttendanceData>();
+        foreach (var entry in DataTableManager.AttendanceTable.GetList())
+        {
+            attendanceStates[entry.ID] = AttendanceData.CreateDefault(entry.ID);
+        }
+
+        Version = 4;
+    }
+    public override SaveData VersionUp()
+    {
         throw new System.NotImplementedException();
     }
 }

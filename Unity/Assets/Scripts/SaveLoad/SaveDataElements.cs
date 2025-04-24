@@ -241,3 +241,22 @@ public class DungeonKeyShopData
         return data;
     }
 }
+[Serializable]
+public class AttendanceData
+{
+    public int attendanceId;
+    public DateTime lastClaimTime;
+    public int currentIndex;
+
+    public AttendanceData() { }
+
+    public static AttendanceData CreateDefault(int attendanceId)
+    {
+        return new AttendanceData
+        {
+            attendanceId = attendanceId,
+            lastClaimTime = DateTime.MinValue,
+            currentIndex = 1,
+        };
+    }
+}

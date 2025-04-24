@@ -6,11 +6,11 @@ using System.Collections.Generic;
 using System.IO;
 using Unity.VisualScripting;
 using UnityEngine;
-using SaveDataVC = SaveDataV3;
+using SaveDataVC = SaveDataV4;
 
 public static class SaveLoadManager
 {
-    public static int SaveDataVersion { get; private set; } = 3;
+    public static int SaveDataVersion { get; private set; } = 4;
     public static SaveDataVC Data { get; private set; }
 
     public static event Action onSaveRequested;
@@ -40,6 +40,9 @@ public static class SaveLoadManager
                     break;
                 case 3:
                     saveData = JsonConvert.DeserializeObject<SaveDataV3>(json);
+                    break;
+                case 4:
+                    saveData = JsonConvert.DeserializeObject<SaveDataV4>(json);
                     break;
                 default:
                     Debug.LogWarning($"Unknown SaveData version {version}, creating fresh default.");
@@ -82,6 +85,11 @@ public static class SaveLoadManager
         defaultSaveData.buildingData = BuildingData.CreateDefault();
         defaultSaveData.dungeonKeyShopData = DungeonKeyShopData.CreateDefault();
         defaultSaveData.quitTime = DateTime.Now;
+        defaultSaveData.attendanceStates = new Dictionary<int, AttendanceData>();
+        foreach (var entry in DataTableManager.AttendanceTable.GetList())
+        {
+            defaultSaveData.attendanceStates[entry.ID] = AttendanceData.CreateDefault(entry.ID);
+        }
 
         Data = defaultSaveData;
     }

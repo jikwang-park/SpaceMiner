@@ -13,7 +13,7 @@ public class Test : MonoBehaviour
     }
     public async void OnClickStartButton()
     {
-        await FirebaseManager.Instance.SetGame();
-        var handle = Addressables.LoadSceneAsync("Assets/Scenes/DevelopScene",LoadSceneMode.Single);
+        await FirebaseManager.Instance.InitializeAsync();
+        var handle = Addressables.LoadSceneAsync("DevelopScene", LoadSceneMode.Single);
     }
 }

@@ -16,65 +16,30 @@ public class FirebaseManager : Singleton<FirebaseManager>
     private DatabaseReference root;
     private string userId;
     private long serverTimeOffsetMs;
-    private async void Awake()
+    public async Task InitializeAsync()
     {
-        await Firebase.FirebaseApp.CheckAndFixDependenciesAsync().ContinueWithOnMainThread(task => {
-            var dependencyStatus = task.Result;
-            if (dependencyStatus == Firebase.DependencyStatus.Available)
-            {
-                // Create and hold a reference to your FirebaseApp,
-                // where app is a Firebase.FirebaseApp property of your application class.
-                // app = Firebase.FirebaseApp.DefaultInstance;
-
-                // Set a flag here to indicate whether Firebase is ready to use by your app.
-            }
-            else
-            {
-                Debug.LogError(System.String.Format(
-                  "Could not resolve all Firebase dependencies: {0}", dependencyStatus));
-                // Firebase Unity SDK is not safe to use here.
-            }
-        });
-
+        await Firebase.FirebaseApp.CheckAndFixDependenciesAsync();
         auth = FirebaseAuth.DefaultInstance;
         root = FirebaseDatabase.DefaultInstance.RootReference;
 
         var offsetRef = FirebaseDatabase.DefaultInstance.GetReference(".info/serverTimeOffset");
-
         offsetRef.ValueChanged += (s, e) => {
             if (long.TryParse(e.Snapshot.Value?.ToString(), out var ms))
-            {
                 serverTimeOffsetMs = ms;
-            }
         };
+        await SignInAnonymouslyAsync();
+        await LoadFromFirebaseAsync();
     }
-    public async Task SetGame()
-    {
-        await SignInAnonymously();
-        await LoadFromFirebase();
-    }
-    private async Task SignInAnonymously()
-    {
-        await auth.SignInAnonymouslyAsync().ContinueWith(task => {
-            if (task.IsCanceled)
-            {
-                Debug.LogError("SignInAnonymouslyAsync was canceled.");
-                return;
-            }
-            if (task.IsFaulted)
-            {
-                Debug.LogError("SignInAnonymouslyAsync encountered an error: " + task.Exception);
-                return;
-            }
 
-            AuthResult result = task.Result;
-            this.userId = result.User.UserId;
-            SaveLoadManager.onSaveRequested += SaveToFirebase;
-            Debug.LogFormat("User signed in successfully: {0} ({1})",
-                result.User.DisplayName, result.User.UserId);
-        });
+    private async Task SignInAnonymouslyAsync()
+    {
+        var result = await auth.SignInAnonymouslyAsync();
+        this.userId = result.User.UserId;
+        SaveLoadManager.onSaveRequested += SaveToFirebaseAsync;
+        Debug.LogFormat("User signed in successfully: {0} ({1})",
+            result.User.DisplayName, result.User.UserId);
     }
-    private async void SaveToFirebase()
+    private async void SaveToFirebaseAsync()
     {
         if(string.IsNullOrEmpty(userId))
         {
@@ -88,7 +53,7 @@ public class FirebaseManager : Singleton<FirebaseManager>
 
         await root.Child("users").Child(userId).Child("SaveData").SetRawJsonValueAsync(json);
     }
-    private async Task LoadFromFirebase()
+    private async Task LoadFromFirebaseAsync()
     {
         if (string.IsNullOrEmpty(userId))
         {

@@ -2,7 +2,6 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
@@ -294,18 +293,18 @@ public class StageMonsterManager : MonoBehaviour
             return;
         }
 
-        int frontTypeCount = data.NormalMonsterIDs.Length;
-        int eachMaxCount = data.FrontSlots / frontTypeCount;
-        int[] createdCount = new int[eachMaxCount];
+        int TypeCount = data.NormalMonsterIDs.Length;
+        int eachMaxCount = data.FrontSlots / TypeCount;
+        int[] createdCount = new int[TypeCount];
 
         for (int i = 0; i < data.FrontSlots; ++i)
         {
-            int index = Random.Range(0, frontTypeCount);
-            if (i < eachMaxCount * frontTypeCount)
+            int index = Random.Range(0, TypeCount);
+            if (i < eachMaxCount * TypeCount)
             {
                 while (createdCount[index] >= eachMaxCount)
                 {
-                    index = Random.Range(0, frontTypeCount);
+                    index = Random.Range(0, TypeCount);
                 }
             }
 
@@ -317,11 +316,25 @@ public class StageMonsterManager : MonoBehaviour
         EndLine();
 
         int backStartPos = Mathf.CeilToInt((float)data.FrontSlots / 3) * 3;
+        TypeCount = data.RangedMonsterIDs.Length;
+        eachMaxCount = data.BackSlots / TypeCount;
+        createdCount = new int[TypeCount];
 
         for (int i = 0, j = backStartPos; i < data.BackSlots; ++i, ++j)
         {
+            int index = Random.Range(0, TypeCount);
+            if (i < eachMaxCount * TypeCount)
+            {
+                while (createdCount[index] >= eachMaxCount)
+                {
+                    index = Random.Range(0, TypeCount);
+                }
+            }
+
+            int monsterId = data.RangedMonsterIDs[index];
             int lane = i % 3;
-            SpawnMonster(lane, j, frontPosition, data.RangedMonsterID);
+            SpawnMonster(lane, j, frontPosition, monsterId);
+            ++createdCount[index];
         }
         EndLine();
     }

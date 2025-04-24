@@ -4,6 +4,8 @@ using UnityEngine;
 
 public class Variables
 {
+    public const float PlanetTime = 60f;
+
     public static Languages currentLanguage = Languages.Korean;
 
     public static int currentDungeonType = 1;

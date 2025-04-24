@@ -51,10 +51,7 @@ public class AnimationController : AnimationControl
     private void Awake()
     {
         animations = GetComponent<Animation>();
-    }
 
-    private void Start()
-    {
         animations.wrapMode = WrapMode.Loop;
         foreach (AnimationState state in animations)
         {
@@ -173,7 +170,15 @@ public class AnimationController : AnimationControl
             return;
         }
         var state = animations[animationDict[clipID]];
-        state.normalizedSpeed = speed;
+
+        if (state.normalizedSpeed < speed)
+        {
+            state.normalizedSpeed = speed / 1.1f;
+        }
+        else
+        {
+            state.speed = speed;
+        }
     }
 
 

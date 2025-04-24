@@ -6,14 +6,13 @@ using static UnitUpgradeTable;
 
 public class UnitStats : CharacterStats
 {
-    public float attackSpeed { get; private set; } = 0;
     private StageManager stageManager;
 
     private Grade currentGrade;
 
 
 
-    public BigNumber barrier=0;
+    public BigNumber barrier = 0;
 
 
 
@@ -24,7 +23,7 @@ public class UnitStats : CharacterStats
 
     protected override void OnEnable()
     {
-        base.OnEnable(); 
+        base.OnEnable();
         UnitCombatPowerCalculator.onCombatPowerChanged += RefreshStats;
     }
 
@@ -44,7 +43,7 @@ public class UnitStats : CharacterStats
     }
     private void RecalculateHpWithIncrease()
     {
-        
+
         BigNumber previousMaxHp = maxHp;
 
         maxHp = UnitCombatPowerCalculator.statsDictionary[type].soldierMaxHp;
@@ -58,7 +57,7 @@ public class UnitStats : CharacterStats
 
     private void RecalculateHpWithRatio()
     {
-        
+
         float ratio = 0f;
         if (maxHp > 0)
         {
@@ -72,16 +71,16 @@ public class UnitStats : CharacterStats
         Hp = maxHp * ratio;
     }
 
-    
+
     public UnitTypes type;
     public void SetData(SoldierTable.Data data, UnitTypes type)
     {
         moveSpeed = data.MoveSpeed;
-       
-        attackSpeed = data.AttackSpeed;
+
+        coolDown = 100f / data.AttackSpeed;
         this.type = type;
 
-      
+
         currentGrade = data.Grade;
 
         coolDown = 1;
@@ -124,7 +123,7 @@ public class UnitStats : CharacterStats
         attack.isCritical = criticalChance >= Random.Range(0f, 1f);
         if (attack.isCritical)
         {
-           var multiplier =  stats.criticalMultiplier;
+            var multiplier = stats.criticalMultiplier;
 
             attack.damage = stats.soldierAttack * multiplier;
         }
@@ -172,7 +171,7 @@ public class UnitStats : CharacterStats
         BigNumber finialSkillDamage = stats.soldierAttack * currentData.DamageRatio;
 
 
-       var  criticalChance = stats.criticalPossibility;
+        var criticalChance = stats.criticalPossibility;
 
         attack.isCritical = criticalChance >= Random.Range(0, 100);
         if (attack.isCritical)
@@ -205,8 +204,8 @@ public class UnitStats : CharacterStats
         yield return new WaitForSeconds(duration);
         barrier -= amount;
 
-        if(barrier < 0)
+        if (barrier < 0)
             barrier = 0;
     }
-   
+
 }

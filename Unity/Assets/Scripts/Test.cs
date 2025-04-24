@@ -1,6 +1,8 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.AddressableAssets;
+using UnityEngine.SceneManagement;
 
 public class Test : MonoBehaviour
 {
@@ -11,6 +13,7 @@ public class Test : MonoBehaviour
     }
     public void OnClickStartButton()
     {
-        FirebaseManager.Instance.OnClickStartButton();
+        FirebaseManager.Instance.SetGame();
+        var handle = Addressables.LoadSceneAsync("Assets/Scenes/DevelopScene",LoadSceneMode.Single);
     }
 }

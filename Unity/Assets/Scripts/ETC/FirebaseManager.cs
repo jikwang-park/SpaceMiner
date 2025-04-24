@@ -48,16 +48,10 @@ public class FirebaseManager : Singleton<FirebaseManager>
             }
         };
     }
-    public async void OnClickStartButton()
+    public async void SetGame()
     {
         await SignInAnonymously();
         await LoadFromFirebase();
-        var handle = Addressables.LoadSceneAsync(
-        "Assets/Scenes/DevSeol_Scene.unity",                
-        LoadSceneMode.Single        
-        );
-
-        await handle.Task;
     }
     private async Task SignInAnonymously()
     {

@@ -2,17 +2,20 @@ using Firebase.Auth;
 using Firebase.Database;
 using Firebase.Extensions;
 using Newtonsoft.Json;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using UnityEngine;
+using UnityEngine.AddressableAssets;
+using UnityEngine.SceneManagement;
 
 public class FirebaseManager : Singleton<FirebaseManager>
 {
     private FirebaseAuth auth;
     private DatabaseReference root;
     private string userId;
-
+    private long serverTimeOffsetMs;
     private async void Awake()
     {
         await Firebase.FirebaseApp.CheckAndFixDependenciesAsync().ContinueWithOnMainThread(task => {
@@ -36,8 +39,25 @@ public class FirebaseManager : Singleton<FirebaseManager>
         auth = FirebaseAuth.DefaultInstance;
         root = FirebaseDatabase.DefaultInstance.RootReference;
 
+        var offsetRef = FirebaseDatabase.DefaultInstance.GetReference(".info/serverTimeOffset");
 
+        offsetRef.ValueChanged += (s, e) => {
+            if (long.TryParse(e.Snapshot.Value?.ToString(), out var ms))
+            {
+                serverTimeOffsetMs = ms;
+            }
+        };
+    }
+    public async void OnClickStartButton()
+    {
         await SignInAnonymously();
+        await LoadFromFirebase();
+        var handle = Addressables.LoadSceneAsync(
+        "Assets/Scenes/DevSeol_Scene.unity",                
+        LoadSceneMode.Single        
+        );
+
+        await handle.Task;
     }
     private async Task SignInAnonymously()
     {
@@ -69,9 +89,43 @@ public class FirebaseManager : Singleton<FirebaseManager>
         string json = JsonConvert.SerializeObject(SaveLoadManager.Data,
             new JsonSerializerSettings
             {
-                Formatting = Formatting.Indented
+                Formatting = Formatting.Indented,
             });
 
-       await root.Child("users").Child(userId).Child("SaveData").SetRawJsonValueAsync(json);
+        await root.Child("users").Child(userId).Child("SaveData").SetRawJsonValueAsync(json);
+    }
+    private async Task LoadFromFirebase()
+    {
+        if (string.IsNullOrEmpty(userId))
+        {
+            return;
+        }
+
+        var snapshot = await root.Child("users").Child(userId).Child("SaveData").GetValueAsync();
+        if (snapshot.Exists)
+        {
+            string json = snapshot.GetRawJsonValue();
+            if (!string.IsNullOrEmpty(json))
+            {
+                SaveLoadManager.LoadGame(json);
+            }
+        }
+        else
+        {
+            SaveLoadManager.SetDefaultData();
+        }
+    }
+    private void OnApplicationQuit()
+    {
+        SetQuitTime();
+    }
+    public void SetQuitTime()
+    {
+        SaveLoadManager.Data.quitTime = GetFirebaseServerTime().ToLocalTime();
+        SaveLoadManager.SaveGame();
+    }
+    public DateTime GetFirebaseServerTime()
+    {
+        return DateTime.UtcNow.AddMilliseconds(serverTimeOffsetMs);
     }
 }

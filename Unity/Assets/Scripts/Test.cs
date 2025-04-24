@@ -4,16 +4,13 @@ using UnityEngine;
 
 public class Test : MonoBehaviour
 {
-    public BigNumber bigNumber;
-    // Start is called before the first frame update
-    void Start()
+    private FirebaseManager firebaseManager;
+    private void Awake()
     {
-        bigNumber = 100000;
+        firebaseManager = FirebaseManager.Instance;
     }
-
-    // Update is called once per frame
-    void Update()
+    public void OnClickStartButton()
     {
-        
+        FirebaseManager.Instance.OnClickStartButton();
     }
 }

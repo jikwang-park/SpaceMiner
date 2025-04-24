@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using static UnitUpgradeTable;
 
 public static class UnitCombatPowerCalculator
 {
@@ -9,11 +10,13 @@ public static class UnitCombatPowerCalculator
     private const int tankerSkillWeight = 10;
     private const int healerSkillWeight = 7;
     public static event Action onCombatPowerChanged;
+
+    public static Dictionary<UnitTypes, UnitCombatStats> statsDictionary;
     public struct UnitCombatStats
     {
         public BigNumber soldierAttack;  
-        public BigNumber soldierArmor;   
-        public BigNumber soldierHp;      
+        public BigNumber soldierDefense;   
+        public BigNumber soldierMaxHp;      
         public float criticalPossibility;
         public float criticalMultiplier; 
     }
@@ -21,6 +24,45 @@ public static class UnitCombatPowerCalculator
     static UnitCombatPowerCalculator()
     {
         CalculateTotalCombatPower();
+    }
+    public static void Init(UnitTypes type)
+    {
+        var stats = GetUnitCombatStats(type);
+        if(statsDictionary.ContainsKey(type))
+        {
+            statsDictionary[type] = stats;
+        }
+        else
+        {
+            statsDictionary.Add(type, stats);
+        }
+    }
+
+    public static void ChangeStats(UpgradeType upgradeType)
+    {
+        foreach(var stat in statsDictionary)
+        {
+            var data = stat.Value;
+            switch (upgradeType)
+            {
+                case UpgradeType.AttackPoint:
+                    data.soldierAttack = GetStats(stat.Key, upgradeType);
+                    break;
+                case UpgradeType.HealthPoint:
+                    data.soldierMaxHp = GetStats(stat.Key, upgradeType);
+                    break;
+                case UpgradeType.DefensePoint:
+                    data.soldierDefense = GetStats(stat.Key, upgradeType);
+                    break;
+                case UpgradeType.CriticalPossibility:
+                    data.criticalPossibility = GetCriticalStats(stat.Key, upgradeType);
+                    break;
+                case UpgradeType.CriticalDamages:
+                    data.criticalMultiplier = GetCriticalStats(stat.Key, upgradeType);
+                    break;
+            }
+        }
+        
     }
     public static void CalculateTotalCombatPower()
     {
@@ -43,11 +85,11 @@ public static class UnitCombatPowerCalculator
         BigNumber soldierBaseHp = unitData.HP;
         BigNumber soldierBaseAttackSpeed = unitData.AttackSpeed;
 
-        BigNumber soldierAttack = UnitStats.GetStats(UnitTypes.Tanker, UnitUpgradeTable.UpgradeType.AttackPoint);
-        BigNumber soldierArmor = UnitStats.GetStats(UnitTypes.Tanker, UnitUpgradeTable.UpgradeType.DefensePoint);
-        BigNumber soldierHp = UnitStats.GetStats(UnitTypes.Tanker, UnitUpgradeTable.UpgradeType.HealthPoint);
-        float soldierCriticalPossibility = UnitStats.GetCriticalStats(UnitTypes.Tanker, UnitUpgradeTable.UpgradeType.CriticalPossibility);
-        float soldierCriticalMultiplier = UnitStats.GetCriticalStats(UnitTypes.Tanker, UnitUpgradeTable.UpgradeType.CriticalDamages);
+        BigNumber soldierAttack = GetStats(UnitTypes.Tanker, UnitUpgradeTable.UpgradeType.AttackPoint);
+        BigNumber soldierArmor = GetStats(UnitTypes.Tanker, UnitUpgradeTable.UpgradeType.DefensePoint);
+        BigNumber soldierHp = GetStats(UnitTypes.Tanker, UnitUpgradeTable.UpgradeType.HealthPoint);
+        float soldierCriticalPossibility = GetCriticalStats(UnitTypes.Tanker, UnitUpgradeTable.UpgradeType.CriticalPossibility);
+        float soldierCriticalMultiplier = GetCriticalStats(UnitTypes.Tanker, UnitUpgradeTable.UpgradeType.CriticalDamages);
 
         BigNumber expectedAttack = GetExpectedDamage(soldierAttack, soldierCriticalMultiplier, soldierCriticalPossibility, skillId, false);
         BigNumber attackPowerPerSecond = GetAttackPowerPerSecond(expectedAttack, soldierBaseAttackSpeed);
@@ -69,11 +111,11 @@ public static class UnitCombatPowerCalculator
         BigNumber soldierBaseHp = unitData.HP;
         BigNumber soldierBaseAttackSpeed = unitData.AttackSpeed;
 
-        BigNumber soldierAttack = UnitStats.GetStats(UnitTypes.Healer, UnitUpgradeTable.UpgradeType.AttackPoint);
-        BigNumber soldierArmor = UnitStats.GetStats(UnitTypes.Healer, UnitUpgradeTable.UpgradeType.DefensePoint);
-        BigNumber soldierHp = UnitStats.GetStats(UnitTypes.Healer, UnitUpgradeTable.UpgradeType.HealthPoint);
-        float soldierCriticalPossibility = UnitStats.GetCriticalStats(UnitTypes.Healer, UnitUpgradeTable.UpgradeType.CriticalPossibility);
-        float soldierCriticalMultiplier = UnitStats.GetCriticalStats(UnitTypes.Healer, UnitUpgradeTable.UpgradeType.CriticalDamages);
+        BigNumber soldierAttack = GetStats(UnitTypes.Healer, UnitUpgradeTable.UpgradeType.AttackPoint);
+        BigNumber soldierArmor = GetStats(UnitTypes.Healer, UnitUpgradeTable.UpgradeType.DefensePoint);
+        BigNumber soldierHp = GetStats(UnitTypes.Healer, UnitUpgradeTable.UpgradeType.HealthPoint);
+        float soldierCriticalPossibility = GetCriticalStats(UnitTypes.Healer, UnitUpgradeTable.UpgradeType.CriticalPossibility);
+        float soldierCriticalMultiplier = GetCriticalStats(UnitTypes.Healer, UnitUpgradeTable.UpgradeType.CriticalDamages);
 
         BigNumber expectedAttack = GetExpectedDamage(soldierAttack, soldierCriticalMultiplier, soldierCriticalPossibility, skillId, false);
         BigNumber attackPowerPerSecond = GetAttackPowerPerSecond(expectedAttack, soldierBaseAttackSpeed);
@@ -96,11 +138,11 @@ public static class UnitCombatPowerCalculator
         BigNumber soldierBaseHp = unitData.HP;
         BigNumber soldierBaseAttackSpeed = unitData.AttackSpeed;
 
-        BigNumber soldierAttack = UnitStats.GetStats(UnitTypes.Healer, UnitUpgradeTable.UpgradeType.AttackPoint);
-        BigNumber soldierArmor = UnitStats.GetStats(UnitTypes.Healer, UnitUpgradeTable.UpgradeType.DefensePoint);
-        BigNumber soldierHp = UnitStats.GetStats(UnitTypes.Healer, UnitUpgradeTable.UpgradeType.HealthPoint);
-        float soldierCriticalPossibility = UnitStats.GetCriticalStats(UnitTypes.Healer, UnitUpgradeTable.UpgradeType.CriticalPossibility);
-        float soldierCriticalMultiplier = UnitStats.GetCriticalStats(UnitTypes.Healer, UnitUpgradeTable.UpgradeType.CriticalDamages);
+        BigNumber soldierAttack = GetStats(UnitTypes.Healer, UnitUpgradeTable.UpgradeType.AttackPoint);
+        BigNumber soldierArmor = GetStats(UnitTypes.Healer, UnitUpgradeTable.UpgradeType.DefensePoint);
+        BigNumber soldierHp = GetStats(UnitTypes.Healer, UnitUpgradeTable.UpgradeType.HealthPoint);
+        float soldierCriticalPossibility = GetCriticalStats(UnitTypes.Healer, UnitUpgradeTable.UpgradeType.CriticalPossibility);
+        float soldierCriticalMultiplier = GetCriticalStats(UnitTypes.Healer, UnitUpgradeTable.UpgradeType.CriticalDamages);
 
         BigNumber expectedAttack = GetExpectedDamage(soldierAttack, soldierCriticalMultiplier, soldierCriticalPossibility, skillId, false);
         BigNumber attackPowerPerSecond = GetAttackPowerPerSecond(expectedAttack, soldierBaseAttackSpeed);
@@ -113,11 +155,11 @@ public static class UnitCombatPowerCalculator
     {
         UnitCombatStats unitCombatStats = new UnitCombatStats();
 
-        unitCombatStats.soldierAttack = UnitStats.GetStats(unitType, UnitUpgradeTable.UpgradeType.AttackPoint);
-        unitCombatStats.soldierArmor = UnitStats.GetStats(unitType, UnitUpgradeTable.UpgradeType.DefensePoint);
-        unitCombatStats.soldierHp = UnitStats.GetStats(unitType, UnitUpgradeTable.UpgradeType.HealthPoint);
-        unitCombatStats.criticalPossibility = UnitStats.GetCriticalStats(unitType, UnitUpgradeTable.UpgradeType.CriticalPossibility);
-        unitCombatStats.criticalMultiplier = UnitStats.GetCriticalStats(unitType, UnitUpgradeTable.UpgradeType.CriticalDamages);
+        unitCombatStats.soldierAttack = GetStats(unitType, UnitUpgradeTable.UpgradeType.AttackPoint);
+        unitCombatStats.soldierDefense = GetStats(unitType, UnitUpgradeTable.UpgradeType.DefensePoint);
+        unitCombatStats.soldierMaxHp = GetStats(unitType, UnitUpgradeTable.UpgradeType.HealthPoint);
+        unitCombatStats.criticalPossibility = GetCriticalStats(unitType, UnitUpgradeTable.UpgradeType.CriticalPossibility);
+        unitCombatStats.criticalMultiplier = GetCriticalStats(unitType, UnitUpgradeTable.UpgradeType.CriticalDamages);
 
         return unitCombatStats;
     }
@@ -139,5 +181,98 @@ public static class UnitCombatPowerCalculator
             expectedDamage = normalDamage * (1 - criticalPossibility) + (normalDamage * criticalMul) * criticalPossibility;
         }
         return expectedDamage;
+    }
+
+    public static float GetCriticalStats(UnitTypes unitType, UpgradeType upgradeType)
+    {
+        int unitId = InventoryManager.GetInventoryData(unitType).equipElementID;
+        var unitData = DataTableManager.SoldierTable.GetData(unitId);
+
+        switch (upgradeType)
+        {
+            case UpgradeType.CriticalPossibility:
+                float possibility = 0f;
+                int accountCriticalPossibilityUpgradeLevel = SaveLoadManager.Data.unitStatUpgradeData.upgradeLevels[upgradeType];
+                var accountCriticalPossibilityStat = GetAccountCriticalStat(upgradeType, accountCriticalPossibilityUpgradeLevel);
+
+                var buildingCriticalPossibilityDatas = DataTableManager.BuildingTable.GetDatas(BuildingTable.BuildingType.CriticalPossibility);
+                var buildingCriticalPossibilityLevel = SaveLoadManager.Data.buildingData.buildingLevels[BuildingTable.BuildingType.CriticalPossibility];
+                var buildingCriticalPossibilityStats = buildingCriticalPossibilityDatas[buildingCriticalPossibilityLevel].Value;
+
+                possibility = accountCriticalPossibilityStat + buildingCriticalPossibilityStats;
+                return possibility;
+            case UpgradeType.CriticalDamages:
+                float criticalMultiplier = 0f;
+                int accountCriticalMulUpgradeLevel = SaveLoadManager.Data.unitStatUpgradeData.upgradeLevels[upgradeType];
+                var accountCriticalMulStat = GetAccountCriticalStat(upgradeType, accountCriticalMulUpgradeLevel);
+
+                var buildingCriticalMulDatas = DataTableManager.BuildingTable.GetDatas(BuildingTable.BuildingType.CriticalDamages);
+                var buildingCriticalMulLevel = SaveLoadManager.Data.buildingData.buildingLevels[BuildingTable.BuildingType.CriticalDamages];
+                var buildingCriticalMulStats = buildingCriticalMulDatas[buildingCriticalMulLevel].Value;
+
+                criticalMultiplier = 2f + accountCriticalMulStat + buildingCriticalMulStats;
+                return criticalMultiplier;
+        }
+        return 0;
+    }
+    private static float GetAccountCriticalStat(UpgradeType upgradeType, int level)
+    {
+        float stat = 0;
+        var data = DataTableManager.UnitUpgradeTable.GetData(upgradeType);
+        stat = data.Value * level;
+        return stat;
+    }
+    public static BigNumber GetStats(UnitTypes unitType, UpgradeType upgradeType)
+    {
+        int unitId = InventoryManager.GetInventoryData(unitType).equipElementID;
+        var unitData = DataTableManager.SoldierTable.GetData(unitId);
+
+        switch (upgradeType)
+        {
+            case UpgradeType.AttackPoint:
+                BigNumber attackStat = 0;
+                int accountAttackUpgradeLevel = SaveLoadManager.Data.unitStatUpgradeData.upgradeLevels[upgradeType];
+                var accountAttackStat = GetAccountStat(upgradeType, accountAttackUpgradeLevel);
+
+                var buildingAttackDatas = DataTableManager.BuildingTable.GetDatas(BuildingTable.BuildingType.AttackPoint);
+                var buildingAttackLevel = SaveLoadManager.Data.buildingData.buildingLevels[BuildingTable.BuildingType.AttackPoint];
+                var buildingAttackStats = buildingAttackDatas[buildingAttackLevel].Value;
+
+                attackStat = (unitData.Attack + accountAttackStat) * (1 + buildingAttackStats);
+                return attackStat;
+            case UpgradeType.HealthPoint:
+                BigNumber hpStat = 0;
+                int accountHpUpgradeLevel = SaveLoadManager.Data.unitStatUpgradeData.upgradeLevels[upgradeType];
+                var accountHpStat = GetAccountStat(upgradeType, accountHpUpgradeLevel);
+
+                var buildingHpDatas = DataTableManager.BuildingTable.GetDatas(BuildingTable.BuildingType.HealthPoint);
+                var buildingHpLevel = SaveLoadManager.Data.buildingData.buildingLevels[BuildingTable.BuildingType.HealthPoint];
+                var buildingHpStats = buildingHpDatas[buildingHpLevel].Value;
+
+                hpStat = (unitData.HP + accountHpStat) * (1 + buildingHpStats);
+                return hpStat;
+            case UpgradeType.DefensePoint:
+                BigNumber armorStat = 0;
+                int accountArmorUpgradeLevel = SaveLoadManager.Data.unitStatUpgradeData.upgradeLevels[upgradeType];
+                var accountArmorStat = GetAccountStat(upgradeType, accountArmorUpgradeLevel);
+
+                var buildingArmorDatas = DataTableManager.BuildingTable.GetDatas(BuildingTable.BuildingType.DefensePoint);
+                var buildingArmorLevel = SaveLoadManager.Data.buildingData.buildingLevels[BuildingTable.BuildingType.DefensePoint];
+                var buildingArmorStats = buildingArmorDatas[buildingArmorLevel].Value;
+
+                armorStat = (unitData.Defence + accountArmorStat) * (1 + buildingArmorStats);
+                return armorStat;
+        }
+        return 0;
+    }
+    private static BigNumber GetAccountStat(UpgradeType upgradeType, int level)
+    {
+        BigNumber stat = 0;
+        var data = DataTableManager.UnitUpgradeTable.GetData(upgradeType);
+        for (int i = 1; i <= level; i++)
+        {
+            stat += data.Value * i;
+        }
+        return stat;
     }
 }

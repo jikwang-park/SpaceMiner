@@ -63,8 +63,8 @@ public class ProfileView : MonoBehaviour
     {
         var stats = UnitCombatPowerCalculator.GetUnitCombatStats(type);
         attackText.text = stats.soldierAttack.ToString();
-        hpText.text = stats.soldierHp.ToString();
-        defenseText.text = stats.soldierArmor.ToString();
+        hpText.text = stats.soldierMaxHp.ToString();
+        defenseText.text = stats.soldierDefense.ToString();
         criticalPossibilityText.text = stats.criticalPossibility.ToString("P2");
         criticalMultiplierText.text = stats.criticalMultiplier.ToString("P2");
     }

@@ -86,8 +86,10 @@ public class UnitStats : CharacterStats
 
     private void RecalculateHpWithIncrease()
     {
+        
         BigNumber previousMaxHp = maxHp;
-        maxHp = (baseMaxHp + accountHp) * (1f + buildingHp);
+
+        maxHp = UnitCombatPowerCalculator.statsDictionary[type].soldierMaxHp;
 
         BigNumber increase = maxHp - previousMaxHp;
 
@@ -98,6 +100,7 @@ public class UnitStats : CharacterStats
 
     private void RecalculateHpWithRatio()
     {
+        
         float ratio = 0f;
         if (maxHp > 0)
         {
@@ -107,47 +110,18 @@ public class UnitStats : CharacterStats
         {
             ratio = 1f;
         }
-        maxHp = (baseMaxHp + accountHp) * (1f + buildingHp);
+        maxHp = UnitCombatPowerCalculator.statsDictionary[type].soldierMaxHp;
         Hp = maxHp * ratio;
     }
 
-    public void AddBuildingStats(BuildingTable.BuildingType type, float amount)
-    {
-
-
-        switch (type)
-        {
-            case BuildingTable.BuildingType.IdleTime:
-                break;
-            case BuildingTable.BuildingType.AttackPoint:
-                buildingAttackDamage += amount;
-                break;
-            case BuildingTable.BuildingType.HealthPoint:
-                buildingHp += amount;
-                RecalculateHpWithIncrease();
-                break;
-            case BuildingTable.BuildingType.DefensePoint:
-                buildingArmor += amount;
-                RecalculateArmor();
-                break;
-            case BuildingTable.BuildingType.CriticalPossibility:
-                buildingCriticalChance += amount;
-                break;
-            case BuildingTable.BuildingType.CriticalDamages:
-                buildingCriticalDamage += amount;
-                break;
-            case BuildingTable.BuildingType.Gold:
-                break;
-            case BuildingTable.BuildingType.Mining:
-                break;
-        }
-    }
     
+    public UnitTypes type;
     public void SetData(SoldierTable.Data data, UnitTypes type)
     {
         moveSpeed = data.MoveSpeed;
         baseDamage = data.Attack;
         attackSpeed = data.AttackSpeed;
+        this.type = type;
 
         baseMaxHp = data.HP;
         currentGrade = data.Grade;
@@ -155,6 +129,7 @@ public class UnitStats : CharacterStats
         coolDown = 1;
         baseArmor = data.Defence;
         range = data.Range;
+        maxHp = UnitCombatPowerCalculator.statsDictionary[type].soldierMaxHp;
         RecalculateArmor();
 
         RecalculateHpWithRatio();
@@ -186,26 +161,20 @@ public class UnitStats : CharacterStats
     {
         Attack attack = new Attack();
 
-
-        criticalChance = accountCriticalChance + buildingCriticalChance;
+        var stats = UnitCombatPowerCalculator.statsDictionary[type];
+        var criticalChance = stats.criticalPossibility;
 
         attack.isCritical = criticalChance >= Random.Range(0, 100);
         if (attack.isCritical)
         {
-            criticalPercent = (2 + (accountCriticalDamage + buildingCriticalDamage));
+           var multiplier =  stats.criticalMultiplier;
 
-            attack.damage = FinialDamage * criticalPercent;
+            attack.damage = stats.soldierAttack * multiplier;
         }
         else
         {
-            attack.damage = FinialDamage;
+            attack.damage = stats.soldierAttack;
         }
-
-
-        //if (defenderStats != null)
-        //{
-        //    attack.damage -= defenderStats.armor;
-        //}
 
         return attack;
     }
@@ -237,20 +206,22 @@ public class UnitStats : CharacterStats
 
         var data = SaveLoadManager.Data.unitSkillUpgradeData.skillUpgradeId;
 
+        var stats = UnitCombatPowerCalculator.statsDictionary[type];
+
         var id = data[UnitTypes.Dealer][currentGrade];
 
         var currentData = DataTableManager.DealerSkillTable.GetData(id);
 
-        BigNumber finialSkillDamage = FinialDamage * currentData.DamageRatio;
+        BigNumber finialSkillDamage = stats.soldierAttack * currentData.DamageRatio;
 
 
-        criticalChance = accountCriticalChance + buildingCriticalChance;
+       var  criticalChance = stats.criticalPossibility;
 
         attack.isCritical = criticalChance >= Random.Range(0, 100);
         if (attack.isCritical)
         {
-            criticalPercent = (2 + (accountCriticalDamage + buildingCriticalDamage));
-            attack.damage = finialSkillDamage * criticalPercent;
+            var multiplier = stats.criticalMultiplier;
+            attack.damage = finialSkillDamage * multiplier;
         }
         else
         {

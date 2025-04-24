@@ -283,26 +283,9 @@ public class Unit : MonoBehaviour, IObjectPoolGameObject
         }
     }
 
-    public void GetSaveStats(UnitUpgradeTable.UpgradeType type, int level)
-    {
-        float value = DataTableManager.UnitUpgradeTable.GetData(type).Value;
-        float stats = 0;
 
-        stats = value * level;
-       
-        unitStats.AddStats(type, stats);
-    }
 
-    public void GetSaveBuildingStats(BuildingTable.BuildingType type, int level)
-    {
-        var data = DataTableManager.BuildingTable.GetDatas(type);
-        float buildingStats = 0;
-        for (int i = 0; i <= level; ++i)
-        {
-            buildingStats = data[i].Value;
-        }
-        unitStats.AddBuildingStats(type, buildingStats);
-    }
+   
 
     public void Release()
     {

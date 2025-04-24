@@ -7,6 +7,7 @@ using System.Linq;
 using UnityEngine;
 using UnityEngine.AddressableAssets;
 using UnityEngine.UI;
+using static UnitUpgradeTable;
 
 public class UnitPartyManager : MonoBehaviour
 {
@@ -109,10 +110,8 @@ public class UnitPartyManager : MonoBehaviour
 
     public void AddBuildingStats(BuildingTable.BuildingType type, float amount)
     {
-        foreach (var unit in party)
-        {
-            unit.Value.unitStats.AddBuildingStats(type, amount);
-        }
+        int index = (int)type;
+        UnitCombatPowerCalculator.ChangeStats((UpgradeType)index);
         UnitCombatPowerCalculator.CalculateTotalCombatPower();
     }
 
@@ -247,36 +246,15 @@ public class UnitPartyManager : MonoBehaviour
             Instantiate(weapons[currentType][(int)currentSoilderData.Grade - 1], weaponSocket);
             party.Add(currentType, unit);
             unit.SetData(currentSoilderData);
-            GetCurrentStats(unit);
-            GetCurrentBulidngStats(unit);
+            UnitCombatPowerCalculator.Init(currentType);
         }
         OnUnitCreated?.Invoke();
         OnUnitUpdated?.Invoke();
     }
 
-    public void GetCurrentStats(Unit unit)
-    {
-        var unitStats = SaveLoadManager.Data.unitStatUpgradeData.upgradeLevels;
+  
 
-        for (int j = (int)UnitUpgradeTable.UpgradeType.AttackPoint; j <= (int)UnitUpgradeTable.UpgradeType.CriticalDamages; j++)
-        {
-            var currentUpgradeType = (UnitUpgradeTable.UpgradeType)j;
-            var currentTypelevel = unitStats[currentUpgradeType];
-            unit.GetSaveStats(currentUpgradeType, currentTypelevel);
-        }
-    }
-
-    public void GetCurrentBulidngStats(Unit unit)
-    {
-        var buildingStats = SaveLoadManager.Data.buildingData.buildingLevels;
-
-        for (int k = (int)BuildingTable.BuildingType.AttackPoint; k <= (int)BuildingTable.BuildingType.IdleTime; ++k)
-        {
-            var currentBuildingType = (BuildingTable.BuildingType)k;
-            var currentBuildingLevel = buildingStats[currentBuildingType];
-            unit.GetSaveBuildingStats(currentBuildingType, currentBuildingLevel);
-        }
-    }
+    
 
     public bool NeedHealUnit()
     {

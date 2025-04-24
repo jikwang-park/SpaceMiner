@@ -50,20 +50,6 @@ public class Unit : MonoBehaviour, IObjectPoolGameObject
 
     public float lastSkillTime;
 
-
-
-    public float RemainCooltime
-    {
-        get
-        {
-            if (UnitStatus == Status.SkillUsing)
-            {
-                return Skill.CoolTime;
-            }
-            return Mathf.Max(Skill.CoolTime + lastSkillTime - Time.time, 0f);
-        }
-    }
-
     public bool IsTargetInRange
     {
         get
@@ -103,7 +89,6 @@ public class Unit : MonoBehaviour, IObjectPoolGameObject
 
     private void Update()
     {
-        Skill.UpdateCoolTime();
         if (UnitStatus == Status.Dead)
         {
             return;

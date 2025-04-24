@@ -61,7 +61,7 @@ public static class UnitCombatPowerCalculator
                     break;
             }
         }
-        
+        onCombatPowerChanged?.Invoke();
     }
     public static void CalculateTotalCombatPower()
     {

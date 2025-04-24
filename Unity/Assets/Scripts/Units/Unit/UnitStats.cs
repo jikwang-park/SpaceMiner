@@ -22,11 +22,26 @@ public class UnitStats : CharacterStats
         stageManager = GameObject.FindGameObjectWithTag("GameController").GetComponent<StageManager>();
     }
 
-    private void Start()
+    protected override void OnEnable()
     {
-
+        base.OnEnable(); 
+        UnitCombatPowerCalculator.onCombatPowerChanged += RefreshStats;
     }
 
+    protected override void OnDisable()
+    {
+        base.OnDisable();
+        UnitCombatPowerCalculator.onCombatPowerChanged -= RefreshStats;
+    }
+    private void RefreshStats()
+    {
+        float prevRate = maxHp != 0 ? Hp.DivideToFloat(maxHp) : 1f;
+
+        armor = UnitCombatPowerCalculator.statsDictionary[type].soldierDefense;
+        maxHp = UnitCombatPowerCalculator.statsDictionary[type].soldierMaxHp;
+
+        Hp = maxHp * prevRate;
+    }
     private void RecalculateHpWithIncrease()
     {
         
@@ -71,6 +86,7 @@ public class UnitStats : CharacterStats
 
         coolDown = 1;
         range = data.Range;
+        armor = UnitCombatPowerCalculator.statsDictionary[type].soldierDefense;
         maxHp = UnitCombatPowerCalculator.statsDictionary[type].soldierMaxHp;
 
         RecalculateHpWithRatio();

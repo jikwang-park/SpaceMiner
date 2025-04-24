@@ -92,9 +92,9 @@ public class IdleRewardManager : MonoBehaviour
                 ItemManager.AddItem(rewardItem.Key, rewardItem.Value);
                 Debug.Log($"Get Idle Reward - {rewardItem.Key} : {rewardItem.Value}");
             }
-            FirebaseManager.Instance.SetQuitTime();
             DisplayRewardUI(processedIdleRewards);
         }
+        FirebaseManager.Instance.SetQuitTime();
     }
 
     private void DisplayRewardUI(List<KeyValuePair<int, BigNumber>> rewards)

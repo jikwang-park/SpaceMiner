@@ -58,8 +58,8 @@ public class UnitSkillButtonUi : MonoBehaviour
         }
         else
         {
-            skillCoolImage.fillAmount = 1.0f - unit.RemainCooltime;
-            coolTimeText.text = unit.Skill.remainCoolTime.ToString("F1");
+            skillCoolImage.fillAmount = 1.0f - unit.Skill.SkillCoolTimeRatio;
+            coolTimeText.text = unit.Skill.RemainCooltime.ToString("F1");
         }
     }
     private void OnClickSkill()

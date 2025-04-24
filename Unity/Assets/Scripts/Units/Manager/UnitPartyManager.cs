@@ -20,7 +20,7 @@ public class UnitPartyManager : MonoBehaviour
     [SerializeField]
     private List<Vector3> unitSpawnPos;
 
-    private Dictionary<UnitTypes, Unit> party = new Dictionary<UnitTypes, Unit>();
+    public Dictionary<UnitTypes, Unit> PartyUnits { get; private set; } = new Dictionary<UnitTypes, Unit>();
 
     public event System.Action OnUnitCreated;
     public event System.Action OnUnitUpdated;
@@ -32,11 +32,11 @@ public class UnitPartyManager : MonoBehaviour
 
     private Vector3 unitOffset = Vector3.left * 1f;
 
-    public int UnitCount => party.Count;
+    public int UnitCount => PartyUnits.Count;
 
     public void ResetSkillCoolTime()
     {
-        foreach (var unit in party.Values)
+        foreach (var unit in PartyUnits.Values)
         {
             unit.lastSkillTime = float.MinValue;
         }
@@ -44,7 +44,7 @@ public class UnitPartyManager : MonoBehaviour
 
     public void ResetUnitHealth()
     {
-        foreach (var unit in party.Values)
+        foreach (var unit in PartyUnits.Values)
         {
             unit.unitStats.Hp = unit.unitStats.maxHp;
         }
@@ -52,7 +52,7 @@ public class UnitPartyManager : MonoBehaviour
 
     public void ResetStatus()
     {
-        foreach (var unit in party.Values)
+        foreach (var unit in PartyUnits.Values)
         {
             unit.ResetStatus();
         }
@@ -70,10 +70,10 @@ public class UnitPartyManager : MonoBehaviour
 
     public void SetUnitData(SoldierTable.Data data, UnitTypes type)
     {
-        if (party.ContainsKey(type))
+        if (PartyUnits.ContainsKey(type))
         {
             UnitCombatPowerCalculator.Init(type);
-            party[type].SetData(data);
+            PartyUnits[type].SetData(data);
             UnitCombatPowerCalculator.CalculateTotalCombatPower();
         }
     }
@@ -81,9 +81,9 @@ public class UnitPartyManager : MonoBehaviour
     private void OnUnitDie(DestructedDestroyEvent sender)
     {
         var unit = sender.GetComponent<Unit>();
-        party.Remove(unit.UnitTypes);
+        PartyUnits.Remove(unit.UnitTypes);
         unit.gameObject.SetActive(false);
-        if (party.Count == 0)
+        if (PartyUnits.Count == 0)
         {
             OnUnitAllDead?.Invoke();
         }
@@ -97,10 +97,10 @@ public class UnitPartyManager : MonoBehaviour
 
     public void UpgradeSkillStats(int id, UnitTypes type)
     {
-        if (!party.ContainsKey(type))
+        if (!PartyUnits.ContainsKey(type))
             return;
 
-        var unit = party[type];
+        var unit = PartyUnits[type];
 
 
         unit.Skill.UpgradeUnitSkillStats(id);
@@ -115,18 +115,18 @@ public class UnitPartyManager : MonoBehaviour
 
     public void UnitDespawn()
     {
-        foreach (var unit in party)
+        foreach (var unit in PartyUnits)
         {
             Destroy(unit.Value.gameObject);
         }
-        party.Clear();
+        PartyUnits.Clear();
     }
 
 
 
     public Transform GetFirstLineUnitTransform()
     {
-        if (party.Count == 0)
+        if (PartyUnits.Count == 0)
         {
             Debug.LogError("Unit is Empty");
             return null;
@@ -135,7 +135,7 @@ public class UnitPartyManager : MonoBehaviour
         Transform frontMostZPos = null;
         float maxZ = float.MinValue;
 
-        foreach (var unit in party.Values)
+        foreach (var unit in PartyUnits.Values)
         {
             if (unit == null)
                 continue;
@@ -154,9 +154,9 @@ public class UnitPartyManager : MonoBehaviour
 
     public Transform GetUnit(UnitTypes type)
     {
-        if (party.ContainsKey(type))
+        if (PartyUnits.ContainsKey(type))
         {
-            return party[type].transform;
+            return PartyUnits[type].transform;
         }
         return null;
     }
@@ -164,9 +164,9 @@ public class UnitPartyManager : MonoBehaviour
     public Unit GetCurrentTargetType(string targetString)
     {
         int target = int.Parse(targetString);
-        if (party.ContainsKey((UnitTypes)target))
+        if (PartyUnits.ContainsKey((UnitTypes)target))
         {
-            return party[(UnitTypes)target];
+            return PartyUnits[(UnitTypes)target];
         }
         return null;
     }
@@ -178,7 +178,7 @@ public class UnitPartyManager : MonoBehaviour
     {
         for (int i = (int)myType - 1; i >= (int)UnitTypes.Tanker; --i)
         {
-            if (party.ContainsKey((UnitTypes)i))
+            if (PartyUnits.ContainsKey((UnitTypes)i))
             {
                 return true;
             }
@@ -190,7 +190,7 @@ public class UnitPartyManager : MonoBehaviour
     {
         for (int i = (int)myType + 1; i <= (int)UnitTypes.Healer; ++i)
         {
-            if (party.ContainsKey((UnitTypes)i))
+            if (PartyUnits.ContainsKey((UnitTypes)i))
             {
                 return true;
             }
@@ -203,9 +203,9 @@ public class UnitPartyManager : MonoBehaviour
     {
         for (int i = (int)myType - 1; i >= (int)UnitTypes.Tanker; --i)
         {
-            if (party.ContainsKey((UnitTypes)i))
+            if (PartyUnits.ContainsKey((UnitTypes)i))
             {
-                return party[(UnitTypes)i];
+                return PartyUnits[(UnitTypes)i];
             }
         }
         return null;
@@ -215,9 +215,9 @@ public class UnitPartyManager : MonoBehaviour
     {
         for (int i = (int)myType + 1; i <= (int)UnitTypes.Healer; ++i)
         {
-            if (party.ContainsKey((UnitTypes)i))
+            if (PartyUnits.ContainsKey((UnitTypes)i))
             {
-                return party[(UnitTypes)i];
+                return PartyUnits[(UnitTypes)i];
             }
         }
         return null;
@@ -242,7 +242,7 @@ public class UnitPartyManager : MonoBehaviour
             var currentSoilderData = DataTableManager.SoldierTable.GetData(currentSoilderId);
             var weaponSocket = unit.transform.Find("Bip001").Find("Bip001 Prop1");
             Instantiate(weapons[currentType][(int)currentSoilderData.Grade - 1], weaponSocket);
-            party.Add(currentType, unit);
+            PartyUnits.Add(currentType, unit);
             UnitCombatPowerCalculator.Init(currentType);
             unit.SetData(currentSoilderData);
         }
@@ -256,7 +256,7 @@ public class UnitPartyManager : MonoBehaviour
 
     public bool NeedHealUnit()
     {
-        foreach (var unit in party)
+        foreach (var unit in PartyUnits)
         {
             if (unit.Value.unitStats.HPRate < Variables.healerSkillHPRatio)
             {

@@ -8,14 +8,20 @@ public class UnitTankerSkill : UnitSkillBase
 
     public override void ExecuteSkill()
     {
-        GetTarget();
-        foreach (var target in targetList)
+        
+        string soliderTarget = data.SoldierTarget;
+        string[] targetStrings = soliderTarget.Split("_");
+        foreach (string target in targetStrings)
         {
+            var targetUnit = unit.StageManager.UnitPartyManager.GetCurrentTargetType(target);
+            if (targetUnit is null)
+            {
+                continue;
+            }
             var barrierAmount = unit.unitStats.armor * Ratio;
-            target.unitStats.UseShiled(data.Duration, barrierAmount);
-            
+            targetUnit.unitStats.UseShiled(data.Duration, barrierAmount);
         }
-        remainCoolTime = CoolTime;
+
         unit.lastSkillTime = Time.time;
     }
 
@@ -26,22 +32,7 @@ public class UnitTankerSkill : UnitSkillBase
         data = DataTableManager.TankerSkillTable.GetData(skillId);
         CoolTime = data.CoolTime;
         Ratio = data.ShieldRatio;
-        remainCoolTime = 0f;
     }
-
-
-    public override void GetTarget()
-    {
-        string soliderTarget = data.SoldierTarget;
-        string[] targetStrings = soliderTarget.Split("_");
-        foreach (string target in targetStrings)
-        {
-            var targetUnit = unit.StageManager.UnitPartyManager.GetCurrentTargetType(target);
-            targetList.Add(targetUnit);
-        }
-    }
-
-    
 
 
     public override void UpgradeUnitSkillStats(int id)
@@ -50,15 +41,5 @@ public class UnitTankerSkill : UnitSkillBase
         this.data = data;
         CoolTime = data.CoolTime;
         Ratio = data.ShieldRatio;
-        GetTarget();
-    }
-
-    public override void UpdateCoolTime()
-    {
-        if (remainCoolTime > 0)
-        {
-            remainCoolTime -= Time.deltaTime;
-            remainCoolTime = Mathf.Max(remainCoolTime, 0f);
-        }
     }
 }

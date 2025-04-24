@@ -22,8 +22,6 @@ public abstract class UnitSkillBase
 
     public float Ratio { get; protected set; }
 
-    public List<Unit> targetList = new List<Unit>();
-
     public abstract void ExecuteSkill();
 
     protected int skillId;
@@ -31,14 +29,20 @@ public abstract class UnitSkillBase
     protected Unit unit;
 
 
-    public float remainCoolTime{get; protected set; }
+    public float RemainCooltime
+    {
+        get
+        {
+            if (unit.UnitStatus == Unit.Status.SkillUsing)
+            {
+                return CoolTime;
+            }
+            return Mathf.Max(CoolTime + unit.lastSkillTime - Time.time, 0f);
+        }
+    }
 
     public abstract void InitSkill(Unit unit);
 
-    public virtual void GetTarget() { }
-
-
-    public abstract void UpdateCoolTime();
 
 
 

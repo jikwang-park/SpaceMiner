@@ -14,7 +14,6 @@ public class UnitDealerSkill : UnitSkillBase
         {
             unit.unitStats.SkillExecute(targetTransforms[i].gameObject);
         }
-        remainCoolTime = CoolTime;
         unit.lastSkillTime = Time.time;
     }
 
@@ -25,7 +24,6 @@ public class UnitDealerSkill : UnitSkillBase
         data = DataTableManager.DealerSkillTable.GetData(skillId);
         CoolTime = data.CoolTime;
         Ratio = data.DamageRatio;
-        remainCoolTime = 0f;
     }
 
 
@@ -41,13 +39,4 @@ public class UnitDealerSkill : UnitSkillBase
         CoolTime = data.CoolTime;
         Ratio = data.DamageRatio;
     }
-    public override void UpdateCoolTime()
-    {
-        if (remainCoolTime > 0)
-        {
-            remainCoolTime -= Time.deltaTime;
-            remainCoolTime = Mathf.Max(remainCoolTime, 0f);
-        }
-    }
-
 }

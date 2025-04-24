@@ -13,32 +13,14 @@ public static class SaveLoadManager
     public static int SaveDataVersion { get; private set; } = 3;
     public static SaveDataVC Data { get; private set; }
 
-    public static string fileName = "SaveData.json";
     public static event Action onSaveRequested;
-    private static string SaveDirectory
-    {
-        get
-        {
-            return $"{Application.persistentDataPath}/Save";
-        }
-    }
     private static JsonSerializerSettings settings = new JsonSerializerSettings
     {
         Formatting = Formatting.Indented,
     };
     public static void SaveGame()
     {
-        if (!Directory.Exists(SaveDirectory))
-        {
-            Directory.CreateDirectory(SaveDirectory);
-        }
-
         onSaveRequested?.Invoke();
-
-        string json = JsonConvert.SerializeObject(Data, settings);
-        string filePath = Path.Combine(SaveDirectory, fileName);
-        File.WriteAllText(filePath, json);
-        Debug.Log("Game saved to: " + filePath);
     }
     public static void LoadGame(string json)
     {

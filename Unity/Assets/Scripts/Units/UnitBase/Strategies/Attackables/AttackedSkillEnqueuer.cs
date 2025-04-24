@@ -13,6 +13,9 @@ public class AttackedSkillEnqueuer : MonoBehaviour, IAttackable
 
     public void OnAttack(GameObject attacker, Attack attack)
     {
-        unit.EnqueueSkill();
+        if (Variables.isAutoSkillMode)
+        {
+            unit.EnqueueSkill();
+        }
     }
 }

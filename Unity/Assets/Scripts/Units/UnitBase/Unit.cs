@@ -139,6 +139,9 @@ public class Unit : MonoBehaviour, IObjectPoolGameObject
     public void SetData(SoldierTable.Data data)
     {
         unitStats.SetData(data, data.UnitType);
+
+        AnimationControl.SetSpeed(AnimationControl.AnimationClipID.Attack, data.AttackSpeed / 100f);
+
         UnitTypes = data.UnitType;
         Grade = data.Grade;
         switch (UnitTypes)
@@ -246,7 +249,7 @@ public class Unit : MonoBehaviour, IObjectPoolGameObject
                     SetStatus(Status.SkillUsing);
                     return;
                 }
-                if (Time.time > lastAttackTime + unitStats.attackSpeed / 100f)
+                if (Time.time > lastAttackTime + 100f / unitStats.attackSpeed)
                 {
                     SetStatus(Status.Attacking);
                 }
@@ -270,7 +273,7 @@ public class Unit : MonoBehaviour, IObjectPoolGameObject
 
 
 
-   
+
 
     public void Release()
     {

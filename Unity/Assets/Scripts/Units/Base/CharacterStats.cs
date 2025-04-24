@@ -19,7 +19,7 @@ public abstract class CharacterStats : MonoBehaviour
     public float HPRate { get; protected set; }
 
     [SerializeField]
-    private BigNumber hp;
+    protected BigNumber hp;
 
     public virtual BigNumber Hp
     {
@@ -32,13 +32,18 @@ public abstract class CharacterStats : MonoBehaviour
             hp = value;
             if (maxHp != 0)
             {
-                HPRate = hp.DivideToFloat(maxHp);
-                OnHpChanged?.Invoke(HPRate);
+                InvokeHpChangedEvent();
             }
         }
     }
 
     public event System.Action<float> OnHpChanged;
+
+    protected void InvokeHpChangedEvent()
+    {
+        HPRate = hp.DivideToFloat(maxHp);
+        OnHpChanged?.Invoke(HPRate);
+    }
 
     protected virtual void OnEnable()
     {

@@ -11,8 +11,8 @@ public static class UnitCombatPowerCalculator
     private const int healerSkillWeight = 7;
     public static event Action onCombatPowerChanged;
 
-    public static Dictionary<UnitTypes, UnitCombatStats> statsDictionary;
-    public struct UnitCombatStats
+    public static Dictionary<UnitTypes, UnitCombatStats> statsDictionary = new Dictionary<UnitTypes, UnitCombatStats>();
+    public class UnitCombatStats
     {
         public BigNumber soldierAttack;  
         public BigNumber soldierDefense;   
@@ -42,23 +42,22 @@ public static class UnitCombatPowerCalculator
     {
         foreach(var stat in statsDictionary)
         {
-            var data = stat.Value;
             switch (upgradeType)
             {
                 case UpgradeType.AttackPoint:
-                    data.soldierAttack = GetStats(stat.Key, upgradeType);
+                    stat.Value.soldierAttack = GetStats(stat.Key, upgradeType);
                     break;
                 case UpgradeType.HealthPoint:
-                    data.soldierMaxHp = GetStats(stat.Key, upgradeType);
+                    stat.Value.soldierMaxHp = GetStats(stat.Key, upgradeType);
                     break;
                 case UpgradeType.DefensePoint:
-                    data.soldierDefense = GetStats(stat.Key, upgradeType);
+                    stat.Value.soldierDefense = GetStats(stat.Key, upgradeType);
                     break;
                 case UpgradeType.CriticalPossibility:
-                    data.criticalPossibility = GetCriticalStats(stat.Key, upgradeType);
+                    stat.Value.criticalPossibility = GetCriticalStats(stat.Key, upgradeType);
                     break;
                 case UpgradeType.CriticalDamages:
-                    data.criticalMultiplier = GetCriticalStats(stat.Key, upgradeType);
+                    stat.Value.criticalMultiplier = GetCriticalStats(stat.Key, upgradeType);
                     break;
             }
         }

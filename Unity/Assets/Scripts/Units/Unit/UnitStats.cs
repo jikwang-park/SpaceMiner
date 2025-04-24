@@ -10,40 +10,11 @@ public class UnitStats : CharacterStats
     private StageManager stageManager;
 
     private Grade currentGrade;
-    private float criticalPercent;
 
-    public BigNumber FinialDamage
-    {
-        get
-        {
-            damage = ((baseDamage + accountDamage) * (1f + buildingAttackDamage));
-            return ((baseDamage + accountDamage) * (1f + buildingAttackDamage));
-        }
-    }
-
-    private BigNumber defalutValue = 1;
 
 
     public BigNumber barrier=0;
 
-    //�⺻
-    public BigNumber baseDamage { get; private set; } = 0;
-    public BigNumber accountDamage { get; private set; } = 0;
-    public float buildingAttackDamage { get; private set; } = 0;
-    //ũ��
-    public float accountCriticalDamage { get; private set; } = 0;
-    public float buildingCriticalDamage { get; private set; } = 0;
-    //���?
-    public BigNumber baseArmor { get; private set; } = 0;
-    public BigNumber accountArmor { get; private set; } = 0;
-    public float buildingArmor { get; private set; } = 0;
-    //ü��
-    public BigNumber baseMaxHp { get; private set; } = 0;
-    public BigNumber accountHp { get; private set; } = 0;
-    public float buildingHp { get; private set; } = 0;
-    //ũȮ
-    public float accountCriticalChance { get; private set; } = 0;
-    public float buildingCriticalChance { get; private set; } = 0;
 
 
     private void Awake()
@@ -54,34 +25,6 @@ public class UnitStats : CharacterStats
     private void Start()
     {
 
-    }
-    public void AddStats(UpgradeType type, float amount)
-    {
-        switch (type)
-        {
-            case UpgradeType.AttackPoint:
-                accountDamage += (int)amount;
-                break;
-            case UpgradeType.HealthPoint:
-                accountHp += (int)amount;
-                RecalculateHpWithIncrease();
-                break;
-            case UpgradeType.DefensePoint:
-                accountArmor += (int)amount;
-                RecalculateArmor();
-                break;
-            case UpgradeType.CriticalPossibility:
-                accountCriticalChance += (int)amount;
-                break;
-            case UpgradeType.CriticalDamages:
-                accountCriticalDamage += (int)amount;
-                break;
-        }
-    }
-
-    private void RecalculateArmor()
-    {
-        armor = (baseArmor + accountArmor) * (1 + buildingArmor);
     }
 
     private void RecalculateHpWithIncrease()
@@ -119,18 +62,16 @@ public class UnitStats : CharacterStats
     public void SetData(SoldierTable.Data data, UnitTypes type)
     {
         moveSpeed = data.MoveSpeed;
-        baseDamage = data.Attack;
+       
         attackSpeed = data.AttackSpeed;
         this.type = type;
 
-        baseMaxHp = data.HP;
+      
         currentGrade = data.Grade;
 
         coolDown = 1;
-        baseArmor = data.Defence;
         range = data.Range;
         maxHp = UnitCombatPowerCalculator.statsDictionary[type].soldierMaxHp;
-        RecalculateArmor();
 
         RecalculateHpWithRatio();
     }

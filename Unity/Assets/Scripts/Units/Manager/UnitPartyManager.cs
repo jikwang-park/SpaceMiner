@@ -72,6 +72,7 @@ public class UnitPartyManager : MonoBehaviour
     {
         if (party.ContainsKey(type))
         {
+            UnitCombatPowerCalculator.Init(type);
             party[type].SetData(data);
             UnitCombatPowerCalculator.CalculateTotalCombatPower();
         }
@@ -89,11 +90,8 @@ public class UnitPartyManager : MonoBehaviour
     }
 
     public void AddStats(UnitUpgradeTable.UpgradeType type, float amount)
-    {
-        foreach (var unit in party)
-        {
-            unit.Value.unitStats.AddStats(type, amount);
-        }
+    {    
+        UnitCombatPowerCalculator.ChangeStats(type);
         UnitCombatPowerCalculator.CalculateTotalCombatPower();
     }
 
@@ -245,8 +243,8 @@ public class UnitPartyManager : MonoBehaviour
             var weaponSocket = unit.transform.Find("Bip001").Find("Bip001 Prop1");
             Instantiate(weapons[currentType][(int)currentSoilderData.Grade - 1], weaponSocket);
             party.Add(currentType, unit);
-            unit.SetData(currentSoilderData);
             UnitCombatPowerCalculator.Init(currentType);
+            unit.SetData(currentSoilderData);
         }
         OnUnitCreated?.Invoke();
         OnUnitUpdated?.Invoke();

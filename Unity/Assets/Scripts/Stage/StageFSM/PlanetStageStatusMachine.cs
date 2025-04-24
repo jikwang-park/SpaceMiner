@@ -43,7 +43,6 @@ public class PlanetStageStatusMachine : StageStatusMachine
         this.stageMachineData = (PlanetStageStatusMachineData)stageMachineData;
     }
 
-
     public override void Start()
     {
         SetStageText();
@@ -111,6 +110,7 @@ public class PlanetStageStatusMachine : StageStatusMachine
 
     protected void NextWave()
     {
+        stageManager.UnitPartyManager.ResetStatus();
         stageManager.StageUiManager.IngameUIManager.SetWaveText(CurrentWave);
 
         status = Status.Play;

@@ -45,6 +45,9 @@ public class DataTableIds
 
     public const string guideQuestTable = "GuideQuestTable";
 
+    public const string attendanceTable = "AttendanceTable";
+    public const string attendanceRewardTable = "AttendanceRewardTable";
+
     public const string robotTable = "RobotTable";
     public const string robotMergeTable = "RobotMergeTable";
 

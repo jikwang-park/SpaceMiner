@@ -152,6 +152,15 @@ public static class DataTableManager
         var damageDungeonRewardTable = new DamageDungeonRewardTable();
         damageDungeonRewardTable.Load(DataTableIds.damageDungeonRewardTable);
         tables.Add(DataTableIds.damageDungeonRewardTable, damageDungeonRewardTable);
+
+
+        var attendanceTable = new AttendanceTable();
+        attendanceTable.Load(DataTableIds.attendanceTable);
+        tables.Add(DataTableIds.attendanceTable, attendanceTable);
+
+        var attendanceRewardTable = new AttendanceRewardTable();
+        attendanceRewardTable.Load(DataTableIds.attendanceRewardTable);
+        tables.Add(DataTableIds.attendanceRewardTable, attendanceRewardTable);
     }
 
 
@@ -249,4 +258,10 @@ public static class DataTableManager
 
     public static DamageDungeonRewardTable DamageDungeonRewardTable
         => GetTable<DamageDungeonRewardTable>(DataTableIds.damageDungeonRewardTable);
+
+    public static AttendanceTable AttendanceTable
+        => GetTable<AttendanceTable>(DataTableIds.attendanceTable);
+
+    public static AttendanceRewardTable AttendanceRewardTable
+        => GetTable<AttendanceRewardTable>(DataTableIds.attendanceRewardTable);
 }

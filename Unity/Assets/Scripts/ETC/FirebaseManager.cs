@@ -48,7 +48,7 @@ public class FirebaseManager : Singleton<FirebaseManager>
             }
         };
     }
-    public async void SetGame()
+    public async Task SetGame()
     {
         await SignInAnonymously();
         await LoadFromFirebase();
@@ -115,8 +115,11 @@ public class FirebaseManager : Singleton<FirebaseManager>
     }
     public void SetQuitTime()
     {
-        SaveLoadManager.Data.quitTime = GetFirebaseServerTime().ToLocalTime();
-        SaveLoadManager.SaveGame();
+        if(SaveLoadManager.Data is not null)
+        {
+            SaveLoadManager.Data.quitTime = GetFirebaseServerTime().ToLocalTime();
+            SaveLoadManager.SaveGame();
+        }
     }
     public DateTime GetFirebaseServerTime()
     {

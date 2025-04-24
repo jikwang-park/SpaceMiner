@@ -1,4 +1,5 @@
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -12,65 +13,50 @@ public static class SaveLoadManager
     public static int SaveDataVersion { get; private set; } = 3;
     public static SaveDataVC Data { get; private set; }
 
-    public static string fileName = "SaveData.json";
     public static event Action onSaveRequested;
-    private static string SaveDirectory
-    {
-        get
-        {
-            return $"{Application.persistentDataPath}/Save";
-        }
-    }
     private static JsonSerializerSettings settings = new JsonSerializerSettings
     {
         Formatting = Formatting.Indented,
-        TypeNameHandling = TypeNameHandling.All,
     };
-    static SaveLoadManager()
-    {
-        if (!LoadGame())
-        {
-            SetDefaultData();
-            SaveGame();
-        }
-    }
     public static void SaveGame()
     {
-        if (!Directory.Exists(SaveDirectory))
-        {
-            Directory.CreateDirectory(SaveDirectory);
-        }
-
         onSaveRequested?.Invoke();
-
-        string json = JsonConvert.SerializeObject(Data, settings);
-        string filePath = Path.Combine(SaveDirectory, fileName);
-        File.WriteAllText(filePath, json);
-        Debug.Log("Game saved to: " + filePath);
     }
-    public static bool LoadGame()
+    public static void LoadGame(string json)
     {
-        string filePath = Path.Combine(SaveDirectory, fileName);
-        if (!File.Exists(filePath))
-        {
-            return false;
-        }
-        string json = File.ReadAllText(filePath);
         try
         {
-            var saveData = JsonConvert.DeserializeObject<SaveData>(json, settings);
+            var jObj = JObject.Parse(json);
+
+            int version = jObj.Value<int>("Version");
+            SaveData saveData;
+            switch (version)
+            {
+                case 1:
+                    saveData = JsonConvert.DeserializeObject<SaveDataV1>(json);
+                    break;
+                case 2:
+                    saveData = JsonConvert.DeserializeObject<SaveDataV2>(json);
+                    break;
+                case 3:
+                    saveData = JsonConvert.DeserializeObject<SaveDataV3>(json);
+                    break;
+                default:
+                    Debug.LogWarning($"Unknown SaveData version {version}, creating fresh default.");
+                    SetDefaultData();
+                    return;
+            }
             while (saveData.Version < SaveDataVersion)
             {
                 saveData = saveData.VersionUp();
             }
             Data = saveData as SaveDataVC;
         }
-        catch
+        catch(Exception e)
         {
+            Debug.LogError(e.Message);
             SetDefaultData();
         }
-
-        return true;
     }
     public static void SetDefaultData()
     {

@@ -39,14 +39,14 @@ public class UnitUiManager : MonoBehaviour
             switch (type)
             {
                 case UnitTypes.Tanker:
-                    stats.onHpChanged += (amount) => { tankerSlider.value = amount; };
+                    stats.OnHpChanged += (amount) => { tankerSlider.value = amount; };
                     break;
                 case UnitTypes.Dealer:
-                    stats.onHpChanged += (amount) => { dealerSlider.value = amount; };
+                    stats.OnHpChanged += (amount) => { dealerSlider.value = amount; };
 
                     break;
                 case UnitTypes.Healer:
-                    stats.onHpChanged += (amount) => { healerSlider.value = amount; };
+                    stats.OnHpChanged += (amount) => { healerSlider.value = amount; };
 
                     break;
             }

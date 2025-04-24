@@ -25,20 +25,32 @@ public class IdleRewardManager : MonoBehaviour
     {
         stageSaveData = SaveLoadManager.Data.stageSaveData;
     }
+    private void Start()
+    {
+        CalculateIdleReward();
+    }
     private void OnApplicationFocus(bool focus)
     {
         if(focus)
         {
-            DateTime quitTime = SaveLoadManager.Data.quitTime;
-            DateTime currentTime = TimeManager.Instance.GetEstimatedServerTime();
-            int idleMinute = (int)(currentTime - quitTime).TotalMinutes;
-
-            if(idleMinute > MaxMinute)
-            {
-                idleMinute = MaxMinute;
-            }
-            GetIdleReward(idleMinute);
+            CalculateIdleReward();
         }
+    }
+    private void CalculateIdleReward()
+    {
+        DateTime quitTime = SaveLoadManager.Data.quitTime;
+        DateTime currentTime = TimeManager.Instance.GetEstimatedServerTime();
+        int idleMinute = (int)(currentTime - quitTime).TotalMinutes;
+        if(idleMinute <= 0)
+        {
+            return;
+        }
+
+        if (idleMinute > MaxMinute)
+        {
+            idleMinute = MaxMinute;
+        }
+        GetIdleReward(idleMinute);
     }
     private void GetIdleReward(int idleTime)
     {
@@ -80,9 +92,9 @@ public class IdleRewardManager : MonoBehaviour
                 ItemManager.AddItem(rewardItem.Key, rewardItem.Value);
                 Debug.Log($"Get Idle Reward - {rewardItem.Key} : {rewardItem.Value}");
             }
-            TimeManager.Instance.SetQuitTime();
             DisplayRewardUI(processedIdleRewards);
         }
+        FirebaseManager.Instance.SetQuitTime();
     }
 
     private void DisplayRewardUI(List<KeyValuePair<int, BigNumber>> rewards)

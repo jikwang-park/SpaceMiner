@@ -60,9 +60,9 @@ public class UnitSkillUpgradeBoard : MonoBehaviour
     {
         upgradeButton.onClick.AddListener(() => OnClickUpgradeButton());
     }
-    public void ShowFirstOpened(int id, UnitTypes type)
+    public void ShowFirstOpened(int id, UnitTypes type, Grade grade)
     {
-        SetInfo(id, type);
+        SetBoardText(id, type, grade);
     }
 
     public void SetImage(UnitTypes type)
@@ -74,12 +74,7 @@ public class UnitSkillUpgradeBoard : MonoBehaviour
 
     }
 
-    public void SetInfo(int id, UnitTypes type)
-    {
-        currentId = id;
-        currentType = type;
-        SetBoardText(id, type);
-    }
+    
 
     public void SetLimit(Grade grade, UnitTypes type, int id)
     {
@@ -89,10 +84,11 @@ public class UnitSkillUpgradeBoard : MonoBehaviour
 
     }
 
-    public void SetBoardText(int id, UnitTypes type)
+    public void SetBoardText(int id, UnitTypes type,Grade grade)
     {
         currentId = id;
         currentType = type;
+        currentGrade = grade;
         SetImage(currentType);
 
 
@@ -180,7 +176,7 @@ public class UnitSkillUpgradeBoard : MonoBehaviour
     {
         ItemManager.ConsumeItem(needItemId, needItemCount);
         currentId = nextId;
-        SetBoardText(currentId, currentType);
+        SetBoardText(currentId, currentType,currentGrade);
         stageManager.UnitPartyManager.UpgradeSkillStats(currentId, currentType);
         SaveLoadManager.Data.unitSkillUpgradeData.skillUpgradeId[currentType][currentGrade] = currentId;
         SaveLoadManager.SaveGame();

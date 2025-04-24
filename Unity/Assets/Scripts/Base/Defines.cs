@@ -13,7 +13,7 @@ public class DataTableIds
         //"StringTableEn",
         //"StringTableJp",
     };
-    
+
     public const string corpsTable = "CorpsTable";
     public const string stageTable = "StageTable";
     public const string waveTable = "WaveTable";
@@ -107,4 +107,11 @@ public enum SlotType
 {
     Equip,
     Inventory,
+}
+
+public enum UnitTypes
+{
+    Tanker = 1,
+    Dealer,
+    Healer,
 }

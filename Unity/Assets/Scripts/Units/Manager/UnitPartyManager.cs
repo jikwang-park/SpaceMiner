@@ -7,6 +7,7 @@ using System.Linq;
 using UnityEngine;
 using UnityEngine.AddressableAssets;
 using UnityEngine.UI;
+using static UnitUpgradeTable;
 
 public class UnitPartyManager : MonoBehaviour
 {
@@ -19,7 +20,7 @@ public class UnitPartyManager : MonoBehaviour
     [SerializeField]
     private List<Vector3> unitSpawnPos;
 
-    private Dictionary<UnitTypes, Unit> party = new Dictionary<UnitTypes, Unit>();
+    public Dictionary<UnitTypes, Unit> PartyUnits { get; private set; } = new Dictionary<UnitTypes, Unit>();
 
     public event System.Action OnUnitCreated;
     public event System.Action OnUnitUpdated;
@@ -29,31 +30,31 @@ public class UnitPartyManager : MonoBehaviour
     [SerializeField]
     public UnitSkillButtonManager buttonManager;
 
-    private Vector3 unitOffset = Vector3.left* 1f;
+    private Vector3 unitOffset = Vector3.left * 1f;
 
-    public int UnitCount => party.Count;
+    public int UnitCount => PartyUnits.Count;
 
     public void ResetSkillCoolTime()
     {
-        foreach (var unit in party.Values)
+        foreach (var unit in PartyUnits.Values)
         {
-            unit.lastSkillUsedTime = -unit.unitSkill.coolTime;
+            unit.lastSkillTime = float.MinValue;
         }
     }
 
     public void ResetUnitHealth()
     {
-        foreach (var unit in party.Values)
+        foreach (var unit in PartyUnits.Values)
         {
             unit.unitStats.Hp = unit.unitStats.maxHp;
         }
     }
 
-    public void ResetBehaviorTree()
+    public void ResetStatus()
     {
-        foreach (var unit in party.Values)
+        foreach (var unit in PartyUnits.Values)
         {
-            unit.behaviorTree.Reset();
+            unit.ResetStatus();
         }
     }
     public void UnitSpawn()
@@ -69,9 +70,10 @@ public class UnitPartyManager : MonoBehaviour
 
     public void SetUnitData(SoldierTable.Data data, UnitTypes type)
     {
-        if (party.ContainsKey(type))
+        if (PartyUnits.ContainsKey(type))
         {
-            party[type].SetData(data, type);
+            UnitCombatPowerCalculator.Init(type);
+            PartyUnits[type].SetData(data);
             UnitCombatPowerCalculator.CalculateTotalCombatPower();
         }
     }
@@ -79,57 +81,52 @@ public class UnitPartyManager : MonoBehaviour
     private void OnUnitDie(DestructedDestroyEvent sender)
     {
         var unit = sender.GetComponent<Unit>();
-        party.Remove(unit.UnitTypes);
+        PartyUnits.Remove(unit.UnitTypes);
         unit.gameObject.SetActive(false);
-        if (party.Count == 0)
+        if (PartyUnits.Count == 0)
         {
             OnUnitAllDead?.Invoke();
         }
     }
 
     public void AddStats(UnitUpgradeTable.UpgradeType type, float amount)
-    {
-        foreach (var unit in party)
-        {
-            unit.Value.unitStats.AddStats(type, amount);
-        }
+    {    
+        UnitCombatPowerCalculator.ChangeStats(type);
         UnitCombatPowerCalculator.CalculateTotalCombatPower();
     }
 
     public void UpgradeSkillStats(int id, UnitTypes type)
     {
-        if (!party.ContainsKey(type))
+        if (!PartyUnits.ContainsKey(type))
             return;
 
-        var unit = party[type];
+        var unit = PartyUnits[type];
 
 
-        unit.unitSkill.UpgradeUnitSkillStats(id);
+        unit.Skill.UpgradeUnitSkillStats(id);
     }
 
     public void AddBuildingStats(BuildingTable.BuildingType type, float amount)
     {
-        foreach (var unit in party)
-        {
-            unit.Value.unitStats.AddBuildingStats(type, amount);
-        }
+        int index = (int)type;
+        UnitCombatPowerCalculator.ChangeStats((UpgradeType)index);
         UnitCombatPowerCalculator.CalculateTotalCombatPower();
     }
 
     public void UnitDespawn()
     {
-        foreach (var unit in party)
+        foreach (var unit in PartyUnits)
         {
             Destroy(unit.Value.gameObject);
         }
-        party.Clear();
+        PartyUnits.Clear();
     }
 
 
 
     public Transform GetFirstLineUnitTransform()
     {
-        if (party.Count == 0)
+        if (PartyUnits.Count == 0)
         {
             Debug.LogError("Unit is Empty");
             return null;
@@ -138,28 +135,28 @@ public class UnitPartyManager : MonoBehaviour
         Transform frontMostZPos = null;
         float maxZ = float.MinValue;
 
-        foreach ( var unit in party.Values)
+        foreach (var unit in PartyUnits.Values)
         {
             if (unit == null)
                 continue;
 
             float currentUnitZpos = unit.transform.position.z;
-            if(currentUnitZpos > maxZ)
+            if (currentUnitZpos > maxZ)
             {
                 maxZ = currentUnitZpos;
                 frontMostZPos = unit.transform;
             }
         }
 
-       return frontMostZPos;
+        return frontMostZPos;
     }
 
-  
-    public Transform GetUnit(UnitTypes type) 
+
+    public Transform GetUnit(UnitTypes type)
     {
-        if (party.ContainsKey(type))
+        if (PartyUnits.ContainsKey(type))
         {
-            return party[type].transform;
+            return PartyUnits[type].transform;
         }
         return null;
     }
@@ -167,19 +164,21 @@ public class UnitPartyManager : MonoBehaviour
     public Unit GetCurrentTargetType(string targetString)
     {
         int target = int.Parse(targetString);
-        if (party.ContainsKey((UnitTypes)target))
+        if (PartyUnits.ContainsKey((UnitTypes)target))
         {
-            return party[(UnitTypes)target];
+            return PartyUnits[(UnitTypes)target];
         }
         return null;
     }
+
+   
 
     // 250403 HKY ���� ���� Ÿ���� ������ ���� ���� ������ ��ȯ���ִ� �޼ҵ� �߰�
     public bool IsUnitExistFront(UnitTypes myType)
     {
         for (int i = (int)myType - 1; i >= (int)UnitTypes.Tanker; --i)
         {
-            if (party.ContainsKey((UnitTypes)i))
+            if (PartyUnits.ContainsKey((UnitTypes)i))
             {
                 return true;
             }
@@ -191,7 +190,7 @@ public class UnitPartyManager : MonoBehaviour
     {
         for (int i = (int)myType + 1; i <= (int)UnitTypes.Healer; ++i)
         {
-            if (party.ContainsKey((UnitTypes)i))
+            if (PartyUnits.ContainsKey((UnitTypes)i))
             {
                 return true;
             }
@@ -204,9 +203,9 @@ public class UnitPartyManager : MonoBehaviour
     {
         for (int i = (int)myType - 1; i >= (int)UnitTypes.Tanker; --i)
         {
-            if (party.ContainsKey((UnitTypes)i))
+            if (PartyUnits.ContainsKey((UnitTypes)i))
             {
-                return party[(UnitTypes)i];
+                return PartyUnits[(UnitTypes)i];
             }
         }
         return null;
@@ -216,9 +215,9 @@ public class UnitPartyManager : MonoBehaviour
     {
         for (int i = (int)myType + 1; i <= (int)UnitTypes.Healer; ++i)
         {
-            if (party.ContainsKey((UnitTypes)i))
+            if (PartyUnits.ContainsKey((UnitTypes)i))
             {
-                return party[(UnitTypes)i];
+                return PartyUnits[(UnitTypes)i];
             }
         }
         return null;
@@ -243,37 +242,27 @@ public class UnitPartyManager : MonoBehaviour
             var currentSoilderData = DataTableManager.SoldierTable.GetData(currentSoilderId);
             var weaponSocket = unit.transform.Find("Bip001").Find("Bip001 Prop1");
             Instantiate(weapons[currentType][(int)currentSoilderData.Grade - 1], weaponSocket);
-            party.Add(currentType, unit);
-            unit.SetData(currentSoilderData, currentType);
-            GetCurrentStats(unit);
-            GetCurrentBulidngStats(unit);
+            PartyUnits.Add(currentType, unit);
+            UnitCombatPowerCalculator.Init(currentType);
+            unit.SetData(currentSoilderData);
         }
         OnUnitCreated?.Invoke();
         OnUnitUpdated?.Invoke();
     }
 
-    public void GetCurrentStats(Unit unit)
+  
+
+    
+
+    public bool NeedHealUnit()
     {
-        var unitStats = SaveLoadManager.Data.unitStatUpgradeData.upgradeLevels;
-
-        for (int j = (int)UnitUpgradeTable.UpgradeType.AttackPoint; j <= (int)UnitUpgradeTable.UpgradeType.CriticalDamages; j++)
+        foreach (var unit in PartyUnits)
         {
-            var currentUpgradeType = (UnitUpgradeTable.UpgradeType)j;
-            var currentTypelevel = unitStats[currentUpgradeType];
-            unit.GetSaveStats(currentUpgradeType, currentTypelevel);
+            if (unit.Value.unitStats.HPRate < Variables.healerSkillHPRatio)
+            {
+                return true;
+            }
         }
+        return false;
     }
-
-    public void GetCurrentBulidngStats(Unit unit)
-    {
-        var buildingStats = SaveLoadManager.Data.buildingData.buildingLevels;
-
-        for (int k = (int)BuildingTable.BuildingType.AttackPoint; k <= (int)BuildingTable.BuildingType.IdleTime; ++k)
-        {
-            var currentBuildingType = (BuildingTable.BuildingType)k;
-            var currentBuildingLevel = buildingStats[currentBuildingType];
-            unit.GetSaveBuildingStats(currentBuildingType, currentBuildingLevel);
-        }
-    }
-
 }

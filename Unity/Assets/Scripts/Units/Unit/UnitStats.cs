@@ -10,48 +10,11 @@ public class UnitStats : CharacterStats
     private StageManager stageManager;
 
     private Grade currentGrade;
-    private float criticalPercent;
 
-    public override BigNumber Hp
-    {
-        get => base.Hp;
-        set
-        {
-            base.Hp = value;
-            onHpChanged?.Invoke(base.Hp.DivideToFloat(maxHp));
-        }
-    }
 
-    public event System.Action<float> onHpChanged;
 
-    public BigNumber FinialDamage
-    {
-        get
-        {
-            damage = ((baseDamage + accountDamage) * (1f + buildingAttackDamage));
-            return ((baseDamage + accountDamage) * (1f + buildingAttackDamage));
-        }
-    }
+    public BigNumber barrier=0;
 
-    private BigNumber defalutValue = 1;
-    //�⺻
-    public BigNumber baseDamage { get; private set; } = 0;
-    public BigNumber accountDamage { get; private set; } = 0;
-    public float buildingAttackDamage { get; private set; } = 0;
-    //ũ��
-    public float accountCriticalDamage { get; private set; } = 0;
-    public float buildingCriticalDamage { get; private set; } = 0;
-    //���?
-    public BigNumber baseArmor { get; private set; } = 0;
-    public BigNumber accountArmor { get; private set; } = 0;
-    public float buildingArmor { get; private set; } = 0;
-    //ü��
-    public BigNumber baseMaxHp { get; private set; } = 0;
-    public BigNumber accountHp { get; private set; } = 0;
-    public float buildingHp { get; private set; } = 0;
-    //ũȮ
-    public float accountCriticalChance { get; private set; } = 0;
-    public float buildingCriticalChance { get; private set; } = 0;
 
 
     private void Awake()
@@ -59,43 +22,32 @@ public class UnitStats : CharacterStats
         stageManager = GameObject.FindGameObjectWithTag("GameController").GetComponent<StageManager>();
     }
 
-    private void Start()
+    protected override void OnEnable()
     {
-
-    }
-    public void AddStats(UpgradeType type, float amount)
-    {
-        switch (type)
-        {
-            case UpgradeType.AttackPoint:
-                accountDamage += (int)amount;
-                break;
-            case UpgradeType.HealthPoint:
-                accountHp += (int)amount;
-                RecalculateHpWithIncrease();
-                break;
-            case UpgradeType.DefensePoint:
-                accountArmor += (int)amount;
-                RecalculateArmor();
-                break;
-            case UpgradeType.CriticalPossibility:
-                accountCriticalChance += (int)amount;
-                break;
-            case UpgradeType.CriticalDamages:
-                accountCriticalDamage += (int)amount;
-                break;
-        }
+        base.OnEnable(); 
+        UnitCombatPowerCalculator.onCombatPowerChanged += RefreshStats;
     }
 
-    private void RecalculateArmor()
+    protected override void OnDisable()
     {
-        armor = (baseArmor + accountArmor) * (1 + buildingArmor);
+        base.OnDisable();
+        UnitCombatPowerCalculator.onCombatPowerChanged -= RefreshStats;
     }
+    private void RefreshStats()
+    {
+        float prevRate = maxHp != 0 ? Hp.DivideToFloat(maxHp) : 1f;
 
+        armor = UnitCombatPowerCalculator.statsDictionary[type].soldierDefense;
+        maxHp = UnitCombatPowerCalculator.statsDictionary[type].soldierMaxHp;
+
+        Hp = maxHp * prevRate;
+    }
     private void RecalculateHpWithIncrease()
     {
+        
         BigNumber previousMaxHp = maxHp;
-        maxHp = (baseMaxHp + accountHp) * (1f + buildingHp);
+
+        maxHp = UnitCombatPowerCalculator.statsDictionary[type].soldierMaxHp;
 
         BigNumber increase = maxHp - previousMaxHp;
 
@@ -106,6 +58,7 @@ public class UnitStats : CharacterStats
 
     private void RecalculateHpWithRatio()
     {
+        
         float ratio = 0f;
         if (maxHp > 0)
         {
@@ -115,149 +68,26 @@ public class UnitStats : CharacterStats
         {
             ratio = 1f;
         }
-        maxHp = (baseMaxHp + accountHp) * (1f + buildingHp);
+        maxHp = UnitCombatPowerCalculator.statsDictionary[type].soldierMaxHp;
         Hp = maxHp * ratio;
     }
 
-    public void AddBuildingStats(BuildingTable.BuildingType type, float amount)
-    {
-
-
-        switch (type)
-        {
-            case BuildingTable.BuildingType.IdleTime:
-                break;
-            case BuildingTable.BuildingType.AttackPoint:
-                buildingAttackDamage += amount;
-                break;
-            case BuildingTable.BuildingType.HealthPoint:
-                buildingHp += amount;
-                RecalculateHpWithIncrease();
-                break;
-            case BuildingTable.BuildingType.DefensePoint:
-                buildingArmor += amount;
-                RecalculateArmor();
-                break;
-            case BuildingTable.BuildingType.CriticalPossibility:
-                buildingCriticalChance += amount;
-                break;
-            case BuildingTable.BuildingType.CriticalDamages:
-                buildingCriticalDamage += amount;
-                break;
-            case BuildingTable.BuildingType.Gold:
-                break;
-            case BuildingTable.BuildingType.Mining:
-                break;
-        }
-    }
-    public static float GetCriticalStats(UnitTypes unitType, UpgradeType upgradeType)
-    {
-        int unitId = InventoryManager.GetInventoryData(unitType).equipElementID;
-        var unitData = DataTableManager.SoldierTable.GetData(unitId);
-
-        switch (upgradeType)
-        {
-            case UpgradeType.CriticalPossibility:
-                float possibility = 0f;
-                int accountCriticalPossibilityUpgradeLevel = SaveLoadManager.Data.unitStatUpgradeData.upgradeLevels[upgradeType];
-                var accountCriticalPossibilityStat = GetAccountCriticalStat(upgradeType, accountCriticalPossibilityUpgradeLevel);
-
-                var buildingCriticalPossibilityDatas = DataTableManager.BuildingTable.GetDatas(BuildingTable.BuildingType.CriticalPossibility);
-                var buildingCriticalPossibilityLevel = SaveLoadManager.Data.buildingData.buildingLevels[BuildingTable.BuildingType.CriticalPossibility];
-                var buildingCriticalPossibilityStats = buildingCriticalPossibilityDatas[buildingCriticalPossibilityLevel].Value;
-
-                possibility = accountCriticalPossibilityStat + buildingCriticalPossibilityStats;
-                return possibility;
-            case UpgradeType.CriticalDamages:
-                float criticalMultiplier = 0f;
-                int accountCriticalMulUpgradeLevel = SaveLoadManager.Data.unitStatUpgradeData.upgradeLevels[upgradeType];
-                var accountCriticalMulStat = GetAccountCriticalStat(upgradeType, accountCriticalMulUpgradeLevel);
-
-                var buildingCriticalMulDatas = DataTableManager.BuildingTable.GetDatas(BuildingTable.BuildingType.CriticalDamages);
-                var buildingCriticalMulLevel = SaveLoadManager.Data.buildingData.buildingLevels[BuildingTable.BuildingType.CriticalDamages];
-                var buildingCriticalMulStats = buildingCriticalMulDatas[buildingCriticalMulLevel].Value;
-
-                criticalMultiplier = 2f + accountCriticalMulStat + buildingCriticalMulStats;
-                return criticalMultiplier;
-        }
-        return 0;
-    }
-    private static float GetAccountCriticalStat(UpgradeType upgradeType, int level)
-    {
-        float stat = 0;
-        var data = DataTableManager.UnitUpgradeTable.GetData(upgradeType);
-        for (int i = 1; i <= level; i++)
-        {
-            stat += data.Value * i;
-        }
-        return stat;
-    }
-    public static BigNumber GetStats(UnitTypes unitType, UpgradeType upgradeType)
-    {
-        int unitId = InventoryManager.GetInventoryData(unitType).equipElementID;
-        var unitData = DataTableManager.SoldierTable.GetData(unitId);
-
-        switch (upgradeType)
-        {
-            case UpgradeType.AttackPoint:
-                BigNumber attackStat = 0;
-                int accountAttackUpgradeLevel = SaveLoadManager.Data.unitStatUpgradeData.upgradeLevels[upgradeType];
-                var accountAttackStat = GetAccountStat(upgradeType, accountAttackUpgradeLevel);
-
-                var buildingAttackDatas = DataTableManager.BuildingTable.GetDatas(BuildingTable.BuildingType.AttackPoint);
-                var buildingAttackLevel = SaveLoadManager.Data.buildingData.buildingLevels[BuildingTable.BuildingType.AttackPoint];
-                var buildingAttackStats = buildingAttackDatas[buildingAttackLevel].Value;
-
-                attackStat = (unitData.Attack + accountAttackStat) * (1 + buildingAttackStats);
-                return attackStat;
-            case UpgradeType.HealthPoint:
-                BigNumber hpStat = 0;
-                int accountHpUpgradeLevel = SaveLoadManager.Data.unitStatUpgradeData.upgradeLevels[upgradeType];
-                var accountHpStat = GetAccountStat(upgradeType, accountHpUpgradeLevel);
-
-                var buildingHpDatas = DataTableManager.BuildingTable.GetDatas(BuildingTable.BuildingType.HealthPoint);
-                var buildingHpLevel = SaveLoadManager.Data.buildingData.buildingLevels[BuildingTable.BuildingType.HealthPoint];
-                var buildingHpStats = buildingHpDatas[buildingHpLevel].Value;
-
-                hpStat = (unitData.HP + accountHpStat) * (1 + buildingHpStats);
-                return hpStat;
-            case UpgradeType.DefensePoint:
-                BigNumber armorStat = 0;
-                int accountArmorUpgradeLevel = SaveLoadManager.Data.unitStatUpgradeData.upgradeLevels[upgradeType];
-                var accountArmorStat = GetAccountStat(upgradeType, accountArmorUpgradeLevel);
-
-                var buildingArmorDatas = DataTableManager.BuildingTable.GetDatas(BuildingTable.BuildingType.DefensePoint);
-                var buildingArmorLevel = SaveLoadManager.Data.buildingData.buildingLevels[BuildingTable.BuildingType.DefensePoint];
-                var buildingArmorStats = buildingArmorDatas[buildingArmorLevel].Value;
-
-                armorStat = (unitData.Defence + accountArmorStat) * (1 + buildingArmorStats);
-                return armorStat;
-        }
-        return 0;
-    }
-    private static BigNumber GetAccountStat(UpgradeType upgradeType, int level)
-    {
-        BigNumber stat = 0;
-        var data = DataTableManager.UnitUpgradeTable.GetData(upgradeType);
-        for (int i = 1; i <= level; i++)
-        {
-            stat += data.Value * i;
-        }
-        return stat;
-    }
+    
+    public UnitTypes type;
     public void SetData(SoldierTable.Data data, UnitTypes type)
     {
         moveSpeed = data.MoveSpeed;
-        baseDamage = data.Attack;
+       
         attackSpeed = data.AttackSpeed;
+        this.type = type;
 
-        baseMaxHp = data.HP;
+      
         currentGrade = data.Grade;
 
         coolDown = 1;
-        baseArmor = data.Defence;
         range = data.Range;
-        RecalculateArmor();
+        armor = UnitCombatPowerCalculator.statsDictionary[type].soldierDefense;
+        maxHp = UnitCombatPowerCalculator.statsDictionary[type].soldierMaxHp;
 
         RecalculateHpWithRatio();
     }
@@ -288,26 +118,20 @@ public class UnitStats : CharacterStats
     {
         Attack attack = new Attack();
 
+        var stats = UnitCombatPowerCalculator.statsDictionary[type];
+        var criticalChance = stats.criticalPossibility;
 
-        criticalChance = accountCriticalChance + buildingCriticalChance;
-
-        attack.isCritical = criticalChance >= Random.Range(0, 100);
+        attack.isCritical = criticalChance >= Random.Range(0f, 1f);
         if (attack.isCritical)
         {
-            criticalPercent = (2 + (accountCriticalDamage + buildingCriticalDamage));
+           var multiplier =  stats.criticalMultiplier;
 
-            attack.damage = FinialDamage * criticalPercent;
+            attack.damage = stats.soldierAttack * multiplier;
         }
         else
         {
-            attack.damage = FinialDamage;
+            attack.damage = stats.soldierAttack;
         }
-
-
-        //if (defenderStats != null)
-        //{
-        //    attack.damage -= defenderStats.armor;
-        //}
 
         return attack;
     }
@@ -339,20 +163,22 @@ public class UnitStats : CharacterStats
 
         var data = SaveLoadManager.Data.unitSkillUpgradeData.skillUpgradeId;
 
+        var stats = UnitCombatPowerCalculator.statsDictionary[type];
+
         var id = data[UnitTypes.Dealer][currentGrade];
 
         var currentData = DataTableManager.DealerSkillTable.GetData(id);
 
-        BigNumber finialSkillDamage = FinialDamage * currentData.DamageRatio;
+        BigNumber finialSkillDamage = stats.soldierAttack * currentData.DamageRatio;
 
 
-        criticalChance = accountCriticalChance + buildingCriticalChance;
+       var  criticalChance = stats.criticalPossibility;
 
         attack.isCritical = criticalChance >= Random.Range(0, 100);
         if (attack.isCritical)
         {
-            criticalPercent = (2 + (accountCriticalDamage + buildingCriticalDamage));
-            attack.damage = finialSkillDamage * criticalPercent;
+            var multiplier = stats.criticalMultiplier;
+            attack.damage = finialSkillDamage * multiplier;
         }
         else
         {
@@ -367,6 +193,20 @@ public class UnitStats : CharacterStats
 
         return attack;
     }
+    public void UseShiled(float duration, BigNumber amount)
+    {
+        barrier += amount;
+        StartCoroutine(RemoveBarrierAfterDuration(duration, amount));
+    }
 
 
+    private IEnumerator RemoveBarrierAfterDuration(float duration, BigNumber amount)
+    {
+        yield return new WaitForSeconds(duration);
+        barrier -= amount;
+
+        if(barrier < 0)
+            barrier = 0;
+    }
+   
 }

@@ -1,16 +1,11 @@
-using System.Collections;
-using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
-using UnityEngine.UI;
 
 public class DungeonEndWindow : MonoBehaviour
 {
     private const int ClearID = 142;
     private const int FailID = 143;
 
-    [SerializeField]
-    private LocalizationText nextText;
     [SerializeField]
     private LocalizationText messageText;
     [SerializeField]
@@ -38,25 +33,6 @@ public class DungeonEndWindow : MonoBehaviour
         stageManager = GameObject.FindGameObjectWithTag("GameController").GetComponent<StageManager>();
     }
 
-    public void Open(BigNumber damage)
-    {
-        gameObject.SetActive(true);
-        messageText.SetString(60011, damage.ToString());
-
-        var rewardData = DataTableManager.DamageDungeonRewardTable.GetData(damage);
-        if (rewardData is not null)
-        {
-            rewardRow.SetActive(true);
-
-            var itemData = DataTableManager.ItemTable.GetData(rewardData.RewardItemID);
-            icon.SetSprite(itemData.SpriteID);
-            countText.text = rewardData.RewardItemCount.ToString();
-        }
-
-        twoButtons.SetActive(true);
-        threeButtons.SetActive(false);
-    }
-
     public void Open(bool isCleared, bool firstCleared)
     {
         this.isCleared = isCleared;
@@ -71,8 +47,7 @@ public class DungeonEndWindow : MonoBehaviour
             var curStage = DataTableManager.DungeonTable.GetData(Variables.currentDungeonType, Variables.currentDungeonStage);
             bool keyCondition = ItemManager.GetItemAmount(curStage.NeedKeyItemID) >= curStage.NeedKeyItemCount;
 
-            var itemData = DataTableManager.ItemTable.GetData(curStage.RewardItemID);
-            icon.SetSprite(itemData.SpriteID);
+            icon.SetItemSprite(curStage.RewardItemID);
             if (firstCleared)
             {
                 countText.text = curStage.FirstClearRewardItemCount.ToString();

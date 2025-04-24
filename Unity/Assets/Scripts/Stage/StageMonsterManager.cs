@@ -39,9 +39,11 @@ public class StageMonsterManager : MonoBehaviour
 
     private int[] laneMonsterCounts;
     public int LaneCount => laneCount;
-    private int monsterCount;
+    public int MonsterCount { get; private set; }
     private ObjectPoolManager objectPoolManager;
     private StageManager stageManager;
+
+    private float weight;
 
     private void Awake()
     {
@@ -51,7 +53,7 @@ public class StageMonsterManager : MonoBehaviour
         monsterLines = new Dictionary<int, Dictionary<int, MonsterController>>();
         monsterControllers = new HashSet<MonsterController>();
         laneMonsterCounts = new int[laneCount];
-        monsterCount = 0;
+        MonsterCount = 0;
     }
 
     public void AddMonster(int lane, MonsterController monster)
@@ -59,7 +61,7 @@ public class StageMonsterManager : MonoBehaviour
         var destructedEvent = monster.GetComponent<DestructedDestroyEvent>();
         if (destructedEvent != null)
         {
-            ++monsterCount;
+            ++MonsterCount;
             monsterControllers.Add(monster);
             if (!monsterLines.ContainsKey(currentLastLine))
             {
@@ -97,7 +99,7 @@ public class StageMonsterManager : MonoBehaviour
         {
             laneMonsterCounts[i] = 0;
         }
-        monsterCount = 0;
+        MonsterCount = 0;
 
         while (monsterControllers.Count > 0)
         {
@@ -121,7 +123,7 @@ public class StageMonsterManager : MonoBehaviour
         var monsterController = sender.GetComponent<MonsterController>();
         if (monsterController.MonsterData.RewardTableID != 0)
         {
-            ItemManager.AddItem(monsterController.RewardData.RewardItemID1, monsterController.RewardData.RewardItemCount1);
+            ItemManager.AddItem(monsterController.RewardData.RewardItemID1, new BigNumber(monsterController.RewardData.RewardItemCount1) * weight);
 
             int reward2index = monsterController.RewardData.RandomReward2();
             if (reward2index > -1)
@@ -132,9 +134,9 @@ public class StageMonsterManager : MonoBehaviour
 
         OnMonsterDie?.Invoke();
 
-        --monsterCount;
+        --MonsterCount;
 
-        if (monsterCount == 0)
+        if (MonsterCount == 0)
         {
             OnMonsterCleared?.Invoke();
         }
@@ -343,6 +345,10 @@ public class StageMonsterManager : MonoBehaviour
         var monsterController = monster.GetComponent<MonsterController>();
         monsterController.enabled = true;
         monsterController.SetMonsterId(monsterId);
+        if (weight != 1f)
+        {
+            monsterController.SetWeight(weight);
+        }
         monster.transform.parent = null;
         monster.transform.position = frontPosition + SpawnPoints[index];
         monster.transform.rotation = Quaternion.LookRotation(Vector3.back, Vector3.up);
@@ -350,5 +356,10 @@ public class StageMonsterManager : MonoBehaviour
         stageManager.StageUiManager.HPBarManager.SetHPBar(monster.transform);
 
         AddMonster(lane, monsterController);
+    }
+
+    public void SetWeight(float weight)
+    {
+        this.weight = weight;
     }
 }

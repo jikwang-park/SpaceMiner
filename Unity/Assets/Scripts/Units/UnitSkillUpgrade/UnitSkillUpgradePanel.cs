@@ -34,7 +34,7 @@ public class UnitSkillUpgradePanel : MonoBehaviour
    
     private void Start()
     {
-        board.ShowFirstOpened(id, currentType);
+        board.ShowFirstOpened(id, currentType,currentGrade);
 
     }
     public void SetGradeButtons()
@@ -58,7 +58,7 @@ public class UnitSkillUpgradePanel : MonoBehaviour
         currentType = type;
         SetGrade(Grade.Normal);
         SetGradeButtons();
-        board.SetInfo(GetCurrentId(), currentType);
+        board.SetBoardText(GetCurrentId(), currentType,currentGrade);
     }
     private void OnEnable()
     {
@@ -71,6 +71,6 @@ public class UnitSkillUpgradePanel : MonoBehaviour
             return;
 
         currentGrade = grade;
-        board.SetInfo(GetCurrentId(), currentType);
+        board.SetBoardText(GetCurrentId(), currentType, currentGrade);
     }
 }

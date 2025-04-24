@@ -12,11 +12,6 @@ public class IdleRewardPopup : MonoBehaviour
     private string prefabFormat = "Prefabs/UI/IdleReward";
     public void DisplayIdleReward(List<KeyValuePair<int, BigNumber>> rewards)
     {
-        foreach (Transform child in contentParent)
-        {
-            Destroy(child.gameObject);
-        }
-
         foreach(var reward in rewards)
         {
             Addressables.InstantiateAsync(prefabFormat, contentParent).Completed += (AsyncOperationHandle<GameObject> handle) =>
@@ -31,6 +26,13 @@ public class IdleRewardPopup : MonoBehaviour
                     }
                 }
             };
+        }
+    }
+    private void OnDisable()
+    {
+        foreach (Transform child in contentParent)
+        {
+            Destroy(child.gameObject);
         }
     }
 }

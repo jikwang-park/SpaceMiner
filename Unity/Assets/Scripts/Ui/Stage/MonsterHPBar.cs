@@ -60,7 +60,7 @@ public class MonsterHPBar : MonoBehaviour, IObjectPoolGameObject
 
         OnTargetHPChanged(1f);
         target.GetComponent<DestructedDestroyEvent>().OnDestroyed += OnTargetRelease;
-        target.GetComponent<MonsterStats>().onHPChanged += OnTargetHPChanged;
+        target.GetComponent<MonsterStats>().OnHpChanged += OnTargetHPChanged;
         gameObject.SetActive(false);
     }
 }

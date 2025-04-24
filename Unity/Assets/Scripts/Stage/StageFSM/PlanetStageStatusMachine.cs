@@ -43,7 +43,6 @@ public class PlanetStageStatusMachine : StageStatusMachine
         this.stageMachineData = (PlanetStageStatusMachineData)stageMachineData;
     }
 
-
     public override void Start()
     {
         SetStageText();
@@ -86,7 +85,7 @@ public class PlanetStageStatusMachine : StageStatusMachine
         {
             stageManager.ReleaseBackground();
             stageManager.StageUiManager.IngameUIManager.CloseStageEndWindow();
-
+            stageManager.StageMonsterManager.SetWeight(1f);
             SetEvent(false);
             ClearStage();
         }
@@ -111,6 +110,7 @@ public class PlanetStageStatusMachine : StageStatusMachine
 
     protected void NextWave()
     {
+        stageManager.UnitPartyManager.ResetStatus();
         stageManager.StageUiManager.IngameUIManager.SetWaveText(CurrentWave);
 
         status = Status.Play;
@@ -190,7 +190,7 @@ public class PlanetStageStatusMachine : StageStatusMachine
 
     protected void NextStage()
     {
-        
+
         if (status == Status.ClearPlanet
             || status == Status.Defeat
             || status == Status.Timeout
@@ -202,7 +202,7 @@ public class PlanetStageStatusMachine : StageStatusMachine
         {
             stageManager.UnitPartyManager.ResetUnitHealth();
             stageManager.UnitPartyManager.ResetSkillCoolTime();
-            stageManager.UnitPartyManager.ResetBehaviorTree();
+            stageManager.UnitPartyManager.ResetStatus();
 
             SetStageText();
             SetStageData();
@@ -306,6 +306,7 @@ public class PlanetStageStatusMachine : StageStatusMachine
     {
         stageEndTime = Time.time + 60f;
         stageData = DataTableManager.StageTable.GetStageData(CurrentPlanet, CurrentStage);
+        stageManager.StageMonsterManager.SetWeight(stageData.Weight);
         waveData = DataTableManager.WaveTable.GetData(stageData.WaveID);
     }
 
@@ -314,7 +315,7 @@ public class PlanetStageStatusMachine : StageStatusMachine
         stageManager.UnitPartyManager.UnitSpawn();
         stageManager.UnitPartyManager.ResetUnitHealth();
         stageManager.UnitPartyManager.ResetSkillCoolTime();
-        stageManager.UnitPartyManager.ResetBehaviorTree();
+        stageManager.UnitPartyManager.ResetStatus();
     }
 
     protected void SetEvent(bool set)

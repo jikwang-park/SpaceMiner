@@ -200,6 +200,13 @@ public class MonsterController : MonoBehaviour, IObjectPoolGameObject
         }
     }
 
+    public void SetWeight(float weight)
+    {
+        Stats.maxHp *= weight;
+        Stats.Hp = Stats.maxHp;
+        Stats.damage *= weight;
+    }
+
     public void AttackTarget()
     {
         status = Status.Attacking;

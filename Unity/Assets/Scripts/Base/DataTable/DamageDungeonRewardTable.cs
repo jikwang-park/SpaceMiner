@@ -67,6 +67,24 @@ public class DamageDungeonRewardTable : DataTable
         return null;
     }
 
+    public SortedList<int, BigNumber> GetRewards(BigNumber damage)
+    {
+        SortedList<int, BigNumber> rewards = new SortedList<int, BigNumber>();
+        for (int i = 0; i < dataList.Count; ++i)
+        {
+            if (dataList[i].NeedDamage > damage)
+            {
+                continue;
+            }
+            if (!rewards.ContainsKey(dataList[i].RewardItemID))
+            {
+                rewards.Add(dataList[i].RewardItemID, 0);
+            }
+            rewards[dataList[i].RewardItemID] += dataList[i].RewardItemCount;
+        }
+        return rewards;
+    }
+
     public override void Set(List<string[]> data)
     {
         var tableData = new Dictionary<int, ITableData>();

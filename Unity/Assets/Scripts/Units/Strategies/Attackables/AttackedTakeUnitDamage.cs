@@ -24,50 +24,33 @@ public class AttackedTakeUnitDamage : MonoBehaviour,IAttackable
 
     public void OnAttack(GameObject attacker, Attack attack)
     {
-        if (unit.HasBarrier)
+        //TODO: 유닛 스탯으로 배리어 이동 후 작업 필요
+        if(unit.unitStats.barrier > attack.damage)
         {
-            unit.barrier -= attack.damage;
-            if (unit.barrier < 0 )
-            {
-                unit.unitStats.Hp += unit.barrier;
-                unit.barrier = 0;
-            }
-            
+            unit.unitStats.barrier -= attack.damage;
+            return;
         }
         else
         {
-            unit.unitStats.Hp -= attack.damage;
-        }
+            var trueDamage = attack.damage - unit.unitStats.barrier;
+            unit.unitStats.Hp -= trueDamage;
+            unit.unitStats.barrier = 0;
 
-        if (unit.unitStats.Hp < 0 && gameObjectEnabled)
-        {
-            unit.unitStats.Hp = new BigNumber("0");
-            IDestructable[] destructables = GetComponents<IDestructable>();
-            if (destructables.Length > 0)
+            if (unit.unitStats.Hp < 0 && gameObjectEnabled)
             {
-                gameObjectEnabled = false;
-            }
-            foreach (var destructable in destructables)
-            {
-                destructable.OnDestruction(attacker);
-            }
-        }
-
-
-        stats.Hp -= attack.damage;
-
-        if (stats.Hp < 0 && gameObjectEnabled)
-        {
-            stats.Hp = new BigNumber("0");
-            IDestructable[] destructables = GetComponents<IDestructable>();
-            if (destructables.Length > 0)
-            {
-                gameObjectEnabled = false;
-            }
-            foreach (var destructable in destructables)
-            {
-                destructable.OnDestruction(attacker);
+                unit.unitStats.Hp = new BigNumber("0");
+                IDestructable[] destructables = GetComponents<IDestructable>();
+                if (destructables.Length > 0)
+                {
+                    gameObjectEnabled = false;
+                }
+                foreach (var destructable in destructables)
+                {
+                    destructable.OnDestruction(attacker);
+                }
             }
         }
+
+       
     }
 }

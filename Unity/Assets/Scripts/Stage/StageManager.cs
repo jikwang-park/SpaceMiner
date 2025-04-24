@@ -39,16 +39,6 @@ public class StageManager : MonoBehaviour
         StageUiManager.OnExitButtonClicked += StageUiManager_OnExitButtonClicked;
         ItemManager.OnItemAmountChanged += OnItemAmountChanged;
         InitStatusMachines();
-
-        //switch (ingameStatus)
-        //{
-        //    case IngameStatus.Planet:
-        //        stageStatusMachine = new PlanetStageStatusMachine(this);
-        //        break;
-        //    case IngameStatus.Dungeon:
-        //        stageStatusMachine = new DungeonStageStatusMachine(this);
-        //        break;
-        //}
     }
 
     private void OnItemAmountChanged(int itemID, BigNumber Amount)
@@ -93,6 +83,9 @@ public class StageManager : MonoBehaviour
         stageStatusMachine = new MineStageStatusMachine(this);
         stageStatusMachine.SetStageData(statusMachineDatas[IngameStatus.Mine]);
         machines.Add(IngameStatus.Mine, stageStatusMachine);
+
+        stageStatusMachine = new LevelDesignStageStatusMachine(this);
+        machines.Add(IngameStatus.LevelDesign, stageStatusMachine);
     }
 
     public void SetStatus(IngameStatus status)
@@ -150,5 +143,14 @@ public class StageManager : MonoBehaviour
     public void StageEnd()
     {
         OnStageEnd?.Invoke();
+    }
+
+    public StageStatusMachine GetStage(IngameStatus status)
+    {
+        if (machines.ContainsKey(status))
+        {
+            return machines[status];
+        }
+        return null;
     }
 }

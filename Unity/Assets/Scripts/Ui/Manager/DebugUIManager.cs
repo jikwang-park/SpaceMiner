@@ -46,11 +46,13 @@ public class DebugUIManager : MonoBehaviour
     private System.Action confirmAction;
 
     private TimeManager timeManager;
+    private StageManager stageManager;
 
     private void Start()
     {
         coRowSet = StartCoroutine(CoRowActive());
         timeManager = GameObject.FindGameObjectWithTag("GameController").GetComponent<TimeManager>();
+        stageManager = timeManager.GetComponent<StageManager>();
         if (timeManager.isDebug)
         {
             timeModeText.text = "로컬\n시간";
@@ -233,5 +235,17 @@ public class DebugUIManager : MonoBehaviour
                 return;
         }
         confirmWindow.SetActive(true);
+    }
+
+    public void ChangeLevelDesignStage()
+    {
+        if(stageManager.IngameStatus != IngameStatus.LevelDesign)
+        {
+            stageManager.SetStatus(IngameStatus.LevelDesign);
+        }
+        else
+        {
+            stageManager.SetStatus(IngameStatus.Planet);
+        }
     }
 }

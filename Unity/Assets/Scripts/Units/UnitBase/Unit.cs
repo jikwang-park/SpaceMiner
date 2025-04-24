@@ -249,7 +249,7 @@ public class Unit : MonoBehaviour, IObjectPoolGameObject
                     SetStatus(Status.SkillUsing);
                     return;
                 }
-                if (Time.time > lastAttackTime + 100f / unitStats.attackSpeed)
+                if (Time.time > lastAttackTime + unitStats.coolDown)
                 {
                     SetStatus(Status.Attacking);
                 }

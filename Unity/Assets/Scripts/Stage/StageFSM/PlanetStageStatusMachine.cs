@@ -23,8 +23,6 @@ public class PlanetStageStatusMachine : StageStatusMachine
 
     protected WaveTable.Data waveData;
 
-    private StageSaveData stageLoadData = SaveLoadManager.Data.stageSaveData;
-
     private PlanetStageStatusMachineData stageMachineData;
 
     private Status status;
@@ -46,7 +44,7 @@ public class PlanetStageStatusMachine : StageStatusMachine
     public override void Start()
     {
         SetStageText();
-        SetStageData();
+        LoadStageData();
         InstantiateBackground();
         UnitSpawn();
 
@@ -98,11 +96,11 @@ public class PlanetStageStatusMachine : StageStatusMachine
         if (remainingTime <= 0f)
         {
             remainingTime = 0f;
-            OnStageEnd(Status.Timeout);
+            StageEnd(Status.Timeout);
         }
         if (stageManager.UnitPartyManager.UnitCount == 0)
         {
-            OnStageEnd(Status.Defeat);
+            StageEnd(Status.Defeat);
         }
 
         stageManager.StageUiManager.IngameUIManager.SetTimer(remainingTime);
@@ -119,7 +117,7 @@ public class PlanetStageStatusMachine : StageStatusMachine
 
         if (corpsData is null)
         {
-            OnStageEnd(Status.Defeat);
+            StageEnd(Status.Defeat);
         }
 
         Transform unit = stageManager.UnitPartyManager.GetFirstLineUnitTransform();
@@ -150,13 +148,13 @@ public class PlanetStageStatusMachine : StageStatusMachine
     {
         if (CurrentWave > waveData.CorpsIDs.Length)
         {
-            OnStageEnd(Status.Clear);
+            StageEnd(Status.Clear);
             return;
         }
         NextWave();
     }
 
-    protected void OnStageEnd(Status status)
+    protected void StageEnd(Status status)
     {
         this.status = status;
         onStageEnd?.Invoke();
@@ -205,13 +203,14 @@ public class PlanetStageStatusMachine : StageStatusMachine
             stageManager.UnitPartyManager.ResetStatus();
 
             SetStageText();
-            SetStageData();
+            LoadStageData();
             NextWave();
         }
     }
 
     protected void FailStageSet()
     {
+        StageSaveData stageLoadData = SaveLoadManager.Data.stageSaveData;
         if (stageLoadData.currentStage > 1)
         {
             --stageLoadData.currentStage;
@@ -238,6 +237,7 @@ public class PlanetStageStatusMachine : StageStatusMachine
 
     protected bool CheckClearedStageChange()
     {
+        StageSaveData stageLoadData = SaveLoadManager.Data.stageSaveData;
         bool renewed = (CurrentPlanet == stageLoadData.clearedPlanet && CurrentStage > stageLoadData.clearedStage)
             || (CurrentPlanet > stageLoadData.clearedPlanet);
 
@@ -276,6 +276,7 @@ public class PlanetStageStatusMachine : StageStatusMachine
 
     protected void CheckPlanetClear()
     {
+        StageSaveData stageLoadData = SaveLoadManager.Data.stageSaveData;
         if (DataTableManager.StageTable.IsExistStage(CurrentPlanet, CurrentStage + 1))
         {
             ++stageLoadData.currentStage;
@@ -295,6 +296,7 @@ public class PlanetStageStatusMachine : StageStatusMachine
 
     protected void SetStageText()
     {
+        StageSaveData stageLoadData = SaveLoadManager.Data.stageSaveData;
         CurrentPlanet = stageLoadData.currentPlanet;
         CurrentStage = stageLoadData.currentStage;
         CurrentWave = 1;
@@ -302,9 +304,9 @@ public class PlanetStageStatusMachine : StageStatusMachine
         stageManager.StageUiManager.IngameUIManager.SetWaveText(CurrentWave);
     }
 
-    protected void SetStageData()
+    protected void LoadStageData()
     {
-        stageEndTime = Time.time + 60f;
+        stageEndTime = Time.time + Variables.PlanetTime;
         stageData = DataTableManager.StageTable.GetStageData(CurrentPlanet, CurrentStage);
         stageManager.StageMonsterManager.SetWeight(stageData.Weight);
         waveData = DataTableManager.WaveTable.GetData(stageData.WaveID);
@@ -341,6 +343,7 @@ public class PlanetStageStatusMachine : StageStatusMachine
     {
         stageManager.StageMonsterManager.StopMonster();
         stageManager.UnitPartyManager.UnitDespawn();
+        stageManager.StageUiManager.HPBarManager.ClearHPBar();
         stageManager.StageMonsterManager.ClearMonster();
     }
 
@@ -352,7 +355,7 @@ public class PlanetStageStatusMachine : StageStatusMachine
 
         ClearStage();
         SetStageText();
-        SetStageData();
+        LoadStageData();
 
         stageManager.ReleaseBackground();
         InstantiateBackground();

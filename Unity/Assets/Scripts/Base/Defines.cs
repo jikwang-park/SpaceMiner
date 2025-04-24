@@ -92,6 +92,7 @@ public enum IngameStatus
     Planet,
     Dungeon,
     Mine,
+    LevelDesign,
 }
 
 public enum TargetPriority

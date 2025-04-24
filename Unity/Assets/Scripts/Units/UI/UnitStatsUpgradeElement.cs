@@ -175,15 +175,18 @@ public class UnitStatsUpgradeElement : MonoBehaviour, IPointerDownHandler, IPoin
 
     private void LevelUp()
     {
-
         if (level > 1000)
-        {
             return;
-        }
 
         int addLevel = statsMultiplier;
 
         level += addLevel;
+
+        if (level > 1000)
+        {
+            level = 1000;
+        }
+
         currentValue += level * value;
         currentGold += GetCurrentGold(level);
 

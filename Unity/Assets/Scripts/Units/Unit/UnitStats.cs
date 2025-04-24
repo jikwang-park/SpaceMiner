@@ -105,7 +105,7 @@ public class UnitStats : CharacterStats
         var stats = UnitCombatPowerCalculator.statsDictionary[type];
         var criticalChance = stats.criticalPossibility;
 
-        attack.isCritical = criticalChance >= Random.Range(0, 100);
+        attack.isCritical = criticalChance >= Random.Range(0f, 1f);
         if (attack.isCritical)
         {
            var multiplier =  stats.criticalMultiplier;

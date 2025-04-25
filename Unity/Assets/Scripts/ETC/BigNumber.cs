@@ -125,6 +125,10 @@ public struct BigNumber : ISerializationCallbackReceiver
     {
         return new BigNumber(value);
     }
+    public static implicit operator BigNumber(float value)
+    {
+        return new BigNumber(value);
+    }
     public static BigNumber operator -(BigNumber a)
     {
         BigNumber result = new BigNumber(new List<int>(a.parts));
@@ -233,12 +237,24 @@ public struct BigNumber : ISerializationCallbackReceiver
         {
             return new BigNumber("0");
         }
+
+        BigNumber result = 0;
         int scale = 10000;
 
-        int intMultiplier = (int)Math.Round(Math.Abs(multiplier) * scale);
+        if(multiplier >= 1f)
+        {
+            BigNumber bigMultiplier = (BigNumber)multiplier * scale;
+            BigNumber temp = a * bigMultiplier;
+            result = temp / scale;
+        }
+        else
+        {
+            int intMultiplier = (int)(multiplier * scale);
+            BigNumber temp = a * intMultiplier;
+            result = temp / scale;
+        }
+        
 
-        BigNumber temp = a * intMultiplier;
-        BigNumber result = temp / scale;
         result.sign = a.sign * (multiplier < 0 ? -1 : 1);
         return result;
     }

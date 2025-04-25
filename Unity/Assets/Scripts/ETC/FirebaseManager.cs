@@ -19,6 +19,9 @@ public class FirebaseManager : Singleton<FirebaseManager>
     public async Task InitializeAsync()
     {
         await Firebase.FirebaseApp.CheckAndFixDependenciesAsync();
+#if UNITY_EDITOR 
+        FirebaseDatabase.DefaultInstance.SetPersistenceEnabled(false); 
+#endif
         auth = FirebaseAuth.DefaultInstance;
         root = FirebaseDatabase.DefaultInstance.RootReference;
 

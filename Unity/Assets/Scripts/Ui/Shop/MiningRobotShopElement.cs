@@ -27,7 +27,7 @@ public class MiningRobotShopElement : MonoBehaviour
     private BigNumber needAmount;
     private int paymentItemAmount;
 
-
+    private bool isInitialized = false;
     public void Initialize(ShopTable.Data data)
     {
         needItemId = data.NeedItemID;
@@ -48,26 +48,22 @@ public class MiningRobotShopElement : MonoBehaviour
         var robotGrade = robotData.Grade;
         robotGradeImage.sprite = gradeNameSprites[(int)robotGrade - 1];
 
+        isInitialized = true;
         UpdateUI();
     }
     private void OnEnable()
     {
         ItemManager.OnItemAmountChanged += DoItemAmountChanged;
+        if(isInitialized)
+        {
+            UpdateUI();
+        }
     }
     private void OnDisable()
     {
         ItemManager.OnItemAmountChanged -= DoItemAmountChanged;
 
     }
-#if UNITY_EDITOR
-    private void Update()
-    {
-        if (Input.GetKeyDown(KeyCode.F1))
-        {
-            ItemManager.AddItem(needItemId, 100);
-        }
-    }
-#endif
     private void UpdateUI()
     {
         decribeText.SetStringArguments(needItemString.ToString(), needAmount.ToString());

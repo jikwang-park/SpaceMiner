@@ -222,6 +222,7 @@ public class Unit : MonoBehaviour, IObjectPoolGameObject
                 AnimationControl?.Play(AnimationControl.AnimationClipID.Attack);
                 break;
             case Status.SkillUsing:
+                lastSkillTime = Time.time;
                 AnimationControl?.Play(AnimationControl.AnimationClipID.Skill);
                 break;
             case Status.Dead:

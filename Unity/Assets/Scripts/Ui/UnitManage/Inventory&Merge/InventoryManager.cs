@@ -81,25 +81,25 @@ public static class InventoryManager
         }
         onChangedInventory?.Invoke();
     }
-    public static void Merge(int soldierId, int count = 1)
+    public static bool Merge(int soldierId, int count = 1)
     {
         SoldierTable.Data data = DataTableManager.SoldierTable.GetData(soldierId);
         SoldierInventoryData inventoryData = GetInventoryData(data.UnitType);
         if(inventoryData == null) 
         {
-            return;
+            return false;
         }
 
         int index = inventoryData.elements.FindIndex((e) => e.soldierId == data.ID);
         if(index < 0 || index >= inventoryData.elements.Count - 1)
         {
-            return;
+            return false;
         }
 
         SoldierInventoryElementData currentElement = inventoryData.elements[index];
         if (currentElement.count < requireMergeCount * count)
         {
-            return;
+            return false;
         }
 
         currentElement.count -= requireMergeCount * count;
@@ -115,6 +115,7 @@ public static class InventoryManager
             nextElement.count += count;
         }
         onChangedInventory?.Invoke();
+        return true;
     }
     public static void Equip(UnitTypes type, int soldierId)
     {

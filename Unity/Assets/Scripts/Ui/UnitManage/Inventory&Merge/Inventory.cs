@@ -150,21 +150,16 @@ public class Inventory : MonoBehaviour
     }
     public void BatchMerge()
     {
-        bool isMerged = true;
-
-        while (isMerged)
+        foreach (var element in inventoryElements
+                 .OrderBy(e => e.Grade)
+                 .ThenBy(e => e.Level)
+                 .ToList())
         {
-            isMerged = false;
-
-            foreach (var element in inventoryElements.ToList())
+            while (InventoryManager.Merge(element.soldierId))
             {
-                while (!element.IsLocked && element.Count >= InventoryManager.requireMergeCount)
-                {
-                    InventoryManager.Merge(element.soldierId);
-                    isMerged = true;
-                }
             }
         }
+
         OnElementSelected(selectedElement);
         SaveLoadManager.SaveGame();
     }

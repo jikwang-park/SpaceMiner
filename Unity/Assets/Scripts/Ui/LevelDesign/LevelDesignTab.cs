@@ -11,12 +11,6 @@ public class LevelDesignTab : MonoBehaviour
 
     private StageManager stageManager;
 
-    [SerializeField]
-    private Toggle[] toggles;
-
-    [SerializeField]
-    private GameObject[] panels;
-
     private UnitTypes selectedUnit;
 
     [SerializeField]
@@ -40,40 +34,6 @@ public class LevelDesignTab : MonoBehaviour
         machine = (LevelDesignStageStatusMachine)stageManager.GetStage(IngameStatus.LevelDesign);
         exitButtonTime = float.MinValue;
         RefreshText();
-    }
-
-    public void ChangeTab(int index)
-    {
-        bool toggleOn = toggles[index].isOn;
-        switch (index)
-        {
-            case 0:
-                TogglePanel(toggleOn, 0);
-                selectedUnit = UnitTypes.Tanker;
-                break;
-            case 1:
-                TogglePanel(toggleOn, 0);
-                selectedUnit = UnitTypes.Dealer;
-                break;
-            case 2:
-                TogglePanel(toggleOn, 0);
-                selectedUnit = UnitTypes.Healer;
-                break;
-            case 3:
-                TogglePanel(toggleOn, 1);
-
-
-                break;
-        }
-
-    }
-
-    private void TogglePanel(bool isOn, int panelIndex)
-    {
-        if (panels[panelIndex].activeInHierarchy != isOn)
-        {
-            panels[panelIndex].SetActive(isOn);
-        }
     }
 
     public void SetStage()

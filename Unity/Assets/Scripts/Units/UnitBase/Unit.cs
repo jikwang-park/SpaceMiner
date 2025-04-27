@@ -140,7 +140,8 @@ public class Unit : MonoBehaviour, IObjectPoolGameObject
     {
         unitStats.SetData(data, data.UnitType);
 
-        AnimationControl.SetSpeed(AnimationControl.AnimationClipID.Attack, data.AttackSpeed / 100f);
+        AnimationControl.SetSpeed(AnimationControl.AnimationClipID.Attack, 1f/UnitCombatPowerCalculator.statsDictionary[data.UnitType].coolDown);
+
 
         UnitTypes = data.UnitType;
         Grade = data.Grade;

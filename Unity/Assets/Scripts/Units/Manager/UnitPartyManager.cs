@@ -90,7 +90,7 @@ public class UnitPartyManager : MonoBehaviour
     }
 
     public void AddStats(UnitUpgradeTable.UpgradeType type, float amount)
-    {    
+    {
         UnitCombatPowerCalculator.ChangeStats(type);
         UnitCombatPowerCalculator.CalculateTotalCombatPower();
     }
@@ -171,7 +171,7 @@ public class UnitPartyManager : MonoBehaviour
         return null;
     }
 
-   
+
 
     // 250403 HKY ���� ���� Ÿ���� ������ ���� ���� ������ ��ȯ���ִ� �޼ҵ� �߰�
     public bool IsUnitExistFront(UnitTypes myType)
@@ -229,7 +229,7 @@ public class UnitPartyManager : MonoBehaviour
     {
         Vector3 position = startPos;
 
-
+        var stageManager = GameObject.FindGameObjectWithTag("GameController").GetComponent<StageManager>();
 
         for (int i = (int)UnitTypes.Tanker; i <= (int)UnitTypes.Healer; ++i)
         {
@@ -243,16 +243,19 @@ public class UnitPartyManager : MonoBehaviour
             var weaponSocket = unit.transform.Find("Bip001").Find("Bip001 Prop1");
             Instantiate(weapons[currentType][(int)currentSoilderData.Grade - 1], weaponSocket);
             PartyUnits.Add(currentType, unit);
-            UnitCombatPowerCalculator.Init(currentType);
+            if (stageManager.IngameStatus != IngameStatus.LevelDesign)
+            {
+                UnitCombatPowerCalculator.Init(currentType);
+            }
             unit.SetData(currentSoilderData);
         }
         OnUnitCreated?.Invoke();
         OnUnitUpdated?.Invoke();
     }
 
-  
 
-    
+
+
 
     public bool NeedHealUnit()
     {

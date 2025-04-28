@@ -30,8 +30,10 @@ public class FirebaseManager : Singleton<FirebaseManager>
             if (long.TryParse(e.Snapshot.Value?.ToString(), out var ms))
                 serverTimeOffsetMs = ms;
         };
+
         auth.StateChanged += AuthStateChanged;
         AuthStateChanged(this, null);
+        SaveLoadManager.onSaveRequested += SaveToFirebaseAsync;
 
         await LoadFromFirebaseAsync();
     }
@@ -48,7 +50,6 @@ public class FirebaseManager : Singleton<FirebaseManager>
             }
             else
             {
-                // 기존 세션 복원
                 Debug.Log($"Restored session for user: {user.UserId}");
             }
         }

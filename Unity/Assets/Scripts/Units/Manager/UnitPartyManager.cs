@@ -173,7 +173,6 @@ public class UnitPartyManager : MonoBehaviour
 
    
 
-    // 250403 HKY ���� ���� Ÿ���� ������ ���� ���� ������ ��ȯ���ִ� �޼ҵ� �߰�
     public bool IsUnitExistFront(UnitTypes myType)
     {
         for (int i = (int)myType - 1; i >= (int)UnitTypes.Tanker; --i)
@@ -198,7 +197,6 @@ public class UnitPartyManager : MonoBehaviour
         return false;
     }
 
-    // 250403 HKY ���� ���� Ÿ���� ������ �� ���� ������ ��ȯ���ִ� �޼ҵ� �߰�
     public Unit GetFrontUnit(UnitTypes myType)
     {
         for (int i = (int)myType - 1; i >= (int)UnitTypes.Tanker; --i)

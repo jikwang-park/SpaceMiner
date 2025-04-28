@@ -416,10 +416,7 @@ public class StageMonsterManager : MonoBehaviour
         var monsterController = monster.GetComponent<MonsterController>();
         monsterController.enabled = true;
         monsterController.SetMonsterId(monsterId);
-        if (weight != 1f)
-        {
-            monsterController.SetWeight(weight);
-        }
+        
         monster.transform.parent = null;
         monster.transform.position = frontPosition + SpawnPoints[index];
         monster.transform.rotation = Quaternion.LookRotation(Vector3.back, Vector3.up);
@@ -431,6 +428,10 @@ public class StageMonsterManager : MonoBehaviour
         stat.range = data.attackRange[(int)type];
         stat.coolDown = 100f / data.attackSpeed[(int)type];
         stat.moveSpeed = data.moveSpeed[(int)type];
+        if (weight != 1f)
+        {
+            monsterController.SetWeight(weight);
+        }
 
         stageManager.StageUiManager.HPBarManager.SetHPBar(monster.transform);
 

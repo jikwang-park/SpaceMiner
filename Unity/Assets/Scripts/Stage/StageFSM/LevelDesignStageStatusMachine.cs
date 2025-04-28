@@ -22,6 +22,13 @@ public class LevelDesignStageStatusMachine : StageStatusMachine
         public float[] moveSpeed = new float[3];
     }
 
+    public class SkillData
+    {
+        public float[] coolTime = new float[3];
+        public float[] ratio = new float[3];
+        public float[] etc = new float[3];
+    }
+
     public float stageTime;
     public float weight;
     public int waveLength;
@@ -29,6 +36,7 @@ public class LevelDesignStageStatusMachine : StageStatusMachine
     public float respawnDistance;
     public CorpsTable.Data[] corpsDatas;
     public WaveMonsterData[] waveMonsterDatas;
+    public SkillData skillData;
 
     private int CurrentWave;
     private Status status;
@@ -118,6 +126,34 @@ public class LevelDesignStageStatusMachine : StageStatusMachine
             waveMonsterDatas[i] = new WaveMonsterData();
         }
         SetStageData(1, 1);
+
+        skillData = new SkillData();
+
+        foreach (UnitTypes type in Enum.GetValues(typeof(UnitTypes)))
+        {
+            string name = type.ToString() + Grade.Normal.ToString();
+            int defaultId = DataTableManager.DefaultDataTable.GetID(name);
+            switch (type)
+            {
+                case UnitTypes.Tanker:
+                    var tankerSkillData = DataTableManager.TankerSkillTable.GetData(defaultId);
+                    skillData.coolTime[0] = tankerSkillData.CoolTime;
+                    skillData.ratio[0] = tankerSkillData.ShieldRatio;
+                    skillData.etc[0] = tankerSkillData.Duration;
+                    break;
+                case UnitTypes.Dealer:
+                    var dealerSkillData = DataTableManager.DealerSkillTable.GetData(defaultId);
+                    skillData.coolTime[1] = dealerSkillData.CoolTime;
+                    skillData.ratio[1] = dealerSkillData.DamageRatio;
+                    skillData.etc[1] = dealerSkillData.MonsterMaxTarget;
+                    break;
+                case UnitTypes.Healer:
+                    var healerSkillData = DataTableManager.HealerSkillTable.GetData(defaultId);
+                    skillData.coolTime[2] = healerSkillData.CoolTime;
+                    skillData.ratio[2] = healerSkillData.HealRatio;
+                    break;
+            }
+        }
     }
 
     private void UpdateTimer(float currentTime)
@@ -178,6 +214,7 @@ public class LevelDesignStageStatusMachine : StageStatusMachine
     protected void UnitSpawn()
     {
         stageManager.UnitPartyManager.UnitSpawn();
+        UnitSkillSet();
         stageManager.UnitPartyManager.ResetUnitHealth();
         stageManager.UnitPartyManager.ResetSkillCoolTime();
         stageManager.UnitPartyManager.ResetStatus();
@@ -243,6 +280,18 @@ public class LevelDesignStageStatusMachine : StageStatusMachine
                 waveMonsterDatas[i].attackSpeed[2] = monsterTableData.AttackSpeed;
                 waveMonsterDatas[i].moveSpeed[2] = monsterTableData.MoveSpeed;
             }
+        }
+    }
+
+    private void UnitSkillSet()
+    {
+        foreach (UnitTypes type in Enum.GetValues(typeof(UnitTypes)))
+        {
+            var unitTransform = stageManager.UnitPartyManager.GetUnit(type);
+            var unit = unitTransform.GetComponent<Unit>();
+            unit.Skill.SetCoolTime(skillData.coolTime[(int)type - 1]);
+            unit.Skill.SetRatio(skillData.ratio[(int)type - 1]);
+            unit.Skill.SetEtcValue(skillData.etc[(int)type - 1]);
         }
     }
 }

@@ -166,15 +166,11 @@ public class UnitStats : CharacterStats
     {
         Attack attack = new Attack();
 
-        var data = SaveLoadManager.Data.unitSkillUpgradeData.skillUpgradeId;
-
         var stats = UnitCombatPowerCalculator.statsDictionary[type];
 
-        var id = data[UnitTypes.Dealer][currentGrade];
+        var unit = GetComponent<Unit>();
 
-        var currentData = DataTableManager.DealerSkillTable.GetData(id);
-
-        BigNumber finialSkillDamage = stats.soldierAttack * currentData.DamageRatio;
+        BigNumber finialSkillDamage = stats.soldierAttack * unit.Skill.Ratio;
 
 
         var criticalChance = stats.criticalPossibility;

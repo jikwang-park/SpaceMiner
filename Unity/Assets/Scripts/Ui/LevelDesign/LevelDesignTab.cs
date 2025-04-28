@@ -8,7 +8,7 @@ using UnityEngine.UI;
 
 public class LevelDesignTab : MonoBehaviour
 {
-    public enum WaveType
+    private enum WaveType
     {
         MonsterCount,
         Attack,
@@ -18,11 +18,16 @@ public class LevelDesignTab : MonoBehaviour
         MoveSpeed,
     }
 
+    private enum SkillType
+    {
+        Cooltime,
+        Ratio,
+        etc,
+    }
+
     private LevelDesignStageStatusMachine machine;
 
     private StageManager stageManager;
-
-    private UnitTypes selectedUnit;
 
     [SerializeField]
     private TMP_InputField stageInput;
@@ -39,6 +44,9 @@ public class LevelDesignTab : MonoBehaviour
     private SerializedDictionary<StatType, TMP_InputField[]> statInputs;
 
     [SerializeField]
+    private SerializedDictionary<SkillType, TMP_InputField[]> skillInputs;
+
+    [SerializeField]
     private SerializedDictionary<WaveType, TMP_InputField[]> waveInputs;
 
     private float exitButtonTime;
@@ -52,8 +60,10 @@ public class LevelDesignTab : MonoBehaviour
         RefreshText();
         RefreshUnitInput();
         RefreshMonsterWave();
+        RefreshSkillInput();
         SetUnitInputEvent();
         SetMonsterInputEvent();
+        SetSkillInputEvent();
     }
 
     public void SetStage()
@@ -116,6 +126,9 @@ public class LevelDesignTab : MonoBehaviour
     public void StartStage()
     {
         machine.Start();
+        RefreshUnitInput();
+        RefreshMonsterWave();
+        RefreshSkillInput();
     }
 
     public void StopStage()
@@ -243,39 +256,56 @@ public class LevelDesignTab : MonoBehaviour
         waveInputs[WaveType.MoveSpeed][2].text = waveMonsterData.moveSpeed[2].ToString();
     }
 
+    private void RefreshSkillInput()
+    {
+        var skilldata = machine.skillData;
+
+        skillInputs[SkillType.Cooltime][0].text = skilldata.coolTime[0].ToString();
+        skillInputs[SkillType.Cooltime][1].text = skilldata.coolTime[1].ToString();
+        skillInputs[SkillType.Cooltime][2].text = skilldata.coolTime[2].ToString();
+
+        skillInputs[SkillType.Ratio][0].text = skilldata.ratio[0].ToString();
+        skillInputs[SkillType.Ratio][1].text = skilldata.ratio[1].ToString();
+        skillInputs[SkillType.Ratio][2].text = skilldata.ratio[2].ToString();
+
+        skillInputs[SkillType.etc][0].text = skilldata.etc[0].ToString();
+        skillInputs[SkillType.etc][1].text = skilldata.etc[1].ToString();
+        skillInputs[SkillType.etc][2].text = skilldata.etc[2].ToString();
+    }
+
     private void SetUnitInputEvent()
     {
-        statInputs[StatType.Attack][0].onEndEdit.AddListener((str) => UnitCombatPowerCalculator.SetStat(UnitTypes.Tanker, StatType.Attack, str));
-        statInputs[StatType.Attack][1].onEndEdit.AddListener((str) => UnitCombatPowerCalculator.SetStat(UnitTypes.Dealer, StatType.Attack, str));
-        statInputs[StatType.Attack][2].onEndEdit.AddListener((str) => UnitCombatPowerCalculator.SetStat(UnitTypes.Healer, StatType.Attack, str));
+        statInputs[StatType.Attack][0].onEndEdit.AddListener((str) => SetStat(UnitTypes.Tanker, StatType.Attack, str));
+        statInputs[StatType.Attack][1].onEndEdit.AddListener((str) => SetStat(UnitTypes.Dealer, StatType.Attack, str));
+        statInputs[StatType.Attack][2].onEndEdit.AddListener((str) => SetStat(UnitTypes.Healer, StatType.Attack, str));
 
-        statInputs[StatType.Defence][0].onEndEdit.AddListener((str) => UnitCombatPowerCalculator.SetStat(UnitTypes.Tanker, StatType.Defence, str));
-        statInputs[StatType.Defence][1].onEndEdit.AddListener((str) => UnitCombatPowerCalculator.SetStat(UnitTypes.Dealer, StatType.Defence, str));
-        statInputs[StatType.Defence][2].onEndEdit.AddListener((str) => UnitCombatPowerCalculator.SetStat(UnitTypes.Healer, StatType.Defence, str));
+        statInputs[StatType.Defence][0].onEndEdit.AddListener((str) => SetStat(UnitTypes.Tanker, StatType.Defence, str));
+        statInputs[StatType.Defence][1].onEndEdit.AddListener((str) => SetStat(UnitTypes.Dealer, StatType.Defence, str));
+        statInputs[StatType.Defence][2].onEndEdit.AddListener((str) => SetStat(UnitTypes.Healer, StatType.Defence, str));
 
-        statInputs[StatType.MaxHP][0].onEndEdit.AddListener((str) => UnitCombatPowerCalculator.SetStat(UnitTypes.Tanker, StatType.MaxHP, str));
-        statInputs[StatType.MaxHP][1].onEndEdit.AddListener((str) => UnitCombatPowerCalculator.SetStat(UnitTypes.Dealer, StatType.MaxHP, str));
-        statInputs[StatType.MaxHP][2].onEndEdit.AddListener((str) => UnitCombatPowerCalculator.SetStat(UnitTypes.Healer, StatType.MaxHP, str));
+        statInputs[StatType.MaxHP][0].onEndEdit.AddListener((str) => SetStat(UnitTypes.Tanker, StatType.MaxHP, str));
+        statInputs[StatType.MaxHP][1].onEndEdit.AddListener((str) => SetStat(UnitTypes.Dealer, StatType.MaxHP, str));
+        statInputs[StatType.MaxHP][2].onEndEdit.AddListener((str) => SetStat(UnitTypes.Healer, StatType.MaxHP, str));
 
-        statInputs[StatType.CriticalPossibility][0].onEndEdit.AddListener((str) => UnitCombatPowerCalculator.SetStat(UnitTypes.Tanker, StatType.CriticalPossibility, str));
-        statInputs[StatType.CriticalPossibility][1].onEndEdit.AddListener((str) => UnitCombatPowerCalculator.SetStat(UnitTypes.Dealer, StatType.CriticalPossibility, str));
-        statInputs[StatType.CriticalPossibility][2].onEndEdit.AddListener((str) => UnitCombatPowerCalculator.SetStat(UnitTypes.Healer, StatType.CriticalPossibility, str));
+        statInputs[StatType.CriticalPossibility][0].onEndEdit.AddListener((str) => SetStat(UnitTypes.Tanker, StatType.CriticalPossibility, str));
+        statInputs[StatType.CriticalPossibility][1].onEndEdit.AddListener((str) => SetStat(UnitTypes.Dealer, StatType.CriticalPossibility, str));
+        statInputs[StatType.CriticalPossibility][2].onEndEdit.AddListener((str) => SetStat(UnitTypes.Healer, StatType.CriticalPossibility, str));
 
-        statInputs[StatType.CriticalMultiplier][0].onEndEdit.AddListener((str) => UnitCombatPowerCalculator.SetStat(UnitTypes.Tanker, StatType.CriticalMultiplier, str));
-        statInputs[StatType.CriticalMultiplier][1].onEndEdit.AddListener((str) => UnitCombatPowerCalculator.SetStat(UnitTypes.Dealer, StatType.CriticalMultiplier, str));
-        statInputs[StatType.CriticalMultiplier][2].onEndEdit.AddListener((str) => UnitCombatPowerCalculator.SetStat(UnitTypes.Healer, StatType.CriticalMultiplier, str));
+        statInputs[StatType.CriticalMultiplier][0].onEndEdit.AddListener((str) => SetStat(UnitTypes.Tanker, StatType.CriticalMultiplier, str));
+        statInputs[StatType.CriticalMultiplier][1].onEndEdit.AddListener((str) => SetStat(UnitTypes.Dealer, StatType.CriticalMultiplier, str));
+        statInputs[StatType.CriticalMultiplier][2].onEndEdit.AddListener((str) => SetStat(UnitTypes.Healer, StatType.CriticalMultiplier, str));
 
-        statInputs[StatType.AttackSpeed][0].onEndEdit.AddListener((str) => UnitCombatPowerCalculator.SetStat(UnitTypes.Tanker, StatType.AttackSpeed, str));
-        statInputs[StatType.AttackSpeed][1].onEndEdit.AddListener((str) => UnitCombatPowerCalculator.SetStat(UnitTypes.Dealer, StatType.AttackSpeed, str));
-        statInputs[StatType.AttackSpeed][2].onEndEdit.AddListener((str) => UnitCombatPowerCalculator.SetStat(UnitTypes.Healer, StatType.AttackSpeed, str));
+        statInputs[StatType.AttackSpeed][0].onEndEdit.AddListener((str) => SetStat(UnitTypes.Tanker, StatType.AttackSpeed, str));
+        statInputs[StatType.AttackSpeed][1].onEndEdit.AddListener((str) => SetStat(UnitTypes.Dealer, StatType.AttackSpeed, str));
+        statInputs[StatType.AttackSpeed][2].onEndEdit.AddListener((str) => SetStat(UnitTypes.Healer, StatType.AttackSpeed, str));
 
-        statInputs[StatType.MoveSpeed][0].onEndEdit.AddListener((str) => UnitCombatPowerCalculator.SetStat(UnitTypes.Tanker, StatType.MoveSpeed, str));
-        statInputs[StatType.MoveSpeed][1].onEndEdit.AddListener((str) => UnitCombatPowerCalculator.SetStat(UnitTypes.Dealer, StatType.MoveSpeed, str));
-        statInputs[StatType.MoveSpeed][2].onEndEdit.AddListener((str) => UnitCombatPowerCalculator.SetStat(UnitTypes.Healer, StatType.MoveSpeed, str));
+        statInputs[StatType.MoveSpeed][0].onEndEdit.AddListener((str) => SetStat(UnitTypes.Tanker, StatType.MoveSpeed, str));
+        statInputs[StatType.MoveSpeed][1].onEndEdit.AddListener((str) => SetStat(UnitTypes.Dealer, StatType.MoveSpeed, str));
+        statInputs[StatType.MoveSpeed][2].onEndEdit.AddListener((str) => SetStat(UnitTypes.Healer, StatType.MoveSpeed, str));
 
-        statInputs[StatType.AttackRange][0].onEndEdit.AddListener((str) => UnitCombatPowerCalculator.SetStat(UnitTypes.Tanker, StatType.AttackRange, str));
-        statInputs[StatType.AttackRange][1].onEndEdit.AddListener((str) => UnitCombatPowerCalculator.SetStat(UnitTypes.Dealer, StatType.AttackRange, str));
-        statInputs[StatType.AttackRange][2].onEndEdit.AddListener((str) => UnitCombatPowerCalculator.SetStat(UnitTypes.Healer, StatType.AttackRange, str));
+        statInputs[StatType.AttackRange][0].onEndEdit.AddListener((str) => SetStat(UnitTypes.Tanker, StatType.AttackRange, str));
+        statInputs[StatType.AttackRange][1].onEndEdit.AddListener((str) => SetStat(UnitTypes.Dealer, StatType.AttackRange, str));
+        statInputs[StatType.AttackRange][2].onEndEdit.AddListener((str) => SetStat(UnitTypes.Healer, StatType.AttackRange, str));
     }
 
     private void SetMonsterInputEvent()
@@ -303,7 +333,21 @@ public class LevelDesignTab : MonoBehaviour
         waveInputs[WaveType.MoveSpeed][0].onEndEdit.AddListener((str) => SetMonsterStat(0, WaveType.MoveSpeed, str));
         waveInputs[WaveType.MoveSpeed][1].onEndEdit.AddListener((str) => SetMonsterStat(1, WaveType.MoveSpeed, str));
         waveInputs[WaveType.MoveSpeed][2].onEndEdit.AddListener((str) => SetMonsterStat(2, WaveType.MoveSpeed, str));
+    }
 
+    private void SetSkillInputEvent()
+    {
+        skillInputs[SkillType.Cooltime][0].onEndEdit.AddListener((str) => SetSkillStat(0, SkillType.Cooltime, str));
+        skillInputs[SkillType.Cooltime][1].onEndEdit.AddListener((str) => SetSkillStat(1, SkillType.Cooltime, str));
+        skillInputs[SkillType.Cooltime][2].onEndEdit.AddListener((str) => SetSkillStat(2, SkillType.Cooltime, str));
+
+        skillInputs[SkillType.Ratio][0].onEndEdit.AddListener((str) => SetSkillStat(0, SkillType.Ratio, str));
+        skillInputs[SkillType.Ratio][1].onEndEdit.AddListener((str) => SetSkillStat(1, SkillType.Ratio, str));
+        skillInputs[SkillType.Ratio][2].onEndEdit.AddListener((str) => SetSkillStat(2, SkillType.Ratio, str));
+
+        skillInputs[SkillType.etc][0].onEndEdit.AddListener((str) => SetSkillStat(0, SkillType.etc, str));
+        skillInputs[SkillType.etc][1].onEndEdit.AddListener((str) => SetSkillStat(1, SkillType.etc, str));
+        skillInputs[SkillType.etc][2].onEndEdit.AddListener((str) => SetSkillStat(2, SkillType.etc, str));
     }
 
     private void SetMonsterStat(int index, WaveType waveType, string value)
@@ -340,6 +384,81 @@ public class LevelDesignTab : MonoBehaviour
                 if (float.TryParse(value, out float speed))
                 {
                     machine.waveMonsterDatas[machine.waveTarget].moveSpeed[index] = speed;
+                }
+                break;
+        }
+    }
+
+
+    private void SetStat(UnitTypes unitType, StatType statType, string value)
+    {
+        switch (statType)
+        {
+            case StatType.Attack:
+                BigNumber newAttack = value;
+                UnitCombatPowerCalculator.statsDictionary[unitType].soldierAttack = newAttack;
+                break;
+            case StatType.Defence:
+                BigNumber newDefence = value;
+                UnitCombatPowerCalculator.statsDictionary[unitType].soldierDefense = newDefence;
+                break;
+            case StatType.MaxHP:
+                BigNumber newMaxHP = value;
+                UnitCombatPowerCalculator.statsDictionary[unitType].soldierMaxHp = newMaxHP;
+                break;
+            case StatType.CriticalPossibility:
+                if (float.TryParse(value, out float newPossibility))
+                {
+                    UnitCombatPowerCalculator.statsDictionary[unitType].criticalPossibility = newPossibility;
+                }
+                break;
+            case StatType.CriticalMultiplier:
+                if (float.TryParse(value, out float newCritMul))
+                {
+                    UnitCombatPowerCalculator.statsDictionary[unitType].criticalMultiplier = newCritMul;
+                }
+                break;
+            case StatType.AttackSpeed:
+                if (int.TryParse(value, out int newAttackSpeed))
+                {
+                    UnitCombatPowerCalculator.statsDictionary[unitType].coolDown = 100f / newAttackSpeed;
+                }
+                break;
+            case StatType.MoveSpeed:
+                if (float.TryParse(value, out float newMoveSpeed))
+                {
+                    UnitCombatPowerCalculator.statsDictionary[unitType].moveSpeed = newMoveSpeed;
+                }
+                break;
+            case StatType.AttackRange:
+                if (float.TryParse(value, out float newAttackRange))
+                {
+                    UnitCombatPowerCalculator.statsDictionary[unitType].attackRange = newAttackRange;
+                }
+                break;
+        }
+    }
+
+    private void SetSkillStat(int index, SkillType skillType, string value)
+    {
+        switch (skillType)
+        {
+            case SkillType.Cooltime:
+                if (float.TryParse(value, out float coolTime))
+                {
+                    machine.skillData.coolTime[index] = coolTime;
+                }
+                break;
+            case SkillType.Ratio:
+                if(float.TryParse(value, out float ratio))
+                {
+                    machine.skillData.ratio[index] = ratio;
+                }
+                break;
+            case SkillType.etc:
+                if(float.TryParse(value, out float etc))
+                {
+                    machine.skillData.etc[index] = etc;
                 }
                 break;
         }

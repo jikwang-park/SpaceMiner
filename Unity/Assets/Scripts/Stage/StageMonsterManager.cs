@@ -10,6 +10,13 @@ public class StageMonsterManager : MonoBehaviour
     [SerializeField]
     private int laneCount = 3;
 
+    private enum MonsterType
+    {
+        Normal,
+        Ranged,
+        Boss,
+    }
+
     [field: SerializeField]
     public Vector3[] SpawnPoints { get; private set; } = new Vector3[]
     {
@@ -339,6 +346,35 @@ public class StageMonsterManager : MonoBehaviour
         EndLine();
     }
 
+    public void Spawn(Vector3 frontPosition, LevelDesignStageStatusMachine.WaveMonsterData data, MonsterSkillTable.Data skillData)
+    {
+        if (data.slots[0] == 0 && data.slots[1] == 0 && data.slots[2] != 0)
+        {
+            int lane = 1;
+            SpawnMonster(lane, lane, frontPosition, 91001, data, MonsterType.Boss, skillData);
+            EndLine();
+            return;
+        }
+
+        for (int i = 0; i < data.slots[0]; ++i)
+        {
+            int monsterId = 11006;
+            int lane = i % 3;
+            SpawnMonster(lane, i, frontPosition, monsterId, data, MonsterType.Normal);
+        }
+        EndLine();
+
+        int backStartPos = Mathf.CeilToInt((float)data.slots[0] / 3) * 3;
+
+        for (int i = 0, j = backStartPos; i < data.slots[1]; ++i, ++j)
+        {
+            int monsterId = 11011;
+            int lane = i % 3;
+            SpawnMonster(lane, j, frontPosition, monsterId, data, MonsterType.Ranged);
+        }
+        EndLine();
+    }
+
     private void EndLine()
     {
         if (monsterLines[currentLastLine].Count == 0 || monsterLines[currentLastLine].Count == laneCount)
@@ -365,6 +401,45 @@ public class StageMonsterManager : MonoBehaviour
         monster.transform.parent = null;
         monster.transform.position = frontPosition + SpawnPoints[index];
         monster.transform.rotation = Quaternion.LookRotation(Vector3.back, Vector3.up);
+
+        stageManager.StageUiManager.HPBarManager.SetHPBar(monster.transform);
+
+        AddMonster(lane, monsterController);
+    }
+
+    private void SpawnMonster(int lane, int index, Vector3 frontPosition, int monsterId,
+        LevelDesignStageStatusMachine.WaveMonsterData data,
+        MonsterType type,
+        MonsterSkillTable.Data skillData = null)
+    {
+        var monsterData = DataTableManager.MonsterTable.GetData(monsterId);
+
+        var prefabID = DataTableManager.AddressTable.GetData(monsterData.PrefabID);
+        var monster = objectPoolManager.Get(prefabID);
+        var monsterController = monster.GetComponent<MonsterController>();
+        monsterController.enabled = true;
+        monsterController.SetMonsterId(monsterId);
+
+        monster.transform.parent = null;
+        monster.transform.position = frontPosition + SpawnPoints[index];
+        monster.transform.rotation = Quaternion.LookRotation(Vector3.back, Vector3.up);
+
+        var stat = monster.GetComponent<MonsterStats>();
+        stat.damage = data.attack[(int)type];
+        stat.maxHp = data.maxHp[(int)type];
+        stat.Hp = data.maxHp[(int)type];
+        stat.range = data.attackRange[(int)type];
+        stat.coolDown = 100f / data.attackSpeed[(int)type];
+        stat.moveSpeed = data.moveSpeed[(int)type];
+        if (weight != 1f)
+        {
+            monsterController.SetWeight(weight);
+        }
+        if (type == MonsterType.Boss)
+        {
+            var skill = monster.GetComponent<MonsterSkill>();
+            skill.SetSkill(skillData, stat);
+        }
 
         stageManager.StageUiManager.HPBarManager.SetHPBar(monster.transform);
 

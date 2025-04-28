@@ -14,11 +14,14 @@ public static class UnitCombatPowerCalculator
     public static Dictionary<UnitTypes, UnitCombatStats> statsDictionary = new Dictionary<UnitTypes, UnitCombatStats>();
     public class UnitCombatStats
     {
-        public BigNumber soldierAttack;  
-        public BigNumber soldierDefense;   
-        public BigNumber soldierMaxHp;      
+        public BigNumber soldierAttack;
+        public BigNumber soldierDefense;
+        public BigNumber soldierMaxHp;
         public float criticalPossibility;
-        public float criticalMultiplier; 
+        public float criticalMultiplier;
+        public float coolDown;
+        public float moveSpeed;
+        public float attackRange;
     }
     public static BigNumber ToTalCombatPower { get; private set; }
     static UnitCombatPowerCalculator()
@@ -28,7 +31,7 @@ public static class UnitCombatPowerCalculator
     public static void Init(UnitTypes type)
     {
         var stats = GetUnitCombatStats(type);
-        if(statsDictionary.ContainsKey(type))
+        if (statsDictionary.ContainsKey(type))
         {
             statsDictionary[type] = stats;
         }
@@ -40,7 +43,7 @@ public static class UnitCombatPowerCalculator
 
     public static void ChangeStats(UpgradeType upgradeType)
     {
-        foreach(var stat in statsDictionary)
+        foreach (var stat in statsDictionary)
         {
             switch (upgradeType)
             {
@@ -66,7 +69,7 @@ public static class UnitCombatPowerCalculator
     public static void CalculateTotalCombatPower()
     {
         var calculatedCombatPower = GetTankerCombatPower() + GetDealerCombatPower() + GetHealerCombatPower();
-        if(ToTalCombatPower != calculatedCombatPower)
+        if (ToTalCombatPower != calculatedCombatPower)
         {
             ToTalCombatPower = calculatedCombatPower;
             onCombatPowerChanged?.Invoke();
@@ -154,11 +157,17 @@ public static class UnitCombatPowerCalculator
     {
         UnitCombatStats unitCombatStats = new UnitCombatStats();
 
+        int unitId = InventoryManager.GetInventoryData(unitType).equipElementID;
+        var unitData = DataTableManager.SoldierTable.GetData(unitId);
+
         unitCombatStats.soldierAttack = GetStats(unitType, UnitUpgradeTable.UpgradeType.AttackPoint);
         unitCombatStats.soldierDefense = GetStats(unitType, UnitUpgradeTable.UpgradeType.DefensePoint);
         unitCombatStats.soldierMaxHp = GetStats(unitType, UnitUpgradeTable.UpgradeType.HealthPoint);
         unitCombatStats.criticalPossibility = GetCriticalStats(unitType, UnitUpgradeTable.UpgradeType.CriticalPossibility);
         unitCombatStats.criticalMultiplier = GetCriticalStats(unitType, UnitUpgradeTable.UpgradeType.CriticalDamages);
+        unitCombatStats.coolDown = 100f / unitData.AttackSpeed;
+        unitCombatStats.moveSpeed = unitData.MoveSpeed;
+        unitCombatStats.attackRange = unitData.Range;
 
         return unitCombatStats;
     }
@@ -268,10 +277,9 @@ public static class UnitCombatPowerCalculator
     {
         BigNumber stat = 0;
         var data = DataTableManager.UnitUpgradeTable.GetData(upgradeType);
-        for (int i = 1; i <= level; i++)
-        {
-            stat += data.Value * i;
-        }
+
+        stat = data.Value * level;
+        
         return stat;
     }
 }

@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using TMPro;
@@ -28,8 +29,6 @@ public class UnitStatsUpgradeElement : MonoBehaviour, IPointerDownHandler, IPoin
     private TextMeshProUGUI needGoldText;
     [SerializeField]
     private LocalizationText goldText;
-    [SerializeField]
-    private UnitPartyManager unitPartyManager;
     [SerializeField]
     private StageManager stageManager;
     [SerializeField]
@@ -67,7 +66,6 @@ public class UnitStatsUpgradeElement : MonoBehaviour, IPointerDownHandler, IPoin
     private void Awake()
     {
         stageManager = GameObject.FindGameObjectWithTag("GameController").GetComponent<StageManager>();
-        //addStatButton.onClick.AddListener(() => OnClickAddStatsButton());
 
     }
 
@@ -92,18 +90,10 @@ public class UnitStatsUpgradeElement : MonoBehaviour, IPointerDownHandler, IPoin
         StatsImage.sprite = statsSprite[index - 1];
     }
 
-    public void Init(UnitUpgradeTable.Data data)
-    {
-        currentType = data.Type;
-        value = data.Value;
-        gold = data.NeedItemCount;
-        maxLevel = data.MaxLevel;
-        SetStatsInfo();
-    }
 
     private void SetStatsInfo()
     {
-        nextLevel = level + statsMultiplier;
+        nextLevel = Mathf.Min(maxLevel, level + statsMultiplier);
         levelText.text = $"Level + {level} -> {nextLevel}";
         float beforeValue = level * value;
         float afterValue = nextLevel * value;
@@ -120,13 +110,22 @@ public class UnitStatsUpgradeElement : MonoBehaviour, IPointerDownHandler, IPoin
                 break;
             case UpgradeType.CriticalPossibility:
             case UpgradeType.CriticalDamages:
-                beforeStatsInfo.text = $"{(beforeValue * 100):F2}%";
-                afterStatsInfo.text = $"{((afterValue) * 100):F2}%";
+                beforeStatsInfo.text = $"{(beforeValue * 100f):F2}%";
+                afterStatsInfo.text = $"{((afterValue) * 100f):F2}%";
                 break;
         }
-        BigNumber neededGold = GetGoldForMultipleLevels(level, statsMultiplier);
+        if (level >= maxLevel)
+        {
+            needGoldText.text = "Max Level";
+        }
+        else
+        {
+            BigNumber neededGold = GetGoldForMultipleLevels(level, statsMultiplier);
 
-        needGoldText.text = $" +{neededGold}";
+            needGoldText.text = $" +{neededGold}";
+        }
+
+
     }
     public BigNumber GetGoldForMultipleLevels(int currentLevel, int multiplier)
     {
@@ -146,8 +145,11 @@ public class UnitStatsUpgradeElement : MonoBehaviour, IPointerDownHandler, IPoin
         value = data.Value;
         gold = data.NeedItemCount;
         maxLevel = data.MaxLevel;
+        
 
         this.level = level;
+        this.level = Mathf.Clamp(level,1,maxLevel);
+
         currentValue = GetCurrentValue(level);
         currentGold = GetCurrentGold(level);
         SetStatsInfo();
@@ -175,16 +177,18 @@ public class UnitStatsUpgradeElement : MonoBehaviour, IPointerDownHandler, IPoin
 
     private void LevelUp()
     {
-        if (level > 1000)
+        if (level > maxLevel)
             return;
 
         int addLevel = statsMultiplier;
 
+
         level += addLevel;
 
-        if (level > 1000)
+        
+        if (level > maxLevel)
         {
-            level = 1000;
+            level = maxLevel;
         }
 
         currentValue += level * value;

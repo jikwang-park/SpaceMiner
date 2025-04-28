@@ -46,6 +46,20 @@ public abstract class UnitSkillBase
 
     public abstract void UpgradeUnitSkillStats(int id);
     
+    public void SetCoolTime(float cooltime)
+    {
+        CoolTime = cooltime;
+    }
+
+    public void SetRatio(float ratio)
+    {
+        Ratio = ratio;
+    }
+
+    public virtual void SetEtcValue(float value)
+    {
+
+    }
 }
 
 

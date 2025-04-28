@@ -7,6 +7,7 @@ public class MineStageStatusMachine : StageStatusMachine
     private MineStageStatusMachineData stageMachineData;
 
     private Mine mine;
+    private int planetID;
     private MiningRobotController[] robotControllers = new MiningRobotController[2];
 
     public MineStageStatusMachine(StageManager stageManager) : base(stageManager)
@@ -27,6 +28,8 @@ public class MineStageStatusMachine : StageStatusMachine
             stageManager.CameraManager.enabled = false;
             stageManager.CameraManager.SetCameraRotation(stageMachineData.cameraRotation);
             stageManager.CameraManager.SetCameraOffset(stageMachineData.cameraPosition);
+
+            MiningRobotInventoryManager.onEquipRobot += OnEquipChanged;
         }
         else
         {
@@ -35,9 +38,11 @@ public class MineStageStatusMachine : StageStatusMachine
             stageManager.CameraManager.SetCameraOffset();
 
             mine.Release();
-            foreach (var controller in robotControllers)
+            mine = null;
+            for (int i = 0; i < robotControllers.Length; ++i)
             {
-                controller?.Release();
+                robotControllers[i]?.Release();
+                robotControllers[i] = null;
             }
         }
     }
@@ -48,7 +53,18 @@ public class MineStageStatusMachine : StageStatusMachine
 
     public override void Reset()
     {
-
+        if (Variables.planetMiningID == planetID)
+        {
+            return;
+        }
+        mine.Release();
+        mine = null;
+        for (int i = 0; i < robotControllers.Length; ++i)
+        {
+            robotControllers[i]?.Release();
+            robotControllers[i] = null;
+        }
+        InitStage();
     }
 
     public override void Start()
@@ -63,32 +79,83 @@ public class MineStageStatusMachine : StageStatusMachine
 
     protected void InitStage()
     {
-        var planetData = DataTableManager.PlanetTable.GetData(Variables.planetMiningID);
+        planetID = Variables.planetMiningID;
+        var planetData = DataTableManager.PlanetTable.GetData(planetID);
         var prefabAddress = DataTableManager.AddressTable.GetData(planetData.PrefabID);
         var mineGo = stageManager.ObjectPoolManager.Get(prefabAddress);
         mineGo.transform.parent = null;
         mine = mineGo.GetComponent<Mine>();
-
         var equipments = MiningRobotInventoryManager.Inventory.equipmentSlotsToPlanet;
 
-        if (!equipments.ContainsKey(Variables.planetMiningID))
+        if (!equipments.ContainsKey(planetID))
         {
             return;
         }
 
-        for (int i = 0; i < equipments[Variables.planetMiningID].Length; ++i)
+        for (int i = 0; i < equipments[planetID].Length; ++i)
         {
-            if (equipments[Variables.planetMiningID][i].isEmpty)
+            if (equipments[planetID][i].isEmpty)
             {
                 continue;
             }
-            var robotData = DataTableManager.RobotTable.GetData(equipments[Variables.planetMiningID][i].miningRobotId);
+            var robotData = DataTableManager.RobotTable.GetData(equipments[planetID][i].miningRobotId);
             var robotAddress = DataTableManager.AddressTable.GetData(robotData.PrefabID);
             var robotGo = stageManager.ObjectPoolManager.Get(robotAddress);
             robotGo.transform.parent = null;
             robotGo.transform.position = mine.GetSpawnPoint(i).position;
             robotControllers[i] = robotGo.GetComponent<MiningRobotController>();
-            robotControllers[i].Init(Variables.planetMiningID, equipments[Variables.planetMiningID][i].miningRobotId, i);
+            robotControllers[i].Init(planetID, equipments[planetID][i].miningRobotId, i);
+            robotControllers[i].SetOreStorage(mine.GetOre(i), mine.GetStorage(i));
+        }
+    }
+
+    private void OnEquipChanged(int planetID)
+    {
+        if (!IsActive)
+        {
+            return;
+        }
+
+        if (Variables.planetMiningID != planetID)
+        {
+            return;
+        }
+
+        var equipments = MiningRobotInventoryManager.Inventory.equipmentSlotsToPlanet;
+
+        if (!equipments.ContainsKey(planetID))
+        {
+            return;
+        }
+
+        for (int i = 0; i < equipments[planetID].Length; ++i)
+        {
+            bool robotCreated = robotControllers[i] is not null;
+            if (equipments[planetID][i].isEmpty)
+            {
+                if (robotCreated)
+                {
+                    robotControllers[i].Release();
+                    robotControllers[i] = null;
+                }
+                continue;
+            }
+            if (robotCreated && robotControllers[i].RobotData.ID == equipments[planetID][i].miningRobotId)
+            {
+                continue;
+            }
+            if (robotCreated)
+            {
+                robotControllers[i].Release();
+                robotControllers[i] = null;
+            }
+            var robotData = DataTableManager.RobotTable.GetData(equipments[planetID][i].miningRobotId);
+            var robotAddress = DataTableManager.AddressTable.GetData(robotData.PrefabID);
+            var robotGo = stageManager.ObjectPoolManager.Get(robotAddress);
+            robotGo.transform.parent = null;
+            robotGo.transform.position = mine.GetSpawnPoint(i).position;
+            robotControllers[i] = robotGo.GetComponent<MiningRobotController>();
+            robotControllers[i].Init(planetID, equipments[planetID][i].miningRobotId, i);
             robotControllers[i].SetOreStorage(mine.GetOre(i), mine.GetStorage(i));
         }
     }

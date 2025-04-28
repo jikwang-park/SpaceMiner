@@ -38,6 +38,9 @@ public class UnitStats : CharacterStats
 
         armor = UnitCombatPowerCalculator.statsDictionary[type].soldierDefense;
         maxHp = UnitCombatPowerCalculator.statsDictionary[type].soldierMaxHp;
+        range = UnitCombatPowerCalculator.statsDictionary[type].attackRange;
+        coolDown = UnitCombatPowerCalculator.statsDictionary[type].coolDown;
+        moveSpeed = UnitCombatPowerCalculator.statsDictionary[type].moveSpeed;
 
         Hp = maxHp * prevRate;
     }
@@ -87,6 +90,9 @@ public class UnitStats : CharacterStats
         range = data.Range;
         armor = UnitCombatPowerCalculator.statsDictionary[type].soldierDefense;
         maxHp = UnitCombatPowerCalculator.statsDictionary[type].soldierMaxHp;
+        range = UnitCombatPowerCalculator.statsDictionary[type].attackRange;
+        coolDown = UnitCombatPowerCalculator.statsDictionary[type].coolDown;
+        moveSpeed = UnitCombatPowerCalculator.statsDictionary[type].moveSpeed;
 
         RecalculateHpWithRatio();
     }
@@ -160,20 +166,16 @@ public class UnitStats : CharacterStats
     {
         Attack attack = new Attack();
 
-        var data = SaveLoadManager.Data.unitSkillUpgradeData.skillUpgradeId;
-
         var stats = UnitCombatPowerCalculator.statsDictionary[type];
 
-        var id = data[UnitTypes.Dealer][currentGrade];
+        var unit = GetComponent<Unit>();
 
-        var currentData = DataTableManager.DealerSkillTable.GetData(id);
-
-        BigNumber finialSkillDamage = stats.soldierAttack * currentData.DamageRatio;
+        BigNumber finialSkillDamage = stats.soldierAttack * unit.Skill.Ratio;
 
 
         var criticalChance = stats.criticalPossibility;
 
-        attack.isCritical = criticalChance >= Random.Range(0, 100);
+        attack.isCritical = criticalChance >= Random.Range(0f, 1f);
         if (attack.isCritical)
         {
             var multiplier = stats.criticalMultiplier;

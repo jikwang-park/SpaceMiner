@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
-public class AttendanceRewardManager : MonoBehaviour
+public class AttendanceRewardManager : Singleton<AttendanceRewardManager>
 {
     
     private Dictionary<int, AttendanceData> Attendances
@@ -33,7 +33,7 @@ public class AttendanceRewardManager : MonoBehaviour
             }
         }
     }
-    public bool CanClaim(int attendanceId)
+    public bool CanClaim(int attendanceId, int dayIndex)
     {
         if(!Attendances.ContainsKey(attendanceId))
         {
@@ -43,26 +43,39 @@ public class AttendanceRewardManager : MonoBehaviour
         var attendanceData = DataTableManager.AttendanceTable.GetList().Find((e) => e.ID == attendanceId);
         DateTime now = TimeManager.Instance.GetEstimatedServerTime();
 
-        bool canClaimDay = now.Date > Attendances[attendanceId].lastClaimTime.Date;
-        bool canClaimIndex = Attendances[attendanceId].currentIndex < attendanceData.Period || attendanceData.IsRepeat == 1;
+       if(now.Date <= Attendances[attendanceId].lastClaimTime.Date)
+        {
+            return false;
+        }
 
-        return canClaimDay && canClaimIndex;
+       if(dayIndex != Attendances[attendanceId].currentIndex)
+        {
+            return false;
+        }
+
+       if(dayIndex > attendanceData.Period && attendanceData.IsRepeat != 1)
+        {
+            return false;
+        }
+
+        return true;
     }
-    public void Claim(int attendanceId)
+    public void Claim(int attendanceId, int dayIndex)
     {
-        if(!CanClaim(attendanceId))
+        if(!CanClaim(attendanceId, dayIndex))
         { 
             return; 
         }
 
         var attendanceData = DataTableManager.AttendanceTable.GetList().Find((e) => e.ID == attendanceId);
-        var rewardData = DataTableManager.AttendanceRewardTable.GetData(attendanceId, Attendances[attendanceId].currentIndex);
+        var rewardData = DataTableManager.AttendanceRewardTable.GetData(attendanceId, dayIndex);
+        DateTime now = TimeManager.Instance.GetEstimatedServerTime();
         int rewardItemId = rewardData.RewardItemID;
         BigNumber rewardAmount = rewardData.RewardItemCount;
 
         ItemManager.AddItem(rewardItemId, rewardAmount);
 
-        Attendances[attendanceId].lastClaimTime = TimeManager.Instance.GetEstimatedServerTime();
+        Attendances[attendanceId].lastClaimTime = now;
         Attendances[attendanceId].currentIndex = Attendances[attendanceId].currentIndex < attendanceData.Period ? Attendances[attendanceId].currentIndex + 1
             : (attendanceData.IsRepeat == 1 ? 1 : attendanceData.Period);
     }

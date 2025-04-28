@@ -14,7 +14,7 @@ public class FirebaseManager : Singleton<FirebaseManager>
 {
     private FirebaseAuth auth;
     private DatabaseReference root;
-    private string userId;
+    private FirebaseUser user;
     private long serverTimeOffsetMs;
     public async Task InitializeAsync()
     {
@@ -30,47 +30,50 @@ public class FirebaseManager : Singleton<FirebaseManager>
             if (long.TryParse(e.Snapshot.Value?.ToString(), out var ms))
                 serverTimeOffsetMs = ms;
         };
-        await SignInAnonymouslyAsync();
+        auth.StateChanged += AuthStateChanged;
+        AuthStateChanged(this, null);
+
         await LoadFromFirebaseAsync();
     }
-
-    private async Task SignInAnonymouslyAsync()
+    private async void AuthStateChanged(object sender, EventArgs e)
     {
-        var result = await auth.SignInAnonymouslyAsync();
-        this.userId = result.User.UserId;
-        SaveLoadManager.onSaveRequested += SaveToFirebaseAsync;
-        Debug.LogFormat("User signed in successfully: {0} ({1})",
-            result.User.DisplayName, result.User.UserId);
+        if (auth.CurrentUser != user)
+        {
+            user = auth.CurrentUser;
+            if (user == null)
+            {
+                var result = await auth.SignInAnonymouslyAsync();
+                user = result.User;
+                Debug.Log($"Signed in anonymously: {user.UserId}");
+            }
+            else
+            {
+                // 기존 세션 복원
+                Debug.Log($"Restored session for user: {user.UserId}");
+            }
+        }
     }
     private async void SaveToFirebaseAsync()
     {
-        if(string.IsNullOrEmpty(userId))
-        {
-            return;
-        }
-        string json = JsonConvert.SerializeObject(SaveLoadManager.Data,
-            new JsonSerializerSettings
-            {
-                Formatting = Formatting.Indented,
-            });
+        if (user == null) return;
 
-        await root.Child("users").Child(userId).Child("SaveData").SetRawJsonValueAsync(json);
+        string json = JsonConvert.SerializeObject(SaveLoadManager.Data, new JsonSerializerSettings
+        {
+            Formatting = Formatting.Indented
+        });
+
+        await root.Child("users").Child(user.UserId).Child("SaveData")
+                  .SetRawJsonValueAsync(json);
     }
     private async Task LoadFromFirebaseAsync()
     {
-        if (string.IsNullOrEmpty(userId))
-        {
-            return;
-        }
+        if (user == null) return;
 
-        var snapshot = await root.Child("users").Child(userId).Child("SaveData").GetValueAsync();
-        if (snapshot.Exists)
+        var snap = await root.Child("users").Child(user.UserId).Child("SaveData")
+                             .GetValueAsync();
+        if (snap.Exists && !string.IsNullOrEmpty(snap.GetRawJsonValue()))
         {
-            string json = snapshot.GetRawJsonValue();
-            if (!string.IsNullOrEmpty(json))
-            {
-                SaveLoadManager.LoadGame(json);
-            }
+            SaveLoadManager.LoadGame(snap.GetRawJsonValue());
         }
         else
         {
@@ -92,5 +95,9 @@ public class FirebaseManager : Singleton<FirebaseManager>
     public DateTime GetFirebaseServerTime()
     {
         return DateTime.UtcNow.AddMilliseconds(serverTimeOffsetMs);
+    }
+    private void OnDestroy()
+    {
+        if (auth != null) auth.StateChanged -= AuthStateChanged;
     }
 }

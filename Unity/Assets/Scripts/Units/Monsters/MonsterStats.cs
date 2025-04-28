@@ -4,6 +4,8 @@ using UnityEngine;
 
 public class MonsterStats : CharacterStats
 {
+    private readonly static BigNumber zero = new BigNumber(0);
+
     protected override void OnDisable()
     {
         base.OnDisable();
@@ -55,6 +57,10 @@ public class MonsterStats : CharacterStats
         if (defenderStats is not null)
         {
             attack.damage *= Variables.DefenceBase.DivideToFloat(200 + defenderStats.armor);
+        }
+        if (attack.damage == zero)
+        {
+            attack.damage = 1;
         }
 
         return attack;

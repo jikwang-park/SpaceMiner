@@ -54,6 +54,11 @@ public class FirebaseManager : Singleton<FirebaseManager>
             }
         }
     }
+    public static Task ClearAllDataAsync()
+    {
+        var rootRef = FirebaseDatabase.DefaultInstance.RootReference;
+        return rootRef.RemoveValueAsync();
+    }
     private async void SaveToFirebaseAsync()
     {
         if (user == null) return;

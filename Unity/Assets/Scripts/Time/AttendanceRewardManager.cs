@@ -33,6 +33,10 @@ public class AttendanceRewardManager : Singleton<AttendanceRewardManager>
             }
         }
     }
+    public bool IsClaimed(int attendanceId, int dayIndex)
+    {
+        return dayIndex < Attendances[attendanceId].currentIndex;
+    }
     public bool CanClaim(int attendanceId, int dayIndex)
     {
         if(!Attendances.ContainsKey(attendanceId))

@@ -9,6 +9,8 @@ using UnityEngine.ResourceManagement.AsyncOperations;
 public class SelectAttendancePanelUI : MonoBehaviour
 {
     [SerializeField]
+    AttendanceInteractableUI attendanceInteractableUI;
+    [SerializeField]
     private Transform contentParent;
 
     private const string prefabFormat = "Prefabs/UI/SelectAttendanceButton";
@@ -52,6 +54,7 @@ public class SelectAttendancePanelUI : MonoBehaviour
     }
     public void OnClickSelectAttendanceButton(int attendanceId)
     {
-
+        var attendanceData = DataTableManager.AttendanceTable.GetList().Find((e) => e.ID == attendanceId);
+        attendanceInteractableUI.Initialize(attendanceData);
     }
 }

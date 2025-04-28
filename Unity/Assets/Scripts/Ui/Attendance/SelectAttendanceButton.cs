@@ -17,6 +17,6 @@ public class SelectAttendanceButton : MonoBehaviour
     }
     public void OnClickSelectAttendanceButton()
     {
-
+        parent.OnClickSelectAttendanceButton(attendanceId);
     }
 }

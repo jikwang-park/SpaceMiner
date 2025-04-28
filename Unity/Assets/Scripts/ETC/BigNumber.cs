@@ -2,6 +2,7 @@ using Newtonsoft.Json;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Runtime.CompilerServices;
 using System.Runtime.Serialization;
 using UnityEngine;
 
@@ -238,23 +239,23 @@ public struct BigNumber : ISerializationCallbackReceiver
             return new BigNumber("0");
         }
 
-        BigNumber result = 0;
         int scale = 10000;
 
-        if(multiplier >= 1f)
-        {
-            BigNumber bigMultiplier = (BigNumber)multiplier * scale;
-            BigNumber temp = a * bigMultiplier;
-            result = temp / scale;
-        }
-        else
-        {
-            int intMultiplier = (int)(multiplier * scale);
-            BigNumber temp = a * intMultiplier;
-            result = temp / scale;
-        }
-        
+        long scaledLong = (long)Math.Round(multiplier * scale);
 
+        BigNumber pBig;
+        try
+        {
+            int scaledInt = checked((int)scaledLong);
+            pBig = new BigNumber(scaledInt);
+        }
+        catch (OverflowException)
+        {
+            pBig = new BigNumber(scaledLong.ToString());
+        }
+
+        BigNumber temp = a * pBig;
+        BigNumber result = temp / scale;
         result.sign = a.sign * (multiplier < 0 ? -1 : 1);
         return result;
     }

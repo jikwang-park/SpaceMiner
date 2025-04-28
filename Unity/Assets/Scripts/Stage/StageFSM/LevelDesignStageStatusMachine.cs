@@ -37,6 +37,7 @@ public class LevelDesignStageStatusMachine : StageStatusMachine
     public CorpsTable.Data[] corpsDatas;
     public WaveMonsterData[] waveMonsterDatas;
     public SkillData skillData;
+    public MonsterSkillTable.Data monsterSkillData;
 
     private int CurrentWave;
     private Status status;
@@ -154,6 +155,13 @@ public class LevelDesignStageStatusMachine : StageStatusMachine
                     break;
             }
         }
+
+        monsterSkillData = new MonsterSkillTable.Data();
+        monsterSkillData.AttackRatio = 2;
+        monsterSkillData.SkillRange = 10;
+        monsterSkillData.CoolTime = 5;
+        monsterSkillData.MaxTargetCount = 2;
+        monsterSkillData.TargetPriority = (TargetPriority)1;
     }
 
     private void UpdateTimer(float currentTime)
@@ -184,11 +192,11 @@ public class LevelDesignStageStatusMachine : StageStatusMachine
 
         if (unit is not null)
         {
-            stageManager.StageMonsterManager.Spawn(unit.position + Vector3.forward * respawnDistance, waveMonsterDatas[CurrentWave - 1]);
+            stageManager.StageMonsterManager.Spawn(unit.position + Vector3.forward * respawnDistance, waveMonsterDatas[CurrentWave - 1], monsterSkillData);
         }
         else
         {
-            stageManager.StageMonsterManager.Spawn(Vector3.zero, waveMonsterDatas[CurrentWave - 1]);
+            stageManager.StageMonsterManager.Spawn(Vector3.zero, waveMonsterDatas[CurrentWave - 1], monsterSkillData);
         }
 
         stageManager.StageUiManager.IngameUIManager.SetWaveText(CurrentWave);

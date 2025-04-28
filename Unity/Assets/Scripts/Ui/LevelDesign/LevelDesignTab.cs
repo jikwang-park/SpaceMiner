@@ -25,6 +25,15 @@ public class LevelDesignTab : MonoBehaviour
         etc,
     }
 
+    private enum MonsterSkillType
+    {
+        AttackRatio,
+        SkillRange,
+        CoolTime,
+        MaxTargetCount,
+        Priority,
+    }
+
     private LevelDesignStageStatusMachine machine;
 
     private StageManager stageManager;
@@ -49,6 +58,9 @@ public class LevelDesignTab : MonoBehaviour
     [SerializeField]
     private SerializedDictionary<WaveType, TMP_InputField[]> waveInputs;
 
+    [SerializeField]
+    private SerializedDictionary<MonsterSkillType, TMP_InputField> monsterSkillInputs;
+
     private float exitButtonTime;
 
     private void Start()
@@ -61,9 +73,11 @@ public class LevelDesignTab : MonoBehaviour
         RefreshUnitInput();
         RefreshMonsterWave();
         RefreshSkillInput();
+        RefrestMonsterSkillInput();
         SetUnitInputEvent();
-        SetMonsterInputEvent();
         SetSkillInputEvent();
+        SetMonsterInputEvent();
+        SetMonsterInputSkillEvent();
     }
 
     public void SetStage()
@@ -273,6 +287,17 @@ public class LevelDesignTab : MonoBehaviour
         skillInputs[SkillType.etc][2].text = skilldata.etc[2].ToString();
     }
 
+    private void RefrestMonsterSkillInput()
+    {
+        var monsterSkillData = machine.monsterSkillData;
+
+        monsterSkillInputs[MonsterSkillType.AttackRatio].text = monsterSkillData.AttackRatio.ToString();
+        monsterSkillInputs[MonsterSkillType.SkillRange].text = monsterSkillData.SkillRange.ToString();
+        monsterSkillInputs[MonsterSkillType.CoolTime].text = monsterSkillData.CoolTime.ToString();
+        monsterSkillInputs[MonsterSkillType.MaxTargetCount].text = monsterSkillData.MaxTargetCount.ToString();
+        monsterSkillInputs[MonsterSkillType.Priority].text = ((int)monsterSkillData.TargetPriority).ToString();
+    }
+
     private void SetUnitInputEvent()
     {
         statInputs[StatType.Attack][0].onEndEdit.AddListener((str) => SetStat(UnitTypes.Tanker, StatType.Attack, str));
@@ -348,6 +373,15 @@ public class LevelDesignTab : MonoBehaviour
         skillInputs[SkillType.etc][0].onEndEdit.AddListener((str) => SetSkillStat(0, SkillType.etc, str));
         skillInputs[SkillType.etc][1].onEndEdit.AddListener((str) => SetSkillStat(1, SkillType.etc, str));
         skillInputs[SkillType.etc][2].onEndEdit.AddListener((str) => SetSkillStat(2, SkillType.etc, str));
+    }
+
+    private void SetMonsterInputSkillEvent()
+    {
+        monsterSkillInputs[MonsterSkillType.AttackRatio].onEndEdit.AddListener((str) => SetMonsterSkill(MonsterSkillType.AttackRatio, str));
+        monsterSkillInputs[MonsterSkillType.SkillRange].onEndEdit.AddListener((str) => SetMonsterSkill(MonsterSkillType.SkillRange, str));
+        monsterSkillInputs[MonsterSkillType.CoolTime].onEndEdit.AddListener((str) => SetMonsterSkill(MonsterSkillType.CoolTime, str));
+        monsterSkillInputs[MonsterSkillType.MaxTargetCount].onEndEdit.AddListener((str) => SetMonsterSkill(MonsterSkillType.MaxTargetCount, str));
+        monsterSkillInputs[MonsterSkillType.Priority].onEndEdit.AddListener((str) => SetMonsterSkill(MonsterSkillType.Priority, str));
     }
 
     private void SetMonsterStat(int index, WaveType waveType, string value)
@@ -450,15 +484,53 @@ public class LevelDesignTab : MonoBehaviour
                 }
                 break;
             case SkillType.Ratio:
-                if(float.TryParse(value, out float ratio))
+                if (float.TryParse(value, out float ratio))
                 {
                     machine.skillData.ratio[index] = ratio;
                 }
                 break;
             case SkillType.etc:
-                if(float.TryParse(value, out float etc))
+                if (float.TryParse(value, out float etc))
                 {
                     machine.skillData.etc[index] = etc;
+                }
+                break;
+        }
+    }
+
+    private void SetMonsterSkill(MonsterSkillType skillType, string value)
+    {
+        switch (skillType)
+        {
+            case MonsterSkillType.AttackRatio:
+                if (float.TryParse(value, out float attackRatio))
+                {
+                    machine.monsterSkillData.AttackRatio = attackRatio;
+                }
+                break;
+            case MonsterSkillType.SkillRange:
+                if (float.TryParse(value, out float skillRange))
+                {
+                    machine.monsterSkillData.SkillRange = skillRange;
+                }
+                break;
+            case MonsterSkillType.CoolTime:
+                if (float.TryParse(value, out float coolTime))
+                {
+                    machine.monsterSkillData.CoolTime = coolTime;
+                }
+                break;
+            case MonsterSkillType.MaxTargetCount:
+                if (int.TryParse(value, out int maxTargetCount))
+                {
+                    machine.monsterSkillData.MaxTargetCount = maxTargetCount;
+                }
+                break;
+            case MonsterSkillType.Priority:
+                if (int.TryParse(value, out int ipriority)
+                    && Enum.IsDefined(typeof(TargetPriority), ipriority))
+                {
+                    machine.monsterSkillData.TargetPriority = (TargetPriority)ipriority;
                 }
                 break;
         }

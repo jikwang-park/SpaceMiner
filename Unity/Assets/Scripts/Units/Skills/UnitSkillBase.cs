@@ -20,11 +20,15 @@ public abstract class UnitSkillBase
 
     public float Ratio { get; protected set; }
 
-    public abstract void ExecuteSkill();
+    
 
     protected int skillId;
 
     protected Unit unit;
+
+    protected Grade skillGrade;
+
+    protected BuffTable.Data buffData;
 
 
     public float RemainCooltime
@@ -38,14 +42,17 @@ public abstract class UnitSkillBase
             return Mathf.Max(CoolTime + unit.lastSkillTime - Time.time, 0f);
         }
     }
-
+    public abstract void ExecuteSkill();
     public abstract void InitSkill(Unit unit);
 
-
-
+    public virtual void ExecuteBuff() { }
 
     public abstract void UpgradeUnitSkillStats(int id);
-    
+
+    public virtual void GetBuff(int id) { }
+
+
+
 }
 
 

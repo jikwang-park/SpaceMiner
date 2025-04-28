@@ -119,3 +119,15 @@ public enum UnitTypes
     Dealer,
     Healer,
 }
+
+public enum StatType
+{
+    Attack,
+    Defence,
+    MaxHP,
+    CriticalPossibility,
+    CriticalMultiplier,
+    AttackSpeed,
+    MoveSpeed,
+    AttackRange
+}

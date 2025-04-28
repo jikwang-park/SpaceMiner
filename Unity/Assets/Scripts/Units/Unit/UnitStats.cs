@@ -38,6 +38,9 @@ public class UnitStats : CharacterStats
 
         armor = UnitCombatPowerCalculator.statsDictionary[type].soldierDefense;
         maxHp = UnitCombatPowerCalculator.statsDictionary[type].soldierMaxHp;
+        range = UnitCombatPowerCalculator.statsDictionary[type].attackRange;
+        coolDown = UnitCombatPowerCalculator.statsDictionary[type].coolDown;
+        moveSpeed = UnitCombatPowerCalculator.statsDictionary[type].moveSpeed;
 
         Hp = maxHp * prevRate;
     }
@@ -87,6 +90,9 @@ public class UnitStats : CharacterStats
         range = data.Range;
         armor = UnitCombatPowerCalculator.statsDictionary[type].soldierDefense;
         maxHp = UnitCombatPowerCalculator.statsDictionary[type].soldierMaxHp;
+        range = UnitCombatPowerCalculator.statsDictionary[type].attackRange;
+        coolDown = UnitCombatPowerCalculator.statsDictionary[type].coolDown;
+        moveSpeed = UnitCombatPowerCalculator.statsDictionary[type].moveSpeed;
 
         RecalculateHpWithRatio();
     }

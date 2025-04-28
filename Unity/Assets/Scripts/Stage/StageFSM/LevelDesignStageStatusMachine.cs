@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using Unity.Mathematics;
 using UnityEngine;
 
 public class LevelDesignStageStatusMachine : StageStatusMachine
@@ -11,12 +12,23 @@ public class LevelDesignStageStatusMachine : StageStatusMachine
         Stop,
     }
 
+    public class WaveMonsterData
+    {
+        public int[] slots = new int[3];
+        public BigNumber[] attack = new BigNumber[3];
+        public BigNumber[] maxHp = new BigNumber[3];
+        public float[] attackRange = new float[3];
+        public float[] attackSpeed = new float[3];
+        public float[] moveSpeed = new float[3];
+    }
+
     public float stageTime;
     public float weight;
     public int waveLength;
     public int waveTarget;
     public float respawnDistance;
     public CorpsTable.Data[] corpsDatas;
+    public WaveMonsterData[] waveMonsterDatas;
 
     private int CurrentWave;
     private Status status;
@@ -99,9 +111,11 @@ public class LevelDesignStageStatusMachine : StageStatusMachine
         initilized = true;
         stageTime = Variables.PlanetTime;
         corpsDatas = new CorpsTable.Data[4];
+        waveMonsterDatas = new WaveMonsterData[4];
         for (int i = 0; i < corpsDatas.Length; ++i)
         {
             corpsDatas[i] = new CorpsTable.Data();
+            waveMonsterDatas[i] = new WaveMonsterData();
         }
         SetStageData(1, 1);
     }
@@ -134,11 +148,11 @@ public class LevelDesignStageStatusMachine : StageStatusMachine
 
         if (unit is not null)
         {
-            stageManager.StageMonsterManager.Spawn(unit.position + Vector3.forward * respawnDistance, corpsDatas[CurrentWave - 1]);
+            stageManager.StageMonsterManager.Spawn(unit.position + Vector3.forward * respawnDistance, waveMonsterDatas[CurrentWave - 1]);
         }
         else
         {
-            stageManager.StageMonsterManager.Spawn(Vector3.zero, corpsDatas[CurrentWave - 1]);
+            stageManager.StageMonsterManager.Spawn(Vector3.zero, waveMonsterDatas[CurrentWave - 1]);
         }
 
         stageManager.StageUiManager.IngameUIManager.SetWaveText(CurrentWave);
@@ -197,6 +211,38 @@ public class LevelDesignStageStatusMachine : StageStatusMachine
             count = tableData.RangedMonsterIDs.Length;
             corpsDatas[i].RangedMonsterIDs = new int[count];
             Array.Copy(tableData.RangedMonsterIDs, corpsDatas[i].RangedMonsterIDs, count);
+
+            waveMonsterDatas[i].slots[0] = corpsDatas[i].FrontSlots;
+            waveMonsterDatas[i].slots[1] = corpsDatas[i].BackSlots;
+            waveMonsterDatas[i].slots[2] = tableData.BossMonsterID != 0 ? 1 : 0;
+
+            if (corpsDatas[i].FrontSlots > 0)
+            {
+                var monsterTableData = DataTableManager.MonsterTable.GetData(corpsDatas[i].NormalMonsterIDs[0]);
+                waveMonsterDatas[i].attack[0] = monsterTableData.Attack;
+                waveMonsterDatas[i].maxHp[0] = monsterTableData.HP;
+                waveMonsterDatas[i].attackRange[0] = monsterTableData.AttackRange;
+                waveMonsterDatas[i].attackSpeed[0] = monsterTableData.AttackSpeed;
+                waveMonsterDatas[i].moveSpeed[0] = monsterTableData.MoveSpeed;
+            }
+            if (corpsDatas[i].BackSlots > 0)
+            {
+                var monsterTableData = DataTableManager.MonsterTable.GetData(corpsDatas[i].RangedMonsterIDs[0]);
+                waveMonsterDatas[i].attack[1] = monsterTableData.Attack;
+                waveMonsterDatas[i].maxHp[1] = monsterTableData.HP;
+                waveMonsterDatas[i].attackRange[1] = monsterTableData.AttackRange;
+                waveMonsterDatas[i].attackSpeed[1] = monsterTableData.AttackSpeed;
+                waveMonsterDatas[i].moveSpeed[1] = monsterTableData.MoveSpeed;
+            }
+            if (waveMonsterDatas[i].slots[2] > 0)
+            {
+                var monsterTableData = DataTableManager.MonsterTable.GetData(corpsDatas[i].BossMonsterID);
+                waveMonsterDatas[i].attack[2] = monsterTableData.Attack;
+                waveMonsterDatas[i].maxHp[2] = monsterTableData.HP;
+                waveMonsterDatas[i].attackRange[2] = monsterTableData.AttackRange;
+                waveMonsterDatas[i].attackSpeed[2] = monsterTableData.AttackSpeed;
+                waveMonsterDatas[i].moveSpeed[2] = monsterTableData.MoveSpeed;
+            }
         }
     }
 }

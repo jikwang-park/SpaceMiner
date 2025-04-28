@@ -2,6 +2,7 @@ using Newtonsoft.Json;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Runtime.CompilerServices;
 using System.Runtime.Serialization;
 using UnityEngine;
@@ -106,8 +107,15 @@ public struct BigNumber : ISerializationCallbackReceiver
     }
     public BigNumber(float input)
     {
-        int truncated = (int)input;
-        this = new BigNumber(truncated);
+        try
+        {
+            int truncated = checked((int)input);
+            this = new BigNumber(truncated);
+        }
+        catch
+        {
+            this = new BigNumber(Math.Truncate(input).ToString());
+        }
     }
     private BigNumber(List<int> parts)
     {
@@ -235,30 +243,68 @@ public struct BigNumber : ISerializationCallbackReceiver
     public static BigNumber operator *(BigNumber a, float multiplier)
     {
         if (multiplier == 0f)
-        {
             return new BigNumber("0");
-        }
 
-        int scale = 10000;
+        string s = multiplier.ToString("G9", CultureInfo.InvariantCulture);
+        bool negative = s.StartsWith("-");
+        if (negative) s = s.Substring(1);
 
-        long scaledLong = (long)Math.Round(multiplier * scale);
+        BigNumber numerator;
+        BigNumber denominator = new BigNumber(1);
 
-        BigNumber pBig;
-        try
+        int eIndex = s.IndexOfAny(new[] { 'E', 'e' });
+        if (eIndex >= 0)
         {
-            int scaledInt = checked((int)scaledLong);
-            pBig = new BigNumber(scaledInt);
+            string mant = s.Substring(0, eIndex);
+            string expStr = s.Substring(eIndex + 1);
+            int exp = int.Parse(expStr, NumberStyles.AllowLeadingSign, CultureInfo.InvariantCulture);
+
+            int decCount = 0;
+            int dotIndex = mant.IndexOf('.');
+            if (dotIndex >= 0)
+            {
+                decCount = mant.Length - dotIndex - 1;
+                mant = mant.Remove(dotIndex, 1);
+            }
+
+            numerator = new BigNumber(mant);
+
+            int scale = exp - decCount;
+            if (scale > 0)
+            {
+                for (int i = 0; i < scale; i++)
+                {
+                    numerator *= 10;
+                }
+            }
+            else if (scale < 0)
+            {
+                for (int i = 0; i < -scale; i++)
+                {
+                    denominator *= 10;
+                }
+            }
         }
-        catch (OverflowException)
+        else if (!s.Contains("."))
         {
-            pBig = new BigNumber(scaledLong.ToString());
+            numerator = new BigNumber(int.Parse(s, CultureInfo.InvariantCulture));
+        }
+        else
+        {
+            var parts = s.Split('.');
+            string whole = parts[0];
+            string frac = parts[1];
+            numerator = new BigNumber(whole + frac);
+            for (int i = 0; i < frac.Length; i++)
+                denominator *= 10;
         }
 
-        BigNumber temp = a * pBig;
-        BigNumber result = temp / scale;
-        result.sign = a.sign * (multiplier < 0 ? -1 : 1);
+        BigNumber temp = a * numerator;
+        BigNumber result = temp.DivideToFloat(denominator);
+        result.sign = a.sign * (negative ? -1 : 1);
         return result;
     }
+
     public static BigNumber operator *(float multiplier, BigNumber a)
     {
         return a * multiplier;
@@ -392,16 +438,9 @@ public struct BigNumber : ISerializationCallbackReceiver
 
         int diff = this.parts.Count - other.parts.Count;
 
-        if(diff > 0)
-        {
-            thisValue *= Mathf.Pow(1000f, Math.Abs(diff));
-        }
-        if (diff < 0)
-        {
-            otherValue *= Mathf.Pow(1000f, Math.Abs(diff));
-        }
+        float scale = Mathf.Pow(1000f, diff);
 
-        return (this.sign * thisValue) / (other.sign * otherValue);
+        return (this.sign * thisValue) / (other.sign * otherValue) * scale;
     }
     public int CompareTo(BigNumber other)
     {

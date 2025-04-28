@@ -277,10 +277,9 @@ public static class UnitCombatPowerCalculator
     {
         BigNumber stat = 0;
         var data = DataTableManager.UnitUpgradeTable.GetData(upgradeType);
-        for (int i = 1; i <= level; i++)
-        {
-            stat += data.Value * i;
-        }
+
+        stat = data.Value * level;
+        
         return stat;
     }
 }

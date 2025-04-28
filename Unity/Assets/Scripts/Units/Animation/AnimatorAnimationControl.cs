@@ -177,7 +177,7 @@ public class AnimatorAnimationControl : AnimationControl
 
         foreach (var animatorState in animatorController.layers[0].stateMachine.states)
         {
-            if (animatorState.state.nameHash != hash)
+            if (!animatorState.state.name.Contains(clipID.ToString()))
             {
                 continue;
             }

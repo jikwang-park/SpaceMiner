@@ -200,10 +200,6 @@ public class Unit : MonoBehaviour, IObjectPoolGameObject
 
     private void OnAttackEnd()
     {
-        if (UnitTypes == UnitTypes.Tanker)
-        {
-            ((AnimatorAnimationControl)AnimationControl).NextWeaponIndex();
-        }
         SetStatus(Status.Wait);
     }
 
@@ -212,6 +208,11 @@ public class Unit : MonoBehaviour, IObjectPoolGameObject
         if (HasTarget)
         {
             unitStats.Execute(target.gameObject);
+
+            if (UnitTypes == UnitTypes.Tanker)
+            {
+                ((AnimatorAnimationControl)AnimationControl).NextWeaponIndex();
+            }
         }
     }
 

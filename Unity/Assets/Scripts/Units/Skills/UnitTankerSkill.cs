@@ -7,6 +7,8 @@ public class UnitTankerSkill : UnitSkillBase
 {
     private TankerSkillTable.Data data;
 
+    private float duration;
+
     public override void ExecuteSkill()
     {
         
@@ -20,7 +22,7 @@ public class UnitTankerSkill : UnitSkillBase
                 continue;
             }
             var barrierAmount = unit.unitStats.armor * Ratio;
-            targetUnit.unitStats.UseShiled(data.Duration, barrierAmount);
+            targetUnit.unitStats.UseShiled(duration, barrierAmount);
         }
         if (skillGrade == Grade.Legend)
         {
@@ -41,6 +43,7 @@ public class UnitTankerSkill : UnitSkillBase
         GetBuff(skillId);
         CoolTime = data.CoolTime;
         Ratio = data.ShieldRatio;
+        duration = data.Duration;
     }
 
     public override void GetBuff(int id)
@@ -63,6 +66,12 @@ public class UnitTankerSkill : UnitSkillBase
         this.data = data;
         CoolTime = data.CoolTime;
         Ratio = data.ShieldRatio;
+        duration = data.Duration;
+    }
+
+    public override void SetEtcValue(float value)
+    {
+        duration = value;
     }
 
 

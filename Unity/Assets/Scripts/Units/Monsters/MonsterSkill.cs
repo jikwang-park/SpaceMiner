@@ -75,7 +75,13 @@ public class MonsterSkill : MonoBehaviour
 
     public void SetSkill(int skillId, MonsterStats stats)
     {
-        skillData = DataTableManager.MonsterSkillTable.GetData(skillId);
+        var skillData = DataTableManager.MonsterSkillTable.GetData(skillId);
+        SetSkill(skillData, stats);
+    }
+
+    public void SetSkill(MonsterSkillTable.Data skillData, MonsterStats stats)
+    {
+        this.skillData = skillData;
         this.stats = stats;
     }
 

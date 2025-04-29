@@ -53,6 +53,21 @@ public abstract class UnitSkillBase
 
 
 
+    
+    public void SetCoolTime(float cooltime)
+    {
+        CoolTime = cooltime;
+    }
+
+    public void SetRatio(float ratio)
+    {
+        Ratio = ratio;
+    }
+
+    public virtual void SetEtcValue(float value)
+    {
+
+    }
 }
 
 

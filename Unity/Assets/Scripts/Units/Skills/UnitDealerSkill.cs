@@ -6,10 +6,12 @@ public class UnitDealerSkill : UnitSkillBase
 {
     private DealerSkillTable.Data data;
 
+    private int monsterMaxTarget;
+
     public override void ExecuteSkill()
     {
         List<Transform> targetTransforms = new List<Transform>();
-        targetTransforms = unit.StageManager.StageMonsterManager.GetMonsters(data.MonsterMaxTarget);
+        targetTransforms = unit.StageManager.StageMonsterManager.GetMonsters(monsterMaxTarget);
         for (int i = 0; i < targetTransforms.Count; ++i)
         {
             unit.unitStats.SkillExecute(targetTransforms[i].gameObject);
@@ -24,6 +26,7 @@ public class UnitDealerSkill : UnitSkillBase
         data = DataTableManager.DealerSkillTable.GetData(skillId);
         CoolTime = data.CoolTime;
         Ratio = data.DamageRatio;
+        monsterMaxTarget = data.MonsterMaxTarget;
     }
 
 
@@ -39,5 +42,11 @@ public class UnitDealerSkill : UnitSkillBase
         this.data = data;
         CoolTime = data.CoolTime;
         Ratio = data.DamageRatio;
+        monsterMaxTarget = data.MonsterMaxTarget;
+    }
+
+    public override void SetEtcValue(float value)
+    {
+        monsterMaxTarget = (int)value;
     }
 }

@@ -29,7 +29,8 @@ public class AnimationController : AnimationControl
         }
     }
 
-    private const string battleidle = "Battle_Idle_01";
+    private const string battleidle01 = "Battle_Idle_01";
+    private const string battleidle = "Battle_Idle";
     private const string idle = "Idle";
     private const string run = "Run";
     private const string attack = "Attack_01";
@@ -59,6 +60,10 @@ public class AnimationController : AnimationControl
             {
                 case battleidle:
                     animationDict.Add(AnimationClipID.BattleIdle, battleidle);
+                    state.wrapMode = WrapMode.Loop;
+                    break;
+                case battleidle01:
+                    animationDict.Add(AnimationClipID.BattleIdle, battleidle01);
                     state.wrapMode = WrapMode.Loop;
                     break;
                 case idle:

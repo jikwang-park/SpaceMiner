@@ -24,7 +24,7 @@ public class UnitHealerSkill : UnitSkillBase
             var targetUnit = unit.StageManager.UnitPartyManager.GetCurrentTargetType(target);
             if(targetUnit is not null)
             {
-                var amount = targetUnit.unitStats.maxHp * data.HealRatio;
+                var amount = targetUnit.unitStats.maxHp * Ratio;
                 targetUnit.unitStats.Hp += amount;
             }
         }

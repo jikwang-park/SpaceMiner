@@ -238,8 +238,9 @@ public class UnitPartyManager : MonoBehaviour
             position += unitOffset;
             var currentSoilderId = InventoryManager.GetInventoryData(currentType).equipElementID;
             var currentSoilderData = DataTableManager.SoldierTable.GetData(currentSoilderId);
-            var weaponSocket = unit.transform.Find("Bip001").Find("Bip001 Prop1");
-            Instantiate(weapons[currentType][(int)currentSoilderData.Grade - 1], weaponSocket);
+            //var weaponSocket = unit.transform.Find("Bip001").Find("Bip001 Prop1");
+            var weaponPosition = unit.weaponPosition;
+            Instantiate(weapons[currentType][(int)currentSoilderData.Grade - 1], weaponPosition);
             PartyUnits.Add(currentType, unit);
             if (stageManager.IngameStatus != IngameStatus.LevelDesign)
             {

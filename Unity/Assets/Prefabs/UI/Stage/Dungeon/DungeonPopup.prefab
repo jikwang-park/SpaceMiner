@@ -489,6 +489,7 @@ GameObject:
   - component: {fileID: 6682894102460278688}
   - component: {fileID: 4707960528854849599}
   - component: {fileID: 1559292164681338181}
+  - component: {fileID: 4143449223521586960}
   m_Layer: 5
   m_Name: PreviousDifficultyButton
   m_TagString: Untagged
@@ -609,6 +610,35 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
+--- !u!114 &4143449223521586960
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1868422092021115964}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 46db5f6226817ee4ab626b3d9a97b5eb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  OnLongPress:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 6845771368442060933}
+        m_TargetAssemblyTypeName: DungeonPopup, Assembly-CSharp
+        m_MethodName: OnClickStage
+        m_Mode: 6
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+  minTime: 0.2
+  interval: 0.1
 --- !u!1 &2453562193476803765
 GameObject:
   m_ObjectHideFlags: 0
@@ -1131,6 +1161,7 @@ GameObject:
   - component: {fileID: 9045896295558474658}
   - component: {fileID: 6802296652437106935}
   - component: {fileID: 6863072860052127193}
+  - component: {fileID: 1474774586506184771}
   m_Layer: 5
   m_Name: NextDifficulty
   m_TagString: Untagged
@@ -1251,6 +1282,35 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 1
         m_CallState: 2
+--- !u!114 &1474774586506184771
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4000267278709660058}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 46db5f6226817ee4ab626b3d9a97b5eb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  OnLongPress:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 6845771368442060933}
+        m_TargetAssemblyTypeName: DungeonPopup, Assembly-CSharp
+        m_MethodName: OnClickStage
+        m_Mode: 6
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 1
+        m_CallState: 2
+  minTime: 0.2
+  interval: 0.1
 --- !u!1 &4072369985030397797
 GameObject:
   m_ObjectHideFlags: 0

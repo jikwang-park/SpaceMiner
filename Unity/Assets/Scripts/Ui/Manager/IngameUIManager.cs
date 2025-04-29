@@ -23,6 +23,8 @@ public class IngameUIManager : MonoBehaviour
     private StageEndWindow stageEndWindow;
     [field: SerializeField]
     public DungeonEndWindow DungeonEndWindow { get; private set; }
+    [field:SerializeField]
+    public DungeonExitConfirmWindow DungeonExitConfirmWindow { get; private set; }
     [field: SerializeField]
     public DamageDungeonEndWindow DamageDungeonEndWindow { get; private set; }
     [field: SerializeField]

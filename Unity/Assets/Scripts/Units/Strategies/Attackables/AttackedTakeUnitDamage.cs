@@ -10,6 +10,10 @@ public class AttackedTakeUnitDamage : MonoBehaviour,IAttackable
     private Unit unit;
 
     public event Action<float> OnHpChanged;
+    public event Action<GameObject> GetDamaged;
+    public event Action<Unit> OnDamageOverflowed;
+
+    public BigNumber currentDamage { get; private set; }
 
     private void Awake()
     {
@@ -22,12 +26,24 @@ public class AttackedTakeUnitDamage : MonoBehaviour,IAttackable
         gameObjectEnabled = true;
     }
 
+
+  
     public void OnAttack(GameObject attacker, Attack attack)
     {
-        //TODO: 유닛 스탯으로 배리어 이동 후 작업 필요
-        if(unit.unitStats.barrier > attack.damage)
+        //currentDamage = attack.damage;
+
+        //if (unit.unitStats.Hp <= attack.damage)
+        //{
+        //    OnDamageOverflowed?.Invoke(unit);
+        //    return;
+        //}
+
+        GetDamaged?.Invoke(attacker);
+
+        if (unit.unitStats.barrier > attack.damage)
         {
             unit.unitStats.barrier -= attack.damage;
+            
             return;
         }
         else

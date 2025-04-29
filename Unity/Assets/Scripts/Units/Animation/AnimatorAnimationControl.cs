@@ -148,33 +148,6 @@ public class AnimatorAnimationControl : AnimationControl
 
     public override void SetSpeed(AnimationClipID clipID, float speed)
     {
-        if (!ContainsClip(clipID))
-        {
-            return;
-        }
-
-        int hash;
-        switch (clipID)
-        {
-            case AnimationClipID.BattleIdle:
-                hash = hashBattleIdle;
-                break;
-            case AnimationClipID.Run:
-                hash = hashRun;
-                break;
-            case AnimationClipID.Attack:
-                hash = hashAttack;
-                break;
-            case AnimationClipID.Skill:
-                hash = hashSkill;
-                break;
-            case AnimationClipID.Die:
-                hash = hashDie;
-                break;
-            default:
-                return;
-        }
-
         foreach (var animatorState in animatorController.layers[0].stateMachine.states)
         {
             if (!animatorState.state.name.Contains(clipID.ToString()))
@@ -207,36 +180,22 @@ public class AnimatorAnimationControl : AnimationControl
 
     private float GetProgress(AnimationClipID clipID)
     {
-        int hash;
-        switch (clipID)
-        {
-            case AnimationClipID.BattleIdle:
-                hash = hashBattleIdle;
-                break;
-            case AnimationClipID.Run:
-                hash = hashRun;
-                break;
-            case AnimationClipID.Attack:
-                hash = hashAttack;
-                break;
-            case AnimationClipID.Skill:
-                hash = hashSkill;
-                break;
-            case AnimationClipID.Die:
-                hash = hashDie;
-                break;
-            default:
-                return 1f;
-        }
-
         var animationState = animator.GetCurrentAnimatorStateInfo(0);
-
-        if (animationState.normalizedTime > 1f)
+        foreach (var animatorState in animatorController.layers[0].stateMachine.states)
         {
-            return 1f;
+            if (animatorState.state.name.Contains(clipID.ToString())
+                && animatorState.state.nameHash == animationState.shortNameHash)
+            {
+                if (animationState.normalizedTime > 1f)
+                {
+                    return 1f;
+                }
+
+                return animationState.normalizedTime;
+            }
         }
 
-        return animationState.normalizedTime;
+        return 0f;
     }
 
     private void ProcessEvent()
@@ -267,18 +226,12 @@ public class AnimatorAnimationControl : AnimationControl
 
     public override bool ContainsClip(AnimationClipID clipID)
     {
-        switch (clipID)
+        foreach (var animatorState in animatorController.layers[0].stateMachine.states)
         {
-            case AnimationClipID.BattleIdle:
-                return animator.HasState(0, hashBattleIdle);
-            case AnimationClipID.Run:
-                return animator.HasState(0, hashRun);
-            case AnimationClipID.Attack:
-                return animator.HasState(0, hashAttack);
-            case AnimationClipID.Skill:
-                return animator.HasState(0, hashSkill);
-            case AnimationClipID.Die:
-                return animator.HasState(0, hashDie);
+            if (animatorState.state.name.Contains(clipID.ToString()))
+            {
+                return true;
+            }
         }
         return false;
     }

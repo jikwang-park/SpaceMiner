@@ -37,6 +37,7 @@ public class UnitDealerSkill : UnitSkillBase
 
     public override void UpgradeUnitSkillStats(int id)
     {
+        
         var data = DataTableManager.DealerSkillTable.GetData(id);
         this.data = data;
         CoolTime = data.CoolTime;

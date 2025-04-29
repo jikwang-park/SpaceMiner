@@ -197,6 +197,7 @@ public class UnitStats : CharacterStats
     public void UseShiled(float duration, BigNumber amount)
     {
         barrier += amount;
+        ParticleEffectManager.Instance.PlayBuffEffect("BarrierEffect", gameObject.transform, duration);
         StartCoroutine(RemoveBarrierAfterDuration(duration, amount));
     }
 

@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AddressableAssets;
+using UnityEngine.ResourceManagement.AsyncOperations;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
@@ -14,6 +15,9 @@ public class Test : MonoBehaviour
         startButton.interactable = false;
         await FirebaseManager.Instance.InitializeAsync();
         var handle = Addressables.LoadSceneAsync("DevelopScene", LoadSceneMode.Single);
-        startButton.interactable = true;
+        if(handle.Status == AsyncOperationStatus.Failed)
+        {
+            startButton.interactable = true;
+        }
     }
 }

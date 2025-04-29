@@ -358,7 +358,7 @@ public class StageMonsterManager : MonoBehaviour
 
         for (int i = 0; i < data.slots[0]; ++i)
         {
-            int monsterId = 11006;
+            int monsterId = 12001;
             int lane = i % 3;
             SpawnMonster(lane, i, frontPosition, monsterId, data, MonsterType.Normal);
         }
@@ -368,7 +368,7 @@ public class StageMonsterManager : MonoBehaviour
 
         for (int i = 0, j = backStartPos; i < data.slots[1]; ++i, ++j)
         {
-            int monsterId = 11011;
+            int monsterId = 13001;
             int lane = i % 3;
             SpawnMonster(lane, j, frontPosition, monsterId, data, MonsterType.Ranged);
         }

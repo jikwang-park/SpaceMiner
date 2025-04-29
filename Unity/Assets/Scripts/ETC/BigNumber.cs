@@ -107,15 +107,30 @@ public struct BigNumber : ISerializationCallbackReceiver
     }
     public BigNumber(float input)
     {
-        try
+        if (float.IsNaN(input) || float.IsInfinity(input))
         {
-            int truncated = checked((int)input);
-            this = new BigNumber(truncated);
+            throw new ArgumentException(nameof(input));
         }
-        catch
+
+        sign = input < 0 ? -1 : 1;
+        float absVal = Math.Abs(input);
+        float truncated = (float)Math.Truncate(absVal);
+
+        if (truncated <= int.MaxValue)
         {
-            this = new BigNumber(Math.Truncate(input).ToString());
+            int intPart = (int)truncated;
+            this = new BigNumber(sign * intPart);
         }
+        else
+        {
+            string s = truncated
+                .ToString("F0", CultureInfo.InvariantCulture);
+            if (sign < 0)
+                s = "-" + s;
+            this = new BigNumber(s);
+        }
+
+        currentValue = this.ToString();
     }
     private BigNumber(List<int> parts)
     {
@@ -243,64 +258,43 @@ public struct BigNumber : ISerializationCallbackReceiver
     public static BigNumber operator *(BigNumber a, float multiplier)
     {
         if (multiplier == 0f)
+        {
             return new BigNumber("0");
-
-        string s = multiplier.ToString("G9", CultureInfo.InvariantCulture);
-        bool negative = s.StartsWith("-");
-        if (negative) s = s.Substring(1);
-
-        BigNumber numerator;
-        BigNumber denominator = new BigNumber(1);
-
-        int eIndex = s.IndexOfAny(new[] { 'E', 'e' });
-        if (eIndex >= 0)
-        {
-            string mant = s.Substring(0, eIndex);
-            string expStr = s.Substring(eIndex + 1);
-            int exp = int.Parse(expStr, NumberStyles.AllowLeadingSign, CultureInfo.InvariantCulture);
-
-            int decCount = 0;
-            int dotIndex = mant.IndexOf('.');
-            if (dotIndex >= 0)
-            {
-                decCount = mant.Length - dotIndex - 1;
-                mant = mant.Remove(dotIndex, 1);
-            }
-
-            numerator = new BigNumber(mant);
-
-            int scale = exp - decCount;
-            if (scale > 0)
-            {
-                for (int i = 0; i < scale; i++)
-                {
-                    numerator *= 10;
-                }
-            }
-            else if (scale < 0)
-            {
-                for (int i = 0; i < -scale; i++)
-                {
-                    denominator *= 10;
-                }
-            }
         }
-        else if (!s.Contains("."))
+        bool negative = multiplier < 0f;
+        float absVal = Math.Abs(multiplier);
+
+        int exponent = (int)Math.Floor(Math.Log10(absVal));
+
+        double mantissa = absVal / Math.Pow(10.0, exponent);
+
+        string mantStr = mantissa.ToString("G9", CultureInfo.InvariantCulture).TrimEnd('0').TrimEnd('.');
+
+        int decCount = 0;
+        int dot = mantStr.IndexOf('.');
+
+        if (dot >= 0)
         {
-            numerator = new BigNumber(int.Parse(s, CultureInfo.InvariantCulture));
+            decCount = mantStr.Length - dot - 1;
+            mantStr = mantStr.Remove(dot, 1);
+        }
+
+        BigNumber numerator = new BigNumber(mantStr);
+
+        BigNumber prod = a * numerator;
+
+        int scaleExp = exponent - decCount;
+        BigNumber result;
+        if (scaleExp >= 0)
+        {
+            result = prod * new BigNumber("1" + new string('0', scaleExp));
         }
         else
         {
-            var parts = s.Split('.');
-            string whole = parts[0];
-            string frac = parts[1];
-            numerator = new BigNumber(whole + frac);
-            for (int i = 0; i < frac.Length; i++)
-                denominator *= 10;
+            BigNumber denom = new BigNumber("1" + new string('0', -scaleExp));
+            result = prod.DivideToFloat(denom);
         }
 
-        BigNumber temp = a * numerator;
-        BigNumber result = temp.DivideToFloat(denominator);
         result.sign = a.sign * (negative ? -1 : 1);
         return result;
     }

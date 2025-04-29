@@ -5,16 +5,28 @@ using UnityEngine;
 public class RobotMoveAction : ActionNode<MiningRobotController>
 {
     private Vector3 direction;
-
+    private AnimationControl animatorControl;
 
     public RobotMoveAction(MiningRobotController context) : base(context)
     {
+        animatorControl = context.GetComponent<AnimationControl>();
     }
 
     protected override void OnStart()
     {
         base.OnStart();
         direction = (context.currentTarget.position - context.transform.position).normalized;
+        switch (context.RobotData.Grade)
+        {
+            case Grade.Normal:
+            case Grade.Rare:
+                animatorControl.Play(AnimationControl.AnimationClipID.Walk);
+                break;
+            case Grade.Epic:
+            case Grade.Legend:
+                animatorControl.Play(AnimationControl.AnimationClipID.Run);
+                break;
+        }
     }
 
     protected override NodeStatus OnUpdate()

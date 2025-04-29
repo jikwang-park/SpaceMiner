@@ -9,6 +9,7 @@ public class AnimatorAnimationControl : AnimationControl
 {
     private readonly static int hashBattleIdle = Animator.StringToHash("BattleIdle");
     private readonly static int hashRun = Animator.StringToHash("Run");
+    private readonly static int hashWalk = Animator.StringToHash("Walk");
     private readonly static int hashAttack = Animator.StringToHash("Attack");
     private readonly static int hashSkill = Animator.StringToHash("Skill");
     private readonly static int hashDie = Animator.StringToHash("Die");
@@ -111,12 +112,6 @@ public class AnimatorAnimationControl : AnimationControl
             }
         }
 
-        animator.ResetTrigger(hashBattleIdle);
-        animator.ResetTrigger(hashRun);
-        animator.ResetTrigger(hashAttack);
-        animator.ResetTrigger(hashSkill);
-        animator.ResetTrigger(hashDie);
-
         CurrentClip = clipID;
 
         switch (CurrentClip)
@@ -135,6 +130,9 @@ public class AnimatorAnimationControl : AnimationControl
                 break;
             case AnimationClipID.Die:
                 animator.SetTrigger(hashDie);
+                break;
+            case AnimationClipID.Walk:
+                animator.SetTrigger(hashWalk);
                 break;
         }
     }

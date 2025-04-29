@@ -30,7 +30,7 @@ public class LevelDesignStageStatusMachine : StageStatusMachine
     }
 
     public float stageTime;
-    public float weight;
+    public float[] weight = new float[3];
     public int waveLength;
     public int waveTarget;
     public float respawnDistance;
@@ -235,7 +235,9 @@ public class LevelDesignStageStatusMachine : StageStatusMachine
         {
             return;
         }
-        weight = stageData.Weight;
+        weight[0] = stageData.AtkWeight;
+        weight[1] = stageData.HpWeight;
+        weight[2] = stageData.GoldWeight;
         stageManager.StageMonsterManager.SetWeight(weight);
         var waveData = DataTableManager.WaveTable.GetData(stageData.WaveID);
         respawnDistance = waveData.RespawnDistance;

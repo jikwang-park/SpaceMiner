@@ -5,9 +5,11 @@ using UnityEngine;
 public class MiningAction : ActionNode<MiningRobotController>
 {
     private float targetTime;
+    private AnimationControl animatorControl;
 
     public MiningAction(MiningRobotController context) : base(context)
     {
+        animatorControl = context.GetComponent<AnimationControl>();
     }
 
     protected override void OnStart()
@@ -23,6 +25,7 @@ public class MiningAction : ActionNode<MiningRobotController>
                 targetTime = Time.time + (float)context.PlanetData.MiningLevel2 / context.RobotData.MiningSpeed;
                 break;
         }
+        animatorControl.Play(AnimationControl.AnimationClipID.Attack);
     }
 
     protected override NodeStatus OnUpdate()

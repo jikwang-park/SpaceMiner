@@ -2,6 +2,7 @@ using Newtonsoft.Json;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Runtime.CompilerServices;
 using System.Runtime.Serialization;
 using UnityEngine;
@@ -106,8 +107,30 @@ public struct BigNumber : ISerializationCallbackReceiver
     }
     public BigNumber(float input)
     {
-        int truncated = (int)input;
-        this = new BigNumber(truncated);
+        if (float.IsNaN(input) || float.IsInfinity(input))
+        {
+            throw new ArgumentException(nameof(input));
+        }
+
+        sign = input < 0 ? -1 : 1;
+        float absVal = Math.Abs(input);
+        float truncated = (float)Math.Truncate(absVal);
+
+        if (truncated <= int.MaxValue)
+        {
+            int intPart = (int)truncated;
+            this = new BigNumber(sign * intPart);
+        }
+        else
+        {
+            string s = truncated
+                .ToString("F0", CultureInfo.InvariantCulture);
+            if (sign < 0)
+                s = "-" + s;
+            this = new BigNumber(s);
+        }
+
+        currentValue = this.ToString();
     }
     private BigNumber(List<int> parts)
     {
@@ -238,27 +261,44 @@ public struct BigNumber : ISerializationCallbackReceiver
         {
             return new BigNumber("0");
         }
+        bool negative = multiplier < 0f;
+        float absVal = Math.Abs(multiplier);
 
-        int scale = 10000;
+        int exponent = (int)Math.Floor(Math.Log10(absVal));
 
-        long scaledLong = (long)Math.Round(multiplier * scale);
+        double mantissa = absVal / Math.Pow(10.0, exponent);
 
-        BigNumber pBig;
-        try
+        string mantStr = mantissa.ToString("G9", CultureInfo.InvariantCulture).TrimEnd('0').TrimEnd('.');
+
+        int decCount = 0;
+        int dot = mantStr.IndexOf('.');
+
+        if (dot >= 0)
         {
-            int scaledInt = checked((int)scaledLong);
-            pBig = new BigNumber(scaledInt);
-        }
-        catch (OverflowException)
-        {
-            pBig = new BigNumber(scaledLong.ToString());
+            decCount = mantStr.Length - dot - 1;
+            mantStr = mantStr.Remove(dot, 1);
         }
 
-        BigNumber temp = a * pBig;
-        BigNumber result = temp / scale;
-        result.sign = a.sign * (multiplier < 0 ? -1 : 1);
+        BigNumber numerator = new BigNumber(mantStr);
+
+        BigNumber prod = a * numerator;
+
+        int scaleExp = exponent - decCount;
+        BigNumber result;
+        if (scaleExp >= 0)
+        {
+            result = prod * new BigNumber("1" + new string('0', scaleExp));
+        }
+        else
+        {
+            BigNumber denom = new BigNumber("1" + new string('0', -scaleExp));
+            result = prod.DivideToFloat(denom);
+        }
+
+        result.sign = a.sign * (negative ? -1 : 1);
         return result;
     }
+
     public static BigNumber operator *(float multiplier, BigNumber a)
     {
         return a * multiplier;
@@ -392,16 +432,9 @@ public struct BigNumber : ISerializationCallbackReceiver
 
         int diff = this.parts.Count - other.parts.Count;
 
-        if(diff > 0)
-        {
-            thisValue *= Mathf.Pow(1000f, Math.Abs(diff));
-        }
-        if (diff < 0)
-        {
-            otherValue *= Mathf.Pow(1000f, Math.Abs(diff));
-        }
+        float scale = Mathf.Pow(1000f, diff);
 
-        return (this.sign * thisValue) / (other.sign * otherValue);
+        return (this.sign * thisValue) / (other.sign * otherValue) * scale;
     }
     public int CompareTo(BigNumber other)
     {

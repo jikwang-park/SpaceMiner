@@ -10,11 +10,13 @@ public class UnitStats : CharacterStats
 
     private Grade currentGrade;
 
-
-
     public BigNumber barrier = 0;
 
+    public bool hasBarrier = false;
 
+    private BigNumber buffReflectionDamage;
+
+    private System.Action<GameObject> ReflectDelegate;
 
     private void Awake()
     {
@@ -72,6 +74,7 @@ public class UnitStats : CharacterStats
         }
         maxHp = UnitCombatPowerCalculator.statsDictionary[type].soldierMaxHp;
         Hp = maxHp * ratio;
+       
     }
 
 
@@ -82,7 +85,7 @@ public class UnitStats : CharacterStats
 
         coolDown = 100f / data.AttackSpeed;
         this.type = type;
-
+        
 
         currentGrade = data.Grade;
 
@@ -94,10 +97,22 @@ public class UnitStats : CharacterStats
         coolDown = UnitCombatPowerCalculator.statsDictionary[type].coolDown;
         moveSpeed = UnitCombatPowerCalculator.statsDictionary[type].moveSpeed;
 
-        RecalculateHpWithRatio();
+        if(Hp == null)
+        {
+            Hp = maxHp;
+        }
+        else
+        {
+            RecalculateHpWithRatio();
+        }
+
     }
 
+    private void Update()
+    {
+        Debug.Log(Hp);
 
+    }
     public override void Execute(GameObject defender)
     {
         if (defender is null)
@@ -140,7 +155,7 @@ public class UnitStats : CharacterStats
 
         return attack;
     }
-    public void SkillExecute(GameObject defender) // ��ų ������ �����? ���� �Ѱܼ� ������ ó��
+    public void SkillExecute(GameObject defender)
     {
         if (defender is null)
         {
@@ -191,12 +206,56 @@ public class UnitStats : CharacterStats
         //{
         //    attack.damage -= defenderStats.armor;
         //}
-
+    
         return attack;
     }
+    public void UseTankerBuff(float duration , BigNumber amount)
+    {
+        buffReflectionDamage = amount;
+        var takeDamage = GetComponent<AttackedTakeUnitDamage>();
+        ReflectDelegate = GetReflectionDamage;
+
+        takeDamage.GetDamaged += ReflectDelegate;
+
+        StartCoroutine(RemoveBuffAfterDuration(duration,takeDamage));
+    }
+
+    public void GetReflectionDamage(GameObject defender)
+    {
+        
+        CharacterStats dStats = defender.GetComponent<CharacterStats>();
+        Attack attack = CreateBuffAttack(dStats);
+        IAttackable[] attackables = defender.GetComponents<IAttackable>();
+        foreach (var attackable in attackables)
+        {
+            attackable.OnAttack(gameObject, attack);
+        }
+    }
+
+    private Attack CreateBuffAttack(CharacterStats defenderStats)
+    {
+        Attack attack = new Attack();
+        attack.damage = buffReflectionDamage;
+        
+        
+        return attack;
+    }
+
+    private IEnumerator RemoveBuffAfterDuration(float duration , AttackedTakeUnitDamage attackedDamage)
+    {
+        yield return new WaitForSeconds(duration);
+        if(ReflectDelegate != null)
+        {
+            attackedDamage.GetDamaged -= ReflectDelegate;
+            ReflectDelegate = null;
+        }
+    }
+
     public void UseShiled(float duration, BigNumber amount)
     {
+        hasBarrier = true;
         barrier += amount;
+        ParticleEffectManager.Instance.PlayBuffEffect("BarrierEffect", gameObject.transform, duration);
         StartCoroutine(RemoveBarrierAfterDuration(duration, amount));
     }
 
@@ -208,6 +267,16 @@ public class UnitStats : CharacterStats
 
         if (barrier < 0)
             barrier = 0;
+        hasBarrier = false;
     }
+
+    //public void UseHealerBuff(BigNumber hpAmount)
+    //{
+
+    //    var takeDamage = GetComponent<AttackedTakeUnitDamage>();
+    //    takeDamage.OnDamageOverflowed += (unit) => unit.unitStats.Hp = hpAmount;
+    //}
+
+    
 
 }

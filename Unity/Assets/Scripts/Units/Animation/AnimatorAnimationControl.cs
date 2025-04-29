@@ -112,13 +112,6 @@ public class AnimatorAnimationControl : AnimationControl
             }
         }
 
-        animator.ResetTrigger(hashBattleIdle);
-        animator.ResetTrigger(hashRun);
-        animator.ResetTrigger(hashAttack);
-        animator.ResetTrigger(hashSkill);
-        animator.ResetTrigger(hashDie);
-        animator.ResetTrigger(hashWalk);
-
         CurrentClip = clipID;
 
         switch (CurrentClip)

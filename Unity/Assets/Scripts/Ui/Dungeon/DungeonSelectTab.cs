@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AddressableAssets;
 
-public class DungeonPage : MonoBehaviour
+public class DungeonSelectTab : MonoBehaviour
 {
     [SerializeField]
     private Transform scrollContent;

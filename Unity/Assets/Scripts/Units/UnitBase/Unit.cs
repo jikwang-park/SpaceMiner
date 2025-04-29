@@ -211,10 +211,6 @@ public class Unit : MonoBehaviour, IObjectPoolGameObject
         {
             unitStats.Execute(target.gameObject);
 
-            if (UnitTypes == UnitTypes.Tanker)
-            {
-                ((AnimatorAnimationControl)AnimationControl).NextWeaponIndex();
-            }
         }
     }
 
@@ -239,6 +235,10 @@ public class Unit : MonoBehaviour, IObjectPoolGameObject
                 break;
             case Status.Attacking:
                 lastAttackTime = Time.time;
+                if (UnitTypes == UnitTypes.Tanker)
+                {
+                    ((AnimatorAnimationControl)AnimationControl).NextWeaponIndex();
+                }
                 AnimationControl?.Play(AnimationControl.AnimationClipID.Attack);
                 break;
             case Status.SkillUsing:

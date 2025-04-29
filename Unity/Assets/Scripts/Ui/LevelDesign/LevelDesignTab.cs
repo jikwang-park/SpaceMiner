@@ -45,7 +45,9 @@ public class LevelDesignTab : MonoBehaviour
     [SerializeField]
     private TextMeshProUGUI waveText;
     [SerializeField]
-    private TMP_InputField weightInput;
+    private TMP_InputField atkWeightInput;
+    [SerializeField]
+    private TMP_InputField hpWeightInput;
     [SerializeField]
     private TMP_InputField timeLimitInput;
 
@@ -98,15 +100,28 @@ public class LevelDesignTab : MonoBehaviour
         }
     }
 
-    public void SetWeight()
+    public void SetAtkWeight(string text)
     {
-        if (string.IsNullOrEmpty(weightInput.text))
+        if (string.IsNullOrEmpty(text))
         {
             return;
         }
-        if (float.TryParse(weightInput.text, out float weight))
+        if (float.TryParse(text, out float weight))
         {
-            machine.weight = weight;
+            machine.weight[0] = weight;
+            RefreshText();
+        }
+    }
+
+    public void SetHpWeight(string text)
+    {
+        if (string.IsNullOrEmpty(text))
+        {
+            return;
+        }
+        if (float.TryParse(text, out float weight))
+        {
+            machine.weight[1] = weight;
             RefreshText();
         }
     }
@@ -199,7 +214,8 @@ public class LevelDesignTab : MonoBehaviour
     private void RefreshText()
     {
         spawnDistanceInput.text = machine.respawnDistance.ToString("F0");
-        weightInput.text = machine.weight.ToString("F2");
+        atkWeightInput.text = machine.weight[0].ToString("F2");
+        hpWeightInput.text = machine.weight[1].ToString("F2");
         waveText.text = $"{machine.waveTarget + 1} / {machine.waveLength}";
         timeLimitInput.text = machine.stageTime.ToString("F0");
     }

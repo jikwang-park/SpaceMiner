@@ -14,44 +14,61 @@ public class GachaPurchaseUI : MonoBehaviour
     [SerializeField]
     private GachaPurchaseButton gachaRepeat2Button;
 
-    private bool useTicket = false;
     private int currentGachaId;
     private void Awake()
     {
         gachaOneButton.onClickGachaButton += DoGacha;
         gachaRepeatButton.onClickGachaButton += DoGacha;
         gachaRepeat2Button.onClickGachaButton += DoGacha;
+        GachaManager.onUseTicketChanged += DoUseTicketChanged;
     }
     public void Initialize(GachaTable.Data data)
     {
-        currentGachaId = data.gachaID;
-        if(useTicket)
+        currentGachaId = data.ID;
+        if(GachaManager.useTicket)
         {
-            gachaOneButton.Initialize(1, 1);
-            gachaRepeatButton.Initialize(data.repeat, data.repeat);
-            gachaRepeat2Button.Initialize(data.repeat2, data.repeat2);
+            gachaOneButton.Initialize(1, 1, data.NeedItemID2);
+            gachaRepeatButton.Initialize(data.RepeatCount1, data.RepeatCount1, data.NeedItemID2);
+            gachaRepeat2Button.Initialize(data.RepeatCount2, data.RepeatCount2, data.NeedItemID2);
         }
         else
         {
-            gachaOneButton.Initialize(1, GachaManager.CalCulateCost(currentGachaId, 1));
-            gachaRepeatButton.Initialize(data.repeat, GachaManager.CalCulateCost(currentGachaId, data.repeat));
-            gachaRepeat2Button.Initialize(data.repeat2, GachaManager.CalCulateCost(currentGachaId, data.repeat2));
+            gachaOneButton.Initialize(1, GachaManager.CalCulateCost(currentGachaId, 1), data.NeedItemID1);
+            gachaRepeatButton.Initialize(data.RepeatCount1, GachaManager.CalCulateCost(currentGachaId, data.RepeatCount1), data.NeedItemID1);
+            gachaRepeat2Button.Initialize(data.RepeatCount2, GachaManager.CalCulateCost(currentGachaId, data.RepeatCount2), data.NeedItemID1);
         }
 
     }
+    private void OnEnable()
+    {
+        GachaManager.onUseTicketChanged += DoUseTicketChanged;
+        if(currentGachaId != default)
+        {
+            Initialize(DataTableManager.GachaTable.GetData(currentGachaId));
+        }
+    }
+    private void OnDisable()
+    {
+        GachaManager.onUseTicketChanged -= DoUseTicketChanged;
+    }
     public void ToggleUseTicket()
     {
-        useTicket = !useTicket;
+        GachaManager.ToggleUseTicket();
+    }
+    private void DoUseTicketChanged()
+    {
         Initialize(DataTableManager.GachaTable.GetData(currentGachaId));
     }
     private void DoGacha(int count)
     {
-        ItemManager.AddItem(1002, 30); // 250404 SHG - 가챠 테스트용 재화 추가 
-        var gachaResults = GachaManager.Gacha(currentGachaId, count, useTicket);
+        var gachaResults = GachaManager.Gacha(currentGachaId, count, GachaManager.useTicket);
         if(gachaResults != null)
         {
             InventoryManager.Add(gachaResults);
-            gachaResultPanelUI.gameObject.SetActive(true);
+            if(!gachaResultPanelUI.gameObject.activeSelf)
+            {
+                gachaResultPanelUI.gameObject.SetActive(true);
+            }
             gachaResultPanelUI.SetResult(gachaResults, currentGachaId);
             Initialize(DataTableManager.GachaTable.GetData(currentGachaId));
         }

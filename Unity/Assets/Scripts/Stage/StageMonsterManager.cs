@@ -1,12 +1,38 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
+using Random = UnityEngine.Random;
 
 public class StageMonsterManager : MonoBehaviour
 {
     [SerializeField]
     private int laneCount = 3;
+
+    private enum MonsterType
+    {
+        Normal,
+        Ranged,
+        Boss,
+    }
+
+    [field: SerializeField]
+    public Vector3[] SpawnPoints { get; private set; } = new Vector3[]
+    {
+        new Vector3(-3f, 0f, 2f),
+        new Vector3(0f, 0f, 2f),
+        new Vector3(3f, 0f, 2f),
+        new Vector3(-3f, 0f, 6f),
+        new Vector3(0f, 0f, 6f),
+        new Vector3(3f, 0f, 6f),
+        new Vector3(-3f, 0f, 10f),
+        new Vector3(0f, 0f, 10f),
+        new Vector3(3f, 0f, 10f),
+        new Vector3(-3f, 0f, 14f),
+        new Vector3(0f, 0f, 14f),
+        new Vector3(3f, 0f, 14f),
+    };
 
     public event Action OnMonsterCleared;
     public event Action OnMonsterDie;
@@ -19,18 +45,47 @@ public class StageMonsterManager : MonoBehaviour
 
     private int[] laneMonsterCounts;
     public int LaneCount => laneCount;
-    private int monsterCount => monsterControllers.Count;
+    public int MonsterCount { get; private set; }
+    private ObjectPoolManager objectPoolManager;
+    private StageManager stageManager;
 
-    private WaveSpawner waveSpawner;
+    private float weight;
 
     private void Awake()
     {
-        waveSpawner = GetComponent<WaveSpawner>();
-        waveSpawner.OnMonsterSpawn += AddMonster;
+        objectPoolManager = GetComponent<ObjectPoolManager>();
+        stageManager = GetComponent<StageManager>();
 
         monsterLines = new Dictionary<int, Dictionary<int, MonsterController>>();
         monsterControllers = new HashSet<MonsterController>();
         laneMonsterCounts = new int[laneCount];
+        MonsterCount = 0;
+    }
+
+    public void AddMonster(int lane, MonsterController monster)
+    {
+        var destructedEvent = monster.GetComponent<DestructedDestroyEvent>();
+        if (destructedEvent != null)
+        {
+            ++MonsterCount;
+            monsterControllers.Add(monster);
+            if (!monsterLines.ContainsKey(currentLastLine))
+            {
+                monsterLines.Add(currentLastLine, new Dictionary<int, MonsterController>());
+            }
+            monsterLines[currentLastLine].Add(lane, monster);
+            monster.currentLine = currentLastLine;
+            monster.isFrontMonster = IsFrontLine;
+            monster.findFrontMonster = GetFrontLineMonster;
+            ++laneMonsterCounts[lane];
+            int createdLine = currentLastLine;
+            destructedEvent.OnDestroyed += (sender) => RemoveMonster(sender, createdLine, lane, monster);
+            if (monsterLines[currentLastLine].Count == laneCount)
+            {
+                ++currentLastLine;
+                monsterLines.Add(currentLastLine, new Dictionary<int, MonsterController>());
+            }
+        }
     }
 
     public void StopMonster()
@@ -50,9 +105,11 @@ public class StageMonsterManager : MonoBehaviour
         {
             laneMonsterCounts[i] = 0;
         }
+        MonsterCount = 0;
 
-        foreach (var monster in monsterControllers)
+        while (monsterControllers.Count > 0)
         {
+            var monster = monsterControllers.First();
             monster.Release();
         }
 
@@ -60,31 +117,6 @@ public class StageMonsterManager : MonoBehaviour
 
         monsterControllers.Clear();
         monsterLines.Clear();
-    }
-
-    public void AddMonster(int lane, MonsterController monster)
-    {
-        var destructedEvent = monster.GetComponent<DestructedDestroyEvent>();
-        if (destructedEvent != null)
-        {
-            monsterControllers.Add(monster);
-            if (!monsterLines.ContainsKey(currentLastLine))
-            {
-                monsterLines.Add(currentLastLine, new Dictionary<int, MonsterController>());
-            }
-            if (monsterLines[currentLastLine].ContainsKey(lane))
-            {
-                ++currentLastLine;
-                monsterLines.Add(currentLastLine, new Dictionary<int, MonsterController>());
-            }
-            monsterLines[currentLastLine].Add(lane, monster);
-            monster.currentLine = currentLastLine;
-            monster.isFrontMonster = IsFrontLine;
-            monster.findFrontMonster = GetFrontLineMonster;
-            ++laneMonsterCounts[lane];
-            int createdLine = currentLastLine;
-            destructedEvent.OnDestroyed += (sender) => RemoveMonster(sender, createdLine, lane, monster);
-        }
     }
 
     public void RemoveMonster(DestructedDestroyEvent sender, int createdLine, int lane, MonsterController monster)
@@ -95,24 +127,32 @@ public class StageMonsterManager : MonoBehaviour
         }
 
         var monsterController = sender.GetComponent<MonsterController>();
-        ItemManager.AddItem(monsterController.RewardData.Reward1, monsterController.RewardData.Count);
-
-        int reward2index = monsterController.RewardData.RandomReward2();
-        if (reward2index > -1)
+        if (monsterController.MonsterData.RewardTableID != 0)
         {
-            ItemManager.AddItem(monsterController.RewardData.Reward2, monsterController.RewardData.counts[reward2index]);
+            ItemManager.AddItem(monsterController.RewardData.RewardItemID1, new BigNumber(monsterController.RewardData.RewardItemCount1) * weight);
+
+            int reward2index = monsterController.RewardData.RandomReward2();
+            if (reward2index > -1)
+            {
+                ItemManager.AddItem(monsterController.RewardData.RewardItemID2, monsterController.RewardData.counts[reward2index]);
+            }
         }
 
         OnMonsterDie?.Invoke();
 
-        monsterControllers.Remove(monster);
-        if (monsterCount == 0)
+        --MonsterCount;
+
+        if (MonsterCount == 0)
         {
             OnMonsterCleared?.Invoke();
         }
 
-        monsterLines[createdLine].Remove(lane);
-        --laneMonsterCounts[lane];
+        if (monsterLines[createdLine][lane] == monster)
+        {
+            monsterLines[createdLine].Remove(lane);
+            --laneMonsterCounts[lane];
+        }
+
         if (monsterLines[createdLine].Count == 0)
         {
             monsterLines.Remove(createdLine);
@@ -126,6 +166,11 @@ public class StageMonsterManager : MonoBehaviour
                 nextMonster.Value.currentLine = -1;
             }
         }
+    }
+
+    public void RemoveFromMonsterSet(MonsterController monster)
+    {
+        monsterControllers.Remove(monster);
     }
 
     public int GetMonsterCount(int lane)
@@ -245,8 +290,164 @@ public class StageMonsterManager : MonoBehaviour
         return !monsterLines.ContainsKey(line - 1);
     }
 
-    public void Spawn(Vector3 position, CorpsTable.Data data)
+    public void Spawn(Vector3 frontPosition, CorpsTable.Data data)
     {
-        waveSpawner.Spawn(position, data);
+        if (data.FrontSlots == 0 && data.BackSlots == 0 && data.BossMonsterID != 0)
+        {
+            int lane = 1;
+            SpawnMonster(lane, lane, frontPosition, data.BossMonsterID);
+            EndLine();
+            return;
+        }
+
+        int TypeCount = data.NormalMonsterIDs.Length;
+        int eachMaxCount = data.FrontSlots / TypeCount;
+        int[] createdCount = new int[TypeCount];
+
+        for (int i = 0; i < data.FrontSlots; ++i)
+        {
+            int index = Random.Range(0, TypeCount);
+            if (i < eachMaxCount * TypeCount)
+            {
+                while (createdCount[index] >= eachMaxCount)
+                {
+                    index = Random.Range(0, TypeCount);
+                }
+            }
+
+            int monsterId = data.NormalMonsterIDs[index];
+            int lane = i % 3;
+            SpawnMonster(lane, i, frontPosition, monsterId);
+            ++createdCount[index];
+        }
+        EndLine();
+
+        int backStartPos = Mathf.CeilToInt((float)data.FrontSlots / 3) * 3;
+        TypeCount = data.RangedMonsterIDs.Length;
+        eachMaxCount = data.BackSlots / TypeCount;
+        createdCount = new int[TypeCount];
+
+        for (int i = 0, j = backStartPos; i < data.BackSlots; ++i, ++j)
+        {
+            int index = Random.Range(0, TypeCount);
+            if (i < eachMaxCount * TypeCount)
+            {
+                while (createdCount[index] >= eachMaxCount)
+                {
+                    index = Random.Range(0, TypeCount);
+                }
+            }
+
+            int monsterId = data.RangedMonsterIDs[index];
+            int lane = i % 3;
+            SpawnMonster(lane, j, frontPosition, monsterId);
+            ++createdCount[index];
+        }
+        EndLine();
+    }
+
+    public void Spawn(Vector3 frontPosition, LevelDesignStageStatusMachine.WaveMonsterData data, MonsterSkillTable.Data skillData)
+    {
+        if (data.slots[0] == 0 && data.slots[1] == 0 && data.slots[2] != 0)
+        {
+            int lane = 1;
+            SpawnMonster(lane, lane, frontPosition, 91001, data, MonsterType.Boss, skillData);
+            EndLine();
+            return;
+        }
+
+        for (int i = 0; i < data.slots[0]; ++i)
+        {
+            int monsterId = 11006;
+            int lane = i % 3;
+            SpawnMonster(lane, i, frontPosition, monsterId, data, MonsterType.Normal);
+        }
+        EndLine();
+
+        int backStartPos = Mathf.CeilToInt((float)data.slots[0] / 3) * 3;
+
+        for (int i = 0, j = backStartPos; i < data.slots[1]; ++i, ++j)
+        {
+            int monsterId = 11011;
+            int lane = i % 3;
+            SpawnMonster(lane, j, frontPosition, monsterId, data, MonsterType.Ranged);
+        }
+        EndLine();
+    }
+
+    private void EndLine()
+    {
+        if (monsterLines[currentLastLine].Count == 0 || monsterLines[currentLastLine].Count == laneCount)
+        {
+            return;
+        }
+        ++currentLastLine;
+        monsterLines.Add(currentLastLine, new Dictionary<int, MonsterController>());
+    }
+
+    private void SpawnMonster(int lane, int index, Vector3 frontPosition, int monsterId)
+    {
+        var monsterData = DataTableManager.MonsterTable.GetData(monsterId);
+
+        var prefabID = DataTableManager.AddressTable.GetData(monsterData.PrefabID);
+        var monster = objectPoolManager.Get(prefabID);
+        var monsterController = monster.GetComponent<MonsterController>();
+        monsterController.enabled = true;
+        monsterController.SetMonsterId(monsterId);
+        if (weight != 1f)
+        {
+            monsterController.SetWeight(weight);
+        }
+        monster.transform.parent = null;
+        monster.transform.position = frontPosition + SpawnPoints[index];
+        monster.transform.rotation = Quaternion.LookRotation(Vector3.back, Vector3.up);
+
+        stageManager.StageUiManager.HPBarManager.SetHPBar(monster.transform);
+
+        AddMonster(lane, monsterController);
+    }
+
+    private void SpawnMonster(int lane, int index, Vector3 frontPosition, int monsterId,
+        LevelDesignStageStatusMachine.WaveMonsterData data,
+        MonsterType type,
+        MonsterSkillTable.Data skillData = null)
+    {
+        var monsterData = DataTableManager.MonsterTable.GetData(monsterId);
+
+        var prefabID = DataTableManager.AddressTable.GetData(monsterData.PrefabID);
+        var monster = objectPoolManager.Get(prefabID);
+        var monsterController = monster.GetComponent<MonsterController>();
+        monsterController.enabled = true;
+        monsterController.SetMonsterId(monsterId);
+
+        monster.transform.parent = null;
+        monster.transform.position = frontPosition + SpawnPoints[index];
+        monster.transform.rotation = Quaternion.LookRotation(Vector3.back, Vector3.up);
+
+        var stat = monster.GetComponent<MonsterStats>();
+        stat.damage = data.attack[(int)type];
+        stat.maxHp = data.maxHp[(int)type];
+        stat.Hp = data.maxHp[(int)type];
+        stat.range = data.attackRange[(int)type];
+        stat.coolDown = 100f / data.attackSpeed[(int)type];
+        stat.moveSpeed = data.moveSpeed[(int)type];
+        if (weight != 1f)
+        {
+            monsterController.SetWeight(weight);
+        }
+        if (type == MonsterType.Boss)
+        {
+            var skill = monster.GetComponent<MonsterSkill>();
+            skill.SetSkill(skillData, stat);
+        }
+
+        stageManager.StageUiManager.HPBarManager.SetHPBar(monster.transform);
+
+        AddMonster(lane, monsterController);
+    }
+
+    public void SetWeight(float weight)
+    {
+        this.weight = weight;
     }
 }

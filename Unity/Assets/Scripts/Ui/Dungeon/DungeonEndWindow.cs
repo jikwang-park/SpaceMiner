@@ -1,23 +1,29 @@
-using System.Collections;
-using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
-using UnityEngine.AddressableAssets;
-using UnityEngine.SceneManagement;
-using UnityEngine.UI;
 
 public class DungeonEndWindow : MonoBehaviour
 {
+    private const int ClearID = 142;
+    private const int FailID = 143;
+
     [SerializeField]
-    private TextMeshProUGUI nextText;
+    private LocalizationText messageText;
     [SerializeField]
-    private TextMeshProUGUI messageText;
+    private AddressableImage icon;
+    [SerializeField]
+    private TextMeshProUGUI countText;
+    [SerializeField]
+    private GameObject rewardRow;
+    [SerializeField]
+    private DungeonRequirementWindow requirementWindow;
 
     private float closeTime;
-    private WaitForSeconds wait = new WaitForSeconds(1f);
 
     [SerializeField]
-    private Button nextButton;
+    private GameObject twoButtons;
+    [SerializeField]
+    private GameObject threeButtons;
+
     private bool isCleared;
 
     private StageManager stageManager;
@@ -27,40 +33,47 @@ public class DungeonEndWindow : MonoBehaviour
         stageManager = GameObject.FindGameObjectWithTag("GameController").GetComponent<StageManager>();
     }
 
-    public void Open(string message, bool isCleared)
+    public void Open(bool isCleared, bool firstCleared)
     {
         this.isCleared = isCleared;
 
         gameObject.SetActive(true);
-
+        rewardRow.SetActive(this.isCleared);
         if (this.isCleared)
         {
-            messageText.text = "Cleared";
+            messageText.SetColor(Color.white);
+            messageText.SetString(ClearID);
             bool lastStageCondition = Variables.currentDungeonStage == DataTableManager.DungeonTable.CountOfStage(Variables.currentDungeonType);
             var curStage = DataTableManager.DungeonTable.GetData(Variables.currentDungeonType, Variables.currentDungeonStage);
-            bool keyCondition = ItemManager.GetItemAmount(curStage.DungeonKeyID) >= curStage.KeyCount;
+            bool keyCondition = ItemManager.GetItemAmount(curStage.NeedKeyItemID) >= curStage.NeedKeyItemCount;
 
-            if (lastStageCondition)
+            icon.SetItemSprite(curStage.RewardItemID);
+            if (firstCleared)
             {
-                nextButton.interactable = ItemManager.GetItemAmount(curStage.DungeonKeyID) >= curStage.KeyCount;
-
-                nextText.text = "Retry";
+                countText.text = curStage.FirstClearRewardItemCount.ToString();
             }
             else
             {
-                nextText.text = "Next";
-                var nextStage = DataTableManager.DungeonTable.GetData(Variables.currentDungeonType, Variables.currentDungeonStage + 1);
+                countText.text = curStage.ClearRewardItemCount.ToString();
+            }
 
-                bool powerCondition = Variables.powerLevel > nextStage.ConditionPower;
-                bool planetCondition = SaveLoadManager.Data.stageSaveData.highPlanet > nextStage.ConditionPlanet;
-                keyCondition = ItemManager.GetItemAmount(nextStage.DungeonKeyID) >= nextStage.KeyCount;
-                nextButton.interactable = powerCondition && planetCondition && keyCondition;
+            if (lastStageCondition)
+            {
+                twoButtons.SetActive(true);
+                threeButtons.SetActive(false);
+            }
+            else
+            {
+                twoButtons.SetActive(false);
+                threeButtons.SetActive(true);
             }
         }
         else
         {
-            messageText.text = "Failed";
-            nextText.text = "Retry";
+            messageText.SetColor(Color.red);
+            messageText.SetString(FailID);
+            twoButtons.SetActive(true);
+            threeButtons.SetActive(false);
         }
     }
 
@@ -76,29 +89,55 @@ public class DungeonEndWindow : MonoBehaviour
         gameObject.SetActive(false);
     }
 
-    public void RightButton()
-    {
-        if (isCleared
-            && Variables.currentDungeonStage < DataTableManager.DungeonTable.CountOfStage(Variables.currentDungeonType))
-        {
-            Lift();
-        }
-        else
-        {
-            Retry();
-        }
-
-        gameObject.SetActive(false);
-    }
-
     public void Lift()
     {
+        var curStage = DataTableManager.DungeonTable.GetData(Variables.currentDungeonType, Variables.currentDungeonStage);
+        var stageSaveData = SaveLoadManager.Data.stageSaveData;
+        if (ItemManager.GetItemAmount(curStage.NeedKeyItemID) < curStage.NeedKeyItemCount)
+        {
+            requirementWindow.Open(DungeonRequirementWindow.Status.KeyCount);
+            return;
+        }
+
+        var nextStage = DataTableManager.DungeonTable.GetData(Variables.currentDungeonType, Variables.currentDungeonStage + 1);
+        if ((stageSaveData.highPlanet < nextStage.NeedClearPlanet)
+            || (stageSaveData.highPlanet == nextStage.NeedClearPlanet
+                && stageSaveData.highStage != stageSaveData.clearedStage))
+        {
+            requirementWindow.Open(DungeonRequirementWindow.Status.StageClear);
+            return;
+        }
+
+        if (UnitCombatPowerCalculator.ToTalCombatPower < nextStage.NeedPower)
+        {
+            requirementWindow.Open(DungeonRequirementWindow.Status.Power);
+            return;
+        }
+
         ++Variables.currentDungeonStage;
-        Retry();
+        stageManager.ResetStage();
+        gameObject.SetActive(false);
     }
 
     public void Retry()
     {
+        var curStage = DataTableManager.DungeonTable.GetData(Variables.currentDungeonType, Variables.currentDungeonStage);
+        var stageSaveData = SaveLoadManager.Data.stageSaveData;
+        if (ItemManager.GetItemAmount(curStage.NeedKeyItemID) < curStage.NeedKeyItemCount)
+        {
+            requirementWindow.Open(DungeonRequirementWindow.Status.KeyCount);
+            return;
+        }
+
         stageManager.ResetStage();
+        gameObject.SetActive(false);
+    }
+
+    public void MoveToShop()
+    {
+        stageManager.StageUiManager.UIGroupStatusManager.UiDict[IngameStatus.Planet].SetPopUpInactive(1);
+        stageManager.SetStatus(IngameStatus.Planet);
+        stageManager.StageUiManager.UIGroupStatusManager.UiDict[IngameStatus.Planet].SetTabActive(3);
+        gameObject.SetActive(false);
     }
 }

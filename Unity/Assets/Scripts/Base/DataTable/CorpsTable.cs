@@ -13,10 +13,11 @@ public class CorpsTable : DataTable
         public int FrontSlots { get; set; }
         public string NormalMonsterID { get; set; }
         public int BackSlots { get; set; }
-        public int RangedMonsterID { get; set; }
+        public string RangedMonsterID { get; set; }
         public int BossMonsterID { get; set; }
 
         public int[] NormalMonsterIDs;
+        public int[] RangedMonsterIDs;
 
         public void Set(string[] argument)
         {
@@ -25,7 +26,8 @@ public class CorpsTable : DataTable
             NormalMonsterID = argument[2];
             NormalMonsterIDs = SplitMonsterId(NormalMonsterID);
             BackSlots = int.Parse(argument[3]);
-            RangedMonsterID = int.Parse(argument[4]);
+            RangedMonsterID = argument[4];
+            RangedMonsterIDs = SplitMonsterId(RangedMonsterID);
             BossMonsterID = int.Parse(argument[5]);
         }
     }
@@ -48,6 +50,7 @@ public class CorpsTable : DataTable
             if (!TableData.ContainsKey(item.ID))
             {
                 item.NormalMonsterIDs = SplitMonsterId(item.NormalMonsterID);
+                item.RangedMonsterIDs = SplitMonsterId(item.RangedMonsterID);
                 TableData.Add(item.ID, item);
             }
             else

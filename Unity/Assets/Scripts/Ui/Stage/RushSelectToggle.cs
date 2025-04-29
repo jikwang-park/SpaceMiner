@@ -6,11 +6,11 @@ using UnityEngine.UI;
 
 public class RushSelectToggle : MonoBehaviour
 {
-    private const string Ascend = "돌파";
-    private const string Repeat = "반복";
+    private const int Ascend = 45;
+    private const int Repeat = 46;
 
     [SerializeField]
-    private TextMeshProUGUI text;
+    private LocalizationText text;
 
     private void Start()
     {
@@ -24,12 +24,12 @@ public class RushSelectToggle : MonoBehaviour
     {
         if (isOn)
         {
-            text.text = Ascend;
+            text.SetString(Ascend);
             Variables.stageMode = StageMode.Ascend;
         }
         else
         {
-            text.text = Repeat;
+            text.SetString(Repeat);
             Variables.stageMode = StageMode.Repeat;
         }
     }

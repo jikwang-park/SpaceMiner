@@ -19,7 +19,7 @@ public class BehaviorTree<T> where T : MonoBehaviour
 
     public NodeStatus Update()
     {
-        if(rootNode == null)
+        if (rootNode == null)
         {
             return NodeStatus.Failure;
         }
@@ -29,11 +29,12 @@ public class BehaviorTree<T> where T : MonoBehaviour
 
     public void Reset()
     {
-        if(rootNode == null)
+        if (rootNode == null)
         {
-            rootNode.Reset();
+            return;
         }
+        rootNode.Reset();
     }
 
- 
+
 }

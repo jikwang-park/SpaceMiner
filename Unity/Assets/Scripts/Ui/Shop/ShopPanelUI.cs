@@ -9,42 +9,76 @@ public class ShopPanelUI : MonoBehaviour
 {
     [SerializeField]
     private List<GameObject> shopPanels = new List<GameObject>();
-    private int currentIndex;
+    [SerializeField]
+    private Toggle keyShopToggle;
+    [SerializeField]
+    private Toggle robotShopToggle;
+    [SerializeField]
+    private Toggle goldShopToggle;
+    [SerializeField]
+    private Sprite selectedSprite;
+    [SerializeField]
+    private Sprite deselectedSprite;
+
+    private Image keyShopToggleImage;
+    private Image robotShopToggleImage;
+    private Image goldShopToggleImage;
+    private int currentIndex = -1;
     private void Awake()
     {
-        DisplayPanel((int)ShopTable.ShopType.DungeonKey);
+        keyShopToggleImage = keyShopToggle.GetComponent<Image>();
+        robotShopToggleImage = robotShopToggle.GetComponent<Image>();
+        goldShopToggleImage = goldShopToggle.GetComponent<Image>();
+    }
+    private void OnEnable()
+    {
+        keyShopToggle.isOn = false;
+        robotShopToggle.isOn = false;
+        goldShopToggle.isOn = false;
+        keyShopToggle.isOn = true;
     }
     private void DisplayPanel(int index)
     {
         int newIndex = index - 1;
-        if (index <= 0 || index > shopPanels.Count)
+        if (newIndex < 0 || newIndex >= shopPanels.Count)
         {
             return;
         }
 
-        if (shopPanels[newIndex].activeSelf)
+        if (currentIndex == newIndex && shopPanels[currentIndex].activeSelf)
         {
             return;
         }
 
-        if (currentIndex < shopPanels.Count)
+        if (currentIndex >= 0 && currentIndex < shopPanels.Count)
         {
             shopPanels[currentIndex].SetActive(false);
         }
-        shopPanels[currentIndex].SetActive(false);
+
         currentIndex = newIndex;
         shopPanels[currentIndex].SetActive(true);
     }
-    public void OnClickOpenDungeonKeyShop()
+    public void OnProcessToggles()
     {
-        DisplayPanel((int)ShopTable.ShopType.DungeonKey);
+        if(keyShopToggle.isOn)
+        {
+            DisplayPanel((int)ShopTable.ShopType.DungeonKey);
+        }
+        else if(robotShopToggle.isOn)
+        {
+            DisplayPanel((int)ShopTable.ShopType.MiningRobot);
+        }
+        else if(goldShopToggle.isOn)
+        {
+            DisplayPanel((int)ShopTable.ShopType.Gold);
+        }
+
+        UpdateToggleSprites();
     }
-    public void OnClickOpenGoldShop()
+    private void UpdateToggleSprites()
     {
-        DisplayPanel((int)ShopTable.ShopType.Gold);
-    }
-    public void OnClickOpenMiningRobotShop()
-    {
-        DisplayPanel((int)ShopTable.ShopType.MiningRobot);
+        keyShopToggleImage.sprite = keyShopToggle.isOn ? selectedSprite : deselectedSprite;
+        robotShopToggleImage.sprite = robotShopToggle.isOn ? selectedSprite : deselectedSprite;
+        goldShopToggleImage.sprite = goldShopToggle.isOn ? selectedSprite : deselectedSprite;
     }
 }

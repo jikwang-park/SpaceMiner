@@ -1,48 +1,68 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
 public class UnitSkillTypeButtons : MonoBehaviour
 {
     [SerializeField]
-    public Button tankerButton;
+    private UnitSkillUpgradePanel manager;
     [SerializeField]
-    public Button dealerButton;
+    private Color defaultColor = Color.white;
+
     [SerializeField]
-    public Button healerButton;
+    private Toggle tankerToggle;
     [SerializeField]
-    private UnitSkillUpgradeManager manager;
-    
+    private Toggle dealerToggle;
+    [SerializeField]
+    private Toggle healerToggle;
+
+    [SerializeField]
+    private Sprite selectedSprite;
+    [SerializeField]
+    private Sprite deselectedSprite;
+
+    [SerializeField]
+    private Image tankerImage;
+    [SerializeField]
+    private Image dealerImage;
+    [SerializeField]
+    private Image healerImage;
+
+
     private void Awake()
     {
-        tankerButton.onClick.AddListener(() => OnClickTankerButton());
-        dealerButton.onClick.AddListener(() => OnClickDealerButton());
-        healerButton.onClick.AddListener(() => OnClickHealerButton());
-    }
-    private void Start()
-    {
-       
-    }
-
-    private void SetButton()
-    {
 
     }
 
+    private void OnEnable()
+    {
+        tankerToggle.isOn = false;
+        dealerToggle.isOn = false;
+        healerToggle.isOn = false;
+        tankerToggle.isOn = true;
+    }
 
 
-    private void OnClickTankerButton()
+    public void OnClickToggle()
     {
-        manager.SetType(UnitTypes.Tanker);
-    }
-    
-    private void OnClickDealerButton()
-    {
-        manager.SetType(UnitTypes.Dealer);
-    }
-    private void OnClickHealerButton()
-    {
-        manager.SetType(UnitTypes.Healer);
+        if (tankerToggle.isOn)
+        {
+            manager.SetType(UnitTypes.Tanker);
+        }
+        else if (dealerToggle.isOn)
+        {
+            manager.SetType(UnitTypes.Dealer);
+
+        }
+        else if (healerToggle.isOn)
+        {
+            manager.SetType(UnitTypes.Healer);
+        }
+        tankerImage.sprite = tankerToggle.isOn ? selectedSprite : deselectedSprite;
+        dealerImage.sprite = dealerToggle.isOn ? selectedSprite : deselectedSprite;
+        healerImage.sprite = healerToggle.isOn ? selectedSprite : deselectedSprite;
     }
 }

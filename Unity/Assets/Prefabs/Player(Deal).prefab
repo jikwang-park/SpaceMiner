@@ -18,7 +18,7 @@ GameObject:
   - component: {fileID: -8728631428743180114}
   - component: {fileID: 5880004952120535119}
   - component: {fileID: 624207336759766548}
-  - component: {fileID: 5389602767288167393}
+  - component: {fileID: 875351178603626873}
   m_Layer: 0
   m_Name: Player(Deal)
   m_TagString: Untagged
@@ -132,19 +132,18 @@ MonoBehaviour:
   stageManger: {fileID: 0}
   unitStats: {fileID: 0}
   targetDistance: 0
-  skillCoolTime: 10
-  skillUsingTime: 2
   attackUsingTime: 0.4
   unitAliveCount: 0
   unitSkill: {fileID: 0}
   targetPos: {fileID: 0}
-  lastDealerSkillUsedTime: 0
-  lastTankerSkillUsedTime: 0
-  lastHealerSkillUsedTime: 0
+  maxDis: 6
+  minDis: 4
+  lastSkillUsedTime: 0
+  currentGrade: 0
+  isAutoSkillMode: 0
   IsNormalAttacking: 0
   IsUnitHit: 0
   lastAttackTime: 0
-  lastSkillAttackTime: 0
 --- !u!114 &-3962210519302198626
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -216,7 +215,7 @@ MonoBehaviour:
   criticalChance: 0
   criticalMultiplier: 0
   moveSpeed: 0
---- !u!114 &5389602767288167393
+--- !u!114 &875351178603626873
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -225,11 +224,8 @@ MonoBehaviour:
   m_GameObject: {fileID: 4954487364961763059}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 6c1d504df11fb3340b6f1d90eeaa050e, type: 3}
+  m_Script: {fileID: 11500000, guid: 1fed17400599b764f8362d3bc865d7c5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  coolTime: 0
-  duration: 0
-  targetList: []
-  dealerTargetList: []
-  CanSaerchTarget: 0
+  showingDuration: 1.5
+  risingSpeed: 2

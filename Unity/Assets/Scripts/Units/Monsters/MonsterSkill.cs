@@ -7,18 +7,22 @@ public class MonsterSkill : MonoBehaviour
     private MonsterSkillTable.Data skillData;
     private MonsterController controller;
     private float lastSkillTime;
+    private MonsterStats stats;
 
     public bool IsCoolTime => lastSkillTime + skillData.CoolTime < Time.time;
 
     public Transform Target { get; private set; }
 
+    [SerializeField]
+    private float skillTime = 0.5f;
+
     public bool IsTargetExist
     {
         get
         {
-            switch (skillData.Type)
+            switch (skillData.TargetPriority)
             {
-                case MonsterSkillTable.TargetPriority.FrontOrder:
+                case TargetPriority.FrontOrder:
                     for (int i = (int)UnitTypes.Tanker; i <= (int)UnitTypes.Healer; ++i)
                     {
                         Target = controller.StageManager.UnitPartyManager.GetUnit((UnitTypes)i);
@@ -28,7 +32,7 @@ public class MonsterSkill : MonoBehaviour
                         }
                     }
                     break;
-                case MonsterSkillTable.TargetPriority.BackOrder:
+                case TargetPriority.BackOrder:
                     for (int i = (int)UnitTypes.Healer; i >= (int)UnitTypes.Tanker; --i)
                     {
                         Target = controller.StageManager.UnitPartyManager.GetUnit((UnitTypes)i);
@@ -50,41 +54,75 @@ public class MonsterSkill : MonoBehaviour
         controller = GetComponent<MonsterController>();
     }
 
+    private void Start()
+    {
+        if (controller.AnimationController.ContainsClip(AnimationControl.AnimationClipID.Skill))
+        {
+            controller.AnimationController.AddEvent(AnimationControl.AnimationClipID.Skill, skillTime, Execute);
+            controller.AnimationController.AddEvent(AnimationControl.AnimationClipID.Skill, 1f, OnSkillEnd);
+        }
+        else
+        {
+            controller.AnimationController.AddEvent(AnimationControl.AnimationClipID.Attack, skillTime, Execute);
+            controller.AnimationController.AddEvent(AnimationControl.AnimationClipID.Attack, 1f, OnSkillEnd);
+        }
+    }
 
     private void OnEnable()
     {
         lastSkillTime = Time.time;
     }
 
-    public void SetSkill(int skillId)
+    public void SetSkill(int skillId, MonsterStats stats)
     {
-        skillData = DataTableManager.MonsterSkillTable.GetData(skillId);
+        var skillData = DataTableManager.MonsterSkillTable.GetData(skillId);
+        SetSkill(skillData, stats);
+    }
+
+    public void SetSkill(MonsterSkillTable.Data skillData, MonsterStats stats)
+    {
+        this.skillData = skillData;
+        this.stats = stats;
     }
 
     public void Use()
     {
         controller.status = MonsterController.Status.SkillUsing;
         lastSkillTime = Time.time;
-        StartCoroutine(CoSkill());
+        if (controller.AnimationController.ContainsClip(AnimationControl.AnimationClipID.Skill))
+        {
+            controller.AnimationController.Play(AnimationControl.AnimationClipID.Skill);
+        }
+        else
+        {
+            controller.AnimationController.Play(AnimationControl.AnimationClipID.Attack);
+        }
     }
 
-    public IEnumerator CoSkill()
+    private void OnSkillEnd()
     {
-        yield return new WaitForSeconds(0.25f);
-        Execute();
-        yield return new WaitForSeconds(0.25f);
+        if(controller.status != MonsterController.Status.SkillUsing)
+        {
+            return;
+        }
+
+        lastSkillTime = Time.time;
+        controller.AnimationController.Play(AnimationControl.AnimationClipID.BattleIdle);
         controller.status = MonsterController.Status.Wait;
     }
 
     public void Execute()
     {
-        controller.status = MonsterController.Status.SkillUsing;
+        if (controller.status != MonsterController.Status.SkillUsing)
+        {
+            return;
+        }
 
         List<Transform> targets = new List<Transform>();
 
-        switch (skillData.Type)
+        switch (skillData.TargetPriority)
         {
-            case MonsterSkillTable.TargetPriority.FrontOrder:
+            case TargetPriority.FrontOrder:
                 for (int i = (int)UnitTypes.Tanker; i <= (int)UnitTypes.Healer; ++i)
                 {
                     Transform target = controller.StageManager.UnitPartyManager.GetUnit((UnitTypes)i);
@@ -101,13 +139,13 @@ public class MonsterSkill : MonoBehaviour
 
                     targets.Add(target);
 
-                    if (targets.Count >= skillData.MaxCount)
+                    if (targets.Count >= skillData.MaxTargetCount)
                     {
                         break;
                     }
                 }
                 break;
-            case MonsterSkillTable.TargetPriority.BackOrder:
+            case TargetPriority.BackOrder:
                 for (int i = (int)UnitTypes.Healer; i >= (int)UnitTypes.Tanker; --i)
                 {
                     Transform target = controller.StageManager.UnitPartyManager.GetUnit((UnitTypes)i);
@@ -124,7 +162,7 @@ public class MonsterSkill : MonoBehaviour
 
                     targets.Add(target);
 
-                    if (targets.Count >= skillData.MaxCount)
+                    if (targets.Count >= skillData.MaxTargetCount)
                     {
                         break;
                     }
@@ -135,21 +173,12 @@ public class MonsterSkill : MonoBehaviour
         foreach (var defender in targets)
         {
             CharacterStats dStats = defender.GetComponent<CharacterStats>();
-            Attack attack = CreateAttack(dStats);
+            Attack attack = stats.CreateAttack(dStats, skillData.AttackRatio);
             IAttackable[] attackables = defender.GetComponents<IAttackable>();
             foreach (var attackable in attackables)
             {
                 attackable.OnAttack(gameObject, attack);
             }
         }
-    }
-
-    public Attack CreateAttack(CharacterStats defenderStats)
-    {
-        //TODO: 대미지 계산식 정해지면 수정해야함 - 250322 HKY
-        Attack attack = new Attack();
-
-        attack.damage = skillData.AtkRatio;
-        return attack;
     }
 }

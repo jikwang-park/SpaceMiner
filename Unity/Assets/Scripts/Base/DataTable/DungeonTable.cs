@@ -1,4 +1,3 @@
-using JetBrains.Annotations;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -12,17 +11,18 @@ public class DungeonTable : DataTable
         public int Type { get; set; }
         public int NameStringID { get; set; }
         public int Stage { get; set; }
-        public int DungeonKeyID { get; set; }
-        public int KeyCount { get; set; }
-        public int ItemID { get; set; }
-        public int FirstClearReward { get; set; }
-        public int ClearReward { get; set; }
-        public int ConditionPlanet { get; set; }
-        public int ConditionPower { get; set; }
+        public int NeedKeyItemID { get; set; }
+        public string NeedKeyItemCount { get; set; }
+        public int RewardItemID { get; set; }
+        public string FirstClearRewardItemCount { get; set; }
+        public string ClearRewardItemCount { get; set; }
+        public int NeedClearPlanet { get; set; }
+        public string NeedPower { get; set; }
         public int KeyPoint { get; set; }
         public float LimitTime { get; set; }
-        public int WaveCorpsID { get; set; }
-        public string PrefabID { get; set; }
+        public int WaveID { get; set; }
+        public int PrefabID { get; set; }
+        public int SpriteID { get; set; }
 
         public void Set(string[] argument)
         {
@@ -30,17 +30,18 @@ public class DungeonTable : DataTable
             Type = int.Parse(argument[1]);
             NameStringID = int.Parse(argument[2]);
             Stage = int.Parse(argument[3]);
-            DungeonKeyID = int.Parse(argument[4]);
-            KeyCount = int.Parse(argument[5]);
-            ItemID = int.Parse(argument[6]);
-            FirstClearReward = int.Parse(argument[7]);
-            ClearReward = int.Parse(argument[8]);
-            ConditionPlanet = int.Parse(argument[9]);
-            ConditionPower = int.Parse(argument[10]);
+            NeedKeyItemID = int.Parse(argument[4]);
+            NeedKeyItemCount = argument[5];
+            RewardItemID = int.Parse(argument[6]);
+            FirstClearRewardItemCount = argument[7];
+            ClearRewardItemCount = argument[8];
+            NeedClearPlanet = int.Parse(argument[9]);
+            NeedPower = argument[10];
             KeyPoint = int.Parse(argument[11]);
             LimitTime = float.Parse(argument[12]);
-            WaveCorpsID = int.Parse(argument[13]);
-            PrefabID = argument[14];
+            WaveID = int.Parse(argument[13]);
+            PrefabID = int.Parse(argument[14]);
+            SpriteID = int.Parse(argument[15]);
         }
     }
 
@@ -116,9 +117,9 @@ public class DungeonTable : DataTable
 
     public Data GetData(int type, int stage)
     {
-        foreach(var data in typeDict[type])
+        foreach (var data in typeDict[type])
         {
-            if(data.Stage == stage)
+            if (data.Stage == stage)
             {
                 return data;
             }
@@ -126,11 +127,24 @@ public class DungeonTable : DataTable
         return null;
     }
 
+    public Dictionary<int, Data> GetLastStages()
+    {
+        Dictionary<int, Data> laststages = new Dictionary<int, Data>();
+
+        for (int i = 0; i < types.Count; ++i)
+        {
+            int last = typeDict[types[i]].Count - 1;
+            laststages.Add(types[i], typeDict[types[i]][last]);
+        }
+
+        return laststages;
+    }
+
     public List<int> DungeonTypes => types;
 
     public int CountOfStage(int type)
     {
-        if(typeDict.ContainsKey(type))
+        if (typeDict.ContainsKey(type))
         {
             return typeDict[type].Count;
         }

@@ -1,7 +1,6 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
 using UnityEngine;
 
 public class UnitUpgradeTable : DataTable
@@ -20,8 +19,10 @@ public class UnitUpgradeTable : DataTable
         public int ID { get; set; }
         public UpgradeType Type { get; set; }
         public float Value { get; set; }
-        public int Gold { get; set; }
+        public int NeedItemID { get; set; }
+        public string NeedItemCount { get; set; }
         public int MaxLevel { get; set; }
+        public int NameStringID { get; set; }
 
         public void Set(string[] argument)
         {
@@ -35,8 +36,10 @@ public class UnitUpgradeTable : DataTable
                 Type = Enum.Parse<UpgradeType>(argument[1]);
             }
             Value = float.Parse(argument[2]);
-            Gold = int.Parse(argument[3]);
-            MaxLevel = int.Parse(argument[4]);
+            NeedItemID = int.Parse(argument[3]);
+            NeedItemCount = argument[4];
+            MaxLevel = int.Parse(argument[5]);
+            NameStringID = int.Parse(argument[6]);
         }
     }
 

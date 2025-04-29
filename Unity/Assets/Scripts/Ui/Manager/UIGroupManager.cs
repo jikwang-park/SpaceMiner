@@ -1,8 +1,4 @@
-using AYellowpaper.SerializedCollections;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.UI;
 
 public class UIGroupManager : MonoBehaviour
 {
@@ -13,10 +9,18 @@ public class UIGroupManager : MonoBehaviour
 
     private int currentTab = 0;
 
+    private void Start()
+    {
+        if (tabs.Length > 0)
+        {
+            tabs[currentTab].gameObject.SetActive(true);
+        }
+    }
+
     //TODO: 탭으로 사용할 패널을 인스펙터에서 OnClick 이벤트에 연결 후 패널인덱스 할당
     public void SetTabActive(int index)
     {
-        if (tabs.Length <= index)
+        if (index < 0 || index >= tabs.Length)
         {
             return;
         }
@@ -33,12 +37,22 @@ public class UIGroupManager : MonoBehaviour
     //TODO: 팝업 윈도우로 사용할 패널을 인스펙터에서 OnClick 이벤트에 연결 후 패널인덱스 할당
     public void SetPopUpActive(int index)
     {
-        if (tabs.Length <= index)
+        if (index < 0 || index >= popups.Length)
         {
             return;
         }
 
         popups[index].gameObject.SetActive(true);
+    }
+
+    public void SetPopUpInactive(int index)
+    {
+        if (index < 0 || index >= popups.Length)
+        {
+            return;
+        }
+
+        popups[index].gameObject.SetActive(false);
     }
 
     public void SetTimeScale()
@@ -52,5 +66,4 @@ public class UIGroupManager : MonoBehaviour
             Time.timeScale = 0f;
         }
     }
-
 }

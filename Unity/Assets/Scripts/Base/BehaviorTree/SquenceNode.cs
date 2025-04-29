@@ -38,6 +38,6 @@ public class SquenceNode<T> : CompositeNode<T> where T : MonoBehaviour
             ++currentChild;
         }
 
-        return NodeStatus.Failure;
+        return NodeStatus.Success;
     }
 }

@@ -12,8 +12,49 @@ public static class ItemManager
             return SaveLoadManager.Data.itemSaveData;
         }
     }
-    public static void AddItem(int itemId, BigNumber amount)
+    private static float GoldIncreaseRatio
     {
+        get
+        {
+            int goldUpgradeLevel = SaveLoadManager.Data.buildingData.buildingLevels[BuildingTable.BuildingType.Gold];
+            float goldUpgradeValue = DataTableManager.BuildingTable.GetDatas(BuildingTable.BuildingType.Gold)[goldUpgradeLevel].Value;
+            return 1 + goldUpgradeValue;
+        }
+    }
+    private static float MiningIncreaseRatio
+    {
+        get
+        {
+            int miningUpgradeLevel = SaveLoadManager.Data.buildingData.buildingLevels[BuildingTable.BuildingType.Mining];
+            float miningUpgradeValue = DataTableManager.BuildingTable.GetDatas(BuildingTable.BuildingType.Mining)[miningUpgradeLevel].Value;
+            return 1 + miningUpgradeValue;
+        }
+    }
+    public static bool AddItem(int itemId, BigNumber amount)
+    {
+        if(DataTableManager.ItemTable.GetData(itemId) == null)
+        {
+            return false;
+        }
+
+        if(Enum.IsDefined(typeof(Currency), itemId))
+        {
+            var currency = (Currency)itemId;
+            switch (currency)
+            {
+                case Currency.Gold:
+                    amount *= GoldIncreaseRatio;
+                    break;
+                case Currency.Annotaion:
+                case Currency.Cobalt:
+                case Currency.Tungsten:
+                case Currency.Titanium:
+                case Currency.Spinel:
+                    amount *= MiningIncreaseRatio;
+                    break;
+            }
+        }
+
         BigNumber maxStack = DataTableManager.ItemTable.GetData(itemId).MaxStack;
         if(items.ContainsKey(itemId))
         {
@@ -28,15 +69,19 @@ public static class ItemManager
         {
             items[itemId] = maxStack;
         }
+        GuideQuestManager.QuestProgressChange(GuideQuestTable.MissionType.Item);
         OnItemAmountChanged?.Invoke(itemId, items[itemId]);
+        return true;
     }
-    public static void ConsumeItem(int itemId, BigNumber amount)
+    public static bool ConsumeItem(int itemId, BigNumber amount)
     {
         if(CanConsume(itemId, amount))
         {
             items[itemId] -= amount;
             OnItemAmountChanged?.Invoke(itemId, items[itemId]);
+            return true;
         }
+        return false;
     }
     public static bool CanConsume(int itemId, BigNumber amount)
     {
@@ -45,6 +90,10 @@ public static class ItemManager
     public static void ConsumeCurrency(Currency currency, BigNumber amount)
     {
         ConsumeItem((int)currency, amount);
+    }
+    public static void AddCurrency(Currency currency, BigNumber amount)
+    {
+        AddItem((int)currency, amount);
     }
     public static BigNumber GetItemAmount(int itemId)
     {

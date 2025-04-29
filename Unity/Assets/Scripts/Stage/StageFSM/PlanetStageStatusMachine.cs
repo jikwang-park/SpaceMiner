@@ -5,6 +5,16 @@ using UnityEngine.SceneManagement;
 
 public class PlanetStageStatusMachine : StageStatusMachine
 {
+    protected enum Status
+    {
+        Play,
+        Clear,
+        ClearPlanet,
+        Timeout,
+        Defeat,
+        CorpsNotFound,
+    }
+
     protected int CurrentPlanet;
     protected int CurrentStage;
     protected int CurrentWave;
@@ -13,47 +23,52 @@ public class PlanetStageStatusMachine : StageStatusMachine
 
     protected WaveTable.Data waveData;
 
-    public float spawnDistance = 20f;
+    private PlanetStageStatusMachineData stageMachineData;
 
-    protected WaitForSeconds wait1s = new WaitForSeconds(1f);
+    private Status status;
 
-    protected bool cleared = false;
+    protected float remainingTime;
 
-    private StageSaveData stageLoadData = SaveLoadManager.Data.stageSaveData;
+    protected event System.Action onStageEnd;
 
     public PlanetStageStatusMachine(StageManager stageManager) : base(stageManager)
     {
+        onStageEnd += stageManager.StageEnd;
+    }
 
+    public override void SetStageData(StageStatusMachineData stageMachineData)
+    {
+        this.stageMachineData = (PlanetStageStatusMachineData)stageMachineData;
     }
 
     public override void Start()
     {
-        stageManager.StageUiManager.IngameUIManager.SetGoldText();
-
-        InitStageInfo();
+        SetStageText();
+        LoadStageData();
         InstantiateBackground();
+        UnitSpawn();
 
-        stageManager.UnitPartyManager.UnitSpawn();
-        stageManager.CameraManager.ResetCameraPosition();
-        stageManager.StartCoroutine(SpawnNextWave());
-        stageManager.StageMonsterManager.OnMonsterDie += OnMonsterDie;
-        stageManager.StageMonsterManager.OnMonsterCleared += OnMonsterCleared;
+        stageManager.CameraManager.SetCameraOffset();
+        NextWave();
+        SetEvent(true);
     }
+
 
     public override void Update()
     {
-        float remainTime = stageEndTime - Time.time;
-
-        if (remainTime <= 0f)
+        float currentTime = Time.time;
+        switch (status)
         {
-            remainTime = 0f;
-            if (!cleared)
-            {
-                EndStage(false);
-            }
+            case Status.Play:
+                UpdateTimer(currentTime);
+                break;
+            case Status.Clear:
+            case Status.ClearPlanet:
+            case Status.Timeout:
+            case Status.Defeat:
+                NextStage();
+                break;
         }
-
-        stageManager.StageUiManager.IngameUIManager.SetTimer(remainTime);
     }
 
     public override void SetActive(bool isActive)
@@ -66,36 +81,50 @@ public class PlanetStageStatusMachine : StageStatusMachine
         }
         else
         {
-            stageManager.StopAllCoroutines();
             stageManager.ReleaseBackground();
             stageManager.StageUiManager.IngameUIManager.CloseStageEndWindow();
-
-            stageManager.StageMonsterManager.OnMonsterDie -= OnMonsterDie;
-            stageManager.StageMonsterManager.OnMonsterCleared -= OnMonsterCleared;
-
-            stageManager.StageMonsterManager.StopMonster();
-            stageManager.UnitPartyManager.UnitDespawn();
-            stageManager.StageMonsterManager.ClearMonster();
-            stageManager.ObjectPoolManager.Clear(stageData.PrefabId);
+            stageManager.StageMonsterManager.SetWeight(1f);
+            SetEvent(false);
+            ClearStage();
         }
     }
 
-    protected IEnumerator SpawnNextWave(float delay = 0.5f)
+    protected void UpdateTimer(float currentTime)
     {
-        stageManager.StageUiManager.IngameUIManager.SetWaveText(CurrentWave);
-        yield return new WaitForSeconds(delay);
+        remainingTime = stageEndTime - currentTime;
 
-        var corpsData = DataTableManager.CorpsTable.GetData(waveData.WaveCorpsIDs[CurrentWave - 1]);
+        if (remainingTime <= 0f)
+        {
+            remainingTime = 0f;
+            StageEnd(Status.Timeout);
+        }
+        if (stageManager.UnitPartyManager.UnitCount == 0)
+        {
+            StageEnd(Status.Defeat);
+        }
+
+        stageManager.StageUiManager.IngameUIManager.SetTimer(remainingTime);
+    }
+
+    protected void NextWave()
+    {
+        stageManager.UnitPartyManager.ResetStatus();
+        stageManager.StageUiManager.IngameUIManager.SetWaveText(CurrentWave);
+
+        status = Status.Play;
+
+        var corpsData = DataTableManager.CorpsTable.GetData(waveData.CorpsIDs[CurrentWave - 1]);
 
         if (corpsData is null)
         {
-            EndStage(false);
+            StageEnd(Status.Defeat);
         }
 
         Transform unit = stageManager.UnitPartyManager.GetFirstLineUnitTransform();
-        if (unit != null)
+
+        if (unit is not null)
         {
-            stageManager.StageMonsterManager.Spawn(unit.position + Vector3.forward * spawnDistance, corpsData);
+            stageManager.StageMonsterManager.Spawn(unit.position + Vector3.forward * waveData.RespawnDistance, corpsData);
         }
         else
         {
@@ -108,7 +137,8 @@ public class PlanetStageStatusMachine : StageStatusMachine
 
     protected void InstantiateBackground()
     {
-        var background = stageManager.ObjectPoolManager.Get(stageData.PrefabId);
+        var prefabID = DataTableManager.AddressTable.GetData(stageData.PrefabID);
+        var background = stageManager.ObjectPoolManager.Get(prefabID);
         background.transform.parent = null;
         background.transform.position = Vector3.back * 30f;
         background.transform.rotation = Quaternion.identity;
@@ -116,47 +146,109 @@ public class PlanetStageStatusMachine : StageStatusMachine
 
     protected void OnMonsterCleared()
     {
-        if (CurrentWave > waveData.WaveCorpsIDs.Length)
+        if (CurrentWave > waveData.CorpsIDs.Length)
         {
-            cleared = true;
-            EndStage(true);
+            StageEnd(Status.Clear);
             return;
         }
+        NextWave();
+    }
 
-        stageManager.StartCoroutine(SpawnNextWave());
+    protected void StageEnd(Status status)
+    {
+        this.status = status;
+        onStageEnd?.Invoke();
+
+        switch (this.status)
+        {
+            case Status.Clear:
+                stageManager.StageUiManager.IngameUIManager.OpenStageEndWindow("Clear", stageMachineData.stageEndWindowDuration);
+
+                bool ClearedStageChanged = CheckClearedStageChange();
+                if (ClearedStageChanged && stageData.FirstClearRewardID != 0)
+                {
+                    GetFirstReward();
+                }
+                if (Variables.stageMode == StageMode.Ascend)
+                {
+                    CheckPlanetClear();
+                }
+                break;
+            case Status.Timeout:
+                stageManager.StageUiManager.IngameUIManager.OpenStageEndWindow("Time Over", stageMachineData.stageEndWindowDuration);
+                FailStageSet();
+                break;
+            case Status.Defeat:
+                stageManager.StageUiManager.IngameUIManager.OpenStageEndWindow("Defeat", stageMachineData.stageEndWindowDuration);
+                FailStageSet();
+                break;
+        }
+        SaveLoadManager.SaveGame();
+    }
+
+    protected void NextStage()
+    {
+
+        if (status == Status.ClearPlanet
+            || status == Status.Defeat
+            || status == Status.Timeout
+            || stageManager.UnitPartyManager.UnitCount != 3)
+        {
+            Reset();
+        }
+        else
+        {
+            stageManager.UnitPartyManager.ResetUnitHealth();
+            stageManager.UnitPartyManager.ResetSkillCoolTime();
+            stageManager.UnitPartyManager.ResetStatus();
+
+            SetStageText();
+            LoadStageData();
+            NextWave();
+        }
+    }
+
+    protected void FailStageSet()
+    {
+        StageSaveData stageLoadData = SaveLoadManager.Data.stageSaveData;
+        if (stageLoadData.currentStage > 1)
+        {
+            --stageLoadData.currentStage;
+        }
+        stageManager.StageUiManager.IngameUIManager.RushSelectToggle.isOn = false;
+    }
+
+    protected void GetFirstReward()
+    {
+        ItemManager.AddItem(stageData.FirstClearRewardID, stageData.FirstClearRewardCount);
+
+        if (stageData.FirstClearRewardID == (int)Currency.Gold)
+        {
+            stageManager.StageUiManager.IngameUIManager.SetGoldText();
+        }
     }
 
     protected void OnMonsterDie()
     {
+        ++SaveLoadManager.Data.questProgressData.monsterCount;
+        GuideQuestManager.QuestProgressChange(GuideQuestTable.MissionType.Exterminate);
         stageManager.StageUiManager.IngameUIManager.SetGoldText();
     }
 
-    protected void EndStage(bool cleared)
+    protected bool CheckClearedStageChange()
     {
-        if (!cleared)
+        StageSaveData stageLoadData = SaveLoadManager.Data.stageSaveData;
+        bool renewed = (CurrentPlanet == stageLoadData.clearedPlanet && CurrentStage > stageLoadData.clearedStage)
+            || (CurrentPlanet > stageLoadData.clearedPlanet);
+
+        if (renewed)
         {
-            stageManager.StartCoroutine(CoStageFail());
-            return;
-        }
-
-        stageManager.StartCoroutine(CoClearStage());
-    }
-
-    private IEnumerator CoClearStage()
-    {
-        stageManager.StageUiManager.IngameUIManager.OpenStageEndWindow("Clear");
-
-        if (CurrentPlanet == stageLoadData.highPlanet
-            && CurrentStage == stageLoadData.highStage)
-        {
-            if (stageData.FirstClearRewardID != 0)
-            {
-                ItemManager.AddItem(stageData.FirstClearRewardID, stageData.FirstClearRewardCount);
-            }
-            stageManager.StageUiManager.IngameUIManager.SetGoldText();
+            stageLoadData.clearedPlanet = CurrentPlanet;
+            stageLoadData.clearedStage = CurrentStage;
 
             if (DataTableManager.StageTable.IsExistStage(CurrentPlanet, CurrentStage + 1))
             {
+                stageLoadData.highPlanet = CurrentPlanet;
                 stageLoadData.highStage = CurrentStage + 1;
             }
             else if (DataTableManager.StageTable.IsExistPlanet(CurrentPlanet + 1))
@@ -164,103 +256,113 @@ public class PlanetStageStatusMachine : StageStatusMachine
                 stageLoadData.highPlanet = CurrentPlanet + 1;
                 stageLoadData.highStage = 1;
             }
+            else
+            {
+                stageLoadData.highPlanet = CurrentPlanet;
+                stageLoadData.highStage = CurrentStage;
+            }
+
+            if (stageManager.StageUiManager.IngameUIManager.StageSelectWindow.gameObject.activeInHierarchy)
+            {
+                stageManager.StageUiManager.IngameUIManager.StageSelectWindow.RefreshStageWindow();
+            }
+
+            GuideQuestManager.QuestProgressChange(GuideQuestTable.MissionType.StageClear);
         }
 
-        yield return wait1s;
 
-
-        if (Variables.stageMode == StageMode.Ascend)
-        {
-            if (DataTableManager.StageTable.IsExistPlanet(CurrentPlanet + 1))
-            {
-                ++stageLoadData.currentPlanet;
-                stageLoadData.currentStage = 1;
-
-
-                SaveLoadManager.SaveGame();
-                stageManager.StageUiManager.IngameUIManager.CloseStageEndWindow();
-                Reset();
-                //SceneManager.LoadScene(0);
-            }
-            else if (DataTableManager.StageTable.IsExistStage(CurrentPlanet, CurrentStage + 1))
-            {
-                ++stageLoadData.currentStage;
-            }
-        }
-
-        InitStageInfo();
-        stageManager.StartCoroutine(SpawnNextWave());
-
-        SaveLoadManager.SaveGame();
-
-        stageManager.StageUiManager.IngameUIManager.CloseStageEndWindow();
+        return renewed;
     }
 
-    private IEnumerator CoStageFail()
+    protected void CheckPlanetClear()
     {
-        if (stageLoadData.currentStage > 1)
+        StageSaveData stageLoadData = SaveLoadManager.Data.stageSaveData;
+        if (DataTableManager.StageTable.IsExistStage(CurrentPlanet, CurrentStage + 1))
         {
-            --stageLoadData.currentStage;
+            ++stageLoadData.currentStage;
         }
+        else if (DataTableManager.StageTable.IsExistPlanet(CurrentPlanet + 1))
+        {
+            status = Status.ClearPlanet;
+            ++stageLoadData.currentPlanet;
+            stageLoadData.currentStage = 1;
 
-        Variables.stageMode = StageMode.Repeat;
-        stageManager.StageUiManager.IngameUIManager.OpenStageEndWindow("Fail");
-        SaveLoadManager.SaveGame();
-
-        yield return wait1s;
-
-
-        stageManager.StageUiManager.IngameUIManager.CloseStageEndWindow();
-        Reset();
-        //SceneManager.LoadScene(0);
-        //Addressables.LoadSceneAsync("StageDevelopScene");
+            if (stageManager.StageUiManager.IngameUIManager.StageSelectWindow.gameObject.activeSelf)
+            {
+                stageManager.StageUiManager.IngameUIManager.StageSelectWindow.RefreshStageWindow();
+            }
+        }
     }
 
-    protected void InitStageInfo()
+    protected void SetStageText()
     {
+        StageSaveData stageLoadData = SaveLoadManager.Data.stageSaveData;
         CurrentPlanet = stageLoadData.currentPlanet;
         CurrentStage = stageLoadData.currentStage;
         CurrentWave = 1;
-        stageEndTime = Time.time + 60f;
-        cleared = false;
-
-        stageManager.UnitPartyManager.ResetUnitHealth();
-        stageManager.UnitPartyManager.ResetSkillCoolTime();
-        stageManager.UnitPartyManager.ResetBehaviorTree();
-
-        //stageData = DataTableManager.StageTable.GetData(string.Format(stageIDFormat, CurrentPlanet, CurrentStage));
-        stageData = DataTableManager.StageTable.GetStageData(CurrentPlanet, CurrentStage);
-        waveData = DataTableManager.WaveTable.GetData(stageData.CorpsID);
         stageManager.StageUiManager.IngameUIManager.SetStageText(CurrentPlanet, CurrentStage);
         stageManager.StageUiManager.IngameUIManager.SetWaveText(CurrentWave);
     }
 
+    protected void LoadStageData()
+    {
+        stageEndTime = Time.time + Variables.PlanetTime;
+        stageData = DataTableManager.StageTable.GetStageData(CurrentPlanet, CurrentStage);
+        stageManager.StageMonsterManager.SetWeight(stageData.Weight);
+        waveData = DataTableManager.WaveTable.GetData(stageData.WaveID);
+    }
+
+    protected void UnitSpawn()
+    {
+        stageManager.UnitPartyManager.UnitSpawn();
+        stageManager.UnitPartyManager.ResetUnitHealth();
+        stageManager.UnitPartyManager.ResetSkillCoolTime();
+        stageManager.UnitPartyManager.ResetStatus();
+    }
+
+    protected void SetEvent(bool set)
+    {
+        if (set)
+        {
+            stageManager.StageMonsterManager.OnMonsterDie += OnMonsterDie;
+            stageManager.StageMonsterManager.OnMonsterCleared += OnMonsterCleared;
+        }
+        else
+        {
+            stageManager.StageMonsterManager.OnMonsterDie -= OnMonsterDie;
+            stageManager.StageMonsterManager.OnMonsterCleared -= OnMonsterCleared;
+        }
+    }
+
     public override void Exit()
     {
-        Start();
+        Reset();
+    }
+
+    protected void ClearStage()
+    {
+        stageManager.StageMonsterManager.StopMonster();
+        stageManager.UnitPartyManager.UnitDespawn();
+        stageManager.StageUiManager.HPBarManager.ClearHPBar();
+        stageManager.StageMonsterManager.ClearMonster();
     }
 
     public override void Reset()
     {
+        stageManager.ReleaseDamageTexts();
         stageManager.StageUiManager.curtain.SetFade(true);
         int previousPlanet = CurrentPlanet;
-        var previousBackground = stageData.PrefabId;
-        stageManager.StopAllCoroutines();
-        stageManager.StageMonsterManager.ClearMonster();
-        stageManager.StageUiManager.IngameUIManager.SetGoldText();
 
-        InitStageInfo();
-        if (previousPlanet != CurrentPlanet)
-        {
-            stageManager.ReleaseBackground();
-            stageManager.ObjectPoolManager.Clear(previousBackground);
-            InstantiateBackground();
+        ClearStage();
+        SetStageText();
+        LoadStageData();
 
-            stageManager.UnitPartyManager.UnitSpawn();
-            stageManager.CameraManager.ResetCameraPosition();
-        }
+        stageManager.ReleaseBackground();
+        InstantiateBackground();
 
-        stageManager.StartCoroutine(SpawnNextWave());
+        UnitSpawn();
+        stageManager.CameraManager.SetCameraOffset();
         stageManager.StageUiManager.curtain.SetFade(false);
+        NextWave();
     }
 }

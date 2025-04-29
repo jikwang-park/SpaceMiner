@@ -38,6 +38,7 @@ public class StringTable : DataTable
         {
             if (!TableData.ContainsKey(item.ID))
             {
+                item.Line = item.Line.Replace("__", "\n");
                 TableData.Add(item.ID, item);
             }
             else

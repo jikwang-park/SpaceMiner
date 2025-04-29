@@ -5,29 +5,39 @@ using UnityEngine;
 
 public class DealerSkill : UnitSkill
 {
-    private float damageRatio;
+    public float damageRatio { get; private set; }
     private int targetCount;
 
     protected override void Awake()
     {
         base.Awake();
-        Init();
         unit = GetComponent<Unit>();
     }
-    public override void Init()
+
+
+    public override void DealerInit(UnitTypes type, Grade grade)
     {
-        var delaerSkillData = DataTableManager.DealerSkillTable.GetData(1101); //250331 HKY 데이터형 변경
-        if (delaerSkillData != null )
+        currentType = type;
+        currentSkillGrade = grade;
+
+        var data = SaveLoadManager.Data.unitSkillUpgradeData.skillUpgradeId;
+
+        currentSkillId = data[currentType][currentSkillGrade];
+        var dealerSkillData = DataTableManager.DealerSkillTable.GetData(currentSkillId); //250331 HKY 데이터형 변경
+        if (dealerSkillData != null)
         {
-            coolTime = delaerSkillData.CoolTime;
-            damageRatio = delaerSkillData.DamageRatio;
-            targetCount = delaerSkillData.MonsterMaxTarget;
+            coolTime = dealerSkillData.CoolTime;
+            damageRatio = dealerSkillData.DamageRatio;
+            targetCount = dealerSkillData.MonsterMaxTarget;
         }
     }
+
+ 
 
 
     public override void ExecuteSkill()
     {
+        base.ExecuteSkill();
         List<Transform> targetTransforms = new List<Transform>();
         targetTransforms = stageManager.StageMonsterManager.GetMonsters(targetCount);
         for(int i = 0; i < targetTransforms.Count; ++i)
@@ -36,6 +46,10 @@ public class DealerSkill : UnitSkill
         }
     }
 
+    public override void Update()
+    {
+        base.Update();
+    }
     public override void UpgradeUnitSkillStats(int id)
     {
         var data = DataTableManager.DealerSkillTable.GetData(id);

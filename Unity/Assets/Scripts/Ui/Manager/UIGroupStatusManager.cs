@@ -5,9 +5,9 @@ using UnityEngine;
 
 public class UIGroupStatusManager : MonoBehaviour
 {
-    [SerializeField]
+    [field: SerializeField]
     [SerializedDictionary("Target Status", "UI Elements")]
-    private SerializedDictionary<IngameStatus, UIGroupManager> uiDict;
+    public SerializedDictionary<IngameStatus, UIGroupManager> UiDict { get; private set; }
 
     private IngameStatus ingameStatus = IngameStatus.Planet;
 
@@ -15,9 +15,9 @@ public class UIGroupStatusManager : MonoBehaviour
     {
         get
         {
-            if (uiDict.ContainsKey(ingameStatus))
+            if (UiDict.ContainsKey(ingameStatus))
             {
-                return uiDict[ingameStatus];
+                return UiDict[ingameStatus];
             }
             return null;
         }
@@ -30,14 +30,14 @@ public class UIGroupStatusManager : MonoBehaviour
             return;
         }
 
-        if (uiDict.ContainsKey(ingameStatus))
+        if (UiDict.ContainsKey(ingameStatus))
         {
-            uiDict[ingameStatus].gameObject.SetActive(false);
+            UiDict[ingameStatus].gameObject.SetActive(false);
         }
 
-        if (uiDict.ContainsKey(status))
+        if (UiDict.ContainsKey(status))
         {
-            uiDict[status].gameObject.SetActive(true);
+            UiDict[status].gameObject.SetActive(true);
         }
 
         ingameStatus = status;

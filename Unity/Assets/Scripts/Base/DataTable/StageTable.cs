@@ -11,28 +11,30 @@ public class StageTable : DataTable
     public class Data : ITableData
     {
         public int ID { get; set; }
-        public int StringID { get; set; }
+        public int NameStringID { get; set; }
         public int Planet { get; set; }
         public int Stage { get; set; }
-        public int CorpsID { get; set; }
+        public int WaveID { get; set; }
         public int FirstClearRewardID { get; set; }
         public string FirstClearRewardCount { get; set; }
-        public int IdleRewardID { get; set; }
-        public string IdleRewardCount { get; set; }
-        public string PrefabId { get; set; }
+        public int IdleRewardItemID { get; set; }
+        public string IdleRewardItemCount { get; set; }
+        public int PrefabID { get; set; }
+        public float Weight { get; set; }
 
         public void Set(string[] argument)
         {
             ID = int.Parse(argument[0]);
-            StringID = int.Parse(argument[1]);
+            NameStringID = int.Parse(argument[1]);
             Planet = int.Parse(argument[2]);
             Stage = int.Parse(argument[3]);
-            CorpsID = int.Parse(argument[4]);
+            WaveID = int.Parse(argument[4]);
             FirstClearRewardID = int.Parse(argument[5]);
             FirstClearRewardCount = argument[6];
-            IdleRewardID = int.Parse(argument[7]);
-            IdleRewardCount = argument[8];
-            PrefabId = argument[9];
+            IdleRewardItemID = int.Parse(argument[7]);
+            IdleRewardItemCount = argument[8];
+            PrefabID = int.Parse(argument[9]);
+            Weight = float.Parse(argument[10]);
         }
     }
 
@@ -99,7 +101,7 @@ public class StageTable : DataTable
         return planetDict[planet].Values.ToList();
     }
 
-    public Data GetStageData(int planet,int stage)
+    public Data GetStageData(int planet, int stage)
     {
         return planetDict[planet][stage];
     }
@@ -107,6 +109,13 @@ public class StageTable : DataTable
     public List<int> GetPlanetKeys()
     {
         return planetDict.Keys.ToList();
+    }
+
+    public Data GetLastStage()
+    {
+        var maxplanet = planetDict.Keys.Max();
+        var maxstage = planetDict[maxplanet].Max(p => p.Value.Stage);
+        return GetStageData(maxplanet, maxstage);
     }
 
     public override void Set(List<string[]> data)

@@ -1,19 +1,19 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.AddressableAssets;
+using UnityEngine.SceneManagement;
+using UnityEngine.UI;
 
 public class Test : MonoBehaviour
 {
-    public BigNumber bigNumber;
-    // Start is called before the first frame update
-    void Start()
+    [SerializeField]
+    private Button startButton;
+    public async void OnClickStartButton()
     {
-        bigNumber = 100000;
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        
+        startButton.interactable = false;
+        await FirebaseManager.Instance.InitializeAsync();
+        var handle = Addressables.LoadSceneAsync("DevelopScene", LoadSceneMode.Single);
+        startButton.interactable = true;
     }
 }

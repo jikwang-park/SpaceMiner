@@ -4,16 +4,23 @@ using UnityEngine;
 
 public class MonsterStats : CharacterStats
 {
-    public void SetData(MonsterTable.Data monsterData)
+    private readonly static BigNumber zero = new BigNumber(0);
+
+    protected override void OnDisable()
     {
-        damage = monsterData.Atk;
-        range = monsterData.AtkRange;
-        maxHp = monsterData.Hp;
-        Hp = maxHp;
-        coolDown = 100f / monsterData.AtkSpeed;
-        moveSpeed = monsterData.MoveSpeed;
+        base.OnDisable();
     }
 
+    public void SetData(MonsterTable.Data monsterData)
+    {
+        damage = monsterData.Attack;
+        range = monsterData.AttackRange;
+        maxHp = monsterData.HP;
+        Hp = maxHp;
+        coolDown = 100f / monsterData.AttackSpeed;
+        GetComponent<AnimationControl>().SetSpeed(AnimationControl.AnimationClipID.Attack, monsterData.AttackSpeed / 100f);
+        moveSpeed = monsterData.MoveSpeed;
+    }
 
     public override void Execute(GameObject defender)
     {
@@ -39,7 +46,30 @@ public class MonsterStats : CharacterStats
 
     public override Attack CreateAttack(CharacterStats defenderStats)
     {
-        //TODO: 대미지 계산식 정해지면 수정해야함 - 250322 HKY
+        //몬스터 공격력 * 200/(200 + 방어력)
+
+        Attack attack = new Attack();
+
+        BigNumber damage = this.damage;
+
+        attack.damage = damage;
+
+        if (defenderStats is not null)
+        {
+            attack.damage *= Variables.DefenceBase.DivideToFloat(200 + defenderStats.armor);
+        }
+        if (attack.damage == zero)
+        {
+            attack.damage = 1;
+        }
+
+        return attack;
+    }
+
+    public Attack CreateAttack(CharacterStats defenderStats, float skillRatio)
+    {
+        //몬스터 공격력 * 스킬 배율 * 200/(200 + 방어력)
+
         Attack attack = new Attack();
 
         BigNumber damage = this.damage;
@@ -51,9 +81,9 @@ public class MonsterStats : CharacterStats
         }
         attack.damage = damage;
 
-        if (defenderStats != null)
+        if (defenderStats is not null)
         {
-            attack.damage -= defenderStats.armor;
+            attack.damage *= skillRatio * Variables.DefenceBase.DivideToFloat(200 + defenderStats.armor);
         }
 
         return attack;

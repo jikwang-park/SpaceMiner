@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class IngameUIManager : MonoBehaviour
 {
@@ -12,18 +13,25 @@ public class IngameUIManager : MonoBehaviour
 
     [SerializeField]
     private TextMeshProUGUI stageText;
-    [SerializeField]
-    private TextMeshProUGUI waveText;
+    [field: SerializeField]
+    public TextMeshProUGUI waveText { get; private set; }
     [SerializeField]
     private TextMeshProUGUI timerText;
     [SerializeField]
     private TextMeshProUGUI goldText;
     [SerializeField]
     private StageEndWindow stageEndWindow;
-    [SerializeField]
-    private DungeonEndWindow dungeonEndWindow;
     [field: SerializeField]
-    public StageSelectWindow stageSelectWindow { get; private set; }
+    public DungeonEndWindow DungeonEndWindow { get; private set; }
+    [field: SerializeField]
+    public DamageDungeonEndWindow DamageDungeonEndWindow { get; private set; }
+    [field: SerializeField]
+    public StageSelectWindow StageSelectWindow { get; private set; }
+    [field: SerializeField]
+    public GuideQuestRewardWindow GuideQuestRewardWindow { get; private set; }
+
+    [field: SerializeField]
+    public Toggle RushSelectToggle { get; private set; }
 
     [SerializeField]
     private SerializedDictionary<IngameStatus, List<GameObject>> statusObjectLists;
@@ -50,24 +58,14 @@ public class IngameUIManager : MonoBehaviour
         stageText.text = string.Format(dungeonTextFormat, dungeonId, stage);
     }
 
-    public void OpenStageEndWindow(string message)
+    public void OpenStageEndWindow(string message, float duration)
     {
-        stageEndWindow.Open(message);
+        stageEndWindow.Open(message, duration);
     }
 
     public void CloseStageEndWindow()
     {
         stageEndWindow.Close();
-    }
-
-    public void OpenDungeonEndWindow(string message, bool isCleared)
-    {
-        dungeonEndWindow.Open(message, isCleared);
-    }
-
-    public void CloseDungeonEndWindow()
-    {
-        dungeonEndWindow.Close();
     }
 
     public void SetGoldText()

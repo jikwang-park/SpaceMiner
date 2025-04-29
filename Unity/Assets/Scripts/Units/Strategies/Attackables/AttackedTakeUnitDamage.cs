@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -7,6 +8,12 @@ public class AttackedTakeUnitDamage : MonoBehaviour,IAttackable
     private CharacterStats stats;
     private bool gameObjectEnabled;
     private Unit unit;
+
+    public event Action<float> OnHpChanged;
+    public event Action<GameObject> GetDamaged;
+    public event Action<Unit> OnDamageOverflowed;
+
+    public BigNumber currentDamage { get; private set; }
 
     private void Awake()
     {
@@ -19,52 +26,47 @@ public class AttackedTakeUnitDamage : MonoBehaviour,IAttackable
         gameObjectEnabled = true;
     }
 
+
+  
     public void OnAttack(GameObject attacker, Attack attack)
     {
-        if (unit.HasBarrier)
+        //currentDamage = attack.damage;
+
+        //if (unit.unitStats.Hp <= attack.damage)
+        //{
+        //    OnDamageOverflowed?.Invoke(unit);
+        //    return;
+        //}
+
+        GetDamaged?.Invoke(attacker);
+
+        if (unit.unitStats.barrier > attack.damage)
         {
-            unit.barrier -= attack.damage;
-            if (unit.barrier < 0 )
-            {
-                unit.unitStats.Hp += unit.barrier;
-                unit.barrier = 0;
-            }
+            unit.unitStats.barrier -= attack.damage;
             
+            return;
         }
         else
         {
-            unit.unitStats.Hp -= attack.damage;
-        }
+            var trueDamage = attack.damage - unit.unitStats.barrier;
+            unit.unitStats.Hp -= trueDamage;
+            unit.unitStats.barrier = 0;
 
-        if (unit.unitStats.Hp < 0 && gameObjectEnabled)
-        {
-            unit.unitStats.Hp = new BigNumber("0");
-            IDestructable[] destructables = GetComponents<IDestructable>();
-            if (destructables.Length > 0)
+            if (unit.unitStats.Hp < 0 && gameObjectEnabled)
             {
-                gameObjectEnabled = false;
-            }
-            foreach (var destructable in destructables)
-            {
-                destructable.OnDestruction(attacker);
-            }
-        }
-
-
-        stats.Hp -= attack.damage;
-
-        if (stats.Hp < 0 && gameObjectEnabled)
-        {
-            stats.Hp = new BigNumber("0");
-            IDestructable[] destructables = GetComponents<IDestructable>();
-            if (destructables.Length > 0)
-            {
-                gameObjectEnabled = false;
-            }
-            foreach (var destructable in destructables)
-            {
-                destructable.OnDestruction(attacker);
+                unit.unitStats.Hp = new BigNumber("0");
+                IDestructable[] destructables = GetComponents<IDestructable>();
+                if (destructables.Length > 0)
+                {
+                    gameObjectEnabled = false;
+                }
+                foreach (var destructable in destructables)
+                {
+                    destructable.OnDestruction(attacker);
+                }
             }
         }
+
+       
     }
 }

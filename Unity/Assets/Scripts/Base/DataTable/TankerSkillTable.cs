@@ -10,28 +10,39 @@ public class TankerSkillTable : DataTable
     public class Data : ITableData
     {
         public int ID { get; set; }
-        public SkillType Type { get; set; }
+        public Grade Grade { get; set; }
         public float ShieldRatio { get; set; }
         public float Duration { get; set; }
         public float CoolTime { get; set; }
         public int BuffID { get; set; }
         public string SoldierTarget { get; set; }
         public int Level { get; set; }
+        public int NameStringID { get; set; }
+        public int DetailStringID { get; set; }
 
-        public UnitTypes[] targetPriority;
+        //public UnitTypes[] targetPriority;
 
         public void Set(string[] argument)
         {
             ID = int.Parse(argument[0]);
-            Type = Enum.Parse<SkillType>(argument[1]);
+            if (int.TryParse(argument[1], out int type))
+            {
+                Grade = (Grade)type;
+            }
+            else
+            {
+                Grade = Enum.Parse<Grade>(argument[1]);
+            }
             ShieldRatio = int.Parse(argument[2]);
             Duration = int.Parse(argument[3]);
             CoolTime = int.Parse(argument[4]);
             BuffID = int.Parse(argument[5]);
             SoldierTarget = argument[6];
             Level = int.Parse(argument[7]);
+            NameStringID = int.Parse(argument[8]);
+            DetailStringID = int.Parse(argument[9]);
 
-            targetPriority = SplitSoldierTarget(SoldierTarget);
+            //targetPriority = SplitSoldierTarget(SoldierTarget);
         }
         
     }
@@ -95,23 +106,23 @@ public class TankerSkillTable : DataTable
     }
 
 
-    private static UnitTypes[] SplitSoldierTarget(string id)
-    {
-        string[] idstring = id.Split('_');
-        UnitTypes[] ids = new UnitTypes[idstring.Length];
+    //private static UnitTypes[] SplitSoldierTarget(string id)
+    //{
+    //    string[] idstring = id.Split('_');
+    //    UnitTypes[] ids = new UnitTypes[idstring.Length];
 
-        for (int i = 0; i < ids.Length; ++i)
-        {
-            if (int.TryParse(idstring[i], out int result))
-            {
-                ids[i] = (UnitTypes)result;
-            }
-            else
-            {
-                ids[i] = Enum.Parse<UnitTypes>(idstring[i]);
-            }
-        }
+    //    for (int i = 0; i < ids.Length; ++i)
+    //    {
+    //        if (int.TryParse(idstring[i], out int result))
+    //        {
+    //            ids[i] = (UnitTypes)result;
+    //        }
+    //        else
+    //        {
+    //            ids[i] = Enum.Parse<UnitTypes>(idstring[i]);
+    //        }
+    //    }
 
-        return ids;
-    }
+    //    return ids;
+    //}
 }

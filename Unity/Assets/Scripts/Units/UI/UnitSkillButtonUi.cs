@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -12,10 +13,17 @@ public class UnitSkillButtonUi : MonoBehaviour
     public Button SkillButton;
 
     [SerializeField]
+    private GameObject target;
+
+    [SerializeField]
     private Unit unit;
 
     private StageManager stageManager;
-    
+
+    [SerializeField]
+    private TextMeshProUGUI coolTimeText;
+
+
     private void Start()
     {
         stageManager = GameObject.FindGameObjectWithTag("GameController").GetComponent<StageManager>();
@@ -25,33 +33,50 @@ public class UnitSkillButtonUi : MonoBehaviour
     {
         ShowCooltime();
         ButtonUpdate();
+
     }
     private void ButtonUpdate()
     {
-        if ((!unit.isAutoSkillMode&&!unit.isAutoSkillMode) || !unit.IsSkillCoolTimeOn)
+        if (unit.UnitStatus == Unit.Status.Dead)
         {
             SkillButton.interactable = false;
+            target.SetActive(false);
+            return;
         }
-            SkillButton.interactable = true;
+
+        target.SetActive(true);
+
+        SkillButton.interactable = unit.Skill.SkillCoolTimeRatio >= 1f;
+
     }
     private void ShowCooltime()
     {
-        if (unit.IsSkillCoolTimeOn)
+        if (unit.Skill.SkillCoolTimeRatio >= 1f)
         {
             skillCoolImage.fillAmount = 0f;
+            coolTimeText.text = null;
         }
         else
         {
-            skillCoolImage.fillAmount = 1.0f - unit.RemainSkillCoolTime;
+            skillCoolImage.fillAmount = 1.0f - unit.Skill.SkillCoolTimeRatio;
+            coolTimeText.text = unit.Skill.RemainCooltime.ToString("F1");
         }
     }
     private void OnClickSkill()
     {
-        if(!unit.isAutoSkillMode && unit.IsSkillCoolTimeOn)
+        if (unit is null)
         {
-            Debug.Log("수동 스킬 사용!");
-            unit.UseSkill();
+            return;
         }
+        unit.EnqueueSkill();
+
+
+        //if(unit.IsSkillCoolTimeOn)
+        //{
+        //    unit.isSkillButtonPressed = true;
+        //    unit.UseSkill();
+        //    unit.isSkillButtonPressed = false;
+        //}
     }
 
     public void SetUnit(Unit unit)

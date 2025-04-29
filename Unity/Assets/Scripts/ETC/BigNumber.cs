@@ -2,6 +2,8 @@ using Newtonsoft.Json;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Globalization;
+using System.Runtime.CompilerServices;
 using System.Runtime.Serialization;
 using UnityEngine;
 
@@ -17,6 +19,14 @@ public struct BigNumber : ISerializationCallbackReceiver
                                 "N", "O", "P", "Q", "R", "S", "T", "U", "V",  "W", "X", "Y", "Z"};
     public BigNumber(string input)
     {
+        if (string.IsNullOrEmpty(input))
+        {
+            parts = new List<int> { 0 };
+            sign = 1;
+            currentValue = "0";
+            return;
+        }
+
         parts = new List<int>();
         sign = 1;
         input = input.Trim();
@@ -95,6 +105,33 @@ public struct BigNumber : ISerializationCallbackReceiver
         }
         currentValue = ToString();
     }
+    public BigNumber(float input)
+    {
+        if (float.IsNaN(input) || float.IsInfinity(input))
+        {
+            throw new ArgumentException(nameof(input));
+        }
+
+        sign = input < 0 ? -1 : 1;
+        float absVal = Math.Abs(input);
+        float truncated = (float)Math.Truncate(absVal);
+
+        if (truncated <= int.MaxValue)
+        {
+            int intPart = (int)truncated;
+            this = new BigNumber(sign * intPart);
+        }
+        else
+        {
+            string s = truncated
+                .ToString("F0", CultureInfo.InvariantCulture);
+            if (sign < 0)
+                s = "-" + s;
+            this = new BigNumber(s);
+        }
+
+        currentValue = this.ToString();
+    }
     private BigNumber(List<int> parts)
     {
         this.parts = parts;
@@ -109,6 +146,10 @@ public struct BigNumber : ISerializationCallbackReceiver
         return new BigNumber(value);
     }
     public static implicit operator BigNumber(string value)
+    {
+        return new BigNumber(value);
+    }
+    public static implicit operator BigNumber(float value)
     {
         return new BigNumber(value);
     }
@@ -156,11 +197,35 @@ public struct BigNumber : ISerializationCallbackReceiver
 
         return a + other;
     }
+    public static BigNumber operator +(BigNumber a, float b)
+    {
+        BigNumber other = new BigNumber(b);
+
+        return a + other;
+    }
     public static BigNumber operator +(BigNumber a, string b)
     {
         BigNumber other = new BigNumber(b);
 
         return a + other;
+    }
+    public static BigNumber operator +(int a, BigNumber b)
+    {
+        BigNumber other = new BigNumber(a.ToString());
+
+        return other + b;
+    }
+    public static BigNumber operator +(string a, BigNumber b)
+    {
+        BigNumber other = new BigNumber(a);
+
+        return other + b;
+    }
+    public static BigNumber operator +(float a, BigNumber b)
+    {
+        BigNumber other = new BigNumber(a);
+
+        return other + b;
     }
     public static BigNumber operator -(BigNumber a, BigNumber b)
     {
@@ -178,20 +243,65 @@ public struct BigNumber : ISerializationCallbackReceiver
 
         return a + (-other);
     }
+    public static BigNumber operator -(int a, BigNumber b)
+    {
+        BigNumber other = new BigNumber(a.ToString());
+
+        return other + (-b);
+    }
+    public static BigNumber operator -(string a, BigNumber b)
+    {
+        BigNumber other = new BigNumber(a);
+
+        return other + (-b);
+    }
     public static BigNumber operator *(BigNumber a, float multiplier)
     {
         if (multiplier == 0f)
         {
             return new BigNumber("0");
         }
-        int scale = 10000;
+        bool negative = multiplier < 0f;
+        float absVal = Math.Abs(multiplier);
 
-        int intMultiplier = (int)Math.Round(Math.Abs(multiplier) * scale);
+        int exponent = (int)Math.Floor(Math.Log10(absVal));
 
-        BigNumber temp = a * intMultiplier;
-        BigNumber result = temp / scale;
-        result.sign = a.sign * (multiplier < 0 ? -1 : 1);
+        double mantissa = absVal / Math.Pow(10.0, exponent);
+
+        string mantStr = mantissa.ToString("G9", CultureInfo.InvariantCulture).TrimEnd('0').TrimEnd('.');
+
+        int decCount = 0;
+        int dot = mantStr.IndexOf('.');
+
+        if (dot >= 0)
+        {
+            decCount = mantStr.Length - dot - 1;
+            mantStr = mantStr.Remove(dot, 1);
+        }
+
+        BigNumber numerator = new BigNumber(mantStr);
+
+        BigNumber prod = a * numerator;
+
+        int scaleExp = exponent - decCount;
+        BigNumber result;
+        if (scaleExp >= 0)
+        {
+            result = prod * new BigNumber("1" + new string('0', scaleExp));
+        }
+        else
+        {
+            BigNumber denom = new BigNumber("1" + new string('0', -scaleExp));
+            result = prod.DivideToFloat(denom);
+        }
+
+        result.sign = a.sign * (negative ? -1 : 1);
         return result;
+    }
+
+    public static BigNumber operator *(float multiplier, BigNumber a)
+    {
+        return a * multiplier;
     }
     public static BigNumber operator *(BigNumber a, int multiplier)
     {
@@ -219,6 +329,35 @@ public struct BigNumber : ISerializationCallbackReceiver
 
         BigNumber result = new BigNumber(resultParts);
         result.sign = newSign;
+        result.Normalize();
+        return result;
+    }
+    public static BigNumber operator *(int multiplier, BigNumber a)
+    {
+        return a * multiplier;
+    }
+    public static BigNumber operator *(BigNumber a, BigNumber b)
+    {
+        int n = a.parts.Count;
+        int m = b.parts.Count;
+        int[] resultArr = new int[n + m];
+
+        for (int i = 0; i < n; i++)
+        {
+            int carry = 0;
+            for (int j = 0; j < m; j++)
+            {
+                long mult = (long)a.parts[i] * (long)b.parts[j] + resultArr[i + j] + carry;
+                resultArr[i + j] = (int)(mult % 1000);
+                carry = (int)(mult / 1000);
+            }
+            resultArr[i + m] += carry;
+        }
+
+        List<int> resultParts = new List<int>(resultArr);
+
+        BigNumber result = new BigNumber(resultParts);
+        result.sign = a.sign * b.sign;
         result.Normalize();
         return result;
     }
@@ -293,16 +432,9 @@ public struct BigNumber : ISerializationCallbackReceiver
 
         int diff = this.parts.Count - other.parts.Count;
 
-        if(diff > 0)
-        {
-            thisValue *= Mathf.Pow(1000f, Math.Abs(diff));
-        }
-        if (diff < 0)
-        {
-            otherValue *= Mathf.Pow(1000f, Math.Abs(diff));
-        }
+        float scale = Mathf.Pow(1000f, diff);
 
-        return (this.sign * thisValue) / (other.sign * otherValue);
+        return (this.sign * thisValue) / (other.sign * otherValue) * scale;
     }
     public int CompareTo(BigNumber other)
     {
@@ -328,6 +460,11 @@ public struct BigNumber : ISerializationCallbackReceiver
         BigNumber other = new BigNumber(b.ToString());
         return a < other;
     }
+    public static bool operator <(int a, BigNumber b)
+    {
+        BigNumber other = new BigNumber(a.ToString());
+        return other < b;
+    }
     public static bool operator >(BigNumber a, BigNumber b)
     {
         return a.CompareTo(b) > 0;
@@ -336,6 +473,11 @@ public struct BigNumber : ISerializationCallbackReceiver
     {
         BigNumber other = new BigNumber(b.ToString());
         return a > other;
+    }
+    public static bool operator >(int a, BigNumber b)
+    {
+        BigNumber other = new BigNumber(a.ToString());
+        return other > b;
     }
     public static bool operator <=(BigNumber a, BigNumber b)
     {
@@ -346,6 +488,11 @@ public struct BigNumber : ISerializationCallbackReceiver
         BigNumber other = new BigNumber(b.ToString());
         return a <= other;
     }
+    public static bool operator <=(int a, BigNumber b)
+    {
+        BigNumber other = new BigNumber(a.ToString());
+        return other <= b;
+    }
     public static bool operator >=(BigNumber a, BigNumber b)
     {
         return a.CompareTo(b) >= 0;
@@ -354,6 +501,11 @@ public struct BigNumber : ISerializationCallbackReceiver
     {
         BigNumber other = new BigNumber(b.ToString());
         return a >= other;
+    }
+    public static bool operator >=(int a, BigNumber b)
+    {
+        BigNumber other = new BigNumber(a.ToString());
+        return other >= b;
     }
     public static bool operator ==(BigNumber a, BigNumber b)
     {
@@ -364,6 +516,11 @@ public struct BigNumber : ISerializationCallbackReceiver
         BigNumber other = new BigNumber(b.ToString());
         return a == other;
     }
+    public static bool operator ==(int a, BigNumber b)
+    {
+        BigNumber other = new BigNumber(a.ToString());
+        return other == b;
+    }
     public static bool operator !=(BigNumber a, BigNumber b)
     {
         return !(a == b);
@@ -372,6 +529,11 @@ public struct BigNumber : ISerializationCallbackReceiver
     {
         BigNumber other = new BigNumber(b.ToString());
         return a != other;
+    }
+    public static bool operator !=(int a, BigNumber b)
+    {
+        BigNumber other = new BigNumber(a.ToString());
+        return other != b;
     }
     private static List<int> AddAbsolute(List<int> aParts, List<int> bParts)
     {

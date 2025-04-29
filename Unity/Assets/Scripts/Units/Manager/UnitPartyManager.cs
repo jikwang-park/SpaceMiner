@@ -1,67 +1,60 @@
+using AYellowpaper.SerializedCollections;
+using JetBrains.Annotations;
 using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using UnityEngine.AddressableAssets;
+using UnityEngine.UI;
+using static UnitUpgradeTable;
 
 public class UnitPartyManager : MonoBehaviour
 {
     [SerializeField]
-    private Unit tankerPrefab;
-    [SerializeField]
-    private Unit dealerPrefab;
-    [SerializeField]
-    private Unit healerPrefab;
+    private SerializedDictionary<UnitTypes, Unit> characters;
 
-    private Dictionary<UnitTypes, Unit> prefabs = new Dictionary<UnitTypes, Unit>();
-    private Dictionary<UnitTypes, Unit> party = new Dictionary<UnitTypes, Unit>();
+    [SerializeField]
+    private SerializedDictionary<UnitTypes, GameObject[]> weapons;
+
+    [SerializeField]
+    private List<Vector3> unitSpawnPos;
+
+    public Dictionary<UnitTypes, Unit> PartyUnits { get; private set; } = new Dictionary<UnitTypes, Unit>();
+
+    public event System.Action OnUnitCreated;
+    public event System.Action OnUnitUpdated;
 
     public event System.Action OnUnitAllDead;
 
     [SerializeField]
-    private Vector3 unitOffset = Vector3.back * 5f;
+    public UnitSkillButtonManager buttonManager;
 
-    public int UnitCount => party.Count;
+    private Vector3 unitOffset = Vector3.left * 1f;
 
-    private void Awake()
-    {
-        if (tankerPrefab is not null)
-        {
-            prefabs.Add(UnitTypes.Tanker, tankerPrefab);
-        }
-        if (dealerPrefab is not null)
-        {
-            prefabs.Add(UnitTypes.Dealer, dealerPrefab);
-        }
-        if (healerPrefab is not null)
-        {
-            prefabs.Add(UnitTypes.Healer, healerPrefab);
-        }
-    }
+    public int UnitCount => PartyUnits.Count;
 
-   
     public void ResetSkillCoolTime()
     {
-        foreach (var unit in party.Values)
+        foreach (var unit in PartyUnits.Values)
         {
-            unit.lastSkillUsedTime = -unit.unitSkill.coolTime;
+            unit.lastSkillTime = float.MinValue;
         }
     }
 
     public void ResetUnitHealth()
     {
-        foreach (var unit in party.Values)
+        foreach (var unit in PartyUnits.Values)
         {
             unit.unitStats.Hp = unit.unitStats.maxHp;
         }
     }
 
-    public void ResetBehaviorTree()
+    public void ResetStatus()
     {
-        foreach (var unit in party.Values)
+        foreach (var unit in PartyUnits.Values)
         {
-            unit.behaviorTree.Reset();
+            unit.ResetStatus();
         }
     }
     public void UnitSpawn()
@@ -77,18 +70,20 @@ public class UnitPartyManager : MonoBehaviour
 
     public void SetUnitData(SoldierTable.Data data, UnitTypes type)
     {
-        if (party.ContainsKey(type))
+        if (PartyUnits.ContainsKey(type))
         {
-            party[type].SetData(data, type);
+            UnitCombatPowerCalculator.Init(type);
+            PartyUnits[type].SetData(data);
+            UnitCombatPowerCalculator.CalculateTotalCombatPower();
         }
     }
 
     private void OnUnitDie(DestructedDestroyEvent sender)
     {
         var unit = sender.GetComponent<Unit>();
-        party.Remove(unit.UnitTypes);
-
-        if (party.Count == 0)
+        PartyUnits.Remove(unit.UnitTypes);
+        unit.gameObject.SetActive(false);
+        if (PartyUnits.Count == 0)
         {
             OnUnitAllDead?.Invoke();
         }
@@ -96,51 +91,72 @@ public class UnitPartyManager : MonoBehaviour
 
     public void AddStats(UnitUpgradeTable.UpgradeType type, float amount)
     {
-        foreach (var unit in party)
-        {
-            unit.Value.unitStats.AddStats(type, amount);
-        }
+        UnitCombatPowerCalculator.ChangeStats(type);
+        UnitCombatPowerCalculator.CalculateTotalCombatPower();
     }
 
     public void UpgradeSkillStats(int id, UnitTypes type)
     {
-        var unit = party[type];
-        unit.unitSkill.UpgradeUnitSkillStats(id);
+        if (!PartyUnits.ContainsKey(type))
+            return;
+
+        var unit = PartyUnits[type];
+
+
+        unit.Skill.UpgradeUnitSkillStats(id);
+    }
+
+    public void AddBuildingStats(BuildingTable.BuildingType type, float amount)
+    {
+        int index = (int)type;
+        UnitCombatPowerCalculator.ChangeStats((UpgradeType)index);
+        UnitCombatPowerCalculator.CalculateTotalCombatPower();
     }
 
     public void UnitDespawn()
     {
-        foreach (var unit in party)
+        foreach (var unit in PartyUnits)
         {
             Destroy(unit.Value.gameObject);
         }
-        party.Clear();
+        PartyUnits.Clear();
     }
+
+
 
     public Transform GetFirstLineUnitTransform()
     {
-        if (party.Count == 0)
+        if (PartyUnits.Count == 0)
         {
             Debug.LogError("Unit is Empty");
             return null;
         }
 
-        for (int i = (int)UnitTypes.Tanker; i <= (int)UnitTypes.Healer; ++i)
+        Transform frontMostZPos = null;
+        float maxZ = float.MinValue;
+
+        foreach (var unit in PartyUnits.Values)
         {
-            if (party.ContainsKey((UnitTypes)i))
+            if (unit == null)
+                continue;
+
+            float currentUnitZpos = unit.transform.position.z;
+            if (currentUnitZpos > maxZ)
             {
-                return party[(UnitTypes)i].transform;
+                maxZ = currentUnitZpos;
+                frontMostZPos = unit.transform;
             }
         }
 
-        return null;
+        return frontMostZPos;
     }
+
 
     public Transform GetUnit(UnitTypes type)
     {
-        if (party.ContainsKey(type))
+        if (PartyUnits.ContainsKey(type))
         {
-            return party[type].transform;
+            return PartyUnits[type].transform;
         }
         return null;
     }
@@ -148,19 +164,20 @@ public class UnitPartyManager : MonoBehaviour
     public Unit GetCurrentTargetType(string targetString)
     {
         int target = int.Parse(targetString);
-        if (party.ContainsKey((UnitTypes)target))
+        if (PartyUnits.ContainsKey((UnitTypes)target))
         {
-            return party[(UnitTypes)target];
+            return PartyUnits[(UnitTypes)target];
         }
         return null;
     }
 
-    // 250403 HKY 현재 유닛 타입을 넣으면 앞의 유닛 유무를 반환해주는 메소드 추가
+
+
     public bool IsUnitExistFront(UnitTypes myType)
     {
         for (int i = (int)myType - 1; i >= (int)UnitTypes.Tanker; --i)
         {
-            if (party.ContainsKey((UnitTypes)i))
+            if (PartyUnits.ContainsKey((UnitTypes)i))
             {
                 return true;
             }
@@ -172,7 +189,7 @@ public class UnitPartyManager : MonoBehaviour
     {
         for (int i = (int)myType + 1; i <= (int)UnitTypes.Healer; ++i)
         {
-            if (party.ContainsKey((UnitTypes)i))
+            if (PartyUnits.ContainsKey((UnitTypes)i))
             {
                 return true;
             }
@@ -180,14 +197,13 @@ public class UnitPartyManager : MonoBehaviour
         return false;
     }
 
-    // 250403 HKY 현재 유닛 타입을 넣으면 내 앞의 유닛을 반환해주는 메소드 추가
     public Unit GetFrontUnit(UnitTypes myType)
     {
         for (int i = (int)myType - 1; i >= (int)UnitTypes.Tanker; --i)
         {
-            if (party.ContainsKey((UnitTypes)i))
+            if (PartyUnits.ContainsKey((UnitTypes)i))
             {
-                return party[(UnitTypes)i];
+                return PartyUnits[(UnitTypes)i];
             }
         }
         return null;
@@ -197,36 +213,58 @@ public class UnitPartyManager : MonoBehaviour
     {
         for (int i = (int)myType + 1; i <= (int)UnitTypes.Healer; ++i)
         {
-            if (party.ContainsKey((UnitTypes)i))
+            if (PartyUnits.ContainsKey((UnitTypes)i))
             {
-                return party[(UnitTypes)i];
+                return PartyUnits[(UnitTypes)i];
             }
         }
         return null;
     }
 
+
+
     public void ResetUnits(Vector3 startPos)
     {
         Vector3 position = startPos;
 
-        var typeData = DataTableManager.SoldierTable.GetTypeDictionary();
+        var stageManager = GameObject.FindGameObjectWithTag("GameController").GetComponent<StageManager>();
 
         for (int i = (int)UnitTypes.Tanker; i <= (int)UnitTypes.Healer; ++i)
         {
-            if (!prefabs.ContainsKey((UnitTypes)i))
-            {
-                position += unitOffset;
-                continue;
-            }
+            var currentType = (UnitTypes)i;
 
-            var go = Instantiate(prefabs[(UnitTypes)i], position, Quaternion.identity);
-            go.GetComponent<DestructedDestroyEvent>().OnDestroyed += OnUnitDie;
+            var unit = Instantiate(characters[currentType], position, Quaternion.identity);
+            unit.GetComponent<DestructedDestroyEvent>().OnDestroyed += OnUnitDie;
             position += unitOffset;
-            // 나중에 비동기로드로 바꿈
-            go.SetData(typeData[(UnitTypes)i][0], (UnitTypes)i);
-            party.Add(go.UnitTypes, go);
+            var currentSoilderId = InventoryManager.GetInventoryData(currentType).equipElementID;
+            var currentSoilderData = DataTableManager.SoldierTable.GetData(currentSoilderId);
+            //var weaponSocket = unit.transform.Find("Bip001").Find("Bip001 Prop1");
+            var weaponPosition = unit.weaponPosition;
+            Instantiate(weapons[currentType][(int)currentSoilderData.Grade - 1], weaponPosition);
+            PartyUnits.Add(currentType, unit);
+            if (stageManager.IngameStatus != IngameStatus.LevelDesign)
+            {
+                UnitCombatPowerCalculator.Init(currentType);
+            }
+            unit.SetData(currentSoilderData);
         }
+        OnUnitCreated?.Invoke();
+        OnUnitUpdated?.Invoke();
     }
 
-  
+
+
+
+
+    public bool NeedHealUnit()
+    {
+        foreach (var unit in PartyUnits)
+        {
+            if (unit.Value.unitStats.HPRate < Variables.healerSkillHPRatio)
+            {
+                return true;
+            }
+        }
+        return false;
+    }
 }

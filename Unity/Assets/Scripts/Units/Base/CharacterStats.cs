@@ -4,9 +4,10 @@ using UnityEngine;
 
 public abstract class CharacterStats : MonoBehaviour
 {
-    public BigNumber maxHp;
+    public BigNumber maxHp = 0;
+
     public BigNumber damage;
-    public BigNumber armor = 1;
+    public BigNumber armor = 0;
 
     public float coolDown;
     public float range;
@@ -15,11 +16,43 @@ public abstract class CharacterStats : MonoBehaviour
 
     public float moveSpeed;
 
-    public BigNumber Hp { get; set; }
+    public float HPRate { get; protected set; }
+
+    [SerializeField]
+    protected BigNumber hp;
+
+    public virtual BigNumber Hp
+    {
+        get
+        {
+            return hp;
+        }
+        set
+        {
+            hp = value;
+            if (maxHp != 0)
+            {
+                InvokeHpChangedEvent();
+            }
+        }
+    }
+
+    public event System.Action<float> OnHpChanged;
+
+    protected void InvokeHpChangedEvent()
+    {
+        HPRate = hp.DivideToFloat(maxHp);
+        OnHpChanged?.Invoke(HPRate);
+    }
 
     protected virtual void OnEnable()
     {
         Hp = maxHp;
+    }
+
+    protected virtual void OnDisable()
+    {
+        OnHpChanged = null;
     }
 
     public abstract Attack CreateAttack(CharacterStats defenderStats);

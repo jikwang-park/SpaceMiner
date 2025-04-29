@@ -236,8 +236,6 @@ public class UnitStats : CharacterStats
     {
         Attack attack = new Attack();
         attack.damage = buffReflectionDamage;
-        
-        
         return attack;
     }
 
@@ -275,6 +273,6 @@ public class UnitStats : CharacterStats
     //    takeDamage.OnDamageOverflowed += (unit) => unit.unitStats.Hp = hpAmount;
     //}
 
-    
+
 
 }

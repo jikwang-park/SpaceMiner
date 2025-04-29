@@ -13,7 +13,6 @@ public class AttackedTakeUnitDamage : MonoBehaviour,IAttackable
     public event Action<GameObject> GetDamaged;
     public event Action<Unit> OnDamageOverflowed;
 
-    public BigNumber currentDamage { get; private set; }
 
     private void Awake()
     {
@@ -30,13 +29,7 @@ public class AttackedTakeUnitDamage : MonoBehaviour,IAttackable
   
     public void OnAttack(GameObject attacker, Attack attack)
     {
-        //currentDamage = attack.damage;
-
-        //if (unit.unitStats.Hp <= attack.damage)
-        //{
-        //    OnDamageOverflowed?.Invoke(unit);
-        //    return;
-        //}
+        
 
         GetDamaged?.Invoke(attacker);
 
@@ -51,6 +44,11 @@ public class AttackedTakeUnitDamage : MonoBehaviour,IAttackable
             var trueDamage = attack.damage - unit.unitStats.barrier;
             unit.unitStats.Hp -= trueDamage;
             unit.unitStats.barrier = 0;
+            //if(unit.unitStats.Hp <= 0)
+            //{
+            //    OnDamageOverflowed?.Invoke(unit);
+            //    return;
+            //}
 
             if (unit.unitStats.Hp < 0 && gameObjectEnabled)
             {

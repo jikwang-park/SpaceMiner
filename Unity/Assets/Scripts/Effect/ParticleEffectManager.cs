@@ -18,12 +18,31 @@ public class ParticleEffectManager : Singleton<ParticleEffectManager>
         {
             effect = go.AddComponent<PoolableEffect>();
         }
+        effect.ResetTransform();
 
         go.transform.SetParent(parent, false);
-        go.transform.localPosition = Vector3.zero;
-        go.transform.localRotation = Quaternion.identity;
         var ps = go.GetComponent<ParticleSystem>();
         if(ps == null)
+        {
+            effect.Release();
+        }
+        else
+        {
+            effect.PlayAndRelease(ps);
+        }
+    }
+    public void PlayOneShot(string prefabKey, Vector3 position)
+    {
+        var go = objectPoolManager.Get(prefabKey);
+        var effect = go.GetComponent<PoolableEffect>();
+        if (effect == null)
+        {
+            effect = go.AddComponent<PoolableEffect>();
+        }
+        effect.ResetTransform();
+        go.transform.position += position;
+        var ps = go.GetComponent<ParticleSystem>();
+        if (ps == null)
         {
             effect.Release();
         }
@@ -42,9 +61,8 @@ public class ParticleEffectManager : Singleton<ParticleEffectManager>
         {
             effect = go.AddComponent<PoolableEffect>();
         }
-
+        effect.ResetTransform();
         go.transform.SetParent(parent, false);
-        go.transform.localRotation = Quaternion.identity;
 
         var ps = go.GetComponent<ParticleSystem>()
                  ?? go.GetComponentInChildren<ParticleSystem>();
@@ -78,6 +96,6 @@ public class ParticleEffectManager : Singleton<ParticleEffectManager>
     private IEnumerator StopAfter(float duration, PoolableEffect effect)
     {
         yield return new WaitForSeconds(duration);
-        effect.Release();
+        StopBuffEffect(effect);
     }
 }

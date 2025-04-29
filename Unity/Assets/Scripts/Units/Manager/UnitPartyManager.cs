@@ -74,6 +74,7 @@ public class UnitPartyManager : MonoBehaviour
         {
             UnitCombatPowerCalculator.Init(type);
             PartyUnits[type].SetData(data);
+            ParticleEffectManager.Instance.PlayOneShot("UnitChangeEffect", PartyUnits[type].transform);
             UnitCombatPowerCalculator.CalculateTotalCombatPower();
         }
     }

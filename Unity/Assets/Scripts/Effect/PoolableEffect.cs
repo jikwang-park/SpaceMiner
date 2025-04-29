@@ -7,9 +7,22 @@ using UnityEngine.Pool;
 public class PoolableEffect : MonoBehaviour, IObjectPoolGameObject
 {
     public IObjectPool<GameObject> ObjectPool { get; set; }
+
+    private Vector3 defaultPos;
+    private Quaternion defaultRot;
+
     private ParticleSystem ps;
     private Coroutine releaseCoroutine;
-
+    private void Awake()
+    {
+        defaultPos = transform.localPosition;
+        defaultRot = transform.localRotation;
+    }
+    public void ResetTransform()
+    {
+        transform.localPosition = defaultPos;
+        transform.localRotation = defaultRot;
+    }
     public void PlayAndRelease(ParticleSystem particleSystem)
     {
         ps = particleSystem;
@@ -27,9 +40,10 @@ public class PoolableEffect : MonoBehaviour, IObjectPoolGameObject
     }
     public void Release()
     {
+        ResetTransform();
         if (ObjectPool != null)
         {
-            ObjectPool.Release(this.gameObject);
+            ObjectPool.Release(gameObject);
         }
     }
     public void ImmediateRelease()

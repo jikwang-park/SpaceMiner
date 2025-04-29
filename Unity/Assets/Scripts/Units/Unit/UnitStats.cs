@@ -16,8 +16,9 @@ public class UnitStats : CharacterStats
 
     private BigNumber buffReflectionDamage;
 
-    private System.Action<GameObject> ReflectDelegate;
 
+    private System.Action<GameObject> ReflectDelegate;
+    public event System.Action OnBarrierUp;
     private void Awake()
     {
         stageManager = GameObject.FindGameObjectWithTag("GameController").GetComponent<StageManager>();
@@ -209,7 +210,7 @@ public class UnitStats : CharacterStats
     
         return attack;
     }
-    public void UseTankerBuff(float duration , BigNumber amount)
+    public void UseTankerBuff(float duration, BigNumber amount)
     {
         buffReflectionDamage = amount;
         var takeDamage = GetComponent<AttackedTakeUnitDamage>();
@@ -255,7 +256,7 @@ public class UnitStats : CharacterStats
     {
         hasBarrier = true;
         barrier += amount;
-        ParticleEffectManager.Instance.PlayBuffEffect("BarrierEffect", gameObject.transform, duration);
+        OnBarrierUp?.Invoke();
         StartCoroutine(RemoveBarrierAfterDuration(duration, amount));
     }
 

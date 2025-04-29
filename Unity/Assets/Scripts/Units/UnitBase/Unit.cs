@@ -28,6 +28,9 @@ public class Unit : MonoBehaviour, IObjectPoolGameObject
     [SerializeField]
     private float skillTime = 0.2f;
 
+    [field: SerializeField]
+    public Transform weaponPosition { get; private set; }
+
     public Status UnitStatus { get; private set; }
 
     public IObjectPool<GameObject> ObjectPool { get; set; }
@@ -73,8 +76,17 @@ public class Unit : MonoBehaviour, IObjectPoolGameObject
     {
         AnimationControl.AddEvent(AnimationControl.AnimationClipID.Attack, attackTime, OnAttack);
         AnimationControl.AddEvent(AnimationControl.AnimationClipID.Attack, 1f, OnAttackEnd);
-        AnimationControl.AddEvent(AnimationControl.AnimationClipID.Skill, skillTime, ExecuteSkill);
-        AnimationControl.AddEvent(AnimationControl.AnimationClipID.Skill, 1f, OnSkillEnd);
+        if (UnitTypes == UnitTypes.Healer)
+        {
+            AnimationControl.AddEvent(AnimationControl.AnimationClipID.Idle, skillTime, ExecuteSkill);
+            AnimationControl.AddEvent(AnimationControl.AnimationClipID.Idle, 1f, OnSkillEnd);
+            AnimationControl.SetSpeed(AnimationControl.AnimationClipID.Idle, 1f);
+        }
+        else
+        {
+            AnimationControl.AddEvent(AnimationControl.AnimationClipID.Skill, skillTime, ExecuteSkill);
+            AnimationControl.AddEvent(AnimationControl.AnimationClipID.Skill, 1f, OnSkillEnd);
+        }
         AnimationControl.AddEvent(AnimationControl.AnimationClipID.Die, 1f, OnEnd);
 
 
@@ -140,7 +152,7 @@ public class Unit : MonoBehaviour, IObjectPoolGameObject
     {
         unitStats.SetData(data, data.UnitType);
 
-        AnimationControl.SetSpeed(AnimationControl.AnimationClipID.Attack, 1f/UnitCombatPowerCalculator.statsDictionary[data.UnitType].coolDown);
+        AnimationControl.SetSpeed(AnimationControl.AnimationClipID.Attack, 1f / UnitCombatPowerCalculator.statsDictionary[data.UnitType].coolDown);
 
 
         UnitTypes = data.UnitType;
@@ -196,6 +208,11 @@ public class Unit : MonoBehaviour, IObjectPoolGameObject
         if (HasTarget)
         {
             unitStats.Execute(target.gameObject);
+
+            if (UnitTypes == UnitTypes.Tanker)
+            {
+                ((AnimatorAnimationControl)AnimationControl).NextWeaponIndex();
+            }
         }
     }
 
@@ -224,7 +241,14 @@ public class Unit : MonoBehaviour, IObjectPoolGameObject
                 break;
             case Status.SkillUsing:
                 lastSkillTime = Time.time;
-                AnimationControl?.Play(AnimationControl.AnimationClipID.Skill);
+                if (UnitTypes == UnitTypes.Healer)
+                {
+                    AnimationControl?.Play(AnimationControl.AnimationClipID.Idle);
+                }
+                else
+                {
+                    AnimationControl?.Play(AnimationControl.AnimationClipID.Skill);
+                }
                 break;
             case Status.Dead:
                 AnimationControl?.Play(AnimationControl.AnimationClipID.Die);
@@ -272,10 +296,6 @@ public class Unit : MonoBehaviour, IObjectPoolGameObject
                 break;
         }
     }
-
-
-
-
 
     public void Release()
     {

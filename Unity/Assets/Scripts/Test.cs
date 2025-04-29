@@ -10,6 +10,8 @@ public class Test : MonoBehaviour
 {
     [SerializeField]
     private Button startButton;
+    [SerializeField]
+    private Button resetButton;
     public async void OnClickStartButton()
     {
         startButton.interactable = false;
@@ -18,6 +20,20 @@ public class Test : MonoBehaviour
         if(handle.Status == AsyncOperationStatus.Failed)
         {
             startButton.interactable = true;
+        }
+    }
+    public async void OnClickResetButton()
+    {
+        resetButton.interactable = false;
+        try
+        {
+            await FirebaseManager.Instance.ResetUserDataAsync();
+            Debug.Log("Firebase 데이터 초기화 완료");
+        }
+        catch (System.Exception ex)
+        {
+            Debug.LogError($"데이터 초기화 실패: {ex}");
+            resetButton.interactable = true;
         }
     }
 }

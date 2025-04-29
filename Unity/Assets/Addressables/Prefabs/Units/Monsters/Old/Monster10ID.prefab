@@ -17,6 +17,7 @@ GameObject:
   - component: {fileID: -4814780007642218122}
   - component: {fileID: -3387518340940699320}
   - component: {fileID: 1733733034986668331}
+  - component: {fileID: -121999204625612729}
   m_Layer: 6
   m_Name: Monster10ID
   m_TagString: Untagged
@@ -54,9 +55,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   status: 0
   <Stats>k__BackingField: {fileID: 0}
-  animations: {fileID: 7318371391842218873}
+  attackTime: 0.4
   <minDistanceInMonster>k__BackingField: 2
-  frontLine: -1
+  hasTarget: 0
+  currentLine: -1
 --- !u!114 &-4091593577540809166
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -80,6 +82,8 @@ MonoBehaviour:
   criticalChance: 0
   criticalMultiplier: 0
   moveSpeed: 3
+  hp:
+    currentValue: 
 --- !u!114 &2226669683278739750
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -164,6 +168,18 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 1, y: 1, z: 1}
   m_Center: {x: 0, y: 0.5, z: 0}
+--- !u!114 &-121999204625612729
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 9151133835082727212}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 006fdbcec7b4fb14cbcd30c2d1863457, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1001 &8884441792544358492
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -225,11 +241,6 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 5cd0ae15ea0baa645a025f98bea62543, type: 3}
---- !u!111 &7318371391842218873 stripped
-Animation:
-  m_CorrespondingSourceObject: {fileID: 2223639932434330405, guid: 5cd0ae15ea0baa645a025f98bea62543, type: 3}
-  m_PrefabInstance: {fileID: 8884441792544358492}
-  m_PrefabAsset: {fileID: 0}
 --- !u!4 &8989565014230738871 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: 5cd0ae15ea0baa645a025f98bea62543, type: 3}

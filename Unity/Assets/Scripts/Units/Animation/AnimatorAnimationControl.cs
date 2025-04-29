@@ -114,6 +114,9 @@ public class AnimatorAnimationControl : AnimationControl
 
         CurrentClip = clipID;
 
+        animator.ResetTrigger(hashRun);
+        animator.ResetTrigger(hashBattleIdle);
+
         switch (CurrentClip)
         {
             case AnimationClipID.BattleIdle:

@@ -178,7 +178,7 @@ public class AnimationController : AnimationControl
 
         if (state.normalizedSpeed < speed)
         {
-            state.normalizedSpeed = speed / 1.1f;
+            state.normalizedSpeed = speed;
         }
         else
         {

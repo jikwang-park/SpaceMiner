@@ -695,7 +695,8 @@ GameObject:
   m_Component:
   - component: {fileID: 4450535764687236403}
   - component: {fileID: 5033993261951474714}
-  - component: {fileID: 8242478781855900290}
+  - component: {fileID: -9081179066949344510}
+  - component: {fileID: -3361545219043731127}
   m_Layer: 0
   m_Name: MiningRobot_Rare
   m_TagString: Untagged
@@ -732,10 +733,10 @@ Animator:
   m_GameObject: {fileID: 7697676883336264734}
   m_Enabled: 1
   m_Avatar: {fileID: 9000000, guid: d314a97dbb26b834a882d42db92820bd, type: 3}
-  m_Controller: {fileID: 9100000, guid: 810b84598c32744499d7496846593927, type: 2}
+  m_Controller: {fileID: 9100000, guid: 7625ba6879a6f63459ad2c0578d24ae2, type: 2}
   m_CullingMode: 1
   m_UpdateMode: 0
-  m_ApplyRootMotion: 1
+  m_ApplyRootMotion: 0
   m_LinearVelocityBlending: 0
   m_StabilizeFeet: 0
   m_WarningMessage: 
@@ -743,29 +744,34 @@ Animator:
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
   m_WriteDefaultValuesOnDisable: 0
---- !u!111 &8242478781855900290
-Animation:
+--- !u!114 &-9081179066949344510
+MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 7697676883336264734}
   m_Enabled: 1
-  serializedVersion: 3
-  m_Animation: {fileID: 7400000, guid: a35fd094dea0d6e48b683e46ab5de632, type: 2}
-  m_Animations:
-  - {fileID: 7400000, guid: b3a7ce87b1be0c945a1f08f3371fc4dc, type: 2}
-  - {fileID: 7400000, guid: 03ad4054578521345a5a19e5449e7e70, type: 2}
-  - {fileID: 7400000, guid: 7bc87f3a77eb9df46b887e579452f428, type: 2}
-  - {fileID: 7400000, guid: cad137f70140c184d8e9499ea4e37b14, type: 2}
-  - {fileID: 7400000, guid: a35fd094dea0d6e48b683e46ab5de632, type: 2}
-  - {fileID: 7400000, guid: 70cbded1ccaf19b4eab719b2384b8a83, type: 2}
-  - {fileID: 7400000, guid: 214913e07638aa74ba10317450924ddc, type: 2}
-  - {fileID: 7400000, guid: a25d76fffc5a2f7429ae1d501f00a334, type: 2}
-  m_WrapMode: 0
-  m_PlayAutomatically: 1
-  m_AnimatePhysics: 0
-  m_CullingType: 0
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 87bc9d58137b04e4288c7e528c3a67d9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  ore: {fileID: 0}
+  storage: {fileID: 0}
+  currentTarget: {fileID: 0}
+--- !u!114 &-3361545219043731127
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7697676883336264734}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: efcc155bb4b7e214c809dd3e06f43d5e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  attackIndexLength: 0
 --- !u!1 &9035474033588257294
 GameObject:
   m_ObjectHideFlags: 0

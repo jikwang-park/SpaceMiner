@@ -1,10 +1,10 @@
 using TMPro;
 using UnityEngine;
 
-public class DungeonEndWindow : MonoBehaviour
+public class Dungeon1EndWindow : MonoBehaviour
 {
-    private const int ClearID = 142;
-    private const int FailID = 143;
+    private const int ClearID = 160;
+    private const int FailID = 161;
 
     [SerializeField]
     private LocalizationText messageText;
@@ -89,7 +89,7 @@ public class DungeonEndWindow : MonoBehaviour
         gameObject.SetActive(false);
     }
 
-    public void Lift()
+    public void Next()
     {
         var curStage = DataTableManager.DungeonTable.GetData(Variables.currentDungeonType, Variables.currentDungeonStage);
         var stageSaveData = SaveLoadManager.Data.stageSaveData;

@@ -23,6 +23,7 @@ public class UnitTankerSkill : UnitSkillBase
             }
             var barrierAmount = unit.unitStats.armor * Ratio;
             targetUnit.unitStats.UseShiled(duration, barrierAmount);
+            Debug.Log(barrierAmount);
         }
         if (skillGrade == Grade.Legend)
         {

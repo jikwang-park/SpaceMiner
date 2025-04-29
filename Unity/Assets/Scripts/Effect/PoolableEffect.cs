@@ -10,6 +10,7 @@ public class PoolableEffect : MonoBehaviour, IObjectPoolGameObject
 
     private Vector3 defaultPos;
     private Quaternion defaultRot;
+    private Vector3 defaultScale;
 
     private ParticleSystem ps;
     private Coroutine releaseCoroutine;
@@ -17,11 +18,13 @@ public class PoolableEffect : MonoBehaviour, IObjectPoolGameObject
     {
         defaultPos = transform.localPosition;
         defaultRot = transform.localRotation;
+        defaultScale = transform.localScale;
     }
     public void ResetTransform()
     {
         transform.localPosition = defaultPos;
         transform.localRotation = defaultRot;
+        transform.localScale = defaultScale;
     }
     public void PlayAndRelease(ParticleSystem particleSystem)
     {

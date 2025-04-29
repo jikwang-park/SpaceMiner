@@ -19,6 +19,7 @@ public class UnitStats : CharacterStats
 
     private System.Action<GameObject> ReflectDelegate;
     public event System.Action OnBarrierUp;
+    public event System.Action<UnitTypes> OnAttack;
     private void Awake()
     {
         stageManager = GameObject.FindGameObjectWithTag("GameController").GetComponent<StageManager>();
@@ -108,12 +109,6 @@ public class UnitStats : CharacterStats
         }
 
     }
-
-    private void Update()
-    {
-        Debug.Log(Hp);
-
-    }
     public override void Execute(GameObject defender)
     {
         if (defender is null)
@@ -129,6 +124,7 @@ public class UnitStats : CharacterStats
 
         CharacterStats dStats = defender.GetComponent<CharacterStats>();
         Attack attack = CreateAttack(dStats);
+        OnAttack?.Invoke(type);
         IAttackable[] attackables = defender.GetComponents<IAttackable>();
         foreach (var attackable in attackables)
         {

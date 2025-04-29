@@ -241,7 +241,10 @@ public class UnitPartyManager : MonoBehaviour
             var currentSoilderData = DataTableManager.SoldierTable.GetData(currentSoilderId);
             //var weaponSocket = unit.transform.Find("Bip001").Find("Bip001 Prop1");
             var weaponPosition = unit.weaponPosition;
-            Instantiate(weapons[currentType][(int)currentSoilderData.Grade - 1], weaponPosition);
+            var weaponGo = Instantiate(weapons[currentType][(int)currentSoilderData.Grade - 1], weaponPosition);
+            var weaponPoint = weaponGo.transform.Find("BulletStarter");
+            unit.GetComponent<UnitEffectController>().attackEffectPoint = weaponPoint;
+            
             PartyUnits.Add(currentType, unit);
             if (stageManager.IngameStatus != IngameStatus.LevelDesign)
             {

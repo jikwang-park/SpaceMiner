@@ -14,6 +14,7 @@ public abstract class AnimationControl : MonoBehaviour
         Attack,
         Skill,
         Die,
+        Walk,
     }
 
     public AnimationClipID CurrentClip { get; protected set; }

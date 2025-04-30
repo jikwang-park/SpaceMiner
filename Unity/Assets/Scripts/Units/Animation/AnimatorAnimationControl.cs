@@ -2,7 +2,6 @@ using AYellowpaper.SerializedCollections;
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using UnityEditor.Animations;
 using UnityEngine;
 
 [RequireComponent(typeof(Animator))]
@@ -10,10 +9,13 @@ public class AnimatorAnimationControl : AnimationControl
 {
     private readonly static int hashBattleIdle = Animator.StringToHash("BattleIdle");
     private readonly static int hashRun = Animator.StringToHash("Run");
+    private readonly static int hashWalk = Animator.StringToHash("Walk");
     private readonly static int hashAttack = Animator.StringToHash("Attack");
     private readonly static int hashSkill = Animator.StringToHash("Skill");
     private readonly static int hashDie = Animator.StringToHash("Die");
     private readonly static int hashAttackIndex = Animator.StringToHash("AttackIndex");
+    private readonly static int hashAttackSpeed = Animator.StringToHash("AttackSpeed");
+
 
     private class EventPair
     {
@@ -39,8 +41,6 @@ public class AnimatorAnimationControl : AnimationControl
 
     private Animator animator;
 
-    private AnimatorController animatorController;
-
     private Dictionary<AnimationClipID, List<EventPair>> events = new Dictionary<AnimationClipID, List<EventPair>>();
 
     private EventComparer eventComparer = new EventComparer();
@@ -53,7 +53,6 @@ public class AnimatorAnimationControl : AnimationControl
     private void Awake()
     {
         animator = GetComponent<Animator>();
-        animatorController = animator.runtimeAnimatorController as AnimatorController;
         CurrentClip = AnimationClipID.None;
     }
 
@@ -113,13 +112,10 @@ public class AnimatorAnimationControl : AnimationControl
             }
         }
 
-        animator.ResetTrigger(hashBattleIdle);
-        animator.ResetTrigger(hashRun);
-        animator.ResetTrigger(hashAttack);
-        animator.ResetTrigger(hashSkill);
-        animator.ResetTrigger(hashDie);
-
         CurrentClip = clipID;
+
+        animator.ResetTrigger(hashRun);
+        animator.ResetTrigger(hashBattleIdle);
 
         switch (CurrentClip)
         {
@@ -138,6 +134,9 @@ public class AnimatorAnimationControl : AnimationControl
             case AnimationClipID.Die:
                 animator.SetTrigger(hashDie);
                 break;
+            case AnimationClipID.Walk:
+                animator.SetTrigger(hashWalk);
+                break;
         }
     }
 
@@ -148,21 +147,23 @@ public class AnimatorAnimationControl : AnimationControl
 
     public override void SetSpeed(AnimationClipID clipID, float speed)
     {
-        foreach (var animatorState in animatorController.layers[0].stateMachine.states)
+        switch (clipID)
         {
-            if (!animatorState.state.name.Contains(clipID.ToString()))
-            {
-                continue;
-            }
-            var clip = animatorState.state.motion as AnimationClip;
-            if (clip.length > 1f)
-            {
-                animatorState.state.speed = clip.length * speed;
-            }
-            else
-            {
-                animatorState.state.speed = speed;
-            }
+            case AnimationClipID.None:
+                break;
+            case AnimationClipID.Idle:
+                break;
+            case AnimationClipID.BattleIdle:
+                break;
+            case AnimationClipID.Run:
+                break;
+            case AnimationClipID.Attack:
+                animator.SetFloat(hashAttackSpeed, speed);
+                break;
+            case AnimationClipID.Skill:
+                break;
+            case AnimationClipID.Die:
+                break;
         }
     }
 
@@ -180,18 +181,26 @@ public class AnimatorAnimationControl : AnimationControl
 
     private float GetProgress(AnimationClipID clipID)
     {
-        var animationState = animator.GetCurrentAnimatorStateInfo(0);
-        foreach (var animatorState in animatorController.layers[0].stateMachine.states)
-        {
-            if (animatorState.state.name.Contains(clipID.ToString())
-                && animatorState.state.nameHash == animationState.shortNameHash)
-            {
-                if (animationState.normalizedTime > 1f)
-                {
-                    return 1f;
-                }
+        var currentClips = animator.GetCurrentAnimatorClipInfo(0);
+        var currentState = animator.GetCurrentAnimatorStateInfo(0);
+        var nextClips = animator.GetNextAnimatorClipInfo(0);
+        var nextState = animator.GetNextAnimatorStateInfo(0);
 
-                return animationState.normalizedTime;
+        var clipIDString = clipID.ToString();
+
+        foreach (var currentClip in currentClips)
+        {
+            if (currentClip.clip.name.Contains(clipIDString))
+            {
+                return currentState.normalizedTime;
+            }
+        }
+
+        foreach (var nextClip in nextClips)
+        {
+            if (nextClip.clip.name.Contains(clipIDString))
+            {
+                return nextState.normalizedTime;
             }
         }
 
@@ -226,22 +235,23 @@ public class AnimatorAnimationControl : AnimationControl
 
     public override bool ContainsClip(AnimationClipID clipID)
     {
-        foreach (var animatorState in animatorController.layers[0].stateMachine.states)
+        string clipIDString = clipID.ToString();
+        if (clipID == AnimationClipID.Attack && attackIndexLength > 0)
         {
-            if (animatorState.state.name.Contains(clipID.ToString()))
-            {
-                return true;
-            }
+            return animator.HasState(0, Animator.StringToHash($"{clipIDString}0"));
         }
-        return false;
+        else
+        {
+            return animator.HasState(0, Animator.StringToHash(clipIDString));
+        }
     }
 
     public void NextWeaponIndex()
     {
         if (attackIndexLength > 0)
         {
-            attackIndex = (attackIndex + 1) % attackIndexLength;
             animator.SetInteger(hashAttackIndex, attackIndex);
+            attackIndex = (attackIndex + 1) % attackIndexLength;
         }
     }
 }

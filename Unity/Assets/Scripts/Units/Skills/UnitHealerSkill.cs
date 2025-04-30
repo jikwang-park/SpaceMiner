@@ -26,6 +26,7 @@ public class UnitHealerSkill : UnitSkillBase
             {
                 var amount = targetUnit.unitStats.maxHp * Ratio;
                 targetUnit.unitStats.Hp += amount;
+                ParticleEffectManager.Instance.PlayOneShot("HealEffect", targetUnit.transform);
             }
         }
 

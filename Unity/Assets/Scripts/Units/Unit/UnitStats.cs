@@ -16,8 +16,10 @@ public class UnitStats : CharacterStats
 
     private BigNumber buffReflectionDamage;
 
-    private System.Action<GameObject> ReflectDelegate;
 
+    private System.Action<GameObject> ReflectDelegate;
+    public event System.Action OnBarrierUp;
+    public event System.Action<UnitTypes> OnAttack;
     private void Awake()
     {
         stageManager = GameObject.FindGameObjectWithTag("GameController").GetComponent<StageManager>();
@@ -107,12 +109,6 @@ public class UnitStats : CharacterStats
         }
 
     }
-
-    private void Update()
-    {
-        Debug.Log(Hp);
-
-    }
     public override void Execute(GameObject defender)
     {
         if (defender is null)
@@ -125,7 +121,7 @@ public class UnitStats : CharacterStats
         {
             return;
         }
-
+        OnAttack?.Invoke(type);
         CharacterStats dStats = defender.GetComponent<CharacterStats>();
         Attack attack = CreateAttack(dStats);
         IAttackable[] attackables = defender.GetComponents<IAttackable>();
@@ -209,7 +205,7 @@ public class UnitStats : CharacterStats
     
         return attack;
     }
-    public void UseTankerBuff(float duration , BigNumber amount)
+    public void UseTankerBuff(float duration, BigNumber amount)
     {
         buffReflectionDamage = amount;
         var takeDamage = GetComponent<AttackedTakeUnitDamage>();
@@ -253,6 +249,7 @@ public class UnitStats : CharacterStats
     {
         hasBarrier = true;
         barrier += amount;
+        OnBarrierUp?.Invoke();
         StartCoroutine(RemoveBarrierAfterDuration(duration, amount));
     }
 

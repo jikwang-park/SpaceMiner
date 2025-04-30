@@ -203,13 +203,14 @@ public class DungeonStageStatusMachine : StageStatusMachine
                 {
                     ItemManager.ConsumeItem(dungeonData.NeedKeyItemID, dungeonData.NeedKeyItemCount);
                 }
-
+                stageManager.StageUiManager.IngameUIManager.DungeonExitConfirmWindow.gameObject.SetActive(false);
                 stageManager.StageUiManager.IngameUIManager.DungeonEndWindow.Open(true, firstCleared);
 
                 break;
             case Status.Timeout:
                 if (dungeonData.Type == 1)
                 {
+                    stageManager.StageUiManager.IngameUIManager.DungeonExitConfirmWindow.gameObject.SetActive(false);
                     stageManager.StageUiManager.IngameUIManager.DungeonEndWindow.Open(false, false);
                 }
                 else if (dungeonData.Type == 2)
@@ -218,6 +219,7 @@ public class DungeonStageStatusMachine : StageStatusMachine
                 }
                 break;
             case Status.Defeat:
+                stageManager.StageUiManager.IngameUIManager.DungeonExitConfirmWindow.gameObject.SetActive(false);
                 stageManager.StageUiManager.IngameUIManager.DungeonEndWindow.Open(false, false);
                 break;
         }
@@ -294,10 +296,12 @@ public class DungeonStageStatusMachine : StageStatusMachine
             {
                 SaveLoadManager.Data.stageSaveData.clearedDungeon[currentType] = currentStage;
             }
+            stageManager.StageUiManager.IngameUIManager.DungeonExitConfirmWindow.gameObject.SetActive(false);
             stageManager.StageUiManager.IngameUIManager.DamageDungeonEndWindow.Open(damage, rewardsData);
         }
         else
         {
+            stageManager.StageUiManager.IngameUIManager.DungeonExitConfirmWindow.gameObject.SetActive(false);
             stageManager.StageUiManager.IngameUIManager.DamageDungeonEndWindow.Open(damage);
         }
     }

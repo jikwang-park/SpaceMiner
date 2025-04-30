@@ -12,6 +12,7 @@ public class AttackedTakeUnitDamage : MonoBehaviour,IAttackable
     public event Action<float> OnHpChanged;
     public event Action<GameObject> GetDamaged;
     public event Action<Unit> OnDamageOverflowed;
+    public event Action OnBarrierDown;
 
 
     private void Awake()
@@ -41,6 +42,10 @@ public class AttackedTakeUnitDamage : MonoBehaviour,IAttackable
         }
         else
         {
+            if(unit.unitStats.barrier > 0)
+            {
+                OnBarrierDown?.Invoke();
+            }
             var trueDamage = attack.damage - unit.unitStats.barrier;
             unit.unitStats.Hp -= trueDamage;
             unit.unitStats.barrier = 0;

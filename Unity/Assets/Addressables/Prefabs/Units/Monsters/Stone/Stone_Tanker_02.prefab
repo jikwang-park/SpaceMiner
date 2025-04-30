@@ -136,10 +136,11 @@ GameObject:
   - component: {fileID: 6196533095119189284}
   - component: {fileID: 9090023198101930584}
   - component: {fileID: -7690720337217084316}
-  - component: {fileID: 6737683532129644246}
+  - component: {fileID: -344716170320578318}
   - component: {fileID: 4983842916734930360}
   - component: {fileID: 7340051066431265428}
   - component: {fileID: 7626992108457170298}
+  - component: {fileID: -1796119190493281766}
   m_Layer: 0
   m_Name: Stone_Tanker_02
   m_TagString: Enemy
@@ -224,6 +225,8 @@ MonoBehaviour:
   criticalChance: 0
   criticalMultiplier: 0
   moveSpeed: 0
+  hp:
+    currentValue: 
 --- !u!114 &99390460326379525
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -288,7 +291,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8aa1921a0dca5b34c8e13a04da6dfd7a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!114 &6737683532129644246
+--- !u!114 &-344716170320578318
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -297,7 +300,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 4181467185713303285}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a318b2369402152468a58d09351a9482, type: 3}
+  m_Script: {fileID: 11500000, guid: 01c571c7b0d3c9242a0169cc80cc27d6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!111 &4983842916734930360
@@ -369,6 +372,18 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 0
   m_CollisionDetection: 3
+--- !u!114 &-1796119190493281766
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4181467185713303285}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 006fdbcec7b4fb14cbcd30c2d1863457, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &4517318238912711650
 GameObject:
   m_ObjectHideFlags: 0

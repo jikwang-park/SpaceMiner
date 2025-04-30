@@ -5,6 +5,7 @@ using UnityEngine.SceneManagement;
 
 public class PlanetStageStatusMachine : StageStatusMachine
 {
+    private readonly static float[] DefaultWeight = new float[3] { 1f, 1f, 1f };
     protected enum Status
     {
         Play,
@@ -30,6 +31,8 @@ public class PlanetStageStatusMachine : StageStatusMachine
     protected float remainingTime;
 
     protected event System.Action onStageEnd;
+
+    private float[] weights = new float[3];
 
     public PlanetStageStatusMachine(StageManager stageManager) : base(stageManager)
     {
@@ -83,7 +86,7 @@ public class PlanetStageStatusMachine : StageStatusMachine
         {
             stageManager.ReleaseBackground();
             stageManager.StageUiManager.IngameUIManager.CloseStageEndWindow();
-            stageManager.StageMonsterManager.SetWeight(1f);
+            stageManager.StageMonsterManager.SetWeight(DefaultWeight);
             SetEvent(false);
             ClearStage();
         }
@@ -308,7 +311,10 @@ public class PlanetStageStatusMachine : StageStatusMachine
     {
         stageEndTime = Time.time + Variables.PlanetTime;
         stageData = DataTableManager.StageTable.GetStageData(CurrentPlanet, CurrentStage);
-        stageManager.StageMonsterManager.SetWeight(stageData.Weight);
+        weights[0] = stageData.AtkWeight;
+        weights[1] = stageData.HpWeight;
+        weights[2] = stageData.GoldWeight;
+        stageManager.StageMonsterManager.SetWeight(weights);
         waveData = DataTableManager.WaveTable.GetData(stageData.WaveID);
     }
 

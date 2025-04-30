@@ -13,19 +13,89 @@ public class ParticleEffectManager : Singleton<ParticleEffectManager>
     public void PlayOneShot(string prefabKey, Transform parent)
     {
         var go = objectPoolManager.Get(prefabKey);
-        if (go.GetComponent<PoolableEffect>() == null)
+        var effect = go.GetComponent<PoolableEffect>();
+        if (effect == null)
         {
-            go.AddComponent<PoolableEffect>();
+            effect = go.AddComponent<PoolableEffect>();
         }
+        effect.ResetTransform();
 
         go.transform.SetParent(parent, false);
         var ps = go.GetComponent<ParticleSystem>();
         if(ps == null)
         {
+            effect.Release();
+        }
+        else
+        {
+            effect.PlayAndRelease(ps);
+        }
+    }
+    public void PlayOneShot(string prefabKey, Vector3 position)
+    {
+        var go = objectPoolManager.Get(prefabKey);
+        var effect = go.GetComponent<PoolableEffect>();
+        if (effect == null)
+        {
+            effect = go.AddComponent<PoolableEffect>();
+        }
+        effect.ResetTransform();
+        go.transform.position += position;
+        var ps = go.GetComponent<ParticleSystem>();
+        if (ps == null)
+        {
+            effect.Release();
+        }
+        else
+        {
+            effect.PlayAndRelease(ps);
+        }
+    }
+    public PoolableEffect PlayBuffEffect(string prefabKey, Transform parent = null)
+    {
+        GameObject go = objectPoolManager.Get(prefabKey);
+        if (go == null) return null;
+
+        var effect = go.GetComponent<PoolableEffect>();
+        if (effect == null)
+        {
+            effect = go.AddComponent<PoolableEffect>();
+        }
+        effect.ResetTransform();
+        go.transform.SetParent(parent, false);
+
+        var ps = go.GetComponent<ParticleSystem>()
+                 ?? go.GetComponentInChildren<ParticleSystem>();
+
+        if (ps != null)
+        {
+            ps.loop = true;
+            ps.Play();
+        }
+        return effect;
+    }
+
+    public void StopBuffEffect(PoolableEffect effect)
+    {
+        if (effect == null)
+        {
             return;
         }
+        effect.Release();
+    }
 
-        ps.Play();
-        go.GetComponent<PoolableEffect>().Release();
+    public void PlayBuffEffect(string prefabKey, Transform parent, float duration)
+    {
+        var effect = PlayBuffEffect(prefabKey, parent);
+        if (effect != null)
+        {
+            StartCoroutine(StopAfter(duration, effect));
+        }
+    }
+
+    private IEnumerator StopAfter(float duration, PoolableEffect effect)
+    {
+        yield return new WaitForSeconds(duration);
+        StopBuffEffect(effect);
     }
 }

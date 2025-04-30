@@ -137,10 +137,11 @@ GameObject:
   - component: {fileID: -7701816433910249287}
   - component: {fileID: -4423638269743690865}
   - component: {fileID: 1647530668291064215}
-  - component: {fileID: 3690993445502021055}
+  - component: {fileID: -5326499146371890689}
   - component: {fileID: 7084359239109909045}
   - component: {fileID: 3821441246097159027}
   - component: {fileID: -5257514057254961807}
+  - component: {fileID: -5427363630503482444}
   m_Layer: 0
   m_Name: Slime_Normal_04
   m_TagString: Enemy
@@ -225,6 +226,8 @@ MonoBehaviour:
   criticalChance: 0
   criticalMultiplier: 0
   moveSpeed: 0
+  hp:
+    currentValue: 
 --- !u!114 &4025005291134898926
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -289,7 +292,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8aa1921a0dca5b34c8e13a04da6dfd7a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!114 &3690993445502021055
+--- !u!114 &-5326499146371890689
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -298,7 +301,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 1386452881371346090}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a318b2369402152468a58d09351a9482, type: 3}
+  m_Script: {fileID: 11500000, guid: 01c571c7b0d3c9242a0169cc80cc27d6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!111 &7084359239109909045
@@ -370,6 +373,18 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 0
   m_CollisionDetection: 3
+--- !u!114 &-5427363630503482444
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1386452881371346090}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 006fdbcec7b4fb14cbcd30c2d1863457, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &2316584685164457737
 GameObject:
   m_ObjectHideFlags: 0

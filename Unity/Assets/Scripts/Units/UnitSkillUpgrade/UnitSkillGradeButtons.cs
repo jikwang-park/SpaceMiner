@@ -14,6 +14,29 @@ public class UnitSkillGradeButtons : MonoBehaviour
     private Button epicButton;
     [SerializeField]
     private Button legendButton;
+
+    [SerializeField]
+    private Toggle normalToggle;
+    [SerializeField]
+    private Toggle rareToggle;
+    [SerializeField]
+    private Toggle epicToggle;
+    [SerializeField]
+    private Toggle legendToggle;
+
+
+    private void OnEnable()
+    {
+        normalToggle.isOn = false;
+        rareToggle.isOn = false;
+        epicToggle.isOn = false;
+        legendToggle.isOn = false;
+        normalToggle.isOn = true;
+    }
+
+
+
+
     [SerializeField]
     private UnitSkillUpgradePanel panel;
 

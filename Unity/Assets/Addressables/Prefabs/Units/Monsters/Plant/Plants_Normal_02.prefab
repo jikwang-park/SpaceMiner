@@ -803,10 +803,11 @@ GameObject:
   - component: {fileID: -4843525632448180443}
   - component: {fileID: 1292954082769749526}
   - component: {fileID: -306324955024587088}
-  - component: {fileID: 6916790232324179563}
+  - component: {fileID: 6042852934744673586}
   - component: {fileID: 7248259259327526240}
   - component: {fileID: 2028098734836933504}
   - component: {fileID: -1507944790394379411}
+  - component: {fileID: -5919663275694323306}
   m_Layer: 0
   m_Name: Plants_Normal_02
   m_TagString: Enemy
@@ -891,6 +892,8 @@ MonoBehaviour:
   criticalChance: 0
   criticalMultiplier: 0
   moveSpeed: 0
+  hp:
+    currentValue: 
 --- !u!114 &-5860030662231919807
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -955,7 +958,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8aa1921a0dca5b34c8e13a04da6dfd7a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!114 &6916790232324179563
+--- !u!114 &6042852934744673586
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -964,7 +967,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 9118834174277674309}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a318b2369402152468a58d09351a9482, type: 3}
+  m_Script: {fileID: 11500000, guid: 01c571c7b0d3c9242a0169cc80cc27d6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!111 &7248259259327526240
@@ -1036,3 +1039,15 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 0
   m_CollisionDetection: 3
+--- !u!114 &-5919663275694323306
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 9118834174277674309}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 006fdbcec7b4fb14cbcd30c2d1863457, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 

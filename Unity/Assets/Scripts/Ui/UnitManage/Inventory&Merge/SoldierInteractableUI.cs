@@ -18,6 +18,8 @@ public class SoldierInteractableUI : MonoBehaviour
     [SerializeField]
     private TextMeshProUGUI countText;
     [SerializeField]
+    private LocalizationText describeText;
+    [SerializeField]
     private Button minusButton;
     [SerializeField]
     private Button plusButton;
@@ -62,6 +64,7 @@ public class SoldierInteractableUI : MonoBehaviour
         nextElementId = nextElement.soldierId;
 
         UpdateButton();
+        UpdateCountText();
     }
 
     public void OnClickPlusButton()
@@ -130,6 +133,7 @@ public class SoldierInteractableUI : MonoBehaviour
             currentCountText.text = $"{currentElementCount}({-count * requiredMergeCount})";
             nextCountText.text = $"{nextElementCount}(+{count})";
         }
+        describeText.SetStringArguments((count * requiredMergeCount).ToString(), count.ToString());
     }
     public void OnClickMergeButton()
     {

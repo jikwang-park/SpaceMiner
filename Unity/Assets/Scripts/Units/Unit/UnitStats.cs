@@ -232,8 +232,6 @@ public class UnitStats : CharacterStats
     {
         Attack attack = new Attack();
         attack.damage = buffReflectionDamage;
-        
-        
         return attack;
     }
 
@@ -268,11 +266,10 @@ public class UnitStats : CharacterStats
 
     //public void UseHealerBuff(BigNumber hpAmount)
     //{
-
     //    var takeDamage = GetComponent<AttackedTakeUnitDamage>();
     //    takeDamage.OnDamageOverflowed += (unit) => unit.unitStats.Hp = hpAmount;
     //}
 
-    
+
 
 }

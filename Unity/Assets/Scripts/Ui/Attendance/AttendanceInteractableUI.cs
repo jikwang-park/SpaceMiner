@@ -8,11 +8,15 @@ public class AttendanceInteractableUI : MonoBehaviour
 {
     [SerializeField]
     private Transform contentParent;
+    [SerializeField]
+    private LocalizationText describeText;
 
     private const string prefabFormat = "Prefabs/UI/AttendanceElement";
 
     public void Initialize(AttendanceTable.Data data)
     {
+        describeText.SetString(data.DetailStringID);
+
         int attendanceCount = data.Period;
         int existingCount = contentParent.childCount;
 
@@ -49,5 +53,6 @@ public class AttendanceInteractableUI : MonoBehaviour
                           );
                       };
         }
+
     }
 }

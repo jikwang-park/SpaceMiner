@@ -55,7 +55,7 @@ public class UnitHealerSkill : UnitSkillBase
 
     //public override void GetBuff(int id)
     //{
-    //    if(skillGrade == Grade.Legend)
+    //    if (skillGrade == Grade.Legend)
     //    {
     //        var buffId = DataTableManager.HealerSkillTable.GetData(id).BuffID;
     //        buffData = DataTableManager.BuffTable.GetData(buffId);
@@ -77,7 +77,7 @@ public class UnitHealerSkill : UnitSkillBase
     //        {
     //            continue;
     //        }
-    //        if(!hasBuffApplied.ContainsKey(targetUnit.UnitTypes)|| !hasBuffApplied[targetUnit.UnitTypes])
+    //        if (!hasBuffApplied.ContainsKey(targetUnit.UnitTypes) || !hasBuffApplied[targetUnit.UnitTypes])
     //        {
     //            var takeDamage = targetUnit.GetComponent<AttackedTakeUnitDamage>();
     //            if (targetUnit.unitStats.Hp <= takeDamage.currentDamage)
@@ -96,5 +96,5 @@ public class UnitHealerSkill : UnitSkillBase
     //    }
     //}
 
-    
+
 }

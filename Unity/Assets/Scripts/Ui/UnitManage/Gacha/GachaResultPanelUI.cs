@@ -64,7 +64,8 @@ public class GachaResultPanelUI : MonoBehaviour
         {
             InstantiateGachaResult(datas[i]);
         }
-
+        skipRequested = false;
+        skipRequestPanel.gameObject.SetActive(false);
         coDisplayResult = null;
     }
     private void InstantiateGachaResult(SoldierTable.Data data)
@@ -88,7 +89,10 @@ public class GachaResultPanelUI : MonoBehaviour
     }
     public void OnClickSkip()
     {
-        skipRequested = true;
-        skipRequestPanel.gameObject.SetActive(false);
+        if(!skipRequested)
+        {
+            skipRequested = true;
+            skipRequestPanel.gameObject.SetActive(false);
+        }
     }
 }

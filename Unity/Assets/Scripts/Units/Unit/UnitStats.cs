@@ -121,10 +121,9 @@ public class UnitStats : CharacterStats
         {
             return;
         }
-
+        OnAttack?.Invoke(type);
         CharacterStats dStats = defender.GetComponent<CharacterStats>();
         Attack attack = CreateAttack(dStats);
-        OnAttack?.Invoke(type);
         IAttackable[] attackables = defender.GetComponents<IAttackable>();
         foreach (var attackable in attackables)
         {
@@ -233,8 +232,6 @@ public class UnitStats : CharacterStats
     {
         Attack attack = new Attack();
         attack.damage = buffReflectionDamage;
-        
-        
         return attack;
     }
 
@@ -269,11 +266,10 @@ public class UnitStats : CharacterStats
 
     //public void UseHealerBuff(BigNumber hpAmount)
     //{
-
     //    var takeDamage = GetComponent<AttackedTakeUnitDamage>();
     //    takeDamage.OnDamageOverflowed += (unit) => unit.unitStats.Hp = hpAmount;
     //}
 
-    
+
 
 }

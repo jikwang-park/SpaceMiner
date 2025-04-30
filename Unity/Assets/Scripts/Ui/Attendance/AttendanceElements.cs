@@ -16,6 +16,8 @@ public class AttendanceElements : MonoBehaviour
     private Image completeImage;
     [SerializeField] 
     private Button claimButton;
+    [SerializeField]
+    private Image lockImage;
 
     private int attendanceId;
     private int dayIndex;
@@ -38,8 +40,8 @@ public class AttendanceElements : MonoBehaviour
 
         completeImage.gameObject.SetActive(claimed);
         canClaimPanel.gameObject.SetActive(canClaim && !claimed);
-        claimButton.interactable = !claimed;
-
+        claimButton.interactable = canClaim && !claimed;
+        lockImage.gameObject.SetActive(!claimed && !canClaim);
     }
     public void OnClickButton()
     {

@@ -7,17 +7,18 @@ using UnityEngine.UI;
 
 public class Dungeon2EndWindow : MonoBehaviour
 {
+    private const string prefabAddress = "Assets/Addressables/Prefabs/UI/Stage/Dungeon/DungeonClearRewardIcon.prefab";
+
     [SerializeField]
-    private LocalizationText messageText;
-    [SerializeField]
-    private DungeonRewardRow rewardRowPrefab;
+    private TextMeshProUGUI totalDamageText;
+
     [SerializeField]
     private DungeonRequirementWindow requirementWindow;
 
     [SerializeField]
-    private Transform rowParent;
+    private Transform iconParent;
 
-    private List<DungeonRewardRow> rows = new List<DungeonRewardRow>();
+    private List<DungeonClearRewardIcon> rewardIcons = new List<DungeonClearRewardIcon>();
 
     private StageManager stageManager;
 
@@ -28,33 +29,32 @@ public class Dungeon2EndWindow : MonoBehaviour
 
     private void OnDisable()
     {
-        for(int i = 0; i< rows.Count;++i)
+        for (int i = 0; i < rewardIcons.Count; ++i)
         {
-            Destroy(rows[i].gameObject);
+            rewardIcons[i].Release();
         }
-        rows.Clear();
+        rewardIcons.Clear();
     }
 
     public void Open(BigNumber damage)
     {
         gameObject.SetActive(true);
-        messageText.SetColor(Color.red);
-        messageText.SetString(60011, damage.ToString());
+
+        totalDamageText.text = damage.ToString();
     }
 
     public void Open(BigNumber damage, SortedList<int, BigNumber> rewards)
     {
-        gameObject.SetActive(true);
+        Open(damage);
 
         foreach (var reward in rewards)
         {
-            var row = Instantiate(rewardRowPrefab, rowParent);
-            row.icon.SetItemSprite(reward.Key);
-            rows.Add(row);
-            row.text.text = reward.Value.ToString();
+            var itemIconGo = stageManager.StageUiManager.ObjectPoolManager.Get(prefabAddress);
+            itemIconGo.transform.SetParent(iconParent);
+            var rewardIcon = itemIconGo.GetComponent<DungeonClearRewardIcon>();
+            rewardIcons.Add(rewardIcon);
+            rewardIcon.SetItem(reward.Key, reward.Value);
         }
-
-        messageText.SetString(60011, damage.ToString());
     }
 
     public void Close()

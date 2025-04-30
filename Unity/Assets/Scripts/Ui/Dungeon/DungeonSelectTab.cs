@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.AddressableAssets;
 
@@ -12,7 +13,10 @@ public class DungeonSelectTab : MonoBehaviour
     private string dungeonRowPrefab = "Prefabs/UI/DungeonEnterRow";
 
     [SerializeField]
-    private DungeonPopup dungeonPopup;
+    private Dungeon1EnterWindow dungeon1EnterWindow;
+
+    [SerializeField]
+    private Dungeon2EnterWindow dungeon2EnterWindow;
 
     private void Start()
     {
@@ -43,7 +47,16 @@ public class DungeonSelectTab : MonoBehaviour
     public void ShowWindow(int type)
     {
         Variables.currentDungeonType = type;
-        dungeonPopup.gameObject.SetActive(true);
-        dungeonPopup.ShowPopup();
+        switch (type)
+        {
+            case 1:
+                dungeon1EnterWindow.gameObject.SetActive(true);
+                dungeon1EnterWindow.ShowPopup();
+                break;
+            case 2:
+                dungeon2EnterWindow.gameObject.SetActive(true);
+                dungeon2EnterWindow.ShowPopup();
+                break;
+        }
     }
 }

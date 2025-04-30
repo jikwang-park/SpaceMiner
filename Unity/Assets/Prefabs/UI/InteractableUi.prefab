@@ -3825,6 +3825,10 @@ PrefabInstance:
       propertyPath: m_AnchoredPosition.y
       value: -64
       objectReference: {fileID: 0}
+    - target: {fileID: 4436403417681472314, guid: 146fbad619243fb45bc68efb8e6d32f6, type: 3}
+      propertyPath: m_Name
+      value: Dungeon1EnterWindow
+      objectReference: {fileID: 0}
     - target: {fileID: 4532024697716639942, guid: 146fbad619243fb45bc68efb8e6d32f6, type: 3}
       propertyPath: m_AnchorMax.y
       value: 1
@@ -4010,15 +4014,15 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 146fbad619243fb45bc68efb8e6d32f6, type: 3}
---- !u!114 &1560481609351574397 stripped
+--- !u!114 &233255796081170550 stripped
 MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 2174012202283424586, guid: 146fbad619243fb45bc68efb8e6d32f6, type: 3}
+  m_CorrespondingSourceObject: {fileID: 626252948093136961, guid: 146fbad619243fb45bc68efb8e6d32f6, type: 3}
   m_PrefabInstance: {fileID: 832133858435131447}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3899290663109411597}
+  m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f3f8816e8ea777f4a83c656836347bb3, type: 3}
+  m_Script: {fileID: 11500000, guid: 8312c9c4f8154fe42be687a4fc4e793e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!1 &1976199555081630280 stripped
@@ -4036,6 +4040,17 @@ GameObject:
   m_CorrespondingSourceObject: {fileID: 4436403417681472314, guid: 146fbad619243fb45bc68efb8e6d32f6, type: 3}
   m_PrefabInstance: {fileID: 832133858435131447}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &4215126467536201992 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 3599350704861233471, guid: 146fbad619243fb45bc68efb8e6d32f6, type: 3}
+  m_PrefabInstance: {fileID: 832133858435131447}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3899290663109411597}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 05dda4aae8e4ce448bf21faec481e0c7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &4599354909753117808 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 3771876536828912711, guid: 146fbad619243fb45bc68efb8e6d32f6, type: 3}
@@ -4055,9 +4070,13 @@ PrefabInstance:
     m_TransformParent: {fileID: 6597073936313511848}
     m_Modifications:
     - target: {fileID: 7660604602541471523, guid: 38ee0fbed52329940b07dbd874c16f8e, type: 3}
-      propertyPath: dungeonPopup
+      propertyPath: dungeon1EnterWindow
       value: 
-      objectReference: {fileID: 1560481609351574397}
+      objectReference: {fileID: 4215126467536201992}
+    - target: {fileID: 7660604602541471523, guid: 38ee0fbed52329940b07dbd874c16f8e, type: 3}
+      propertyPath: dungeon2EnterWindow
+      value: 
+      objectReference: {fileID: 233255796081170550}
     - target: {fileID: 7670527536165819732, guid: 38ee0fbed52329940b07dbd874c16f8e, type: 3}
       propertyPath: m_Pivot.x
       value: 0.5

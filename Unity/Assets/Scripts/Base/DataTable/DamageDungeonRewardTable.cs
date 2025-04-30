@@ -21,6 +21,7 @@ public class DamageDungeonRewardTable : DataTable
     }
 
     private List<Data> dataList = new List<Data>();
+    private SortedList<int, BigNumber> totalReward = new SortedList<int, BigNumber>();
 
     public override System.Type DataType => typeof(Data);
 
@@ -28,6 +29,7 @@ public class DamageDungeonRewardTable : DataTable
     {
         TableData.Clear();
         dataList.Clear();
+        totalReward.Clear();
         if (string.IsNullOrEmpty(text))
         {
             return;
@@ -41,6 +43,11 @@ public class DamageDungeonRewardTable : DataTable
             {
                 TableData.Add(item.ID, item);
                 dataList.Add(item);
+                if (!totalReward.ContainsKey(item.RewardItemID))
+                {
+                    totalReward.Add(item.RewardItemID, 0);
+                }
+                totalReward[item.RewardItemID] += item.RewardItemCount;
             }
             else
             {
@@ -85,18 +92,30 @@ public class DamageDungeonRewardTable : DataTable
         return rewards;
     }
 
+    public SortedList<int, BigNumber> GetReward()
+    {
+        return totalReward;
+    }
+
     public override void Set(List<string[]> data)
     {
         var tableData = new Dictionary<int, ITableData>();
         var newDataList = new List<Data>();
+        var newTotalReward = new SortedList<int, BigNumber>();
         foreach (var item in data)
         {
             var datum = CreateData<Data>(item);
             tableData.Add(datum.ID, datum);
             newDataList.Add(datum);
+            if (!newTotalReward.ContainsKey(datum.RewardItemID))
+            {
+                newTotalReward.Add(datum.RewardItemID, 0);
+            }
+            newTotalReward[datum.RewardItemID] += datum.RewardItemCount;
         }
         TableData = tableData;
         dataList = newDataList;
+        totalReward = newTotalReward;
     }
 
     public override string GetCsvData()

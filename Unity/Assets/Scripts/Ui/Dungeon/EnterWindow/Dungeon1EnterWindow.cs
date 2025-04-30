@@ -5,7 +5,7 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class DungeonPopup : MonoBehaviour
+public class Dungeon1EnterWindow : MonoBehaviour
 {
     private StageManager stageManager;
 
@@ -26,7 +26,13 @@ public class DungeonPopup : MonoBehaviour
     private LocalizationText conditionPowerText;
 
     [SerializeField]
+    private AddressableImage needKeyIcon;
+
+    [SerializeField]
     private LocalizationText keyText;
+
+    [SerializeField]
+    private AddressableImage clearRewardIcon;
 
     [SerializeField]
     private TextMeshProUGUI clearRewardText;
@@ -38,25 +44,16 @@ public class DungeonPopup : MonoBehaviour
     private Button previousDifficultyButton;
 
     [SerializeField]
-    private Button enterButton;
-
-    [SerializeField]
     private Button exterminateButton;
-
-    [SerializeField]
-    private AddressableImage needKeyIcon;
-
-    [SerializeField]
-    private AddressableImage clearRewardIcon;
 
     [SerializeField]
     private DungeonRequirementWindow requirementWindow;
 
     private int maxStage;
 
-    private bool Disabled;
+    private bool disabled;
 
-    private bool Opened;
+    private bool opened;
 
 
     private void Start()
@@ -88,14 +85,14 @@ public class DungeonPopup : MonoBehaviour
 
     private void OnDisable()
     {
-        Disabled = true;
+        disabled = true;
     }
 
     private void OnEnable()
     {
-        if (Disabled)
+        if (disabled)
         {
-            Disabled = false;
+            disabled = false;
             ShowPopup();
         }
     }
@@ -130,7 +127,7 @@ public class DungeonPopup : MonoBehaviour
 
     private void OnItemAmountChanged(int itemId, BigNumber amount)
     {
-        if (Disabled || subStages is null)
+        if (disabled || subStages is null)
         {
             return;
         }
@@ -195,7 +192,7 @@ public class DungeonPopup : MonoBehaviour
 
         Variables.currentDungeonStage = index + 1;
         stageManager.SetStatus(IngameStatus.Dungeon);
-        Opened = true;
+        opened = true;
         gameObject.SetActive(false);
     }
 
@@ -206,11 +203,11 @@ public class DungeonPopup : MonoBehaviour
         {
             return;
         }
-        if (!Opened)
+        if (!opened)
         {
             return;
         }
-        Opened = false;
+        opened = false;
         gameObject.SetActive(true);
     }
 

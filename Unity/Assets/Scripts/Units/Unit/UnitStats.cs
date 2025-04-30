@@ -121,10 +121,9 @@ public class UnitStats : CharacterStats
         {
             return;
         }
-
+        OnAttack?.Invoke(type);
         CharacterStats dStats = defender.GetComponent<CharacterStats>();
         Attack attack = CreateAttack(dStats);
-        OnAttack?.Invoke(type);
         IAttackable[] attackables = defender.GetComponents<IAttackable>();
         foreach (var attackable in attackables)
         {

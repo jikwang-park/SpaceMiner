@@ -371,10 +371,11 @@ GameObject:
   - component: {fileID: -8024644180370279403}
   - component: {fileID: 6895783577671869556}
   - component: {fileID: 1205653200747273609}
-  - component: {fileID: 7197674049391709660}
+  - component: {fileID: -494497475563035183}
   - component: {fileID: 2767227584709504588}
   - component: {fileID: 2767227584709504584}
   - component: {fileID: 2927320743084068659}
+  - component: {fileID: -2811088729232479561}
   m_Layer: 0
   m_Name: Bug_Tanker_01
   m_TagString: Enemy
@@ -459,6 +460,8 @@ MonoBehaviour:
   criticalChance: 0
   criticalMultiplier: 0
   moveSpeed: 0
+  hp:
+    currentValue: 
 --- !u!114 &557632579213925736
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -523,7 +526,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8aa1921a0dca5b34c8e13a04da6dfd7a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!114 &7197674049391709660
+--- !u!114 &-494497475563035183
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -532,7 +535,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 2767227584709504587}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a318b2369402152468a58d09351a9482, type: 3}
+  m_Script: {fileID: 11500000, guid: 01c571c7b0d3c9242a0169cc80cc27d6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!111 &2767227584709504588
@@ -605,6 +608,18 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 0
   m_CollisionDetection: 3
+--- !u!114 &-2811088729232479561
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2767227584709504587}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 006fdbcec7b4fb14cbcd30c2d1863457, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &2767227584752560670
 GameObject:
   m_ObjectHideFlags: 0

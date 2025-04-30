@@ -781,10 +781,11 @@ GameObject:
   - component: {fileID: 8400907816090670577}
   - component: {fileID: -7935494648496092442}
   - component: {fileID: 4929357199081196747}
-  - component: {fileID: -9116498157011368115}
+  - component: {fileID: 7729772265950384285}
   - component: {fileID: 77923118608278519}
   - component: {fileID: 2442047888925537499}
   - component: {fileID: -4881351691966428399}
+  - component: {fileID: -8156905915818963391}
   m_Layer: 0
   m_Name: Stone_Boss_02
   m_TagString: Enemy
@@ -869,6 +870,8 @@ MonoBehaviour:
   criticalChance: 0
   criticalMultiplier: 0
   moveSpeed: 0
+  hp:
+    currentValue: 
 --- !u!114 &6833396895773243470
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -933,7 +936,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8aa1921a0dca5b34c8e13a04da6dfd7a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!114 &-9116498157011368115
+--- !u!114 &7729772265950384285
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -942,7 +945,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 9095426626285347002}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a318b2369402152468a58d09351a9482, type: 3}
+  m_Script: {fileID: 11500000, guid: 01c571c7b0d3c9242a0169cc80cc27d6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!111 &77923118608278519
@@ -1014,6 +1017,18 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 0
   m_CollisionDetection: 3
+--- !u!114 &-8156905915818963391
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 9095426626285347002}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 006fdbcec7b4fb14cbcd30c2d1863457, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &9161800277901165340
 GameObject:
   m_ObjectHideFlags: 0

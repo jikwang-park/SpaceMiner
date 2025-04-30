@@ -17,10 +17,11 @@ GameObject:
   - component: {fileID: -3711494702427154614}
   - component: {fileID: -3719672852061892901}
   - component: {fileID: -7805807241681937003}
-  - component: {fileID: -2307862352897778761}
+  - component: {fileID: 7532513144880455731}
   - component: {fileID: 2968784999278582033}
   - component: {fileID: 1017384515977311993}
   - component: {fileID: -504233893015183362}
+  - component: {fileID: -8858796616185444409}
   m_Layer: 0
   m_Name: Slime_Tanker_01
   m_TagString: Enemy
@@ -105,6 +106,8 @@ MonoBehaviour:
   criticalChance: 0
   criticalMultiplier: 0
   moveSpeed: 0
+  hp:
+    currentValue: 
 --- !u!114 &6018126480545976983
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -169,7 +172,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8aa1921a0dca5b34c8e13a04da6dfd7a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!114 &-2307862352897778761
+--- !u!114 &7532513144880455731
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -178,7 +181,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 4105405693497918199}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a318b2369402152468a58d09351a9482, type: 3}
+  m_Script: {fileID: 11500000, guid: 01c571c7b0d3c9242a0169cc80cc27d6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!111 &2968784999278582033
@@ -250,6 +253,18 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 0
   m_CollisionDetection: 3
+--- !u!114 &-8858796616185444409
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4105405693497918199}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 006fdbcec7b4fb14cbcd30c2d1863457, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &4622113142826660117
 GameObject:
   m_ObjectHideFlags: 0

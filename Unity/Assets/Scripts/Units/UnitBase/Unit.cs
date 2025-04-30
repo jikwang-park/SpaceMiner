@@ -198,11 +198,18 @@ public class Unit : MonoBehaviour, IObjectPoolGameObject
         }
     }
 
-   
+
 
     private void OnAttackEnd()
     {
-        SetStatus(Status.Wait);
+        if (!HasTarget || !IsTargetInRange)
+        {
+            SetStatus(Status.Run);
+        }
+        else
+        {
+            SetStatus(Status.Wait);
+        }
     }
 
     private void OnAttack()
@@ -210,11 +217,6 @@ public class Unit : MonoBehaviour, IObjectPoolGameObject
         if (HasTarget)
         {
             unitStats.Execute(target.gameObject);
-
-            if (UnitTypes == UnitTypes.Tanker)
-            {
-                ((AnimatorAnimationControl)AnimationControl).NextWeaponIndex();
-            }
         }
     }
 
@@ -239,6 +241,10 @@ public class Unit : MonoBehaviour, IObjectPoolGameObject
                 break;
             case Status.Attacking:
                 lastAttackTime = Time.time;
+                if (UnitTypes == UnitTypes.Tanker)
+                {
+                    ((AnimatorAnimationControl)AnimationControl).NextWeaponIndex();
+                }
                 AnimationControl?.Play(AnimationControl.AnimationClipID.Attack);
                 break;
             case Status.SkillUsing:

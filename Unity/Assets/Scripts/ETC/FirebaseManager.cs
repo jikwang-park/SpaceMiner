@@ -106,4 +106,17 @@ public class FirebaseManager : Singleton<FirebaseManager>
     {
         if (auth != null) auth.StateChanged -= AuthStateChanged;
     }
+    public async Task ResetUserDataAsync()
+    {
+        var auth = FirebaseAuth.DefaultInstance;
+        if (auth.CurrentUser == null)
+            throw new System.InvalidOperationException("로그인된 사용자가 없습니다.");
+
+        string uid = auth.CurrentUser.UserId;
+        var dbRef = FirebaseDatabase.DefaultInstance.GetReference("users").Child(uid);
+
+        await dbRef.RemoveValueAsync();
+
+    }
+
 }

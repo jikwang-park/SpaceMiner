@@ -590,10 +590,11 @@ GameObject:
   - component: {fileID: 7053603763687718541}
   - component: {fileID: 632826088316512111}
   - component: {fileID: -3109533869174499464}
-  - component: {fileID: 3085412059719045223}
+  - component: {fileID: 3919998802006278228}
   - component: {fileID: 4247191803865567563}
   - component: {fileID: 1875253663452251751}
   - component: {fileID: 7095677916484545458}
+  - component: {fileID: -504655091489439168}
   m_Layer: 0
   m_Name: Golem_Boss_Green
   m_TagString: Enemy
@@ -678,6 +679,8 @@ MonoBehaviour:
   criticalChance: 0
   criticalMultiplier: 0
   moveSpeed: 0
+  hp:
+    currentValue: 
 --- !u!114 &8538078992200598928
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -742,7 +745,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8aa1921a0dca5b34c8e13a04da6dfd7a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!114 &3085412059719045223
+--- !u!114 &3919998802006278228
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -751,7 +754,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 5034085997511070214}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a318b2369402152468a58d09351a9482, type: 3}
+  m_Script: {fileID: 11500000, guid: 01c571c7b0d3c9242a0169cc80cc27d6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!111 &4247191803865567563
@@ -822,6 +825,18 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 0
   m_CollisionDetection: 3
+--- !u!114 &-504655091489439168
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5034085997511070214}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 006fdbcec7b4fb14cbcd30c2d1863457, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &5377460672405905901
 GameObject:
   m_ObjectHideFlags: 0

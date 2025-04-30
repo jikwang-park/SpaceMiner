@@ -20,7 +20,9 @@ public class StageTable : DataTable
         public int IdleRewardItemID { get; set; }
         public string IdleRewardItemCount { get; set; }
         public int PrefabID { get; set; }
-        public float Weight { get; set; }
+        public float AtkWeight { get; set; }
+        public float HpWeight { get; set; }
+        public float GoldWeight { get; set; }
 
         public void Set(string[] argument)
         {
@@ -34,7 +36,9 @@ public class StageTable : DataTable
             IdleRewardItemID = int.Parse(argument[7]);
             IdleRewardItemCount = argument[8];
             PrefabID = int.Parse(argument[9]);
-            Weight = float.Parse(argument[10]);
+            AtkWeight = float.Parse(argument[10]);
+            HpWeight = float.Parse(argument[11]);
+            GoldWeight = float.Parse(argument[12]);
         }
     }
 

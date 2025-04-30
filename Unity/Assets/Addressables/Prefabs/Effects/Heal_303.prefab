@@ -10245,6 +10245,7 @@ GameObject:
   - component: {fileID: 6348502660393619458}
   - component: {fileID: 7361530348147853979}
   - component: {fileID: 7005788028967437647}
+  - component: {fileID: 4175174176768845296}
   m_Layer: 0
   m_Name: Heal_303
   m_TagString: Untagged
@@ -10261,7 +10262,7 @@ Transform:
   m_GameObject: {fileID: 1599291741164108005}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: 0, y: 1, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -10285,7 +10286,7 @@ ParticleSystem:
   emitterVelocityMode: 0
   looping: 0
   prewarm: 0
-  playOnAwake: 1
+  playOnAwake: 0
   useUnscaledTime: 0
   autoRandomSeed: 1
   startDelay:
@@ -15065,6 +15066,18 @@ ParticleSystemRenderer:
   m_MeshWeighting2: 1
   m_MeshWeighting3: 1
   m_MaskInteraction: 0
+--- !u!114 &4175174176768845296
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1599291741164108005}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b1225c846c2d7784cbff96d247b5e33d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1865464891403958456
 GameObject:
   m_ObjectHideFlags: 0

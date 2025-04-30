@@ -89,7 +89,7 @@ public class Dungeon2EnterWindow : MonoBehaviour
             --highplanet;
         }
 
-        var totalReward = DataTableManager.DamageDungeonRewardTable.GetReward();
+        var totalReward = DataTableManager.DamageDungeonRewardTable.GetRewards();
         int iconIndex = 0;
 
         foreach (var reward in totalReward)
@@ -100,6 +100,11 @@ public class Dungeon2EnterWindow : MonoBehaviour
             {
                 break;
             }
+        }
+
+        for (int i = iconIndex; i < rewardIcons.Length; ++i)
+        {
+            rewardIcons[i].gameObject.SetActive(false);
         }
     }
 

@@ -92,7 +92,7 @@ public class DamageDungeonRewardTable : DataTable
         return rewards;
     }
 
-    public SortedList<int, BigNumber> GetReward()
+    public SortedList<int, BigNumber> GetRewards()
     {
         return totalReward;
     }

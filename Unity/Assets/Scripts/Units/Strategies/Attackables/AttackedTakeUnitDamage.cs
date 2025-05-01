@@ -34,21 +34,21 @@ public class AttackedTakeUnitDamage : MonoBehaviour,IAttackable
 
         GetDamaged?.Invoke(attacker);
 
-        if (unit.unitStats.barrier > attack.damage)
+        if (unit.unitStats.Barrier > attack.damage)
         {
-            unit.unitStats.barrier -= attack.damage;
+            unit.unitStats.Barrier -= attack.damage;
             
             return;
         }
         else
         {
-            if(unit.unitStats.barrier > 0)
+            if(unit.unitStats.Barrier > 0)
             {
                 OnBarrierDown?.Invoke();
             }
-            var trueDamage = attack.damage - unit.unitStats.barrier;
+            var trueDamage = attack.damage - unit.unitStats.Barrier;
             unit.unitStats.Hp -= trueDamage;
-            unit.unitStats.barrier = 0;
+            unit.unitStats.Barrier = 0;
             //if(unit.unitStats.Hp <= 0)
             //{
             //    OnDamageOverflowed?.Invoke(unit);

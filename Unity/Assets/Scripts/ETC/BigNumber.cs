@@ -258,46 +258,66 @@ public struct BigNumber : ISerializationCallbackReceiver
     public static BigNumber operator *(BigNumber a, float multiplier)
     {
         if (multiplier == 0f)
-        {
-            return new BigNumber("0");
-        }
+            return new BigNumber(0);
+
         bool negative = multiplier < 0f;
         float absVal = Math.Abs(multiplier);
 
         int exponent = (int)Math.Floor(Math.Log10(absVal));
-
         double mantissa = absVal / Math.Pow(10.0, exponent);
 
-        string mantStr = mantissa.ToString("G9", CultureInfo.InvariantCulture).TrimEnd('0').TrimEnd('.');
+        string mantStr = mantissa
+            .ToString("0.#######", CultureInfo.InvariantCulture)
+            .TrimEnd('0').TrimEnd('.');
+
+        if (string.IsNullOrEmpty(mantStr))
+            mantStr = "0";
 
         int decCount = 0;
-        int dot = mantStr.IndexOf('.');
-
-        if (dot >= 0)
+        int dotIdx = mantStr.IndexOf('.');
+        if (dotIdx >= 0)
         {
-            decCount = mantStr.Length - dot - 1;
-            mantStr = mantStr.Remove(dot, 1);
+            decCount = mantStr.Length - dotIdx - 1;
+            mantStr = mantStr.Remove(dotIdx, 1);
         }
 
         BigNumber numerator = new BigNumber(mantStr);
-
         BigNumber prod = a * numerator;
 
         int scaleExp = exponent - decCount;
         BigNumber result;
+
         if (scaleExp >= 0)
         {
             result = prod * new BigNumber("1" + new string('0', scaleExp));
         }
         else
         {
-            BigNumber denom = new BigNumber("1" + new string('0', -scaleExp));
-            result = prod.DivideToFloat(denom);
+            int decPower = -scaleExp;
+            try
+            {
+                if (decPower <= 9)
+                {
+                    int divisor = checked((int)Math.Pow(10, decPower));
+                    result = prod / divisor;
+                }
+                else
+                {
+                    throw new OverflowException();
+                }
+            }
+            catch (OverflowException e)
+            {
+
+                float approx = prod.DivideToFloat(new BigNumber("1" + new string('0', decPower)));
+                result = new BigNumber(approx);
+            }
         }
 
         result.sign = a.sign * (negative ? -1 : 1);
         return result;
     }
+
 
     public static BigNumber operator *(float multiplier, BigNumber a)
     {
@@ -410,28 +430,30 @@ public struct BigNumber : ISerializationCallbackReceiver
         return result;
     }
     public float DivideToFloat(BigNumber other)
-    {
+    {       
         if(other == 0)
         {
             throw new DivideByZeroException("Cannot divide by zero");
         }
 
-        int n = Math.Min(3, Math.Min(this.parts.Count, other.parts.Count));
-
+        const int PREC = 3;
         float thisValue = 0f;
         float otherValue = 0f;
+        int thisCount = this.parts.Count;
+        int otherCount = other.parts.Count;
 
-        for(int i = this.parts.Count - 1; i > this.parts.Count - 1 - n; i--)
+        for (int k = 0; k < PREC; k++)
         {
-            thisValue = thisValue * 1000f + (float)this.parts[i];
-        }
-        for (int i = other.parts.Count - 1; i > other.parts.Count - 1 - n; i--)
-        {
-            otherValue = otherValue * 1000f + (float)other.parts[i];
+            int thisIndex = thisCount - 1 - k;
+            int otherIndex = otherCount - 1 - k;
+            float a = (thisIndex >= 0 ? this.parts[thisIndex] : 0f);
+            float b = (otherIndex >= 0 ? other.parts[otherIndex] : 0f);
+
+            thisValue = thisValue * 1000f + a;
+            otherValue = otherValue * 1000f + b;
         }
 
-        int diff = this.parts.Count - other.parts.Count;
-
+        int diff = thisCount - otherCount;
         float scale = Mathf.Pow(1000f, diff);
 
         return (this.sign * thisValue) / (other.sign * otherValue) * scale;

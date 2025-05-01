@@ -29,7 +29,10 @@ public class Unit : MonoBehaviour, IObjectPoolGameObject
     private float skillTime = 0.2f;
 
     [field: SerializeField]
-    public Transform weaponPosition { get; private set; }
+    public Transform LeftHandPosition { get; private set; }
+
+    [field: SerializeField]
+    public Transform RightHandPosition { get; private set; }
 
     public Status UnitStatus { get; private set; }
 

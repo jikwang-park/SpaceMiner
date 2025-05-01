@@ -275,11 +275,34 @@ public static class UnitCombatPowerCalculator
     }
     private static BigNumber GetAccountStat(UpgradeType upgradeType, int level)
     {
+        if(upgradeType == UpgradeType.AttackPoint)
+        {
+            return GetAccountUpgradeAttackStat(level);
+        }
+
         BigNumber stat = 0;
         var data = DataTableManager.UnitUpgradeTable.GetData(upgradeType);
 
         stat = data.Value * level;
         
+        return stat;
+    }
+
+    public static BigNumber GetAccountUpgradeAttackStat(int level)
+    {
+        BigNumber stat = 0;
+        int value = 3;
+        const int per = 100;
+        while (level - per >= 0)
+        {
+            if(level >= per)
+            {
+                stat += per * value;
+                level -= per;
+            }
+            value++;
+        }
+        stat += level * value;
         return stat;
     }
 }

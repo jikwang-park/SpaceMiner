@@ -19,16 +19,18 @@ public class UnitSkillUpgradePanel : MonoBehaviour
     private UnitSkillUpgradeBoard board;
 
 
-    public UnitSkillGradeButtons gradeButtons;
+    public UnitSkillGradeToggles gradeToggle;
 
 
     private void Awake()
     {
-        gradeButtons.Init();
+        gradeToggle.Init();
 
         unitSkillDictionary = SaveLoadManager.Data.unitSkillUpgradeData.skillUpgradeId;
 
         id = unitSkillDictionary[currentType][currentGrade];
+
+        InventoryManager.onChangedInventory += SetGradeToggles;
     }
 
    
@@ -37,13 +39,15 @@ public class UnitSkillUpgradePanel : MonoBehaviour
         board.ShowFirstOpened(id, currentType,currentGrade);
 
     }
-    public void SetGradeButtons()
+    public void SetGradeToggles()
     {
 
         for (int i = (int)Grade.Normal; i <= (int)Grade.Legend; ++i)
         {
             var results = InventoryManager.IsExist(currentType, (Grade)i);
-            gradeButtons.SetButton((Grade)i, results);
+
+            //gradeToggle.SetButton((Grade)i, results);
+            gradeToggle.SetToggle((Grade)i, results);
         }
     }
     public int GetCurrentId()
@@ -57,7 +61,7 @@ public class UnitSkillUpgradePanel : MonoBehaviour
             return;
         currentType = type;
         SetGrade(Grade.Normal);
-        SetGradeButtons();
+        SetGradeToggles();
         board.SetBoardText(GetCurrentId(), currentType,currentGrade);
     }
     private void OnEnable()

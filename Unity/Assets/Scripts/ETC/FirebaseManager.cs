@@ -25,6 +25,18 @@ public class FirebaseManager : Singleton<FirebaseManager>
         auth = FirebaseAuth.DefaultInstance;
         root = FirebaseDatabase.DefaultInstance.RootReference;
 
+        if (auth.CurrentUser == null)
+        {
+            var result = await auth.SignInAnonymouslyAsync();
+            user = result.User;
+            Debug.Log($"Signed in anonymously: {user.UserId}");
+        }
+        else if (auth.CurrentUser != null && auth.CurrentUser != user)
+        {
+            user = auth.CurrentUser;
+            Debug.Log($"Restored session for user: {user.UserId}");
+        }
+
         var offsetRef = FirebaseDatabase.DefaultInstance.GetReference(".info/serverTimeOffset");
         offsetRef.ValueChanged += (s, e) => {
             if (long.TryParse(e.Snapshot.Value?.ToString(), out var ms))
@@ -32,7 +44,6 @@ public class FirebaseManager : Singleton<FirebaseManager>
         };
 
         auth.StateChanged += AuthStateChanged;
-        AuthStateChanged(this, null);
         SaveLoadManager.onSaveRequested += SaveToFirebaseAsync;
 
         await LoadFromFirebaseAsync();

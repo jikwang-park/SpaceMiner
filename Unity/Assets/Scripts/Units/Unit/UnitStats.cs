@@ -258,27 +258,24 @@ public class UnitStats : CharacterStats
     {
         float timer = 0f;
 
-        while (timer < duration && barrier > 0) 
+        while (timer < duration)
         {
-            timer += Time.deltaTime; 
-            yield return null; 
-        }
-
-        if (barrier > 0) 
-        {
-            barrier -= amount;
-
-            if (barrier < 0)
+            if (barrier <= 0)
+            {
                 barrier = 0;
+                hasBarrier = false;
+                yield break;
+            }
+
+            timer += Time.deltaTime;
+            yield return null;
         }
+
+        barrier -= amount;
+        if (barrier < 0)
+            barrier = 0;
 
         hasBarrier = false;
-        //yield return new WaitForSeconds(duration);
-        //barrier -= amount;
-
-        //if (barrier < 0)
-        //    barrier = 0;
-        //hasBarrier = false;
     }
 
     //public void UseHealerBuff(BigNumber hpAmount)

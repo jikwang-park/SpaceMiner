@@ -48,7 +48,7 @@ public class UnitPartyManager : MonoBehaviour
     {
         foreach(var unit in PartyUnits.Values)
         {
-            unit.unitStats.barrier = 0;
+            unit.unitStats.Barrier = 0;
         }
     }
     public void ResetUnitHealth()

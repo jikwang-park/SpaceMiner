@@ -9,7 +9,7 @@ public class GuideQuestWindow : MonoBehaviour
     [SerializeField]
     private Color clearedImageColor = new Color(0f, 1f, 0.2168f, 0.196f);
     [SerializeField]
-    private Color inProgressImageColor = new Color(0f, 0f, 0f, 0.4f);
+    private Color inProgressImageColor = new Color(1f, 1f, 1f, 0.196f);
 
 
     [SerializeField]

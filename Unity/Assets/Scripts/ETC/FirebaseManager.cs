@@ -79,13 +79,20 @@ public class FirebaseManager : Singleton<FirebaseManager>
     {
         if (user == null) return;
 
-        var snap = await root.Child("users").Child(user.UserId).Child("SaveData")
-                             .GetValueAsync();
-        if (snap.Exists && !string.IsNullOrEmpty(snap.GetRawJsonValue()))
+        try
         {
-            SaveLoadManager.LoadGame(snap.GetRawJsonValue());
+            var snap = await root.Child("users").Child(user.UserId).Child("SaveData")
+                             .GetValueAsync();
+            if (snap.Exists && !string.IsNullOrEmpty(snap.GetRawJsonValue()))
+            {
+                SaveLoadManager.LoadGame(snap.GetRawJsonValue());
+            }
+            else
+            {
+                SaveLoadManager.SetDefaultData();
+            }
         }
-        else
+        catch
         {
             SaveLoadManager.SetDefaultData();
         }

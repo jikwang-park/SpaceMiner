@@ -22,11 +22,14 @@ public class MiningRobotController : MonoBehaviour, IObjectPoolGameObject
     [HideInInspector]
     public Transform currentTarget;
 
+    private AnimationControl animationControl;
+
     public float Speed { get; private set; }
 
     private void Awake()
     {
         InitBehaviourTree();
+        animationControl = GetComponent<AnimationControl>();
     }
 
     private void Update()
@@ -104,6 +107,7 @@ public class MiningRobotController : MonoBehaviour, IObjectPoolGameObject
         Slot = 0;
         PlanetData = null;
         RobotData = null;
+        animationControl.Stop();
         ObjectPool.Release(gameObject);
     }
 }

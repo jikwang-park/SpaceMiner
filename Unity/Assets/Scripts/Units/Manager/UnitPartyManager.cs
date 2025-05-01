@@ -18,6 +18,9 @@ public class UnitPartyManager : MonoBehaviour
     private SerializedDictionary<UnitTypes, GameObject[]> weapons;
 
     [SerializeField]
+    private GameObject shield;
+
+    [SerializeField]
     private List<Vector3> unitSpawnPos;
 
     public Dictionary<UnitTypes, Unit> PartyUnits { get; private set; } = new Dictionary<UnitTypes, Unit>();
@@ -246,11 +249,17 @@ public class UnitPartyManager : MonoBehaviour
             var currentSoilderId = InventoryManager.GetInventoryData(currentType).equipElementID;
             var currentSoilderData = DataTableManager.SoldierTable.GetData(currentSoilderId);
             //var weaponSocket = unit.transform.Find("Bip001").Find("Bip001 Prop1");
-            var weaponPosition = unit.weaponPosition;
+            var weaponPosition = unit.RightHandPosition;
             var weaponGo = Instantiate(weapons[currentType][(int)currentSoilderData.Grade - 1], weaponPosition);
             var weaponPoint = weaponGo.transform.Find("BulletStarter");
             unit.GetComponent<UnitEffectController>().attackEffectPoint = weaponPoint;
-            
+
+            if (currentType == UnitTypes.Tanker)
+            {
+                var shieldPosition = unit.LeftHandPosition;
+                var shieldGo = Instantiate(shield, shieldPosition);
+            }
+
             PartyUnits.Add(currentType, unit);
             if (stageManager.IngameStatus != IngameStatus.LevelDesign)
             {

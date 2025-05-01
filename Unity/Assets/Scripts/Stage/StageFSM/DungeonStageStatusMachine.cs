@@ -171,7 +171,7 @@ public class DungeonStageStatusMachine : StageStatusMachine
     {
         this.status = status;
         Time.timeScale = 0f;
-
+        stageManager.StageUiManager.curtain.gameObject.SetActive(false);
         onStageEnd?.Invoke();
 
         switch (this.status)

@@ -191,8 +191,8 @@ public class PlanetStageStatusMachine : StageStatusMachine
 
     protected void NextStage()
     {
-
-        if (status == Status.ClearPlanet
+        if (Variables.stageMode == StageMode.Repeat
+            || status == Status.ClearPlanet
             || status == Status.Defeat
             || status == Status.Timeout
             || stageManager.UnitPartyManager.UnitCount != 3)

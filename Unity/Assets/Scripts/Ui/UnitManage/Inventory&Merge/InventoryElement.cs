@@ -22,25 +22,36 @@ public class InventoryElement : MonoBehaviour
     private TextMeshProUGUI countText;
     [SerializeField]
     private TextMeshProUGUI levelText;
+    [SerializeField]
+    private GameObject alarmImage;
 
     public Inventory parentInventory;
     private Button button;
+    private bool onAlarm = false;
     void Awake()
     {
         button = GetComponent<Button>();
-
+    }
+    private void Start()
+    {
         if (button != null)
         {
             button.interactable = !IsLocked;
         }
-    }
-    private void Start()
-    {
+        if(alarmImage != null)
+        {
+            alarmImage.SetActive(false);
+        }
         button.onClick.AddListener(() => OnElementClicked());
     }
     public void UnlockElement()
     {
         IsLocked = false;
+        onAlarm = true;
+        if(alarmImage != null)
+        {
+            alarmImage.SetActive(true);
+        }
         if (lockImage != null)
         {
             lockImage.gameObject.SetActive(false);
@@ -72,7 +83,11 @@ public class InventoryElement : MonoBehaviour
             levelText.text = "Lv. " + level.ToString();
         }
     }
-
+    private void OnDisable()
+    {
+        onAlarm = false;
+        alarmImage.gameObject.SetActive(false);
+    }
     public void UpdateCount(int newCount)
     {
         Count = newCount;

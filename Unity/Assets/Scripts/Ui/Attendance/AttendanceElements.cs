@@ -11,7 +11,7 @@ public class AttendanceElements : MonoBehaviour
     [SerializeField]
     private AddressableImage currencyImage;
     [SerializeField]
-    private TextMeshProUGUI dayText;
+    private LocalizationText dayText;
     [SerializeField]
     private Image completeImage;
     [SerializeField] 
@@ -28,7 +28,7 @@ public class AttendanceElements : MonoBehaviour
         dayIndex = data.Day;
 
         currencyImage.SetSprite(DataTableManager.ItemTable.GetData(data.RewardItemID).SpriteID);
-        dayText.text = $"{dayIndex} ÀÏÂ÷";
+        dayText.SetStringArguments(dayIndex.ToString());
 
         UpdateUI();
     }

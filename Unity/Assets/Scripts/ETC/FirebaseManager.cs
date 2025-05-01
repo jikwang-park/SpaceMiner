@@ -39,25 +39,18 @@ public class FirebaseManager : Singleton<FirebaseManager>
     }
     private async void AuthStateChanged(object sender, EventArgs e)
     {
-        if (auth.CurrentUser != user)
+        var fbUser = auth.CurrentUser;
+        if (fbUser == null && user == null)
         {
-            user = auth.CurrentUser;
-            if (user == null)
-            {
-                var result = await auth.SignInAnonymouslyAsync();
-                user = result.User;
-                Debug.Log($"Signed in anonymously: {user.UserId}");
-            }
-            else
-            {
-                Debug.Log($"Restored session for user: {user.UserId}");
-            }
+            var result = await auth.SignInAnonymouslyAsync();
+            user = result.User;
+            Debug.Log($"Signed in anonymously: {user.UserId}");
         }
-    }
-    public static Task ClearAllDataAsync()
-    {
-        var rootRef = FirebaseDatabase.DefaultInstance.RootReference;
-        return rootRef.RemoveValueAsync();
+        else if (fbUser != null && fbUser != user)
+        {
+            user = fbUser;
+            Debug.Log($"Restored session for user: {user.UserId}");
+        }
     }
     private async void SaveToFirebaseAsync()
     {

@@ -131,6 +131,7 @@ public class GuideQuestWindow : MonoBehaviour
         if (GuideQuestManager.isCleared)
         {
             background.color = clearedImageColor;
+            questClearMark.SetActive(true);
         }
     }
 }

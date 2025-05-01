@@ -32,6 +32,8 @@ public class DungeonStageStatusMachine : StageStatusMachine
 
     protected event System.Action onStageEnd;
 
+    private MonsterStats bossStats;
+
     public DungeonStageStatusMachine(StageManager stageManager) : base(stageManager)
     {
         onStageEnd += stageManager.StageEnd;
@@ -66,6 +68,10 @@ public class DungeonStageStatusMachine : StageStatusMachine
         {
             case Status.Play:
                 UpdateTimer(currentTime);
+                if (dungeonData.Type == 2)
+                {
+                    stageManager.StageUiManager.IngameUIManager.waveText.text = (-bossStats.Hp).ToString();
+                }
                 break;
         }
     }
@@ -131,7 +137,14 @@ public class DungeonStageStatusMachine : StageStatusMachine
             stageManager.StageMonsterManager.Spawn(Vector3.zero, corpsData);
         }
 
-        stageManager.StageUiManager.IngameUIManager.SetWaveText(currentWave);
+        if (isFirstWave && dungeonData.Type == 2)
+        {
+            stageManager.StageUiManager.IngameUIManager.waveText.gameObject.SetActive(true);
+            stageManager.StageUiManager.IngameUIManager.waveText.text = string.Empty;
+            var monsterTransform = stageManager.StageMonsterManager.GetMonsters(1);
+            bossStats = monsterTransform[0].GetComponent<MonsterStats>();
+        }
+
         ++currentWave;
     }
 

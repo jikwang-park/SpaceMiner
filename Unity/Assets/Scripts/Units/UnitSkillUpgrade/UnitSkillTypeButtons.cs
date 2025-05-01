@@ -32,10 +32,7 @@ public class UnitSkillTypeButtons : MonoBehaviour
     private Image healerImage;
 
 
-    private void Awake()
-    {
-
-    }
+  
 
     private void OnEnable()
     {

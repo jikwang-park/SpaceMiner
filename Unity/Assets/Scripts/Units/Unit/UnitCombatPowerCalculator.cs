@@ -282,4 +282,22 @@ public static class UnitCombatPowerCalculator
         
         return stat;
     }
+
+    public static BigNumber GetAccountUpgradeAttackStat(int level)
+    {
+        BigNumber stat = 0;
+        int value = 3;
+        const int per = 100;
+        while (level - per >= 0)
+        {
+            if(level >= per)
+            {
+                stat += per * value;
+                level -= per;
+            }
+            value++;
+        }
+        stat += level * value;
+        return stat;
+    }
 }

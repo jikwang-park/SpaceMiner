@@ -256,12 +256,29 @@ public class UnitStats : CharacterStats
 
     private IEnumerator RemoveBarrierAfterDuration(float duration, BigNumber amount)
     {
-        yield return new WaitForSeconds(duration);
-        barrier -= amount;
+        float timer = 0f;
 
-        if (barrier < 0)
-            barrier = 0;
+        while (timer < duration && barrier > 0) 
+        {
+            timer += Time.deltaTime; 
+            yield return null; 
+        }
+
+        if (barrier > 0) 
+        {
+            barrier -= amount;
+
+            if (barrier < 0)
+                barrier = 0;
+        }
+
         hasBarrier = false;
+        //yield return new WaitForSeconds(duration);
+        //barrier -= amount;
+
+        //if (barrier < 0)
+        //    barrier = 0;
+        //hasBarrier = false;
     }
 
     //public void UseHealerBuff(BigNumber hpAmount)

@@ -68,7 +68,7 @@ public class IdleRewardManager : MonoBehaviour
 
         var highestClearData = DataTableManager.StageTable.GetStageData(highestClearPlanet, highestClearStage);
 
-        idleRewardsDict.Add(highestClearData.IdleRewardItemID, int.Parse(highestClearData.IdleRewardItemCount) * idleTime);
+        idleRewardsDict.Add(highestClearData.IdleRewardItemID, (BigNumber)highestClearData.IdleRewardItemCount.ToString() * idleTime);
 
         Dictionary<int, BigNumber> idleMiningReward = MiningRobotInventoryManager.GetIdleRewardOpenPlanet();
 

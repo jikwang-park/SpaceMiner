@@ -1,6 +1,5 @@
 using System.Collections;
 using System.Collections.Generic;
-using System.Threading;
 using UnityEngine;
 using static UnitUpgradeTable;
 
@@ -10,12 +9,13 @@ public class UnitStats : CharacterStats
     private StageManager stageManager;
 
     private Grade currentGrade;
+
     private BigNumber barrier = 0;
     public BigNumber Barrier
     {
-        get 
-        { 
-            return barrier; 
+        get
+        {
+            return barrier;
         }
         set
         {
@@ -33,10 +33,13 @@ public class UnitStats : CharacterStats
 
     private BigNumber buffReflectionDamage;
 
+    
+
 
     private System.Action<GameObject> ReflectDelegate;
     public event System.Action OnBarrierUp;
     public event System.Action OnBarrierDown;
+
     public event System.Action<UnitTypes> OnAttack;
     private void Awake()
     {
@@ -266,7 +269,7 @@ public class UnitStats : CharacterStats
     public void UseShiled(float duration, BigNumber amount)
     {
         hasBarrier = true;
-        Barrier += amount;
+        barrier += amount;
         OnBarrierUp?.Invoke();
         StartCoroutine(RemoveBarrierAfterDuration(duration, amount));
     }
@@ -278,7 +281,7 @@ public class UnitStats : CharacterStats
 
         while (timer < duration)
         {
-            if (barrier <= 0)
+            if (barrier <= 0 && hasBarrier)
             {
                 barrier = 0;
                 hasBarrier = false;

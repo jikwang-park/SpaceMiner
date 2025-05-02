@@ -74,6 +74,7 @@ public struct BigNumber : ISerializationCallbackReceiver
         }
         else
         {
+            input = input.Replace(",", "");
             for(int i = input.Length; i > 0; i -= 3)
             {
                 int start = Math.Max(0, i - 3);

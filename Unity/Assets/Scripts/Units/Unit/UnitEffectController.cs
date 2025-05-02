@@ -6,12 +6,10 @@ public class UnitEffectController : MonoBehaviour, IDestructable
 {
     private PoolableEffect barrierEffect;
     private UnitStats unitStat;
-    private AttackedTakeUnitDamage takeUnitDamage;
     public Transform attackEffectPoint;
     private void Awake()
     {
         unitStat = GetComponent<UnitStats>();
-        takeUnitDamage = GetComponent<AttackedTakeUnitDamage>();
     }
 
     public void OnDestruction(GameObject Attacker)
@@ -20,7 +18,7 @@ public class UnitEffectController : MonoBehaviour, IDestructable
         ParticleEffectManager.Instance.PlayOneShot("UnitDeathEffect", gameObject.transform.position);
         unitStat.OnAttack -= DoAttack;
         unitStat.OnBarrierUp -= DoBarrierUp;
-        takeUnitDamage.OnBarrierDown -= DoBarrierDown;
+        unitStat.OnBarrierDown -= DoBarrierDown;
     }
 
     private void OnEnable()
@@ -28,14 +26,13 @@ public class UnitEffectController : MonoBehaviour, IDestructable
         ParticleEffectManager.Instance.PlayOneShot("UnitChangeEffect", gameObject.transform);
         unitStat.OnAttack += DoAttack;
         unitStat.OnBarrierUp += DoBarrierUp;
-        takeUnitDamage.OnBarrierDown += DoBarrierDown;
-
+        unitStat.OnBarrierDown += DoBarrierDown;
     }
 
     private void OnDisable()
     {
         unitStat.OnBarrierUp -= DoBarrierUp;
-        takeUnitDamage.OnBarrierDown -= DoBarrierDown;
+        unitStat.OnBarrierDown -= DoBarrierDown;
     }
 
     private void DoBarrierUp()

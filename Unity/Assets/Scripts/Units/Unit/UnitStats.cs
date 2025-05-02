@@ -10,15 +10,36 @@ public class UnitStats : CharacterStats
 
     private Grade currentGrade;
 
-    public BigNumber barrier = 0;
+    private BigNumber barrier = 0;
+    public BigNumber Barrier
+    {
+        get
+        {
+            return barrier;
+        }
+        set
+        {
+            bool wasPositive = barrier > 0;
+            barrier = value;
+
+            if (wasPositive && barrier <= 0)
+            {
+                OnBarrierDown?.Invoke();
+            }
+        }
+    }
 
     public bool hasBarrier = false;
 
     private BigNumber buffReflectionDamage;
 
+    
+
 
     private System.Action<GameObject> ReflectDelegate;
     public event System.Action OnBarrierUp;
+    public event System.Action OnBarrierDown;
+
     public event System.Action<UnitTypes> OnAttack;
     private void Awake()
     {

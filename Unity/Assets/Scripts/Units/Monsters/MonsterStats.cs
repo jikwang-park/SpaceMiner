@@ -74,16 +74,15 @@ public class MonsterStats : CharacterStats
 
         BigNumber damage = this.damage;
 
-        attack.isCritical = criticalChance >= Random.value;
-        if (attack.isCritical)
-        {
-            damage *= criticalMultiplier;
-        }
-        attack.damage = damage;
+        attack.damage = damage * skillRatio;
 
         if (defenderStats is not null)
         {
-            attack.damage *= skillRatio * Variables.DefenceBase.DivideToFloat(200 + defenderStats.armor);
+            attack.damage *= Variables.DefenceBase.DivideToFloat(200 + defenderStats.armor);
+        }
+        if (attack.damage == zero)
+        {
+            attack.damage = 1;
         }
 
         return attack;

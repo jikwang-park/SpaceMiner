@@ -278,7 +278,7 @@ public class UnitStats : CharacterStats
 
         while (timer < duration)
         {
-            if (barrier <= 0)
+            if (barrier <= 0 && hasBarrier)
             {
                 barrier = 0;
                 hasBarrier = false;

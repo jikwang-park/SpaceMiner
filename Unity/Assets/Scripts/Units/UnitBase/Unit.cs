@@ -317,6 +317,10 @@ public class Unit : MonoBehaviour, IObjectPoolGameObject
     {
         HasTarget = false;
         target = null;
+        if (UnitStatus == Status.SkillUsing)
+        {
+            lastSkillTime = Time.time;
+        }
         SetStatus(Status.Wait);
     }
 }

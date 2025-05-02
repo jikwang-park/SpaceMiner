@@ -44,7 +44,7 @@ public class UnitPartyManager : MonoBehaviour
             unit.lastSkillTime = float.MinValue;
         }
     }
-    public void RestUnitBarrier()
+    public void ResetUnitBarrier()
     {
         foreach(var unit in PartyUnits.Values)
         {

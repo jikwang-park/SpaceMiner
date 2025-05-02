@@ -55,7 +55,7 @@ public static class ItemManager
             }
         }
 
-        BigNumber maxStack = DataTableManager.ItemTable.GetData(itemId).MaxStack;
+        BigNumber maxStack = DataTableManager.ItemTable.GetData(itemId).MaxStack.ToString();
         if(items.ContainsKey(itemId))
         {
             items[itemId] += amount;

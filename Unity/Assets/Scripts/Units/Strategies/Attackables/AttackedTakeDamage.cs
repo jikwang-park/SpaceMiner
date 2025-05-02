@@ -31,7 +31,7 @@ public class AttackedTakeDamage : MonoBehaviour, IAttackable
             }
             foreach (var destructable in destructables)
             {
-                destructable.OnDestruction(attacker);
+                destructable.OnDestruction(attacker);  
             }
         }
     }

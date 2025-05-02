@@ -430,28 +430,30 @@ public struct BigNumber : ISerializationCallbackReceiver
         return result;
     }
     public float DivideToFloat(BigNumber other)
-    {
+    {       
         if(other == 0)
         {
             throw new DivideByZeroException("Cannot divide by zero");
         }
 
-        int precisionPart = 3;
-
+        const int PREC = 3;
         float thisValue = 0f;
         float otherValue = 0f;
+        int thisCount = this.parts.Count;
+        int otherCount = other.parts.Count;
 
-        for(int i = this.parts.Count - precisionPart; i < this.parts.Count; i++)
+        for (int k = 0; k < PREC; k++)
         {
-            thisValue = thisValue * 1000f + (i >= 0 ? this.parts[i] : 0f); 
-        }
-        for (int i = other.parts.Count - precisionPart; i < other.parts.Count; i++)
-        {
-            otherValue = otherValue * 1000f + (i >= 0 ? other.parts[i] : 0);
+            int thisIndex = thisCount - 1 - k;
+            int otherIndex = otherCount - 1 - k;
+            float a = (thisIndex >= 0 ? this.parts[thisIndex] : 0f);
+            float b = (otherIndex >= 0 ? other.parts[otherIndex] : 0f);
+
+            thisValue = thisValue * 1000f + a;
+            otherValue = otherValue * 1000f + b;
         }
 
-        int diff = this.parts.Count - other.parts.Count;
-
+        int diff = thisCount - otherCount;
         float scale = Mathf.Pow(1000f, diff);
 
         return (this.sign * thisValue) / (other.sign * otherValue) * scale;

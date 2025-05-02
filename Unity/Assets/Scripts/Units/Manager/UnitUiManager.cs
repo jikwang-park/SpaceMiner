@@ -43,11 +43,9 @@ public class UnitUiManager : MonoBehaviour
                     break;
                 case UnitTypes.Dealer:
                     stats.OnHpChanged += (amount) => { dealerSlider.value = amount; };
-
                     break;
                 case UnitTypes.Healer:
                     stats.OnHpChanged += (amount) => { healerSlider.value = amount; };
-
                     break;
             }
         }

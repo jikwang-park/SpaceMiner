@@ -294,14 +294,14 @@ public static class UnitCombatPowerCalculator
         int value = 3;
         const int per = 100;
         while (level - per >= 0)
-        {
+       
             if(level >= per)
             {
                 stat += per * value;
                 level -= per;
             }
             value++;
-        }
+        
         stat += level * value;
         return stat;
     }

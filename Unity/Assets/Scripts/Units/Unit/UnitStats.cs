@@ -1,6 +1,5 @@
 using System.Collections;
 using System.Collections.Generic;
-using System.Threading;
 using UnityEngine;
 using static UnitUpgradeTable;
 
@@ -10,24 +9,8 @@ public class UnitStats : CharacterStats
     private StageManager stageManager;
 
     private Grade currentGrade;
-    private BigNumber barrier = 0;
-    public BigNumber Barrier
-    {
-        get 
-        { 
-            return barrier; 
-        }
-        set
-        {
-            bool wasPositive = barrier > 0;
-            barrier = value;
 
-            if (wasPositive && barrier <= 0)
-            {
-                OnBarrierDown?.Invoke();
-            }
-        }
-    }
+    public BigNumber barrier = 0;
 
     public bool hasBarrier = false;
 
@@ -36,7 +19,6 @@ public class UnitStats : CharacterStats
 
     private System.Action<GameObject> ReflectDelegate;
     public event System.Action OnBarrierUp;
-    public event System.Action OnBarrierDown;
     public event System.Action<UnitTypes> OnAttack;
     private void Awake()
     {
@@ -266,7 +248,7 @@ public class UnitStats : CharacterStats
     public void UseShiled(float duration, BigNumber amount)
     {
         hasBarrier = true;
-        Barrier += amount;
+        barrier += amount;
         OnBarrierUp?.Invoke();
         StartCoroutine(RemoveBarrierAfterDuration(duration, amount));
     }
@@ -276,27 +258,24 @@ public class UnitStats : CharacterStats
     {
         float timer = 0f;
 
-        while (timer < duration && Barrier > 0) 
+        while (timer < duration)
         {
-            timer += Time.deltaTime; 
-            yield return null; 
+            if (barrier <= 0)
+            {
+                barrier = 0;
+                hasBarrier = false;
+                yield break;
+            }
+
+            timer += Time.deltaTime;
+            yield return null;
         }
 
-        if (Barrier > 0) 
-        {
-            Barrier -= amount;
-
-            if (Barrier < 0)
-                Barrier = 0;
-        }
+        barrier -= amount;
+        if (barrier < 0)
+            barrier = 0;
 
         hasBarrier = false;
-        //yield return new WaitForSeconds(duration);
-        //barrier -= amount;
-
-        //if (barrier < 0)
-        //    barrier = 0;
-        //hasBarrier = false;
     }
 
     //public void UseHealerBuff(BigNumber hpAmount)

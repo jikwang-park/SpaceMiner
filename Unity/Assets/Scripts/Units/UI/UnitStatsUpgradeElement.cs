@@ -100,11 +100,11 @@ public class UnitStatsUpgradeElement : MonoBehaviour, IPointerDownHandler, IPoin
     {
         nextLevel = Mathf.Min(maxLevel, level + statsMultiplier);
         levelText.text = $"Level + {level} -> {nextLevel}";
-    
+
         BigNumber afterGold = GetCurrentGold(nextLevel);
 
         switch (currentType)
-        {   
+        {
             case UpgradeType.AttackPoint:
                 BigNumber beforeAttackValue = UnitCombatPowerCalculator.GetAccountUpgradeAttackStat(level);
                 BigNumber afterAttackValue = UnitCombatPowerCalculator.GetAccountUpgradeAttackStat(nextLevel);
@@ -165,19 +165,20 @@ public class UnitStatsUpgradeElement : MonoBehaviour, IPointerDownHandler, IPoin
         if (level <= 0)
             return 0;
 
-        if (level <= 100)
+        if (level <= 10)
         {
             return 300 * Mathf.Pow(1.05f, 10 * (level - 1));
         }
-        else if (level <= 1000)
+        else if (level <= 100)
         {
-            BigNumber cost = 300 * Mathf.Pow(1.05f, 10 * 9);
+            BigNumber cost = 300 * Mathf.Pow(1.05f, 10 * (10 - 1));
             return cost * Mathf.Pow(1.005f, 10 * (level - 10));
         }
         else
         {
-            BigNumber cost = 300 * Mathf.Pow(1.05f, 10 * 9) * Mathf.Pow(1.005f, 10 * 90);
-            return cost * Mathf.Pow(1.001f, 10 * (level - 100));
+            BigNumber level10Cost = 300 * Mathf.Pow(1.05f, 10 * (10 - 1));
+            BigNumber level100Cost = level10Cost * Mathf.Pow(1.005f, 10 * (100 - 10));
+            return level100Cost * Mathf.Pow(1.001f, 10 * (level - 100));
         }
     }
 
@@ -215,7 +216,7 @@ public class UnitStatsUpgradeElement : MonoBehaviour, IPointerDownHandler, IPoin
             }
             return result;
         }
-        
+
     }
     public void SetData(int level, UnitUpgradeTable.Data data)
     {
@@ -236,8 +237,7 @@ public class UnitStatsUpgradeElement : MonoBehaviour, IPointerDownHandler, IPoin
         {
             currentNoneCriValue = GetCurrentValue(level);
         }
-        //currentValue = GetCurrentValue(level);
-        //GetCurrentCritValue(level);
+      
         currentGold = GetCurrentGold(level);
         SetStatsInfo();
     }
@@ -245,11 +245,11 @@ public class UnitStatsUpgradeElement : MonoBehaviour, IPointerDownHandler, IPoin
     public BigNumber GetCurrentValue(int level)
     {
         BigNumber result = 0;
-        if(currentType == UpgradeType.AttackPoint)
+        if (currentType == UpgradeType.AttackPoint)
         {
             result = UnitCombatPowerCalculator.GetAccountUpgradeAttackStat(level);
         }
-        else if(currentType == UpgradeType.HealthPoint||currentType == UpgradeType.DefensePoint)
+        else if (currentType == UpgradeType.HealthPoint || currentType == UpgradeType.DefensePoint)
         {
             result = value * level;
         }
@@ -258,13 +258,13 @@ public class UnitStatsUpgradeElement : MonoBehaviour, IPointerDownHandler, IPoin
     public float GetCurrentCritValue(int level)
     {
         float result = 0;
-        if(currentType == UpgradeType.CriticalDamages || currentType == UpgradeType.CriticalPossibility)
+        if (currentType == UpgradeType.CriticalDamages || currentType == UpgradeType.CriticalPossibility)
         {
             result = value * level;
         }
         return result;
     }
-        public BigNumber GetCurrentGold(int level)
+    public BigNumber GetCurrentGold(int level)
     {
         BigNumber result = 0;
         for (int i = 1; i <= level; ++i)

@@ -78,6 +78,10 @@ public static class UnitCombatPowerCalculator
     public static BigNumber GetTankerCombatPower()
     {
         BigNumber combatPower = 0;
+        if (SaveLoadManager.Data == null)
+        {
+            SaveLoadManager.SetDefaultData();
+        }
         SoldierTable.Data unitData = DataTableManager.SoldierTable.GetData(SaveLoadManager.Data.soldierInventorySaveData[UnitTypes.Tanker].equipElementID);
         int skillId = SaveLoadManager.Data.unitSkillUpgradeData.skillUpgradeId[unitData.UnitType][unitData.Grade];
         TankerSkillTable.Data skillData = DataTableManager.TankerSkillTable.GetData(skillId);
@@ -104,6 +108,10 @@ public static class UnitCombatPowerCalculator
     public static BigNumber GetDealerCombatPower()
     {
         BigNumber combatPower = 0;
+        if (SaveLoadManager.Data == null)
+        {
+            SaveLoadManager.SetDefaultData();
+        }
         SoldierTable.Data unitData = DataTableManager.SoldierTable.GetData(SaveLoadManager.Data.soldierInventorySaveData[UnitTypes.Dealer].equipElementID);
         int skillId = SaveLoadManager.Data.unitSkillUpgradeData.skillUpgradeId[unitData.UnitType][unitData.Grade];
         DealerSkillTable.Data skillData = DataTableManager.DealerSkillTable.GetData(skillId);
@@ -131,6 +139,10 @@ public static class UnitCombatPowerCalculator
     public static BigNumber GetHealerCombatPower()
     {
         BigNumber combatPower = 0;
+        if (SaveLoadManager.Data == null)
+        {
+            SaveLoadManager.SetDefaultData();
+        }
         SoldierTable.Data unitData = DataTableManager.SoldierTable.GetData(SaveLoadManager.Data.soldierInventorySaveData[UnitTypes.Healer].equipElementID);
         int skillId = SaveLoadManager.Data.unitSkillUpgradeData.skillUpgradeId[unitData.UnitType][unitData.Grade];
         HealerSkillTable.Data skillData = DataTableManager.HealerSkillTable.GetData(skillId);

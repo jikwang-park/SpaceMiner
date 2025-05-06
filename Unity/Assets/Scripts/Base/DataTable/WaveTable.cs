@@ -19,7 +19,7 @@ public class WaveTable : DataTable
         {
             ID = int.Parse(argument[0]);
             CorpsID = argument[1];
-            CorpsIDs = SplitWaveCorpsID(CorpsID);
+            CorpsIDs = DataTableUtilities.SplitColumnToInt(CorpsID);
         }
     }
 
@@ -40,7 +40,7 @@ public class WaveTable : DataTable
         {
             if (!TableData.ContainsKey(item.ID))
             {
-                item.CorpsIDs = SplitWaveCorpsID(item.CorpsID);
+                item.CorpsIDs = DataTableUtilities.SplitColumnToInt(item.CorpsID);
                 TableData.Add(item.ID, item);
             }
             else
@@ -80,17 +80,5 @@ public class WaveTable : DataTable
         }
 
         return CreateCsv(list);
-    }
-
-    private static int[] SplitWaveCorpsID(string waveCorpsID)
-    {
-        var waveCorpsIDs = waveCorpsID.Split("_");
-        var waveCorpsIntIDs = new int[waveCorpsIDs.Length];
-
-        for (int i = 0; i < waveCorpsIntIDs.Length; ++i)
-        {
-            waveCorpsIntIDs[i] = int.Parse(waveCorpsIDs[i]);
-        }
-        return waveCorpsIntIDs;
     }
 }

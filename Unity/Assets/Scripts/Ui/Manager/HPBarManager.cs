@@ -54,7 +54,6 @@ public class HPBarManager : MonoBehaviour
         hpbarGo.transform.SetParent(hpRect);
         var hpbar = hpbarGo.GetComponent<MonsterHPBar>();
         hpbar.SetTarget(target, this);
-        var objectpoolcomponent = hpbar.GetComponent<IObjectPoolGameObject>();
-        monsterHPBars.Add(objectpoolcomponent);
+        monsterHPBars.Add(hpbar);
     }
 }

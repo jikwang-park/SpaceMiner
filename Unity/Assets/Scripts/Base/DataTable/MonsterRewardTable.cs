@@ -69,21 +69,8 @@ public class MonsterRewardTable : DataTable
             if (!TableData.ContainsKey(item.ID))
             {
                 TableData.Add(item.ID, item);
-                var strCounts = item.RewardItemCount2.Split('_');
-                int countLength = strCounts.Length;
-                item.counts = new BigNumber[countLength];
-                for (int i = 0; i < countLength; ++i)
-                {
-                    item.counts[i] = int.Parse(strCounts[i]);
-                }
-
-                var strProbabilities = item.RewardItemProbability2.Split('_');
-                countLength = strProbabilities.Length;
-                item.probabilities = new float[countLength];
-                for (int i = 0; i < countLength; ++i)
-                {
-                    item.probabilities[i] = float.Parse(strProbabilities[i]);
-                }
+                item.counts = DataTableUtilities.SplitColumnToBigNumber(item.RewardItemCount2);
+                item.probabilities = DataTableUtilities.SplitColumnToFloat(item.RewardItemProbability2);
             }
             else
             {

@@ -149,6 +149,15 @@ public static class DataTableManager
         planetTable.Load(DataTableIds.planetTable);
         tables.Add(DataTableIds.planetTable, planetTable);
 
+        var miningBattleTable = new MiningBattleTable();
+        miningBattleTable.Load(DataTableIds.miningBattleTable);
+        tables.Add(DataTableIds.miningBattleTable, miningBattleTable);
+
+        var miningBattleSpawnTable = new MiningBattleSpawnTable();
+        miningBattleSpawnTable.Load(DataTableIds.miningBattleSpawnTable);
+        tables.Add(DataTableIds.miningBattleSpawnTable, miningBattleSpawnTable);
+
+
         var damageDungeonRewardTable = new DamageDungeonRewardTable();
         damageDungeonRewardTable.Load(DataTableIds.damageDungeonRewardTable);
         tables.Add(DataTableIds.damageDungeonRewardTable, damageDungeonRewardTable);
@@ -264,4 +273,10 @@ public static class DataTableManager
 
     public static AttendanceRewardTable AttendanceRewardTable
         => GetTable<AttendanceRewardTable>(DataTableIds.attendanceRewardTable);
+
+    public static MiningBattleTable MiningBattleTable
+        => GetTable<MiningBattleTable>(DataTableIds.miningBattleTable);
+
+    public static MiningBattleSpawnTable MiningBattleSpawnTable
+        => GetTable<MiningBattleSpawnTable>(DataTableIds.miningBattleSpawnTable);
 }

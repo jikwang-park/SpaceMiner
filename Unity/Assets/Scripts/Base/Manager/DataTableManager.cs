@@ -170,6 +170,11 @@ public static class DataTableManager
         var attendanceRewardTable = new AttendanceRewardTable();
         attendanceRewardTable.Load(DataTableIds.attendanceRewardTable);
         tables.Add(DataTableIds.attendanceRewardTable, attendanceRewardTable);
+
+
+        var tutorialTable = new TutorialTable();
+        tutorialTable.Load(DataTableIds.tutorialTable);
+        tables.Add(DataTableIds.tutorialTable, tutorialTable);
     }
 
 
@@ -279,4 +284,7 @@ public static class DataTableManager
 
     public static MiningBattleSpawnTable MiningBattleSpawnTable
         => GetTable<MiningBattleSpawnTable>(DataTableIds.miningBattleSpawnTable);
+
+    public static TutorialTable TutorialTable
+        => GetTable<TutorialTable>(DataTableIds.tutorialTable);
 }

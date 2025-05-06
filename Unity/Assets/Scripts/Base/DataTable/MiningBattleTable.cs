@@ -52,6 +52,7 @@ public class MiningBattleTable : DataTable
     public override void LoadFromText(string text)
     {
         TableData.Clear();
+        planetStages.Clear();
 
         if (string.IsNullOrEmpty(text))
         {
@@ -64,13 +65,13 @@ public class MiningBattleTable : DataTable
         {
             if (!TableData.ContainsKey(item.ID))
             {
+                TableData.Add(item.ID, item);
+
                 if (!planetStages.ContainsKey(item.PlanetTableID))
                 {
                     planetStages.Add(item.PlanetTableID, new List<Data>());
                 }
                 planetStages[item.PlanetTableID].Add(item);
-
-                TableData.Add(item.ID, item);
             }
             else
             {
@@ -101,12 +102,20 @@ public class MiningBattleTable : DataTable
     public override void Set(List<string[]> data)
     {
         var tableData = new Dictionary<int, ITableData>();
+        var newPlanetStages = new Dictionary<int, List<Data>>();
         foreach (var item in data)
         {
             var datum = CreateData<Data>(item);
             tableData.Add(datum.ID, datum);
+
+            if (!planetStages.ContainsKey(datum.PlanetTableID))
+            {
+                planetStages.Add(datum.PlanetTableID, new List<Data>());
+            }
+            planetStages[datum.PlanetTableID].Add(datum);
         }
         TableData = tableData;
+        planetStages = newPlanetStages;
     }
 
     public override string GetCsvData()

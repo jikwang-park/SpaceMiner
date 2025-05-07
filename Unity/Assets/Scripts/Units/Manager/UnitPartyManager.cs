@@ -138,9 +138,6 @@ public class UnitPartyManager : MonoBehaviour
         }
         PartyUnits.Clear();
     }
-
-
-
     public Transform GetFirstLineUnitTransform()
     {
         if (PartyUnits.Count == 0)
@@ -167,8 +164,6 @@ public class UnitPartyManager : MonoBehaviour
 
         return frontMostZPos;
     }
-
-
     public Transform GetUnit(UnitTypes type)
     {
         if (PartyUnits.ContainsKey(type))
@@ -187,9 +182,6 @@ public class UnitPartyManager : MonoBehaviour
         }
         return null;
     }
-
-
-
     public bool IsUnitExistFront(UnitTypes myType)
     {
         for (int i = (int)myType - 1; i >= (int)UnitTypes.Tanker; --i)
@@ -306,11 +298,6 @@ public class UnitPartyManager : MonoBehaviour
         OnUnitCreated?.Invoke();
         OnUnitUpdated?.Invoke();
     }
-
-
-
-
-
     public bool NeedHealUnit()
     {
         foreach (var unit in PartyUnits)

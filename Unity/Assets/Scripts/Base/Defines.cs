@@ -140,3 +140,10 @@ public class Defines
 {
     public const int DungeonKeyItemID = 5001;
 }
+
+public enum RankingType
+{
+    Stage,
+    CombatPower,
+    DungeonDamage,
+}

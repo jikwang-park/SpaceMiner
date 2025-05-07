@@ -17,6 +17,23 @@ public struct BigNumber : ISerializationCallbackReceiver
     private int sign;
     private static readonly string[] units = {"", "A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", 
                                 "N", "O", "P", "Q", "R", "S", "T", "U", "V",  "W", "X", "Y", "Z"};
+    public bool IsZero
+    {
+        get
+        {
+            if (parts == null)
+            {
+                return true;
+            }
+
+            if (parts.Count == 1 && parts[0] == 0)
+            {
+                return true;
+            }
+
+            return false;
+        }
+    }
     public BigNumber(string input)
     {
         if (string.IsNullOrEmpty(input))
@@ -669,5 +686,16 @@ public struct BigNumber : ISerializationCallbackReceiver
             this.parts = temp.parts;
             this.sign = temp.sign;
         }
+    }
+    public string GetSortKey()
+    {
+        string countKey = parts.Count.ToString("D2");
+        var groupKeys = new List<string>(parts.Count);
+        for (int i = parts.Count - 1; i >= 0; i--)
+        {
+            groupKeys.Add(parts[i].ToString("D3"));
+        }
+
+        return countKey + "-" + string.Join("-", groupKeys);
     }
 }

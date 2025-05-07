@@ -254,11 +254,13 @@ public class PlanetStageStatusMachine : StageStatusMachine
             {
                 stageLoadData.highPlanet = CurrentPlanet;
                 stageLoadData.highStage = CurrentStage + 1;
+                FirebaseManager.Instance.UpdateHighestStageToLeaderBoard();
             }
             else if (DataTableManager.StageTable.IsExistPlanet(CurrentPlanet + 1))
             {
                 stageLoadData.highPlanet = CurrentPlanet + 1;
                 stageLoadData.highStage = 1;
+                FirebaseManager.Instance.UpdateHighestStageToLeaderBoard();
             }
             else
             {

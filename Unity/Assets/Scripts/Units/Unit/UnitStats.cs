@@ -105,12 +105,11 @@ public class UnitStats : CharacterStats
     public void SetData(SoldierTable.Data data, UnitTypes type)
     {
         moveSpeed = data.MoveSpeed;
-
         coolDown = 100f / data.AttackSpeed;
         this.type = type;
-        
-
         currentGrade = data.Grade;
+
+        float prevRatio = maxHp > 0 ? Hp.DivideToFloat(maxHp) : 0f;
 
         coolDown = 1;
         range = data.Range;
@@ -126,7 +125,7 @@ public class UnitStats : CharacterStats
         }
         else
         {
-            RecalculateHpWithRatio();
+            Hp = maxHp * prevRatio;
         }
 
     }
@@ -299,11 +298,6 @@ public class UnitStats : CharacterStats
         hasBarrier = false;
     }
 
-    //public void UseHealerBuff(BigNumber hpAmount)
-    //{
-    //    var takeDamage = GetComponent<AttackedTakeUnitDamage>();
-    //    takeDamage.OnDamageOverflowed += (unit) => unit.unitStats.Hp = hpAmount;
-    //}
 
 
 

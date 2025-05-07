@@ -90,6 +90,8 @@ public static class SaveLoadManager
         {
             defaultSaveData.attendanceStates[entry.ID] = AttendanceData.CreateDefault(entry.ID);
         }
+        defaultSaveData.FirstOpened = new Dictionary<TutorialTable.QuestTypes, bool>();
+        defaultSaveData.GotReward = new Dictionary<TutorialTable.QuestTypes, bool>();
 
         Data = defaultSaveData;
     }

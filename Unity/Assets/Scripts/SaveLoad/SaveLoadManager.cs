@@ -92,7 +92,7 @@ public static class SaveLoadManager
         }
         defaultSaveData.FirstOpened = new Dictionary<TutorialTable.QuestTypes, bool>();
         defaultSaveData.GotReward = new Dictionary<TutorialTable.QuestTypes, bool>();
-
+        defaultSaveData.mineBattleData = MineBattleData.CreateDefault();
         Data = defaultSaveData;
     }
     public static void ResetStatUpgradeData()

@@ -271,4 +271,21 @@ public class AttendanceData
             currentIndex = 1,
         };
     }
+
+}
+[Serializable]
+public class MineBattleData
+{
+    public int mineBattleCount;
+    public DateTime lastClearTime;
+
+    public MineBattleData() { }
+    public static MineBattleData CreateDefault()
+    {
+        return new MineBattleData
+        { 
+            mineBattleCount = 0,
+            lastClearTime = DateTime.MinValue
+        };
+    }
 }

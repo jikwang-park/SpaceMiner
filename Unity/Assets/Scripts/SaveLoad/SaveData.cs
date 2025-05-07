@@ -90,6 +90,7 @@ public class SaveDataV4 : SaveDataV3
     public Dictionary<int, AttendanceData> attendanceStates;
     public Dictionary<TutorialTable.QuestTypes, bool> FirstOpened;
     public Dictionary<TutorialTable.QuestTypes, bool> GotReward;
+    public MineBattleData mineBattleData;
     public SaveDataV4() : base()
     {
         attendanceStates = new Dictionary<int, AttendanceData>();
@@ -104,6 +105,7 @@ public class SaveDataV4 : SaveDataV3
             FirstOpened.Add((TutorialTable.QuestTypes)type, false);
             GotReward.Add((TutorialTable.QuestTypes)type, false);
         }
+        mineBattleData = MineBattleData.CreateDefault();
         Version = 4;
     }
     public SaveDataV4(SaveDataV3 oldData) : base(oldData)
@@ -120,7 +122,7 @@ public class SaveDataV4 : SaveDataV3
             FirstOpened.Add((TutorialTable.QuestTypes)type, false);
             GotReward.Add((TutorialTable.QuestTypes)type, false);
         }
-
+        mineBattleData = MineBattleData.CreateDefault();
         Version = 4;
     }
     public override SaveData VersionUp()

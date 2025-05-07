@@ -105,11 +105,8 @@ public class UnitStats : CharacterStats
     public void SetData(SoldierTable.Data data, UnitTypes type)
     {
         moveSpeed = data.MoveSpeed;
-
         coolDown = 100f / data.AttackSpeed;
         this.type = type;
-        
-
         currentGrade = data.Grade;
 
         float prevRatio = maxHp > 0 ? Hp.DivideToFloat(maxHp) : 0f;

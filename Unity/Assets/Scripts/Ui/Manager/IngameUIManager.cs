@@ -47,6 +47,9 @@ public class IngameUIManager : MonoBehaviour
     [field: SerializeField]
     public Button mineBattleButton { get; private set; }
 
+    [field: SerializeField]
+    public MiningBattleResultWindow miningBattleResultWindow { get; private set; }
+
     [SerializeField]
     private SerializedDictionary<IngameStatus, List<GameObject>> statusObjectLists;
 

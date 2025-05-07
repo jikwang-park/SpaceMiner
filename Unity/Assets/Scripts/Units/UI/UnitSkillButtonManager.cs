@@ -18,6 +18,8 @@ public class UnitSkillButtonManager : MonoBehaviour
     public Button healerHpOptionButton;
     [SerializeField]
     public Slider healthSlider;
+    [SerializeField]
+    private GameObject sliderGameObject;
 
     public bool IsClicked = false;
 
@@ -29,6 +31,8 @@ public class UnitSkillButtonManager : MonoBehaviour
     [SerializeField]
     private TextMeshProUGUI text;
     [SerializeField]
+    private TextMeshProUGUI healthSliderPercentageText;
+    [SerializeField]
     public float currentValue { get; private set; }
 
 
@@ -37,7 +41,7 @@ public class UnitSkillButtonManager : MonoBehaviour
 
     private void Awake()
     {
-        healthSlider.gameObject.SetActive(false);
+        sliderGameObject.gameObject.SetActive(false);
         healerHpOptionButton.onClick.AddListener(() => OnClickHealthSliderButton());
         healthSlider.onValueChanged.AddListener(OnHealthSilderholdChanaged);
         healthSlider.value = 0.5f;
@@ -49,13 +53,17 @@ public class UnitSkillButtonManager : MonoBehaviour
     {
         currentValue = value * 100;
         Variables.healerSkillHPRatio = value;
+        if (healthSliderPercentageText != null)
+        {
+            healthSliderPercentageText.text = $"{currentValue:F0}%";
+        }
     }
     private void Init()
     {
         var tankerUnit = stageManager.UnitPartyManager.GetUnit(UnitTypes.Tanker).gameObject.GetComponent<Unit>();
         tankerSkillButtonUi.SetUnit(tankerUnit);
         var dealerUnit = stageManager.UnitPartyManager.GetUnit(UnitTypes.Dealer).gameObject.GetComponent<Unit>();
-        dealerSkillButton.SetUnit(dealerUnit);
+        dealerSkillButton.SetUnit(dealerUnit);  
         var healerUnit = stageManager.UnitPartyManager.GetUnit(UnitTypes.Healer).gameObject.GetComponent<Unit>();
         healerSkillButton.SetUnit(healerUnit);
 
@@ -70,7 +78,7 @@ public class UnitSkillButtonManager : MonoBehaviour
     private void OnClickHealthSliderButton()
     {
         IsClicked = !IsClicked;
-        healthSlider.gameObject.SetActive(IsClicked);
+        sliderGameObject.gameObject.SetActive(IsClicked);
     }
     private void Update()
     {

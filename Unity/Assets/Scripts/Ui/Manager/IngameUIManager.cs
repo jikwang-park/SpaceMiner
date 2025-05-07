@@ -7,18 +7,27 @@ using UnityEngine.UI;
 
 public class IngameUIManager : MonoBehaviour
 {
-    private const string stageTextFormat = "{0}-{1}";
-    private const string waveTextFormat = "{0} Wave";
-    private const string dungeonTextFormat = "Dungeon {0}-{1}";
+    [field: SerializeField]
+    public GameObject stageTextGameObject { get; private set; }
+
+    [field: SerializeField]
+    public LocalizationText stageText { get; private set; }
+
+    [field: SerializeField]
+    public LocalizationText waveText { get; private set; }
+
+    [field: SerializeField]
+    public LocalizationText timerText { get; private set; }
 
     [SerializeField]
-    private TextMeshProUGUI stageText;
-    [field: SerializeField]
-    public TextMeshProUGUI waveText { get; private set; }
-    [field: SerializeField]
-    public TextMeshProUGUI timerText { get; private set; }
-    [SerializeField]
     private TextMeshProUGUI goldText;
+
+    [field: SerializeField]
+    public GameObject unitHpBars { get; private set; }
+
+    [field: SerializeField]
+    public GameObject unitSkills { get; private set; }
+
     [SerializeField]
     private StageEndWindow stageEndWindow;
     [field: SerializeField]
@@ -35,6 +44,9 @@ public class IngameUIManager : MonoBehaviour
     [field: SerializeField]
     public Toggle RushSelectToggle { get; private set; }
 
+    [field: SerializeField]
+    public Button mineBattleButton { get; private set; }
+
     [SerializeField]
     private SerializedDictionary<IngameStatus, List<GameObject>> statusObjectLists;
 
@@ -42,22 +54,22 @@ public class IngameUIManager : MonoBehaviour
 
     public void SetTimer(float remainTime)
     {
-        timerText.text = remainTime.ToString("F2");
+        timerText.SetString(Defines.DirectStringID, remainTime.ToString("F2"));
     }
 
     public void SetStageText(int planet, int stage)
     {
-        stageText.text = string.Format(stageTextFormat, planet, stage);
+        stageText.SetString(Defines.PlanetStageFormatStringID, planet.ToString(), stage.ToString());
     }
 
     public void SetWaveText(int wave)
     {
-        waveText.text = string.Format(waveTextFormat, wave);
+        waveText.SetString(Defines.WaveTextStringID, wave.ToString());
     }
 
     public void SetDungeonStageText(int dungeonId, int stage)
     {
-        stageText.text = string.Format(dungeonTextFormat, dungeonId, stage);
+        stageText.SetString(Defines.StageDefaultStringID, dungeonId.ToString(), stage.ToString());
     }
 
     public void OpenStageEndWindow(string message, float duration)

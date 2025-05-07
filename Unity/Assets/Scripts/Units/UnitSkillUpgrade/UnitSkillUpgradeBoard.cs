@@ -1,6 +1,7 @@
 using JetBrains.Annotations;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq.Expressions;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -8,9 +9,10 @@ using UnityEngine.UI;
 
 public class UnitSkillUpgradeBoard : MonoBehaviour
 {
+    [SerializeField]
     private UnitSkillUpgradePanel manager;
 
-
+    private const string maxLevelText = "Max Level";
     [SerializeField]
     private Image currentImage;
     [SerializeField]
@@ -23,14 +25,18 @@ public class UnitSkillUpgradeBoard : MonoBehaviour
     private Button upgradeButton;
     [SerializeField]
     private StageManager stageManager;
-
     [SerializeField]
-    private TextMeshProUGUI needText;
-    private int maxLevel = 20;
+    private LocalizationText buttonText;
+
+    private const int maxLevel = 20;
     [SerializeField]
     private AddressableImage needItemImage;
     [SerializeField]
     private TextMeshProUGUI needItemCountText;
+
+
+    [SerializeField]
+    private GameObject nextInfoGameobject;
 
     //임시
     [SerializeField]
@@ -50,11 +56,11 @@ public class UnitSkillUpgradeBoard : MonoBehaviour
 
     private SkillUpgradeTable.Data data;
 
-  
+
     private void Awake()
     {
         stageManager = GameObject.FindGameObjectWithTag("GameController").GetComponent<StageManager>();
-        
+
     }
     private void Start()
     {
@@ -67,24 +73,23 @@ public class UnitSkillUpgradeBoard : MonoBehaviour
 
     public void SetImage(UnitTypes type)
     {
-        int index = (int)type;
-
-        currentImage.sprite = skillImage[index - 1];
-        nextImage.sprite = skillImage[index - 1];
-
+        int index = (int)type - 1;
+        if (index >= 0 && index < skillImage.Count)
+        {
+            currentImage.sprite = skillImage[index];
+            nextImage.sprite = skillImage[index];
+        }
     }
 
-    
+
 
     public void SetLimit(Grade grade, UnitTypes type, int id)
     {
         currentId = id;
         manager.unitSkillDictionary[type][grade] = currentId;
-        //DataTableManager.SkillUpgradeTable.GetData(id).level 
-
     }
 
-    public void SetBoardText(int id, UnitTypes type,Grade grade)
+    public void SetBoardText(int id, UnitTypes type, Grade grade)
     {
         currentId = id;
         currentType = type;
@@ -92,6 +97,22 @@ public class UnitSkillUpgradeBoard : MonoBehaviour
         SetImage(currentType);
 
 
+        SetCurrentSkillText(currentType, currentId, out level);
+
+        if (level >= maxLevel)
+        {
+            SetMaxLevel();
+            return;
+        }
+
+
+        LoadUpgradeData();
+        SetNextSkillText(currentType, nextId);
+        UpdateUpgradeUI();
+    }
+
+    private void SetCurrentSkillText(UnitTypes type , int id, out int level)
+    {
         switch (type)
         {
             case UnitTypes.Tanker:
@@ -114,27 +135,14 @@ public class UnitSkillUpgradeBoard : MonoBehaviour
                 currentText.SetString(healerStringId, (healerData.HealRatio * 100).ToString(), healerData.CoolTime.ToString());
 
                 break;
+            default:
+                level = 0;
+                break;
         }
+    }
 
-        if (level >= maxLevel)
-        {
-            nextText.SetString(60010);
-            upgradeButton.interactable = false;
-
-            return;
-        }
-        var data = DataTableManager.SkillUpgradeTable.GetData(currentId);
-
-        this.data = data;
-        needItemId = data.NeedItemID;
-        needItemCount = int.Parse(data.NeedItemCount);
-        var itemsprtieId = DataTableManager.ItemTable.GetData(needItemId).SpriteID;
-        needItemImage.SetSprite(itemsprtieId);
-        needItemCountText.text = $"{needItemCount}개 필요합니다";
-
-        upgradeButton.interactable = true;
-
-
+    private void SetNextSkillText(UnitTypes type , int id)
+    {
         switch (type)
         {
             case UnitTypes.Tanker:
@@ -157,26 +165,49 @@ public class UnitSkillUpgradeBoard : MonoBehaviour
                 break;
         }
     }
+
+    private void SetMaxLevel()
+    {
+        upgradeButton.gameObject.SetActive(false);
+        nextText.SetString(60010);
+        nextInfoGameobject.SetActive(false);
+        needItemImage.gameObject.SetActive(false);
+        needItemCountText.text = maxLevelText;
+    }
+    private void UpdateUpgradeUI()
+    {
+        upgradeButton.gameObject.SetActive(true);
+        nextInfoGameobject.SetActive(true);
+        needItemImage.gameObject.SetActive(true);
+        needItemImage.SetSprite(DataTableManager.ItemTable.GetData(needItemId).SpriteID);
+        needItemCountText.text = $"{needItemCount}개 필요합니다";
+    }
+    private void LoadUpgradeData()
+    {
+        data = DataTableManager.SkillUpgradeTable.GetData(currentId);
+        nextId = data.SkillPaymentID;
+        needItemId = data.NeedItemID;
+        needItemCount = int.Parse(data.NeedItemCount);
+    }
     private void Update()
     {
-        if (ItemManager.CanConsume(needItemId, needItemCount))
-        {
-            upgradeButton.interactable = true;
-
-        }
-        else
+        if (level >= maxLevel)
         {
             upgradeButton.interactable = false;
+            return;
         }
+
+        bool canUpgrade = ItemManager.CanConsume(needItemId, needItemCount);
+        upgradeButton.interactable = canUpgrade;
+        buttonText.SetColor(new Color(1f, 1f, 1f, canUpgrade ? 1f : 0.2f));
     }
-
-
-
     private void OnClickUpgradeButton()
     {
         ItemManager.ConsumeItem(needItemId, needItemCount);
         currentId = nextId;
-        SetBoardText(currentId, currentType,currentGrade);
+        manager.unitSkillDictionary[currentType][currentGrade] = currentId;
+
+        SetBoardText(currentId, currentType, currentGrade);
         stageManager.UnitPartyManager.UpgradeSkillStats(currentId, currentType);
         SaveLoadManager.Data.unitSkillUpgradeData.skillUpgradeId[currentType][currentGrade] = currentId;
         SaveLoadManager.SaveGame();

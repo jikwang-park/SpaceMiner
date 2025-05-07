@@ -38,6 +38,7 @@ public class DataTableIds
     public const string gachaSoldierTable = "GachaSoldierTable";
 
     public const string itemTable = "ItemTable";
+    public const string effectItemTable = "EffectItemTable";
     public const string shopTable = "ShopTable";
 
     public const string defaultDataTable = "DefaultDataTable";
@@ -136,9 +137,26 @@ public enum StatType
     AttackRange
 }
 
+public class Defines
+{
+    public const int DungeonKeyItemID = 5001;
+    public const int PlanetStageFormatStringID = 169;
+    public const int WaveTextStringID = 147;
+    public const int StageDefaultStringID = 131;
+    public const int DirectStringID = 60011;
+}
+
 public enum RankingType
 {
     Stage,
     CombatPower,
     DungeonDamage,
+}
+
+
+public enum MonsterType
+{
+    Normal,
+    Ranged,
+    Boss,
 }

@@ -139,6 +139,10 @@ public enum StatType
 public class Defines
 {
     public const int DungeonKeyItemID = 5001;
+    public const int PlanetStageFormatStringID = 169;
+    public const int WaveTextStringID = 147;
+    public const int StageDefaultStringID = 131;
+    public const int DirectStringID = 60011;
 }
 
 public enum RankingType

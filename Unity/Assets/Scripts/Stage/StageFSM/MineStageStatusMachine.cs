@@ -33,7 +33,6 @@ public class MineStageStatusMachine : StageStatusMachine
     private float spawnIntervalReduceTime;
     private float spawnInterval;
     private float[] spawnTimers = new float[4];
-    private float[] spawnActivationTime = new float[4];
 
     public MineStageStatusMachine(StageManager stageManager) : base(stageManager)
     {
@@ -56,6 +55,8 @@ public class MineStageStatusMachine : StageStatusMachine
 
             stageManager.StageUiManager.IngameUIManager.timerText.gameObject.SetActive(false);
             stageManager.StageUiManager.IngameUIManager.waveText.gameObject.SetActive(false);
+            stageManager.StageUiManager.IngameUIManager.unitHpBars.SetActive(false);
+            stageManager.StageUiManager.IngameUIManager.unitSkills.gameObject.SetActive(false);
 
             MiningRobotInventoryManager.onEquipRobot += OnEquipChanged;
         }
@@ -209,7 +210,8 @@ public class MineStageStatusMachine : StageStatusMachine
         stageManager.StageUiManager.UIGroupStatusManager.UiDict[IngameStatus.Mine].SetPopUpInactive(0);
 
         centerHP = battleData.HitCount;
-        stageManager.StageUiManager.IngameUIManager.waveText.text = $"HP : {centerHP}";
+        //TODO: 스트링 테이블 넣어야함
+        stageManager.StageUiManager.IngameUIManager.waveText.SetString(Defines.DirectStringID, $"HP : {centerHP}");
 
         for (int i = 0; i < battleSpawnData.SpawnerActivationTimes.Length; ++i)
         {
@@ -280,7 +282,8 @@ public class MineStageStatusMachine : StageStatusMachine
             centerHP = 0;
             OnStageEnd(false);
         }
-        stageManager.StageUiManager.IngameUIManager.waveText.text = $"HP : {centerHP}";
+        //TODO: 스트링 테이블 넣어야함
+        stageManager.StageUiManager.IngameUIManager.waveText.SetString(Defines.DirectStringID, $"HP : {centerHP}");
     }
 
     public void OnStageEnd(bool isTimeOver)

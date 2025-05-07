@@ -670,4 +670,15 @@ public struct BigNumber : ISerializationCallbackReceiver
             this.sign = temp.sign;
         }
     }
+    public string GetSortKey()
+    {
+        string countKey = parts.Count.ToString("D2");
+        var groupKeys = new List<string>(parts.Count);
+        for (int i = parts.Count - 1; i >= 0; i--)
+        {
+            groupKeys.Add(parts[i].ToString("D3"));
+        }
+
+        return countKey + "-" + string.Join("-", groupKeys);
+    }
 }

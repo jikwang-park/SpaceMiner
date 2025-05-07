@@ -135,3 +135,10 @@ public enum StatType
     MoveSpeed,
     AttackRange
 }
+
+public enum RankingType
+{
+    Stage,
+    CombatPower,
+    DungeonDamage,
+}

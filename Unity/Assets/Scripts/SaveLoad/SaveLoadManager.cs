@@ -55,7 +55,7 @@ public static class SaveLoadManager
             }
             Data = saveData as SaveDataVC;
         }
-        catch(Exception e)
+        catch (Exception e)
         {
             Debug.LogError(e.Message);
             SetDefaultData();
@@ -90,9 +90,13 @@ public static class SaveLoadManager
         {
             defaultSaveData.attendanceStates[entry.ID] = AttendanceData.CreateDefault(entry.ID);
         }
-        defaultSaveData.FirstOpened = new Dictionary<TutorialTable.QuestTypes, bool>();
-        defaultSaveData.GotReward = new Dictionary<TutorialTable.QuestTypes, bool>();
-
+        defaultSaveData.TutorialOpened = new Dictionary<TutorialTable.QuestTypes, bool>();
+        defaultSaveData.TutorialRewardGot = new Dictionary<TutorialTable.QuestTypes, bool>();
+        foreach (var type in Enum.GetValues(typeof(TutorialTable.QuestTypes)))
+        {
+            defaultSaveData.TutorialOpened.Add((TutorialTable.QuestTypes)type, false);
+            defaultSaveData.TutorialRewardGot.Add((TutorialTable.QuestTypes)type, false);
+        }
         Data = defaultSaveData;
     }
     public static void ResetStatUpgradeData()
@@ -143,7 +147,7 @@ public static class SaveLoadManager
         Data.stageSaveData.highStage = lastStageData.Stage;
 
         var lastDungeonData = DataTableManager.DungeonTable.GetLastStages();
-        foreach(var data in lastDungeonData)
+        foreach (var data in lastDungeonData)
         {
             Data.stageSaveData.highestDungeon[data.Key] = data.Value.Stage;
         }

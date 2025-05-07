@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Data;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -23,16 +24,18 @@ public class TutorialWindow : MonoBehaviour
     [SerializeField]
     private Button closeButton;
 
-    [SerializeField]
-    private Button backgroundButton;
-
     private List<TutorialTable.Data> datas;
 
-    public void Show(TutorialTable.QuestTypes tutorialType)
+    private TutorialTable.QuestTypes tutorialType;
+
+    public void Show(TutorialTable.QuestTypes type)
     {
+        tutorialType = type;
         datas = DataTableManager.TutorialTable.GetDatas(tutorialType);
         index = 0;
         ShowData();
+
+        closeButton.interactable = SaveLoadManager.Data.TutorialOpened[tutorialType];
     }
 
     public void IndexChange(bool isUp)
@@ -41,6 +44,18 @@ public class TutorialWindow : MonoBehaviour
         {
             ++index;
             ShowData();
+            if (!SaveLoadManager.Data.TutorialRewardGot[tutorialType]
+                && index + 1 == datas.Count && datas[index].RewardItemID != 0)
+            {
+                SaveLoadManager.Data.TutorialRewardGot[tutorialType] = true;
+                SaveLoadManager.Data.TutorialOpened[tutorialType] = true;
+
+                closeButton.interactable = true;
+
+                ItemManager.AddItem(datas[index].RewardItemID, datas[index].RewardItemCount);
+
+                SaveLoadManager.SaveGame();
+            }
         }
         else if (!isUp && index > 0)
         {

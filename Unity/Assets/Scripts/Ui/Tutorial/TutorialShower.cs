@@ -5,14 +5,10 @@ public class TutorialShower : MonoBehaviour
     [SerializeField]
     private TutorialTable.QuestTypes targetType;
 
-    private bool opened = false;
-
     private void Start()
     {
-        if (!opened)
+        if (!SaveLoadManager.Data.TutorialOpened[targetType])
         {
-            opened = true;
-
             var stageManager = GameObject.FindGameObjectWithTag("GameController").GetComponent<StageManager>();
             var uiManager = stageManager.StageUiManager;
             var tutorialWindow = uiManager.TutorialWindow;

@@ -92,10 +92,10 @@ public static class SaveLoadManager
         }
 
         defaultSaveData.mineBattleData = MineBattleData.CreateDefault();
-        defaultSaveData.possessionEffectItemDatas = new Dictionary<PossessionEffectType, int>();
-        foreach (var type in Enum.GetValues(typeof(PossessionEffectType)))
+        defaultSaveData.possessionEffectItemDatas = new Dictionary<EffectItemTable.ItemType, int>();
+        foreach (var type in Enum.GetValues(typeof(EffectItemTable.ItemType)))
         {
-            defaultSaveData.possessionEffectItemDatas.Add((PossessionEffectType)type, 0);
+            defaultSaveData.possessionEffectItemDatas.Add((EffectItemTable.ItemType)type, 0);
         }
 
         defaultSaveData.TutorialOpened = new Dictionary<TutorialTable.QuestTypes, bool>();

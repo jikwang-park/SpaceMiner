@@ -89,7 +89,7 @@ public class SaveDataV4 : SaveDataV3
 {
     public Dictionary<int, AttendanceData> attendanceStates;
     public MineBattleData mineBattleData;
-    public Dictionary<PossessionEffectType, int> possessionEffectItemDatas;
+    public Dictionary<EffectItemTable.ItemType, int> possessionEffectItemDatas;
     public Dictionary<TutorialTable.QuestTypes, bool> TutorialOpened;
     public Dictionary<TutorialTable.QuestTypes, bool> TutorialRewardGot;
     public SaveDataV4() : base()
@@ -110,10 +110,10 @@ public class SaveDataV4 : SaveDataV3
 
         mineBattleData = MineBattleData.CreateDefault();
 
-        possessionEffectItemDatas = new Dictionary<PossessionEffectType, int>();
-        foreach (var type in Enum.GetValues(typeof(PossessionEffectType)))
+        possessionEffectItemDatas = new Dictionary<EffectItemTable.ItemType, int>();
+        foreach (var type in Enum.GetValues(typeof(EffectItemTable.ItemType)))
         {
-            possessionEffectItemDatas.Add((PossessionEffectType)type, 0);
+            possessionEffectItemDatas.Add((EffectItemTable.ItemType)type, 0);
         }
         Version = 4;
     }
@@ -133,10 +133,10 @@ public class SaveDataV4 : SaveDataV3
         }
         mineBattleData = MineBattleData.CreateDefault();
 
-        possessionEffectItemDatas = new Dictionary<PossessionEffectType, int>();
-        foreach (var type in Enum.GetValues(typeof(PossessionEffectType)))
+        possessionEffectItemDatas = new Dictionary<EffectItemTable.ItemType, int>();
+        foreach (var type in Enum.GetValues(typeof(EffectItemTable.ItemType)))
         {
-            possessionEffectItemDatas.Add((PossessionEffectType)type, 0);
+            possessionEffectItemDatas.Add((EffectItemTable.ItemType)type, 0);
         }
 
         Version = 4;

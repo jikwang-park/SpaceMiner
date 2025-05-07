@@ -42,7 +42,7 @@ public class RankingPopupUI : MonoBehaviour
 
         if (ranks == null || ranks.Count == 0)
         {
-            titleText.text = "전투력 순위";
+            titleText.text = "스테이지 진행도 순위";
             currentFirstText.text = "데이터가 없습니다";
             currentFirstNicknameText.text = "--";
             currentFirstScoreBoard.gameObject.SetActive(false);
@@ -92,7 +92,7 @@ public class RankingPopupUI : MonoBehaviour
         List<LeaderBoardEntry> ranks = await FirebaseManager.Instance.GetTopDungeonDamageAsync(topN);
         if (ranks == null || ranks.Count == 0)
         {
-            titleText.text = "전투력 순위";
+            titleText.text = "던전2 데미지 순위";
             currentFirstText.text = "데이터가 없습니다";
             currentFirstNicknameText.text = "--";
             currentFirstScoreBoard.gameObject.SetActive(false);

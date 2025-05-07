@@ -5,6 +5,7 @@ using UnityEngine;
 public static class ItemManager
 {
     public static event Action<int, BigNumber> OnItemAmountChanged;
+    public static event Action<int> OnGainEffectItem;
     private static Dictionary<int, BigNumber> items
     {
         get
@@ -69,8 +70,14 @@ public static class ItemManager
         {
             items[itemId] = maxStack;
         }
+
         GuideQuestManager.QuestProgressChange(GuideQuestTable.MissionType.Item);
         OnItemAmountChanged?.Invoke(itemId, items[itemId]);
+        if (DataTableManager.ItemTable.GetData(itemId).ItemType == 4)
+        {
+            OnGainEffectItem?.Invoke(itemId);
+        }
+
         return true;
     }
     public static bool ConsumeItem(int itemId, BigNumber amount)

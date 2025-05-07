@@ -91,21 +91,32 @@ public class SaveDataV4 : SaveDataV3
     public Dictionary<TutorialTable.QuestTypes, bool> FirstOpened;
     public Dictionary<TutorialTable.QuestTypes, bool> GotReward;
     public MineBattleData mineBattleData;
+    public Dictionary<PossessionEffectType, int> possessionEffectItemDatas;
     public SaveDataV4() : base()
     {
         attendanceStates = new Dictionary<int, AttendanceData>();
+
         foreach (var entry in DataTableManager.AttendanceTable.GetList())
         {
             attendanceStates[entry.ID] = AttendanceData.CreateDefault(entry.ID);
         }
+
         FirstOpened = new Dictionary<TutorialTable.QuestTypes, bool>();
         GotReward = new Dictionary<TutorialTable.QuestTypes, bool>();
+
         foreach(var type in Enum.GetValues(typeof(TutorialTable.QuestTypes)))
         {
             FirstOpened.Add((TutorialTable.QuestTypes)type, false);
             GotReward.Add((TutorialTable.QuestTypes)type, false);
         }
+
         mineBattleData = MineBattleData.CreateDefault();
+
+        possessionEffectItemDatas = new Dictionary<PossessionEffectType, int>();
+        foreach (var type in Enum.GetValues(typeof(PossessionEffectType)))
+        {
+            possessionEffectItemDatas.Add((PossessionEffectType)type, 0);
+        }
         Version = 4;
     }
     public SaveDataV4(SaveDataV3 oldData) : base(oldData)
@@ -123,6 +134,13 @@ public class SaveDataV4 : SaveDataV3
             GotReward.Add((TutorialTable.QuestTypes)type, false);
         }
         mineBattleData = MineBattleData.CreateDefault();
+
+        possessionEffectItemDatas = new Dictionary<PossessionEffectType, int>();
+        foreach (var type in Enum.GetValues(typeof(PossessionEffectType)))
+        {
+            possessionEffectItemDatas.Add((PossessionEffectType)type, 0);
+        }
+
         Version = 4;
     }
     public override SaveData VersionUp()

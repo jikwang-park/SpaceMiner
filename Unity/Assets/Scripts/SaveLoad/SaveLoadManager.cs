@@ -93,6 +93,13 @@ public static class SaveLoadManager
         defaultSaveData.FirstOpened = new Dictionary<TutorialTable.QuestTypes, bool>();
         defaultSaveData.GotReward = new Dictionary<TutorialTable.QuestTypes, bool>();
         defaultSaveData.mineBattleData = MineBattleData.CreateDefault();
+
+        defaultSaveData.possessionEffectItemDatas = new Dictionary<PossessionEffectType, int>();
+        foreach (var type in Enum.GetValues(typeof(PossessionEffectType)))
+        {
+            defaultSaveData.possessionEffectItemDatas.Add((PossessionEffectType)type, 0);
+        }
+
         Data = defaultSaveData;
     }
     public static void ResetStatUpgradeData()

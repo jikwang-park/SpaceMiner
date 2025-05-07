@@ -2,7 +2,6 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using static UnityEditor.Progress;
 
 public class EffectItemTable : DataTable
 {
@@ -27,6 +26,7 @@ public class EffectItemTable : DataTable
         public int ID { get; set; }
         public ItemType Type { get; set; }
         public int Level { get; set; }
+        public float Value { get; set; }
         public int NeedItemID { get; set; }
         public int NeedItemCount { get; set; }
         public int SpriteID { get; set; }
@@ -43,9 +43,10 @@ public class EffectItemTable : DataTable
                 Type = Enum.Parse<ItemType>(argument[1]);
             }
             Level = int.Parse(argument[2]);
-            NeedItemID = int.Parse(argument[3]);
-            NeedItemCount = int.Parse(argument[4]);
-            SpriteID = int.Parse(argument[5]);
+            Value = float.Parse(argument[3]);
+            NeedItemID = int.Parse(argument[4]);
+            NeedItemCount = int.Parse(argument[5]);
+            SpriteID = int.Parse(argument[6]);
         }
     }
 

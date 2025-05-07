@@ -40,15 +40,19 @@ public class UnitUiManager : MonoBehaviour
             {
                 case UnitTypes.Tanker:
                     stats.OnHpChanged += (amount) => { tankerSlider.value = amount; };
+
                     break;
                 case UnitTypes.Dealer:
                     stats.OnHpChanged += (amount) => { dealerSlider.value = amount; };
+
                     break;
                 case UnitTypes.Healer:
                     stats.OnHpChanged += (amount) => { healerSlider.value = amount; };
+
                     break;
             }
         }
     }
+
 
 }

@@ -99,7 +99,7 @@ public class UnitStatsUpgradeElement : MonoBehaviour, IPointerDownHandler, IPoin
     private void SetStatsInfo()
     {
         nextLevel = Mathf.Min(maxLevel, level + statsMultiplier);
-        levelText.text = $"Level + {level} -> {nextLevel}";
+        levelText.text = $"Level + {level} \n-> + {nextLevel}";
 
         BigNumber afterGold = GetCurrentGold(nextLevel);
 
@@ -198,25 +198,16 @@ public class UnitStatsUpgradeElement : MonoBehaviour, IPointerDownHandler, IPoin
 
     public BigNumber GetGoldForMultipleLevels(int currentLevel, int multiplier)
     {
+    
         BigNumber result = 0;
+        int end = Mathf.Min(currentLevel + multiplier, maxLevel);
 
-        if (multiplier == 1)
+        for (int i = currentLevel + 1; i <= end; ++i)
         {
-            result = GetUpgradeCost(currentLevel);
-            return result;
-        }
-        else
-        {
-            int start = currentLevel;
-            int end = Mathf.Min(currentLevel + multiplier, maxLevel);
-
-            for (int i = start; i <= end; ++i)
-            {
-                result += GetUpgradeCost(i);
-            }
-            return result;
+            result += GetUpgradeCost(i);
         }
 
+        return result;
     }
     public void SetData(int level, UnitUpgradeTable.Data data)
     {
@@ -395,7 +386,7 @@ public class UnitStatsUpgradeElement : MonoBehaviour, IPointerDownHandler, IPoin
                 OnClickAddStatsButton();
             }
         }
-    }
+    }   
 
     private IEnumerator LongPressedCoroutine()
     {

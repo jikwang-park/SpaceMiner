@@ -112,6 +112,8 @@ public class UnitStats : CharacterStats
 
         currentGrade = data.Grade;
 
+        float prevRatio = maxHp > 0 ? Hp.DivideToFloat(maxHp) : 0f;
+
         coolDown = 1;
         range = data.Range;
         armor = UnitCombatPowerCalculator.statsDictionary[type].soldierDefense;
@@ -126,7 +128,7 @@ public class UnitStats : CharacterStats
         }
         else
         {
-            RecalculateHpWithRatio();
+            Hp = maxHp * prevRatio;
         }
 
     }
@@ -299,11 +301,6 @@ public class UnitStats : CharacterStats
         hasBarrier = false;
     }
 
-    //public void UseHealerBuff(BigNumber hpAmount)
-    //{
-    //    var takeDamage = GetComponent<AttackedTakeUnitDamage>();
-    //    takeDamage.OnDamageOverflowed += (unit) => unit.unitStats.Hp = hpAmount;
-    //}
 
 
 

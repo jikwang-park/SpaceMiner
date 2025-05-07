@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using static UnityEditor.Progress;
 
 public class EffectItemTable : DataTable
 {
@@ -50,12 +51,15 @@ public class EffectItemTable : DataTable
 
     private Dictionary<ItemType, List<Data>> typeDict = new Dictionary<ItemType, List<Data>>();
 
+    private Dictionary<int, ItemType> needItemTypeDict = new Dictionary<int, ItemType>();
+
     public override Type DataType => typeof(Data);
 
     public override void LoadFromText(string text)
     {
         TableData.Clear();
         typeDict.Clear();
+        needItemTypeDict.Clear();
 
         if (string.IsNullOrEmpty(text))
         {
@@ -75,6 +79,11 @@ public class EffectItemTable : DataTable
                     typeDict.Add(item.Type, new List<Data>());
                 }
                 typeDict[item.Type].Add(item);
+
+                if (!needItemTypeDict.ContainsKey(item.NeedItemID))
+                {
+                    needItemTypeDict.Add(item.NeedItemID, item.Type);
+                }
             }
             else
             {
@@ -101,10 +110,21 @@ public class EffectItemTable : DataTable
         return typeDict[type];
     }
 
+    public ItemType GetTypeByID(int itemID)
+    {
+        if (!needItemTypeDict.ContainsKey(itemID))
+        {
+            throw new ArgumentException("itemID Not Match");
+        }
+
+        return needItemTypeDict[itemID];
+    }
+
     public override void Set(List<string[]> data)
     {
         var tableData = new Dictionary<int, ITableData>();
         var newTypeDict = new Dictionary<ItemType, List<Data>>();
+        var newNeedItemTypeDict = new Dictionary<int, ItemType>();
         foreach (var item in data)
         {
             var datum = CreateData<Data>(item);
@@ -115,9 +135,14 @@ public class EffectItemTable : DataTable
                 newTypeDict.Add(datum.Type, new List<Data>());
             }
             newTypeDict[datum.Type].Add(datum);
+            if (!newNeedItemTypeDict.ContainsKey(datum.NeedItemID))
+            {
+                newNeedItemTypeDict.Add(datum.NeedItemID, datum.Type);
+            }
         }
         TableData = tableData;
         typeDict = newTypeDict;
+        needItemTypeDict = newNeedItemTypeDict;
     }
 
     public override string GetCsvData()

@@ -18,17 +18,9 @@ public static class EffectItemInventoryManager
     }
     public static void DoGainEffectItem(int itemId)
     {
-        EffectItemTable.ItemType effectType;
-        foreach (var type in Enum.GetValues(typeof(EffectItemTable.ItemType)))
-        {
-            int needItemId = DataTableManager.EffectItemTable.GetDatas((EffectItemTable.ItemType)type)[0].NeedItemID;
-            if (itemId == needItemId)
-            {
-                effectType = (EffectItemTable.ItemType)type;
-                break;
-            }
-        }
+        var effectType = DataTableManager.EffectItemTable.GetTypeByID(itemId);
 
+        while (LevelUp(effectType)) ;
     }
     public static bool LevelUp(EffectItemTable.ItemType type)
     {

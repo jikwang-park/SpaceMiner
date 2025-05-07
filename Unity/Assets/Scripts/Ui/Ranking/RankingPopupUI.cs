@@ -20,6 +20,10 @@ public class RankingPopupUI : MonoBehaviour
     private RankingElement myRankingElement;
 
     private const int topN = 50;
+    private void OnEnable()
+    {
+        OnClickStageRankingButton();
+    }
     public void OnClickStageRankingButton()
     {
         SetStageRanking();
@@ -51,9 +55,12 @@ public class RankingPopupUI : MonoBehaviour
         titleText.text = "스테이지 진행도 순위";
         currentFirstText.text = "현재 1등\n스테이지 진행도";
         currentFirstNicknameText.text = first.name;
-        currentFirstScoreBoard.gameObject.SetActive(false);
+        currentFirstScoreBoard.gameObject.SetActive(true);
         currentFirstScoreBoard.SetBoard(RankingType.Stage, first.display);
         rankingBoard.Initialize(ranks, RankingType.Stage);
+
+        var myRank = await FirebaseManager.Instance.GetMyHighestStageRankAsync();
+        myRankingElement.SetInfo(myRank.rank, myRank.myEntry, RankingType.Stage);
     }
     private async void SetCombatPowerRanking()
     {
@@ -73,9 +80,12 @@ public class RankingPopupUI : MonoBehaviour
         titleText.text = "전투력 순위";
         currentFirstText.text = "현재 1등\n전투력";
         currentFirstNicknameText.text = first.name;
-        currentFirstScoreBoard.gameObject.SetActive(false);
+        currentFirstScoreBoard.gameObject.SetActive(true);
         currentFirstScoreBoard.SetBoard(RankingType.CombatPower, first.display);
         rankingBoard.Initialize(ranks, RankingType.CombatPower);
+
+        var myRank = await FirebaseManager.Instance.GetMyCombatPowerRankAsync();
+        myRankingElement.SetInfo(myRank.rank, myRank.myEntry, RankingType.Stage);
     }
     private async void SetDungeonDamageRanking()
     {
@@ -95,8 +105,11 @@ public class RankingPopupUI : MonoBehaviour
         titleText.text = "던전2 데미지 순위";
         currentFirstText.text = "현재 1등\n던전2 데미지";
         currentFirstNicknameText.text = first.name;
-        currentFirstScoreBoard.gameObject.SetActive(false);
+        currentFirstScoreBoard.gameObject.SetActive(true);
         currentFirstScoreBoard.SetBoard(RankingType.DungeonDamage, first.display);
         rankingBoard.Initialize(ranks, RankingType.DungeonDamage);
+
+        var myRank = await FirebaseManager.Instance.GetMyDungeonDamageRankAsync();
+        myRankingElement.SetInfo(myRank.rank, myRank.myEntry, RankingType.Stage);
     }
 }

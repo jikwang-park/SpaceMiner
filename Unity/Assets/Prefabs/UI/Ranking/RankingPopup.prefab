@@ -875,7 +875,19 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 8564748210840064214}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 1151038009277740336}
+        m_TargetAssemblyTypeName: UnityEngine.GameObject, UnityEngine
+        m_MethodName: SetActive
+        m_Mode: 6
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!1 &2986679777328901628
 GameObject:
   m_ObjectHideFlags: 0
@@ -9815,6 +9827,10 @@ PrefabInstance:
     - target: {fileID: 744748173871237079, guid: 648bd0632825e1c479f452a069449b4f, type: 3}
       propertyPath: m_Name
       value: RankingElements
+      objectReference: {fileID: 0}
+    - target: {fileID: 744748173871237079, guid: 648bd0632825e1c479f452a069449b4f, type: 3}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 1406191394919762301, guid: 648bd0632825e1c479f452a069449b4f, type: 3}
       propertyPath: m_AnchorMax.y

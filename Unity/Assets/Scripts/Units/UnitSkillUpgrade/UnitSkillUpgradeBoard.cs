@@ -201,9 +201,6 @@ public class UnitSkillUpgradeBoard : MonoBehaviour
         upgradeButton.interactable = canUpgrade;
         buttonText.SetColor(new Color(1f, 1f, 1f, canUpgrade ? 1f : 0.2f));
     }
-
-   
-
     private void OnClickUpgradeButton()
     {
         ItemManager.ConsumeItem(needItemId, needItemCount);

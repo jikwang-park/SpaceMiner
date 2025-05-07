@@ -99,7 +99,7 @@ public class UnitStatsUpgradeElement : MonoBehaviour, IPointerDownHandler, IPoin
     private void SetStatsInfo()
     {
         nextLevel = Mathf.Min(maxLevel, level + statsMultiplier);
-        levelText.text = $"Level + {level} \n-> {nextLevel}";
+        levelText.text = $"Level + {level} \n-> + {nextLevel}";
 
         BigNumber afterGold = GetCurrentGold(nextLevel);
 

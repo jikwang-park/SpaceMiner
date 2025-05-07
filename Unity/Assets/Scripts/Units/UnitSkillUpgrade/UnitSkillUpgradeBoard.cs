@@ -1,6 +1,7 @@
 using JetBrains.Annotations;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq.Expressions;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -10,7 +11,7 @@ public class UnitSkillUpgradeBoard : MonoBehaviour
 {
     private UnitSkillUpgradePanel manager;
 
-
+    private const string maxLevelText = "Max Level";
     [SerializeField]
     private Image currentImage;
     [SerializeField]
@@ -23,14 +24,18 @@ public class UnitSkillUpgradeBoard : MonoBehaviour
     private Button upgradeButton;
     [SerializeField]
     private StageManager stageManager;
-
     [SerializeField]
-    private TextMeshProUGUI needText;
+    private LocalizationText buttonText;
+
     private int maxLevel = 20;
     [SerializeField]
     private AddressableImage needItemImage;
     [SerializeField]
     private TextMeshProUGUI needItemCountText;
+
+
+    [SerializeField]
+    private GameObject nextInfoGameobject;
 
     //юс╫ц
     [SerializeField]
@@ -118,11 +123,16 @@ public class UnitSkillUpgradeBoard : MonoBehaviour
 
         if (level >= maxLevel)
         {
-            nextText.SetString(60010);
             upgradeButton.interactable = false;
+            nextText.SetString(60010);
+            nextInfoGameobject.SetActive(false);
+            needItemCountText.text = maxLevelText;
 
             return;
         }
+
+        nextInfoGameobject.SetActive(true);
+
         var data = DataTableManager.SkillUpgradeTable.GetData(currentId);
 
         this.data = data;
@@ -161,11 +171,13 @@ public class UnitSkillUpgradeBoard : MonoBehaviour
     {
         if (ItemManager.CanConsume(needItemId, needItemCount))
         {
+            buttonText.SetColor(new Color(1f, 1f, 1f,1f));
             upgradeButton.interactable = true;
 
         }
         else
         {
+            buttonText.SetColor(new Color(1f, 1f, 1f,0.2f));
             upgradeButton.interactable = false;
         }
     }

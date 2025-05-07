@@ -18,11 +18,14 @@ public class StageUiManager : MonoBehaviour
     [field: SerializeField]
     public ScreenCurtain curtain { get; private set; }
 
-    [field:SerializeField]
+    [field: SerializeField]
     public Transform DamageParent { get; private set; }
 
     [field: SerializeField]
     public GameObject InteractableUIBackground { get; private set; }
+
+    [field: SerializeField]
+    public TutorialWindow TutorialWindow { get; private set; }
 
     public event System.Action OnExitButtonClicked;
     public event System.Action MiningBattleClicked;

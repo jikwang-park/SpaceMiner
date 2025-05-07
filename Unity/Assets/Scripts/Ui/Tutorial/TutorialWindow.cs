@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class TutorialWindow : MonoBehaviour
 {
@@ -19,14 +20,15 @@ public class TutorialWindow : MonoBehaviour
 
     private int index;
 
+    [SerializeField]
+    private Button closeButton;
+
+    [SerializeField]
+    private Button backgroundButton;
+
     private List<TutorialTable.Data> datas;
 
-    private void Start()
-    {
-        Show(1);
-    }
-
-    public void Show(int tutorialType)
+    public void Show(TutorialTable.QuestTypes tutorialType)
     {
         datas = DataTableManager.TutorialTable.GetDatas(tutorialType);
         index = 0;

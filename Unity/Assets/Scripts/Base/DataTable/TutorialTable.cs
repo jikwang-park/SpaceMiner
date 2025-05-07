@@ -7,6 +7,18 @@ using UnityEngine.AddressableAssets;
 
 public class TutorialTable : DataTable
 {
+    public enum QuestTypes
+    {
+        FirstPlay = 1,
+        Gacha,
+        SoldierInventory,
+        SkillUpgrade,
+        Dungeon,
+        Store,
+        Mine,
+        Mining,
+    }
+
     public class Data : ITableData
     {
         public int ID { get; set; }
@@ -14,7 +26,7 @@ public class TutorialTable : DataTable
         public int DetailStringID { get; set; }
         public int RewardItemID { get; set; }
         public string RewardItemCount { get; set; }
-        public int QuestType { get; set; }
+        public QuestTypes QuestType { get; set; }
         public int QuestNumber { get; set; }
         public int SpriteID { get; set; }
 
@@ -26,13 +38,20 @@ public class TutorialTable : DataTable
             DetailStringID = int.Parse(argument[2]);
             RewardItemID = int.Parse(argument[3]);
             RewardItemCount = argument[4];
-            QuestType = int.Parse(argument[5]);
+            if (int.TryParse(argument[5], out int kind))
+            {
+                QuestType = (QuestTypes)kind;
+            }
+            else
+            {
+                QuestType = Enum.Parse<QuestTypes>(argument[5]);
+            }
             QuestNumber = int.Parse(argument[6]);
             SpriteID = int.Parse(argument[7]);
         }
     }
 
-    private Dictionary<int, List<Data>> typeDict = new Dictionary<int, List<Data>>();
+    private Dictionary<QuestTypes, List<Data>> typeDict = new Dictionary<QuestTypes, List<Data>>();
 
     public override Type DataType => typeof(Data);
 
@@ -75,7 +94,7 @@ public class TutorialTable : DataTable
         return (Data)TableData[key];
     }
 
-    public List<Data> GetDatas(int type)
+    public List<Data> GetDatas(QuestTypes type)
     {
         if (!typeDict.ContainsKey(type))
         {
@@ -87,7 +106,7 @@ public class TutorialTable : DataTable
     public override void Set(List<string[]> data)
     {
         var tableData = new Dictionary<int, ITableData>();
-        var newTypeDict = new Dictionary<int, List<Data>>();
+        var newTypeDict = new Dictionary<QuestTypes, List<Data>>();
         foreach (var item in data)
         {
             var datum = CreateData<Data>(item);

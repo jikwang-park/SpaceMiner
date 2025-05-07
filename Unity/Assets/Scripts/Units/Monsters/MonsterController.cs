@@ -108,12 +108,12 @@ public class MonsterController : MonoBehaviour, IObjectPoolGameObject
         GetComponent<DestructedDestroyEvent>().OnDestroyed += OnThisDie;
         StageManager = GameObject.FindGameObjectWithTag("GameController").GetComponent<StageManager>();
         status = Status.Wait;
-        NavMeshAgent.enabled = StageManager.IngameStatus == IngameStatus.Mine;
     }
 
     private void OnDisable()
     {
         isDrawRegion = false;
+        NavMeshAgent.enabled = false;
     }
 
     private void Update()
@@ -213,6 +213,7 @@ public class MonsterController : MonoBehaviour, IObjectPoolGameObject
     {
         MonsterData = DataTableManager.MonsterTable.GetData(monsterId);
         Stats.SetData(MonsterData);
+        NavMeshAgent.speed = Stats.moveSpeed;
         RewardData = DataTableManager.MonsterRewardTable.GetData(MonsterData.RewardTableID);
         InitBehaviourTree();
         if (MonsterData.MonsterSkillID != 0)

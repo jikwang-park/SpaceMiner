@@ -53,10 +53,8 @@ public class MineStageStatusMachine : StageStatusMachine
             stageManager.CameraManager.SetCameraRotation(stageMachineData.cameraRotation);
             stageManager.CameraManager.SetCameraOffset(stageMachineData.cameraPosition);
 
-            stageManager.StageUiManager.IngameUIManager.timerText.gameObject.SetActive(false);
-            stageManager.StageUiManager.IngameUIManager.waveText.gameObject.SetActive(false);
-            stageManager.StageUiManager.IngameUIManager.unitHpBars.SetActive(false);
-            stageManager.StageUiManager.IngameUIManager.unitSkills.gameObject.SetActive(false);
+            
+            stageManager.StageUiManager.IngameUIManager.mineBattleButton.gameObject.SetActive(true);
 
             MiningRobotInventoryManager.onEquipRobot += OnEquipChanged;
         }
@@ -65,6 +63,8 @@ public class MineStageStatusMachine : StageStatusMachine
             stageManager.CameraManager.enabled = true;
             stageManager.CameraManager.SetCameraRotation();
             stageManager.CameraManager.SetCameraOffset();
+
+            stageManager.StageUiManager.IngameUIManager.mineBattleButton.gameObject.SetActive(false);
 
             mine.Release();
             mine = null;
@@ -261,13 +261,9 @@ public class MineStageStatusMachine : StageStatusMachine
             if (currentTime > spawnTimers[i])
             {
                 spawnTimers[i] += spawnInterval;
-
-                if (NavMesh.SamplePosition(mineDefence.MonsterSpawnPoints[i].position, out NavMeshHit hit, 10f, NavMesh.AllAreas))
-                {
-                    var monsterController = stageManager.StageMonsterManager.Spawn(hit.position, battleSpawnData.SpawnMonsterIDs[i]);
-                    monsterController.SetTarget(mineDefence.MonsterGoals[i % 2]);
-                    monsterController.hasTarget = true;
-                }
+                var monsterController = stageManager.StageMonsterManager.Spawn(mineDefence.MonsterSpawnPoints[i].position, battleSpawnData.SpawnMonsterIDs[i]);
+                monsterController.SetTarget(mineDefence.MonsterGoals[i % 2]);
+                monsterController.hasTarget = true;
             }
         }
 
@@ -297,6 +293,11 @@ public class MineStageStatusMachine : StageStatusMachine
                 ItemManager.AddItem(battleData.Reward2ItemID, battleData.Reward2ItemCount);
             }
         }
+        stageManager.StageUiManager.IngameUIManager.timerText.gameObject.SetActive(false);
+        stageManager.StageUiManager.IngameUIManager.waveText.gameObject.SetActive(false);
+        stageManager.StageUiManager.IngameUIManager.unitHpBars.SetActive(false);
+        stageManager.StageUiManager.IngameUIManager.unitSkills.gameObject.SetActive(false);
+
         stageManager.StageUiManager.InteractableUIBackground.gameObject.SetActive(true);
         stageManager.StageUiManager.UIGroupStatusManager.UiDict[IngameStatus.Mine].SetPopUpActive(0);
     }

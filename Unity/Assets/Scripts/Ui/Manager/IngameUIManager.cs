@@ -44,6 +44,9 @@ public class IngameUIManager : MonoBehaviour
     [field: SerializeField]
     public Toggle RushSelectToggle { get; private set; }
 
+    [field: SerializeField]
+    public Button mineBattleButton { get; private set; }
+
     [SerializeField]
     private SerializedDictionary<IngameStatus, List<GameObject>> statusObjectLists;
 

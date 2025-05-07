@@ -135,3 +135,8 @@ public enum StatType
     MoveSpeed,
     AttackRange
 }
+
+public class Defines
+{
+    public const int DungeonKeyItemID = 5001;
+}

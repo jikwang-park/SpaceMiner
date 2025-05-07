@@ -6,6 +6,8 @@ using UnityEngine.AddressableAssets;
 
 public class DungeonSelectTab : MonoBehaviour
 {
+    private const string one = "1";
+
     [SerializeField]
     private Transform scrollContent;
 
@@ -18,6 +20,9 @@ public class DungeonSelectTab : MonoBehaviour
     [SerializeField]
     private Dungeon2EnterWindow dungeon2EnterWindow;
 
+    [SerializeField]
+    private LocalizationText keyText;
+
     private void Start()
     {
         List<int> dungeons = DataTableManager.DungeonTable.DungeonTypes;
@@ -27,6 +32,10 @@ public class DungeonSelectTab : MonoBehaviour
             var handle = Addressables.InstantiateAsync(dungeonRowPrefab, scrollContent);
             handle.Completed += (handle) => OnRowLoaded(handle, dungeonType);
         }
+
+        ItemManager.OnItemAmountChanged += ItemManager_OnItemAmountChanged;
+
+        keyText.SetStringArguments(ItemManager.GetItemAmount(Defines.DungeonKeyItemID).ToString(), one);
     }
 
     private void OnRowLoaded(UnityEngine.ResourceManagement.AsyncOperations.AsyncOperationHandle<GameObject> handle, int type)
@@ -57,6 +66,14 @@ public class DungeonSelectTab : MonoBehaviour
                 dungeon2EnterWindow.gameObject.SetActive(true);
                 dungeon2EnterWindow.ShowPopup();
                 break;
+        }
+    }
+
+    private void ItemManager_OnItemAmountChanged(int itemID, BigNumber Amount)
+    {
+        if (itemID == Defines.DungeonKeyItemID)
+        {
+            keyText.SetStringArguments(one, Amount.ToString());
         }
     }
 }

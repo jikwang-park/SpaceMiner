@@ -17,6 +17,23 @@ public struct BigNumber : ISerializationCallbackReceiver
     private int sign;
     private static readonly string[] units = {"", "A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", 
                                 "N", "O", "P", "Q", "R", "S", "T", "U", "V",  "W", "X", "Y", "Z"};
+    public bool IsZero
+    {
+        get
+        {
+            if (parts == null)
+            {
+                return true;
+            }
+
+            if (parts.Count == 1 && parts[0] == 0)
+            {
+                return true;
+            }
+
+            return false;
+        }
+    }
     public BigNumber(string input)
     {
         if (string.IsNullOrEmpty(input))

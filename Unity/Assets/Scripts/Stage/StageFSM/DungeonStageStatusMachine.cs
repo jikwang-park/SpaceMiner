@@ -298,6 +298,7 @@ public class DungeonStageStatusMachine : StageStatusMachine
         if (SaveLoadManager.Data.stageSaveData.dungeonTwoDamage < damage)
         {
             SaveLoadManager.Data.stageSaveData.dungeonTwoDamage = damage;
+            FirebaseManager.Instance.UpdateDungeonDamageToLeaderBoard();
         }
         var rewardsData = DataTableManager.DamageDungeonRewardTable.GetRewards(damage);
         if (rewardsData.Count > 0)

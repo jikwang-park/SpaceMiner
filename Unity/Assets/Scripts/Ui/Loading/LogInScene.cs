@@ -76,6 +76,7 @@ public class LogInScene : MonoBehaviour
     {
         startButton.interactable = false;
         var handle = Addressables.LoadSceneAsync("DevelopScene", LoadSceneMode.Single);
+        FirebaseManager.Instance.UpdateLeaderBoard();
         if (handle.Status == AsyncOperationStatus.Failed)
         {
             startButton.interactable = true;

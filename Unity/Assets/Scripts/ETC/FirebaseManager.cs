@@ -75,8 +75,10 @@ public class FirebaseManager : Singleton<FirebaseManager>
             Formatting = Formatting.Indented
         });
 
-        await root.Child("users").Child(User.UserId).Child("SaveData")
-                  .SetRawJsonValueAsync(json);
+        await root.Child("users")
+            .Child(User.UserId)
+            .Child("SaveData")
+            .SetRawJsonValueAsync(json);
     }
     private async Task LoadFromFirebaseAsync()
     {
@@ -84,8 +86,10 @@ public class FirebaseManager : Singleton<FirebaseManager>
 
         try
         {
-            var snap = await root.Child("users").Child(User.UserId).Child("SaveData")
-                             .GetValueAsync();
+            var snap = await root.Child("users")
+                .Child(User.UserId)
+                .Child("SaveData")
+                .GetValueAsync();
             if (snap.Exists && !string.IsNullOrEmpty(snap.GetRawJsonValue()))
             {
                 SaveLoadManager.LoadGame(snap.GetRawJsonValue());
@@ -133,9 +137,16 @@ public class FirebaseManager : Singleton<FirebaseManager>
     }
     public async void DoCombatPowerChanged()
     {
-        await UpdateCombatPowerToLeaderBoardAsync();
+        await UpdateCombatPowerToLeaderBoard();
     }
-    public Task UpdateCombatPowerToLeaderBoardAsync()
+    public async void UpdateLeaderBoard()
+    {
+        await UpdateCombatPowerToLeaderBoard();
+        await UpdateDungeonDamageToLeaderBoard();
+        await UpdateHighestStageToLeaderBoard();
+
+    }
+    public Task UpdateCombatPowerToLeaderBoard()
     {
         if(User == null)
         {
@@ -168,7 +179,7 @@ public class FirebaseManager : Singleton<FirebaseManager>
         }
         BigNumber damage = SaveLoadManager.Data.stageSaveData.dungeonTwoDamage;
         string displayDamage = damage.ToString();
-        string sortKeyDamage = damage.GetSortKey();
+        string sortKeyDamage = damage.IsZero ? "0" : damage.GetSortKey();
         string nickname = User.DisplayName;
 
         var entry = new

@@ -22,6 +22,8 @@ public static class UnitCombatPowerCalculator
         public float coolDown;
         public float moveSpeed;
         public float attackRange;
+        public float addNormalDamage;
+        public float addBossDamage;
     }
     public static BigNumber ToTalCombatPower { get; private set; }
     static UnitCombatPowerCalculator()
@@ -180,6 +182,8 @@ public static class UnitCombatPowerCalculator
         unitCombatStats.coolDown = 100f / unitData.AttackSpeed;
         unitCombatStats.moveSpeed = unitData.MoveSpeed;
         unitCombatStats.attackRange = unitData.Range;
+        unitCombatStats.addNormalDamage = GetAddDamageStat(EffectItemTable.ItemType.NormalMonsterDamage);
+        unitCombatStats.addBossDamage = GetAddDamageStat(EffectItemTable.ItemType.BossMonsterDamage);
 
         return unitCombatStats;
     }
@@ -202,7 +206,21 @@ public static class UnitCombatPowerCalculator
         }
         return expectedDamage;
     }
-
+    public static float GetAddDamageStat(EffectItemTable.ItemType type)
+    {
+        switch (type)
+        {
+            case EffectItemTable.ItemType.BossMonsterDamage:
+                int bossDamageEffectItemLevel = EffectItemInventoryManager.GetLevel(type);
+                float bossDamageEffectItemValue = DataTableManager.EffectItemTable.GetDatas(type)[bossDamageEffectItemLevel].Value;
+                return 1 + bossDamageEffectItemValue;
+            case EffectItemTable.ItemType.NormalMonsterDamage:
+                int normalDamageEffectItemLevel = EffectItemInventoryManager.GetLevel(type);
+                float normalDamageEffectItemValue = DataTableManager.EffectItemTable.GetDatas(type)[normalDamageEffectItemLevel].Value;
+                return 1 + normalDamageEffectItemValue;
+        }
+        return 0;
+    }
     public static float GetCriticalStats(UnitTypes unitType, UpgradeType upgradeType)
     {
         int unitId = InventoryManager.GetInventoryData(unitType).equipElementID;
@@ -258,7 +276,11 @@ public static class UnitCombatPowerCalculator
                 var buildingAttackLevel = SaveLoadManager.Data.buildingData.buildingLevels[BuildingTable.BuildingType.AttackPoint];
                 var buildingAttackStats = buildingAttackDatas[buildingAttackLevel].Value;
 
-                attackStat = (unitData.Attack + accountAttackStat) * (1 + buildingAttackStats);
+                var attackEffectItemDatas = DataTableManager.EffectItemTable.GetDatas(EffectItemTable.ItemType.Attack);
+                var attackEffectItemLevel = EffectItemInventoryManager.GetLevel(EffectItemTable.ItemType.Attack);
+                var attackEffectItemStats = attackEffectItemDatas[attackEffectItemLevel].Value;
+
+                attackStat = (unitData.Attack + accountAttackStat) * (1 + buildingAttackStats) * (1 + attackEffectItemStats);
                 return attackStat;
             case UpgradeType.HealthPoint:
                 BigNumber hpStat = 0;
@@ -269,7 +291,11 @@ public static class UnitCombatPowerCalculator
                 var buildingHpLevel = SaveLoadManager.Data.buildingData.buildingLevels[BuildingTable.BuildingType.HealthPoint];
                 var buildingHpStats = buildingHpDatas[buildingHpLevel].Value;
 
-                hpStat = (unitData.HP + accountHpStat) * (1 + buildingHpStats);
+                var hpEffectItemDatas = DataTableManager.EffectItemTable.GetDatas(EffectItemTable.ItemType.HP);
+                var hpEffectItemLevel = EffectItemInventoryManager.GetLevel(EffectItemTable.ItemType.HP);
+                var hpEffectItemStats = hpEffectItemDatas[hpEffectItemLevel].Value;
+
+                hpStat = (unitData.HP + accountHpStat) * (1 + buildingHpStats) * (1 + hpEffectItemStats);
                 return hpStat;
             case UpgradeType.DefensePoint:
                 BigNumber armorStat = 0;
@@ -280,7 +306,11 @@ public static class UnitCombatPowerCalculator
                 var buildingArmorLevel = SaveLoadManager.Data.buildingData.buildingLevels[BuildingTable.BuildingType.DefensePoint];
                 var buildingArmorStats = buildingArmorDatas[buildingArmorLevel].Value;
 
-                armorStat = (unitData.Defence + accountArmorStat) * (1 + buildingArmorStats);
+                var armorEffectItemDatas = DataTableManager.EffectItemTable.GetDatas(EffectItemTable.ItemType.Defence);
+                var armorEffectItemLevel = EffectItemInventoryManager.GetLevel(EffectItemTable.ItemType.Defence);
+                var armorEffectItemStats = armorEffectItemDatas[armorEffectItemLevel].Value;
+
+                armorStat = (unitData.Defence + accountArmorStat) * (1 + buildingArmorStats) * (1 + armorEffectItemStats);
                 return armorStat;
         }
         return 0;

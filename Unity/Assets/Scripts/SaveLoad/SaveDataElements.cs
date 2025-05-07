@@ -73,7 +73,10 @@ public class StageSaveData
     [JsonConverter(typeof(IntKeyDictionaryConverter<int>))]
     public Dictionary<int, int> clearedDungeon = new Dictionary<int, int>();
     public BigNumber dungeonTwoDamage;
-
+    [JsonConverter(typeof(IntKeyDictionaryConverter<int>))]
+    public Dictionary<int, int> ClearedMineStage = new Dictionary<int, int>();
+    [JsonConverter(typeof(IntKeyDictionaryConverter<int>))]
+    public Dictionary<int, int> HighMineStage = new Dictionary<int, int>();
     public static StageSaveData CreateDefault()
     {
         var data = new StageSaveData();
@@ -87,6 +90,8 @@ public class StageSaveData
         data.highestDungeon = new Dictionary<int, int>();
         data.clearedDungeon = new Dictionary<int, int>();
         data.dungeonTwoDamage = new BigNumber(0);
+        data.ClearedMineStage = new Dictionary<int, int>();
+        data.HighMineStage = new Dictionary<int, int>();
 
         List<int> dungeons = DataTableManager.DungeonTable.DungeonTypes;
 
@@ -94,6 +99,13 @@ public class StageSaveData
         {
             data.highestDungeon.Add(type, 1);
             data.clearedDungeon.Add(type, 0);
+        }
+
+        List<int> planets = DataTableManager.PlanetTable.GetIds();
+        foreach (var planetId in planets)
+        {
+            data.ClearedMineStage.Add(planetId, 0);
+            data.HighMineStage.Add(planetId, 1);
         }
 
         return data;

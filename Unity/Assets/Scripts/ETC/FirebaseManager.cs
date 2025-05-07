@@ -134,6 +134,7 @@ public class FirebaseManager : Singleton<FirebaseManager>
         var dbRef = FirebaseDatabase.DefaultInstance.GetReference("users").Child(uid);
 
         await dbRef.RemoveValueAsync();
+        SaveLoadManager.SetDefaultData();
     }
     public async void DoCombatPowerChanged()
     {

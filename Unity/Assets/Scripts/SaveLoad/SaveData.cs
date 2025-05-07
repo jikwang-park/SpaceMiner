@@ -88,6 +88,8 @@ public class SaveDataV3 : SaveDataV2
 public class SaveDataV4 : SaveDataV3
 {
     public Dictionary<int, AttendanceData> attendanceStates;
+    public Dictionary<TutorialTable.QuestTypes, bool> FirstOpened;
+    public Dictionary<TutorialTable.QuestTypes, bool> GotReward;
     public SaveDataV4() : base()
     {
         attendanceStates = new Dictionary<int, AttendanceData>();
@@ -95,7 +97,13 @@ public class SaveDataV4 : SaveDataV3
         {
             attendanceStates[entry.ID] = AttendanceData.CreateDefault(entry.ID);
         }
-
+        FirstOpened = new Dictionary<TutorialTable.QuestTypes, bool>();
+        GotReward = new Dictionary<TutorialTable.QuestTypes, bool>();
+        foreach(var type in Enum.GetValues(typeof(TutorialTable.QuestTypes)))
+        {
+            FirstOpened.Add((TutorialTable.QuestTypes)type, false);
+            GotReward.Add((TutorialTable.QuestTypes)type, false);
+        }
         Version = 4;
     }
     public SaveDataV4(SaveDataV3 oldData) : base(oldData)
@@ -104,6 +112,13 @@ public class SaveDataV4 : SaveDataV3
         foreach (var entry in DataTableManager.AttendanceTable.GetList())
         {
             attendanceStates[entry.ID] = AttendanceData.CreateDefault(entry.ID);
+        }
+        FirstOpened = new Dictionary<TutorialTable.QuestTypes, bool>();
+        GotReward = new Dictionary<TutorialTable.QuestTypes, bool>();
+        foreach (var type in Enum.GetValues(typeof(TutorialTable.QuestTypes)))
+        {
+            FirstOpened.Add((TutorialTable.QuestTypes)type, false);
+            GotReward.Add((TutorialTable.QuestTypes)type, false);
         }
 
         Version = 4;

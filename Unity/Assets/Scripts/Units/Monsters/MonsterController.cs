@@ -51,6 +51,8 @@ public class MonsterController : MonoBehaviour, IObjectPoolGameObject
 
     private bool isDrawRegion;
 
+    public MonsterType monsterType;
+
     public bool IsTargetInRange
     {
         get

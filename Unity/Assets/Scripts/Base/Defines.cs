@@ -151,3 +151,11 @@ public enum RankingType
     CombatPower,
     DungeonDamage,
 }
+
+
+public enum MonsterType
+{
+    Normal,
+    Ranged,
+    Boss,
+}

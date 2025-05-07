@@ -33,6 +33,7 @@ public class UnitHealerSkill : UnitSkillBase
         GetBuff(skillId);
         CoolTime = data.CoolTime;
         Ratio = data.HealRatio;
+        ExecuteBuff();
     }
 
 
@@ -47,6 +48,11 @@ public class UnitHealerSkill : UnitSkillBase
 
     public override void GetBuff(int id)
     {
+        var reviveBuff = unit.GetComponent<ReviveOnDeath>();
+        if(reviveBuff != null)
+        {
+            GameObject.Destroy(reviveBuff);
+        }
         if (skillGrade == Grade.Legend)
         {
             var buffId = DataTableManager.HealerSkillTable.GetData(id).BuffID;

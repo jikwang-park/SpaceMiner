@@ -5,7 +5,7 @@ using UnityEngine;
 public class ReviveOnDeath : MonoBehaviour
 {
     public bool HasRevived { get; private set; } = false;
-    private float reviveHpPercent = 30f;
+    private float reviveHpPercent;
 
     public void Initialize(float hpPercent)
     {

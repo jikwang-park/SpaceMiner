@@ -56,7 +56,10 @@ public class AttackedTakeUnitDamage : MonoBehaviour,IAttackable
                 if (revive != null && !revive.HasRevived)
                 {
                     revive.DoRevive();
-                    return; 
+                    if(unit.unitStats.Hp > 0)
+                    {
+                        return;
+                    }
                 }
 
                 unit.unitStats.Hp = new BigNumber("0");

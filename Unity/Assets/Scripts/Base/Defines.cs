@@ -54,6 +54,10 @@ public class DataTableIds
     public const string buildingTable = "BuildingTable";
 
     public const string planetTable = "PlanetTable";
+    public const string miningBattleTable = "MiningBattleTable";
+    public const string miningBattleSpawnTable = "MiningBattleSpawnTable";
+
+    public const string tutorialTable = "TutorialTable";
 }
 
 public enum StageMode

@@ -37,6 +37,7 @@ public class StageManager : MonoBehaviour
         ObjectPoolManager = GetComponent<ObjectPoolManager>();
         CameraManager = GetComponent<CameraManager>();
         StageUiManager.OnExitButtonClicked += StageUiManager_OnExitButtonClicked;
+        StageUiManager.MiningBattleClicked += MiningBattleStart;
         ItemManager.OnItemAmountChanged += OnItemAmountChanged;
         InitStatusMachines();
     }
@@ -152,5 +153,10 @@ public class StageManager : MonoBehaviour
             return machines[status];
         }
         return null;
+    }
+
+    private void MiningBattleStart()
+    {
+        ((MineStageStatusMachine)machines[IngameStatus.Mine]).StartMineBattle();
     }
 }

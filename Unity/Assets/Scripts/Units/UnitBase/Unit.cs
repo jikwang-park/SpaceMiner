@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
+using UnityEngine.AI;
 using UnityEngine.Pool;
 
 public class Unit : MonoBehaviour, IObjectPoolGameObject
@@ -91,14 +92,15 @@ public class Unit : MonoBehaviour, IObjectPoolGameObject
             AnimationControl.AddEvent(AnimationControl.AnimationClipID.Skill, 1f, OnSkillEnd);
         }
         AnimationControl.AddEvent(AnimationControl.AnimationClipID.Die, 1f, OnEnd);
-
-
-        StageManager = GameObject.FindGameObjectWithTag("GameController").GetComponent<StageManager>();
     }
 
 
     private void OnEnable()
     {
+        if (StageManager is null)
+        {
+            StageManager = GameObject.FindGameObjectWithTag("GameController").GetComponent<StageManager>();
+        }
         GetComponent<DestructedDestroyEvent>().OnDestroyed += (_) => SetStatus(Status.Dead);
     }
 
@@ -109,16 +111,51 @@ public class Unit : MonoBehaviour, IObjectPoolGameObject
             return;
         }
 
-        if (HasTarget)
+        if (StageManager.IngameStatus == IngameStatus.Mine)
         {
-            TargetDistance = target.position.z - transform.position.z;
+            if (HasTarget)
+            {
+                var targetDisplacement = target.position - transform.position;
+                targetDisplacement.y = 0f;
+                TargetDistance = Vector3.Magnitude(targetDisplacement);
+                if (TargetDistance > unitStats.range)
+                {
+                    HasTarget = false;
+                    target.GetComponent<DestructedDestroyEvent>().OnDestroyed -= OnTargetDie;
+                    TargetDistance = float.MaxValue;
+                }
+            }
+
+            if (!HasTarget && StageManager.StageMonsterManager.MonsterCount > 0)
+            {
+                HasTarget = true;
+                var monster = StageManager.StageMonsterManager.GetMonster(transform.position);
+                target = monster.transform;
+                target.GetComponent<DestructedDestroyEvent>().OnDestroyed += OnTargetDie;
+            }
+
+            if (HasTarget)
+            {
+                var direction = target.position - transform.position;
+                direction.y = 0f;
+                direction.Normalize();
+                direction = Vector3.Lerp(transform.forward, direction, Time.deltaTime * unitStats.moveSpeed).normalized;
+                transform.LookAt(direction);
+            }
         }
-        else if (StageManager.StageMonsterManager.MonsterCount > 0)
+        else
         {
-            HasTarget = true;
-            var monster = StageManager.StageMonsterManager.GetMonsters(1)[0];
-            target = monster;
-            target.GetComponent<DestructedDestroyEvent>().OnDestroyed += OnTargetDie;
+            if (HasTarget)
+            {
+                TargetDistance = target.position.z - transform.position.z;
+            }
+            else if (StageManager.StageMonsterManager.MonsterCount > 0)
+            {
+                HasTarget = true;
+                var monster = StageManager.StageMonsterManager.GetMonsters(1)[0];
+                target = monster;
+                target.GetComponent<DestructedDestroyEvent>().OnDestroyed += OnTargetDie;
+            }
         }
         if (Variables.isAutoSkillMode)
         {
@@ -156,7 +193,6 @@ public class Unit : MonoBehaviour, IObjectPoolGameObject
         unitStats.SetData(data, data.UnitType);
 
         AnimationControl.SetSpeed(AnimationControl.AnimationClipID.Attack, 1f / UnitCombatPowerCalculator.statsDictionary[data.UnitType].coolDown);
-
 
         UnitTypes = data.UnitType;
         Grade = data.Grade;
@@ -205,7 +241,8 @@ public class Unit : MonoBehaviour, IObjectPoolGameObject
 
     private void OnAttackEnd()
     {
-        if (!HasTarget || !IsTargetInRange)
+        if ((!HasTarget || !IsTargetInRange)
+            && StageManager.IngameStatus != IngameStatus.Mine)
         {
             SetStatus(Status.Run);
         }
@@ -235,7 +272,8 @@ public class Unit : MonoBehaviour, IObjectPoolGameObject
         switch (status)
         {
             case Status.Wait:
-                if (!HasTarget || !IsTargetInRange)
+                if ((!HasTarget || !IsTargetInRange)
+                    && StageManager.IngameStatus != IngameStatus.Mine)
                 {
                     SetStatus(Status.Run);
                     return;
@@ -275,7 +313,8 @@ public class Unit : MonoBehaviour, IObjectPoolGameObject
         switch (UnitStatus)
         {
             case Status.Wait:
-                if (!HasTarget || !IsTargetInRange)
+                if ((!HasTarget || !IsTargetInRange)
+                    && StageManager.IngameStatus != IngameStatus.Mine)
                 {
                     SetStatus(Status.Run);
                     return;
@@ -286,7 +325,7 @@ public class Unit : MonoBehaviour, IObjectPoolGameObject
                     SetStatus(Status.SkillUsing);
                     return;
                 }
-                if (Time.time > lastAttackTime + unitStats.coolDown)
+                if (HasTarget && Time.time > lastAttackTime + unitStats.coolDown)
                 {
                     SetStatus(Status.Attacking);
                 }

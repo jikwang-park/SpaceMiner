@@ -37,6 +37,13 @@ public class UnitPartyManager : MonoBehaviour
 
     public int UnitCount => PartyUnits.Count;
 
+    private StageManager stageManager;
+
+    private void Awake()
+    {
+        stageManager = GetComponent<StageManager>();
+    }
+
     public void ResetSkillCoolTime()
     {
         foreach (var unit in PartyUnits.Values)
@@ -46,7 +53,7 @@ public class UnitPartyManager : MonoBehaviour
     }
     public void ResetUnitBarrier()
     {
-        foreach(var unit in PartyUnits.Values)
+        foreach (var unit in PartyUnits.Values)
         {
             unit.unitStats.Barrier = 0;
         }
@@ -222,11 +229,43 @@ public class UnitPartyManager : MonoBehaviour
         }
         return null;
     }
+
+    public void UnitSpawn(SerializedDictionary<UnitTypes, Transform> SpawnPosition)
+    {
+        for (int i = (int)UnitTypes.Tanker; i <= (int)UnitTypes.Healer; ++i)
+        {
+            var currentType = (UnitTypes)i;
+
+            var unit = Instantiate(characters[currentType], SpawnPosition[currentType].position, Quaternion.identity);
+            unit.GetComponent<DestructedDestroyEvent>().OnDestroyed += OnUnitDie;
+            var currentSoilderId = InventoryManager.GetInventoryData(currentType).equipElementID;
+            var currentSoilderData = DataTableManager.SoldierTable.GetData(currentSoilderId);
+            //var weaponSocket = unit.transform.Find("Bip001").Find("Bip001 Prop1");
+            var weaponPosition = unit.RightHandPosition;
+            var weaponGo = Instantiate(weapons[currentType][(int)currentSoilderData.Grade - 1], weaponPosition);
+            var weaponPoint = weaponGo.transform.Find("BulletStarter");
+            unit.GetComponent<UnitEffectController>().attackEffectPoint = weaponPoint;
+
+            if (currentType == UnitTypes.Tanker)
+            {
+                var shieldPosition = unit.LeftHandPosition;
+                var shieldGo = Instantiate(shield, shieldPosition);
+            }
+
+            PartyUnits.Add(currentType, unit);
+            if (stageManager.IngameStatus != IngameStatus.LevelDesign)
+            {
+                UnitCombatPowerCalculator.Init(currentType);
+            }
+            unit.SetData(currentSoilderData);
+        }
+        OnUnitCreated?.Invoke();
+        OnUnitUpdated?.Invoke();
+    }
+
     public void ResetUnits(Vector3 startPos)
     {
         Vector3 position = startPos;
-
-        var stageManager = GameObject.FindGameObjectWithTag("GameController").GetComponent<StageManager>();
 
         for (int i = (int)UnitTypes.Tanker; i <= (int)UnitTypes.Healer; ++i)
         {

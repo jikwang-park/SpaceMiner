@@ -24,10 +24,10 @@ public class CorpsTable : DataTable
             ID = int.Parse(argument[0]);
             FrontSlots = int.Parse(argument[1]);
             NormalMonsterID = argument[2];
-            NormalMonsterIDs = SplitMonsterId(NormalMonsterID);
+            NormalMonsterIDs = DataTableUtilities.SplitColumnToInt(NormalMonsterID);
             BackSlots = int.Parse(argument[3]);
             RangedMonsterID = argument[4];
-            RangedMonsterIDs = SplitMonsterId(RangedMonsterID);
+            RangedMonsterIDs = DataTableUtilities.SplitColumnToInt(RangedMonsterID);
             BossMonsterID = int.Parse(argument[5]);
         }
     }
@@ -49,8 +49,8 @@ public class CorpsTable : DataTable
         {
             if (!TableData.ContainsKey(item.ID))
             {
-                item.NormalMonsterIDs = SplitMonsterId(item.NormalMonsterID);
-                item.RangedMonsterIDs = SplitMonsterId(item.RangedMonsterID);
+                item.NormalMonsterIDs = DataTableUtilities.SplitColumnToInt(item.NormalMonsterID);
+                item.RangedMonsterIDs = DataTableUtilities.SplitColumnToInt(item.RangedMonsterID);
                 TableData.Add(item.ID, item);
             }
             else
@@ -90,18 +90,5 @@ public class CorpsTable : DataTable
         }
 
         return CreateCsv(list);
-    }
-
-    private static int[] SplitMonsterId(string id)
-    {
-        string[] idstring = id.Split('_');
-        int[] ids = new int[idstring.Length];
-
-        for (int i = 0; i < ids.Length; ++i)
-        {
-            ids[i] = int.Parse(idstring[i]);
-        }
-
-        return ids;
     }
 }

@@ -5,6 +5,7 @@ using UnityEngine;
 
 public static class EffectItemInventoryManager
 {
+    public static event Action<int> OnEffectItemLevelUp;
     public static Dictionary<EffectItemTable.ItemType, int> EffectItemInventory
     {
         get
@@ -19,8 +20,16 @@ public static class EffectItemInventoryManager
     public static void DoGainEffectItem(int itemId)
     {
         var effectType = DataTableManager.EffectItemTable.GetTypeByID(itemId);
+        int count = 0;
+        while (LevelUp(effectType))
+        {
+            ++count;
+        }
 
-        while (LevelUp(effectType)) ;
+        if(count>0)
+        {
+            OnEffectItemLevelUp?.Invoke(itemId);
+        }
     }
     public static bool LevelUp(EffectItemTable.ItemType type)
     {

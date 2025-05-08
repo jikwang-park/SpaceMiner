@@ -33,7 +33,7 @@ public class EffectItemElement : MonoBehaviour
     }
     private void OnDisable()
     {
-        if(alarmImage.gameObject.activeInHierarchy)
+        if(alarmImage.gameObject.activeSelf)
         {
             alarmImage.gameObject.SetActive(false);
         }

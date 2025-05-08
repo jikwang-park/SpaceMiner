@@ -20,6 +20,7 @@ public class EffectItemIcon : MonoBehaviour
     {
         iconImage = icon.GetComponent<Image>();
         backgroundImage = GetComponent<Image>();
+        ApplyColor(true);
     }
     public void Initialize(EffectItemTable.ItemType type, int level)
     {

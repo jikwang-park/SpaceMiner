@@ -46,8 +46,10 @@ public class UnitStatsUpgradeElement : MonoBehaviour, IPointerDownHandler, IPoin
     private TextMeshProUGUI afterStatsInfo;
     [SerializeField]
     private LocalizationText titleText;
+    //[SerializeField]
+    //private Image StatsImage;
     [SerializeField]
-    private Image StatsImage;
+    private AddressableImage statsImage;
     [SerializeField]
     private Image goldImage;
     [SerializeField]
@@ -90,11 +92,17 @@ public class UnitStatsUpgradeElement : MonoBehaviour, IPointerDownHandler, IPoin
         titleText.SetString(stringId);
     }
     //임시 처리
-    public void SetImage(UpgradeType type, List<Sprite> statsSprite)
-    {
-        int index = (int)type;
+    //public void SetImage(UpgradeType type, List<Sprite> statsSprite)
+    //{
+    //    int index = (int)type;
 
-        StatsImage.sprite = statsSprite[index - 1];
+    //    StatsImage.sprite = statsSprite[index - 1];
+    //}
+
+    public void SetInitImage(UpgradeType type)
+    {
+        var spriteId = DataTableManager.UnitUpgradeTable.GetData(type).SpriteID;
+        statsImage.SetSprite(spriteId);
     }
 
 

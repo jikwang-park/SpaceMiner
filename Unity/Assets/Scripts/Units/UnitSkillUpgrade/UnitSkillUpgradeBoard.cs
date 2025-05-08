@@ -28,7 +28,7 @@ public class UnitSkillUpgradeBoard : MonoBehaviour
     [SerializeField]
     private LocalizationText buttonText;
 
-    private const int maxLevel = 20;
+    private int maxLevel;
     [SerializeField]
     private AddressableImage needItemImage;
     [SerializeField]
@@ -188,6 +188,7 @@ public class UnitSkillUpgradeBoard : MonoBehaviour
         nextId = data.SkillPaymentID;
         needItemId = data.NeedItemID;
         needItemCount = int.Parse(data.NeedItemCount);
+        
     }
     private void Update()
     {

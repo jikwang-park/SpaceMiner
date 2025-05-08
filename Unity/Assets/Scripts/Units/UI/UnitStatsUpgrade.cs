@@ -76,7 +76,7 @@ public class UnitStatsUpgrade : MonoBehaviour
                     {
                         statsElement.SetData(data[currentType], DataTableManager.UnitUpgradeTable.GetData(currentType));
                         statsElement.SetInitString(currentType);
-                        statsElement.SetImage(currentType, statsSprite);
+                        statsElement.SetInitImage(currentType);
                         statsElement.SetMultiplier(currentMultiplier);
                         allElements.Add(statsElement);
                     }

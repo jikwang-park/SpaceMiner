@@ -5,6 +5,7 @@ using UnityEngine;
 public static class ItemManager
 {
     public static event Action<int, BigNumber> OnItemAmountChanged;
+    public static event Action<int> OnGainEffectItem;
     private static Dictionary<int, BigNumber> items
     {
         get
@@ -18,7 +19,11 @@ public static class ItemManager
         {
             int goldUpgradeLevel = SaveLoadManager.Data.buildingData.buildingLevels[BuildingTable.BuildingType.Gold];
             float goldUpgradeValue = DataTableManager.BuildingTable.GetDatas(BuildingTable.BuildingType.Gold)[goldUpgradeLevel].Value;
-            return 1 + goldUpgradeValue;
+
+            int goldEffectItemLevel = EffectItemInventoryManager.GetLevel(EffectItemTable.ItemType.GoldGain);
+            float goldEffectItemValue = DataTableManager.EffectItemTable.GetDatas(EffectItemTable.ItemType.GoldGain)[goldEffectItemLevel].Value;
+
+            return 1 + goldUpgradeValue + goldEffectItemValue;
         }
     }
     private static float MiningIncreaseRatio
@@ -27,7 +32,11 @@ public static class ItemManager
         {
             int miningUpgradeLevel = SaveLoadManager.Data.buildingData.buildingLevels[BuildingTable.BuildingType.Mining];
             float miningUpgradeValue = DataTableManager.BuildingTable.GetDatas(BuildingTable.BuildingType.Mining)[miningUpgradeLevel].Value;
-            return 1 + miningUpgradeValue;
+
+            int resourceEffectItemLevel = EffectItemInventoryManager.GetLevel(EffectItemTable.ItemType.ResourceGain);
+            float resourceEffectItemValue = DataTableManager.EffectItemTable.GetDatas(EffectItemTable.ItemType.ResourceGain)[resourceEffectItemLevel].Value;
+
+            return 1 + miningUpgradeValue + resourceEffectItemValue;
         }
     }
     public static bool AddItem(int itemId, BigNumber amount)
@@ -69,8 +78,14 @@ public static class ItemManager
         {
             items[itemId] = maxStack;
         }
+
         GuideQuestManager.QuestProgressChange(GuideQuestTable.MissionType.Item);
         OnItemAmountChanged?.Invoke(itemId, items[itemId]);
+        if (DataTableManager.ItemTable.GetData(itemId).ItemType == 4)
+        {
+            OnGainEffectItem?.Invoke(itemId);
+        }
+
         return true;
     }
     public static bool ConsumeItem(int itemId, BigNumber amount)

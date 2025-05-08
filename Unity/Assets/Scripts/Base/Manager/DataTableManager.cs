@@ -110,6 +110,10 @@ public static class DataTableManager
         itemTable.Load(DataTableIds.itemTable);
         tables.Add(DataTableIds.itemTable, itemTable);
 
+        var effectItemTable = new EffectItemTable();
+        effectItemTable.Load(DataTableIds.effectItemTable);
+        tables.Add(DataTableIds.effectItemTable, effectItemTable);
+
         var shopTable = new ShopTable();
         shopTable.Load(DataTableIds.shopTable);
         tables.Add(DataTableIds.shopTable, shopTable);
@@ -287,4 +291,7 @@ public static class DataTableManager
 
     public static TutorialTable TutorialTable
         => GetTable<TutorialTable>(DataTableIds.tutorialTable);
+
+    public static EffectItemTable EffectItemTable
+        => GetTable<EffectItemTable>(DataTableIds.effectItemTable);
 }

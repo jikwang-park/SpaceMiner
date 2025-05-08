@@ -17,6 +17,10 @@ public class TimeManager : Singleton<TimeManager>
     {
         return isDebug ? DateTime.Now : FirebaseManager.Instance.GetFirebaseServerTime().ToLocalTime();
     }
+    public bool IsNewDay(DateTime beforeTime)
+    {
+        return beforeTime.Date < GetEstimatedServerTime().Date;
+    }
     private void OnApplicationPause(bool pause)
     {
         if (pause)

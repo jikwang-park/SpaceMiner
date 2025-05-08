@@ -232,6 +232,7 @@ public class UnitPartyManager : MonoBehaviour
 
     public void UnitSpawn(SerializedDictionary<UnitTypes, Transform> SpawnPosition)
     {
+        UnitDespawn();
         for (int i = (int)UnitTypes.Tanker; i <= (int)UnitTypes.Healer; ++i)
         {
             var currentType = (UnitTypes)i;

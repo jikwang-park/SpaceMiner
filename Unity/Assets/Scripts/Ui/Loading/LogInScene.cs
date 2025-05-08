@@ -20,6 +20,8 @@ public class LogInScene : MonoBehaviour
     private TMP_InputField nicknameInput;
     [SerializeField]
     private Button saveNicknameButton;
+    [SerializeField]
+    private TextMeshProUGUI alarmText;
     private void Awake()
     {
         startButton.interactable = false;
@@ -50,7 +52,13 @@ public class LogInScene : MonoBehaviour
         string nick = nicknameInput.text.Trim();
         if (string.IsNullOrEmpty(nick))
         {
-            Debug.LogWarning("닉네임을 입력해주세요.");
+            alarmText.text = "닉네임을 입력해주세요.";
+            return;
+        }
+
+        if (nick.Length < 2 || nick.Length > 6)
+        {
+            alarmText.text = "닉네임은 2자 이상 6자 이하여야 합니다.";
             return;
         }
 

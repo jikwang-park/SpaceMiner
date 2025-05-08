@@ -11,12 +11,6 @@ public class StageMonsterManager : MonoBehaviour
     [SerializeField]
     private int laneCount = 3;
 
-    private enum MonsterType
-    {
-        Normal,
-        Ranged,
-        Boss,
-    }
 
     [field: SerializeField]
     public Vector3[] SpawnPoints { get; private set; } = new Vector3[]
@@ -466,6 +460,7 @@ public class StageMonsterManager : MonoBehaviour
         var monsterController = monster.GetComponent<MonsterController>();
         monsterController.enabled = true;
         monsterController.SetMonsterId(monsterId);
+        monsterController.monsterType = type;
 
         monster.transform.parent = null;
         monster.transform.position = frontPosition + SpawnPoints[index];

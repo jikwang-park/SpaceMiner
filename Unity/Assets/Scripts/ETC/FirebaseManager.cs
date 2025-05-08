@@ -134,6 +134,7 @@ public class FirebaseManager : Singleton<FirebaseManager>
         var dbRef = FirebaseDatabase.DefaultInstance.GetReference("users").Child(uid);
 
         await dbRef.RemoveValueAsync();
+        SaveLoadManager.SetDefaultData();
     }
     public async void DoCombatPowerChanged()
     {
@@ -162,7 +163,8 @@ public class FirebaseManager : Singleton<FirebaseManager>
         {
             displayCombatPower,
             sortKeyCombatPower,
-            name = nickname
+            name = nickname,
+            timeStamp = ServerValue.Timestamp
         };
 
         return root
@@ -186,7 +188,8 @@ public class FirebaseManager : Singleton<FirebaseManager>
         {
             displayDamage,
             sortKeyDamage,
-            name = nickname
+            name = nickname,
+            timeStamp = ServerValue.Timestamp
         };
 
         return root
@@ -206,7 +209,8 @@ public class FirebaseManager : Singleton<FirebaseManager>
         var entry = new
         {
             stage = stageId,
-            name = nickname
+            name = nickname,
+            timeStamp = ServerValue.Timestamp
         };
 
         return root
@@ -227,18 +231,26 @@ public class FirebaseManager : Singleton<FirebaseManager>
             .GetValueAsync();
 
         var list = new List<LeaderBoardEntry>();
-        foreach (var child in snap.Children.Reverse())
+        foreach (var child in snap.Children)
         {
-            var dict = (Dictionary<string, object>)child.Value;
+            var ds = child;
             list.Add(new LeaderBoardEntry
             {
-                uid = child.Key,
-                name = dict.GetValueOrDefault("name", "").ToString(),
-                display = dict.GetValueOrDefault("displayCombatPower", "").ToString()
+                uid = ds.Key,
+                name = ds.Child("name").Value?.ToString() ?? "",
+                display = ds.Child("displayCombatPower").Value?.ToString() ?? "",
+                sortKey = ds.Child("sortKeyCombatPower").Value?.ToString() ?? "",
+                timestamp = (long)(ds.Child("timestamp").Value ?? 0L)
             });
         }
 
-        return list;
+        var result = list
+            .OrderBy(e => e.sortKey)
+            .ThenBy(e => e.timestamp)
+            .Reverse()
+            .ToList();
+
+        return result;
     }
     public async Task<List<LeaderBoardEntry>> GetTopHighestStageAsync(int topN)
     {
@@ -252,18 +264,26 @@ public class FirebaseManager : Singleton<FirebaseManager>
             .GetValueAsync();
 
         var list = new List<LeaderBoardEntry>();
-        foreach (var child in snap.Children.Reverse())
+        foreach (var child in snap.Children)
         {
-            var dict = (Dictionary<string, object>)child.Value;
+            var ds = child;
             list.Add(new LeaderBoardEntry
             {
-                uid = child.Key,
-                name = dict.GetValueOrDefault("name", "").ToString(),
-                display = dict.GetValueOrDefault("stage", "").ToString()
+                uid = ds.Key,
+                name = ds.Child("name").Value?.ToString() ?? "",
+                display = ds.Child("stage").Value?.ToString() ?? "",
+                sortKey = ds.Child("stage").Value?.ToString() ?? "",
+                timestamp = (long)(ds.Child("timestamp").Value ?? 0L)
             });
         }
 
-        return list;
+        var result = list
+                    .OrderBy(e => e.sortKey)
+                    .ThenBy(e => e.timestamp)
+                    .Reverse()
+                    .ToList();
+
+        return result;
     }
     public async Task<List<LeaderBoardEntry>> GetTopDungeonDamageAsync(int topN)
     {
@@ -277,20 +297,28 @@ public class FirebaseManager : Singleton<FirebaseManager>
             .GetValueAsync();
 
         var list = new List<LeaderBoardEntry>();
-        foreach (var child in snap.Children.Reverse())
+        foreach (var child in snap.Children)
         {
-            var dict = (Dictionary<string, object>)child.Value;
+            var ds = child;
             list.Add(new LeaderBoardEntry
             {
-                uid = child.Key,
-                name = dict.GetValueOrDefault("name", "").ToString(),
-                display = dict.GetValueOrDefault("displayDamage", "").ToString()
+                uid = ds.Key,
+                name = ds.Child("name").Value?.ToString() ?? "",
+                display = ds.Child("displayDamage").Value?.ToString() ?? "",
+                sortKey = ds.Child("sortKeyDamage").Value?.ToString() ?? "",
+                timestamp = (long)(ds.Child("timestamp").Value ?? 0L)
             });
         }
 
-        return list;
+        var result = list
+                    .OrderBy(e => e.sortKey)
+                    .ThenBy(e => e.timestamp)
+                    .Reverse()
+                    .ToList();
+
+        return result;
     }
-    public async Task<int> GetMyCombatPowerRankAsync()
+    public async Task<MyRankEntry> GetMyCombatPowerRankAsync()
     {
         var mySnap = await root
             .Child("leaderboard")
@@ -300,8 +328,17 @@ public class FirebaseManager : Singleton<FirebaseManager>
 
         if (!mySnap.Exists)
         {
-            return -1;
+            return new MyRankEntry { rank = -1, myEntry = null };
         }
+
+        var userId = mySnap.Key;
+        var nameNode = mySnap.Child("name");
+        string name = (nameNode.Exists && nameNode.Value != null) ? nameNode.Value.ToString() : "";
+
+        var combatPowerNode = mySnap.Child("displayCombatPower");
+        string display = (combatPowerNode.Exists && combatPowerNode.Value != null) ? combatPowerNode.Value.ToString() : "";
+
+        var entry = new LeaderBoardEntry { uid = userId, display = display, name = name };
 
         string mySortKey = mySnap.Child("sortKeyCombatPower").Value as string;
 
@@ -309,12 +346,13 @@ public class FirebaseManager : Singleton<FirebaseManager>
             .Child("leaderboard")
             .Child("CombatPower")
             .OrderByChild("sortKeyCombatPower")
-            .EndAt(mySortKey)
+            .StartAt(mySortKey)
             .GetValueAsync();
 
-        return (int)snap.ChildrenCount;
+        MyRankEntry myRank = new MyRankEntry { rank = (int)snap.ChildrenCount, myEntry = entry };
+        return myRank;
     }
-    public async Task<int> GetMyHighestStageRankAsync()
+    public async Task<MyRankEntry> GetMyHighestStageRankAsync()
     {
         var mySnap = await root
             .Child("leaderboard")
@@ -324,8 +362,22 @@ public class FirebaseManager : Singleton<FirebaseManager>
 
         if (!mySnap.Exists)
         {
-            return -1;
+            return new MyRankEntry { rank = -1, myEntry = null };
         }
+
+        var userId = mySnap.Key;
+        var nameNode = mySnap.Child("name");
+        string name = (nameNode.Exists && nameNode.Value != null) ? nameNode.Value.ToString() : "";
+
+        var stageNode = mySnap.Child("stage");
+        string display = (stageNode.Exists && stageNode.Value != null) ? stageNode.Value.ToString() : "";
+
+        var entry = new LeaderBoardEntry
+        {
+            uid = userId,
+            display = display,
+            name = name
+        };
 
         string mySortKey = mySnap.Child("stage").Value as string;
 
@@ -333,13 +385,14 @@ public class FirebaseManager : Singleton<FirebaseManager>
             .Child("leaderboard")
             .Child("HighestStage")
             .OrderByChild("stage")
-            .EndAt(mySortKey)
+            .StartAt(mySortKey)
             .GetValueAsync();
 
-        return (int)snap.ChildrenCount;
+        MyRankEntry myRank = new MyRankEntry { rank = (int)snap.ChildrenCount, myEntry = entry };
+        return myRank;
     }
 
-    public async Task<int> GetMyDungeonDamageRankAsync()
+    public async Task<MyRankEntry> GetMyDungeonDamageRankAsync()
     {
         var mySnap = await root
             .Child("leaderboard")
@@ -349,8 +402,22 @@ public class FirebaseManager : Singleton<FirebaseManager>
 
         if (!mySnap.Exists)
         {
-            return -1;
+            return new MyRankEntry { rank = -1, myEntry = null };
         }
+
+        var userId = mySnap.Key;
+        var nameNode = mySnap.Child("name");
+        string name = (nameNode.Exists && nameNode.Value != null) ? nameNode.Value.ToString() : "";
+
+        var damageNode = mySnap.Child("sortKeyDamage");
+        string display = (damageNode.Exists && damageNode.Value != null) ? damageNode.Value.ToString() : "";
+
+        var entry = new LeaderBoardEntry
+        {
+            uid = userId,
+            display = display,
+            name = name
+        };
 
         string mySortKey = mySnap.Child("sortKeyDamage").Value as string;
 
@@ -358,9 +425,10 @@ public class FirebaseManager : Singleton<FirebaseManager>
             .Child("leaderboard")
             .Child("DungeonDamage")
             .OrderByChild("sortKeyDamage")
-            .EndAt(mySortKey)
+            .StartAt(mySortKey)
             .GetValueAsync();
 
-        return (int)snap.ChildrenCount;
+        MyRankEntry myRank = new MyRankEntry { rank = (int)snap.ChildrenCount, myEntry = entry };
+        return myRank;
     }
 }

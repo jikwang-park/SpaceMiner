@@ -14,7 +14,7 @@ public class RankingElement : MonoBehaviour
 
     public void SetInfo(int grade, LeaderBoardEntry entry, RankingType type)
     {
-        rankText.text = $"¼øÀ§\n{grade}";
+        rankText.text = $"{grade}";
         nicknameText.text = entry.name;
         scoreBoard.SetBoard(type, entry.display);
     }

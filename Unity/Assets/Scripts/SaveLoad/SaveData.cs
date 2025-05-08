@@ -88,14 +88,33 @@ public class SaveDataV3 : SaveDataV2
 public class SaveDataV4 : SaveDataV3
 {
     public Dictionary<int, AttendanceData> attendanceStates;
+    public MineBattleData mineBattleData;
+    public Dictionary<EffectItemTable.ItemType, int> possessionEffectItemDatas;
+    public Dictionary<TutorialTable.QuestTypes, bool> TutorialOpened;
+    public Dictionary<TutorialTable.QuestTypes, bool> TutorialRewardGot;
     public SaveDataV4() : base()
     {
         attendanceStates = new Dictionary<int, AttendanceData>();
+
         foreach (var entry in DataTableManager.AttendanceTable.GetList())
         {
             attendanceStates[entry.ID] = AttendanceData.CreateDefault(entry.ID);
         }
+        TutorialOpened = new Dictionary<TutorialTable.QuestTypes, bool>();
+        TutorialRewardGot = new Dictionary<TutorialTable.QuestTypes, bool>();
+        foreach(var type in Enum.GetValues(typeof(TutorialTable.QuestTypes)))
+        {
+            TutorialOpened.Add((TutorialTable.QuestTypes)type, false);
+            TutorialRewardGot.Add((TutorialTable.QuestTypes)type, false);
+        }
 
+        mineBattleData = MineBattleData.CreateDefault();
+
+        possessionEffectItemDatas = new Dictionary<EffectItemTable.ItemType, int>();
+        foreach (var type in Enum.GetValues(typeof(EffectItemTable.ItemType)))
+        {
+            possessionEffectItemDatas.Add((EffectItemTable.ItemType)type, 0);
+        }
         Version = 4;
     }
     public SaveDataV4(SaveDataV3 oldData) : base(oldData)
@@ -104,6 +123,20 @@ public class SaveDataV4 : SaveDataV3
         foreach (var entry in DataTableManager.AttendanceTable.GetList())
         {
             attendanceStates[entry.ID] = AttendanceData.CreateDefault(entry.ID);
+        }
+        TutorialOpened = new Dictionary<TutorialTable.QuestTypes, bool>();
+        TutorialRewardGot = new Dictionary<TutorialTable.QuestTypes, bool>();
+        foreach (var type in Enum.GetValues(typeof(TutorialTable.QuestTypes)))
+        {
+            TutorialOpened.Add((TutorialTable.QuestTypes)type, false);
+            TutorialRewardGot.Add((TutorialTable.QuestTypes)type, false);
+        }
+        mineBattleData = MineBattleData.CreateDefault();
+
+        possessionEffectItemDatas = new Dictionary<EffectItemTable.ItemType, int>();
+        foreach (var type in Enum.GetValues(typeof(EffectItemTable.ItemType)))
+        {
+            possessionEffectItemDatas.Add((EffectItemTable.ItemType)type, 0);
         }
 
         Version = 4;

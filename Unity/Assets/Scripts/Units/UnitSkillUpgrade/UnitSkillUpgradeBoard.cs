@@ -1,4 +1,5 @@
 using JetBrains.Annotations;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq.Expressions;
@@ -28,7 +29,7 @@ public class UnitSkillUpgradeBoard : MonoBehaviour
     [SerializeField]
     private LocalizationText buttonText;
 
-    private int maxLevel;
+    private const int maxLevel = 20;
     [SerializeField]
     private AddressableImage needItemImage;
     [SerializeField]
@@ -80,7 +81,6 @@ public class UnitSkillUpgradeBoard : MonoBehaviour
             nextImage.sprite = skillImage[index];
         }
     }
-
 
 
     public void SetLimit(Grade grade, UnitTypes type, int id)
@@ -182,13 +182,13 @@ public class UnitSkillUpgradeBoard : MonoBehaviour
         needItemImage.SetSprite(DataTableManager.ItemTable.GetData(needItemId).SpriteID);
         needItemCountText.text = $"{needItemCount}개 필요합니다";
     }
+
     private void LoadUpgradeData()
     {
         data = DataTableManager.SkillUpgradeTable.GetData(currentId);
         nextId = data.SkillPaymentID;
         needItemId = data.NeedItemID;
         needItemCount = int.Parse(data.NeedItemCount);
-        
     }
     private void Update()
     {

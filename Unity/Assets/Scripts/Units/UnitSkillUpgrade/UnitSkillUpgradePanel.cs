@@ -37,7 +37,6 @@ public class UnitSkillUpgradePanel : MonoBehaviour
     private void Start()
     {
         board.ShowFirstOpened(id, currentType,currentGrade);
-
     }
     public void SetGradeToggles()
     {

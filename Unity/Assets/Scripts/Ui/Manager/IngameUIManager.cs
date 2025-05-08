@@ -15,15 +15,15 @@ public class IngameUIManager : MonoBehaviour
     private TextMeshProUGUI stageText;
     [field: SerializeField]
     public TextMeshProUGUI waveText { get; private set; }
-    [SerializeField]
-    private TextMeshProUGUI timerText;
+    [field: SerializeField]
+    public TextMeshProUGUI timerText { get; private set; }
     [SerializeField]
     private TextMeshProUGUI goldText;
     [SerializeField]
     private StageEndWindow stageEndWindow;
     [field: SerializeField]
     public Dungeon1EndWindow DungeonEndWindow { get; private set; }
-    [field:SerializeField]
+    [field: SerializeField]
     public DungeonExitConfirmWindow DungeonExitConfirmWindow { get; private set; }
     [field: SerializeField]
     public Dungeon2EndWindow DamageDungeonEndWindow { get; private set; }

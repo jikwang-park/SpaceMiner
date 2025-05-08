@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using UnityEngine;
+using UnityEngine.AI;
 using UnityEngine.Pool;
 
 public class MonsterController : MonoBehaviour, IObjectPoolGameObject
@@ -44,6 +45,8 @@ public class MonsterController : MonoBehaviour, IObjectPoolGameObject
 
     public int currentLine = -1;
 
+    public NavMeshAgent NavMeshAgent { get; private set; }
+
     public float LastAttackTime { get; private set; }
 
     private bool isDrawRegion;
@@ -68,7 +71,11 @@ public class MonsterController : MonoBehaviour, IObjectPoolGameObject
     {
         get
         {
-            return isFrontMonster(currentLine) || -(findFrontMonster(currentLine).position.z - transform.position.z) > minDistanceInMonster;
+            if (StageManager.IngameStatus == IngameStatus.Mine)
+            {
+                return true;
+            }
+            return (isFrontMonster(currentLine) || -(findFrontMonster(currentLine).position.z - transform.position.z) > minDistanceInMonster);
         }
     }
 
@@ -80,6 +87,7 @@ public class MonsterController : MonoBehaviour, IObjectPoolGameObject
         Stats = GetComponent<MonsterStats>();
         AnimationController = GetComponent<AnimationControl>();
         status = Status.Wait;
+        NavMeshAgent = GetComponent<NavMeshAgent>();
     }
 
     private void Start()
@@ -98,6 +106,7 @@ public class MonsterController : MonoBehaviour, IObjectPoolGameObject
         GetComponent<DestructedDestroyEvent>().OnDestroyed += OnThisDie;
         StageManager = GameObject.FindGameObjectWithTag("GameController").GetComponent<StageManager>();
         status = Status.Wait;
+        NavMeshAgent.enabled = StageManager.IngameStatus == IngameStatus.Mine;
     }
 
     private void OnDisable()
@@ -112,30 +121,40 @@ public class MonsterController : MonoBehaviour, IObjectPoolGameObject
             return;
         }
 
-        if (StageManager.UnitPartyManager.UnitCount > 0)
+        if (StageManager.IngameStatus != IngameStatus.Mine)
         {
-            var newTarget = StageManager.UnitPartyManager.GetFirstLineUnitTransform();
-            if (newTarget != Target)
+            if (StageManager.UnitPartyManager.UnitCount > 0)
             {
-                if (hasTarget && Target is not null)
+                var newTarget = StageManager.UnitPartyManager.GetFirstLineUnitTransform();
+                if (newTarget != Target)
+                {
+                    if (hasTarget && Target is not null)
+                    {
+                        Target.GetComponent<DestructedDestroyEvent>().OnDestroyed -= OnTargetDie;
+                    }
+                    newTarget.GetComponent<DestructedDestroyEvent>().OnDestroyed += OnTargetDie;
+                    Target = newTarget;
+                }
+                hasTarget = true;
+                TargetDistance = -(Target.position.z - transform.position.z);
+            }
+            else
+            {
+                hasTarget = false;
+                if (Target is not null)
                 {
                     Target.GetComponent<DestructedDestroyEvent>().OnDestroyed -= OnTargetDie;
                 }
-                newTarget.GetComponent<DestructedDestroyEvent>().OnDestroyed += OnTargetDie;
-                Target = newTarget;
+                Target = null;
+                TargetDistance = float.PositiveInfinity;
             }
-            hasTarget = true;
-            TargetDistance = -(Target.position.z - transform.position.z);
         }
         else
         {
-            hasTarget = false;
-            if (Target is not null)
-            {
-                Target.GetComponent<DestructedDestroyEvent>().OnDestroyed -= OnTargetDie;
-            }
-            Target = null;
-            TargetDistance = float.PositiveInfinity;
+            var displacement = Target.position - transform.position;
+            displacement.y = 0f;
+
+            TargetDistance = Vector3.Magnitude(displacement);
         }
 
 #if UNITY_EDITOR
@@ -261,6 +280,11 @@ public class MonsterController : MonoBehaviour, IObjectPoolGameObject
         {
             Gizmos.DrawWireCube(transform.position + transform.forward * 0.5f, new Vector3(1f, 1f, 1f));
         }
+    }
+
+    public void SetTarget(Transform target)
+    {
+        Target = target;
     }
 
     public void Release()

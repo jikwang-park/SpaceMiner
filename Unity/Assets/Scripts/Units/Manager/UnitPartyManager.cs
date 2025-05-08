@@ -18,6 +18,9 @@ public class UnitPartyManager : MonoBehaviour
     private SerializedDictionary<UnitTypes, GameObject[]> weapons;
 
     [SerializeField]
+    private GameObject shield;
+
+    [SerializeField]
     private List<Vector3> unitSpawnPos;
 
     public Dictionary<UnitTypes, Unit> PartyUnits { get; private set; } = new Dictionary<UnitTypes, Unit>();
@@ -34,6 +37,13 @@ public class UnitPartyManager : MonoBehaviour
 
     public int UnitCount => PartyUnits.Count;
 
+    private StageManager stageManager;
+
+    private void Awake()
+    {
+        stageManager = GetComponent<StageManager>();
+    }
+
     public void ResetSkillCoolTime()
     {
         foreach (var unit in PartyUnits.Values)
@@ -41,7 +51,13 @@ public class UnitPartyManager : MonoBehaviour
             unit.lastSkillTime = float.MinValue;
         }
     }
-
+    public void ResetUnitBarrier()
+    {
+        foreach (var unit in PartyUnits.Values)
+        {
+            unit.unitStats.Barrier = 0;
+        }
+    }
     public void ResetUnitHealth()
     {
         foreach (var unit in PartyUnits.Values)
@@ -122,9 +138,6 @@ public class UnitPartyManager : MonoBehaviour
         }
         PartyUnits.Clear();
     }
-
-
-
     public Transform GetFirstLineUnitTransform()
     {
         if (PartyUnits.Count == 0)
@@ -151,8 +164,6 @@ public class UnitPartyManager : MonoBehaviour
 
         return frontMostZPos;
     }
-
-
     public Transform GetUnit(UnitTypes type)
     {
         if (PartyUnits.ContainsKey(type))
@@ -171,9 +182,6 @@ public class UnitPartyManager : MonoBehaviour
         }
         return null;
     }
-
-
-
     public bool IsUnitExistFront(UnitTypes myType)
     {
         for (int i = (int)myType - 1; i >= (int)UnitTypes.Tanker; --i)
@@ -222,29 +230,28 @@ public class UnitPartyManager : MonoBehaviour
         return null;
     }
 
-
-
-    public void ResetUnits(Vector3 startPos)
+    public void UnitSpawn(SerializedDictionary<UnitTypes, Transform> SpawnPosition)
     {
-        Vector3 position = startPos;
-
-        var stageManager = GameObject.FindGameObjectWithTag("GameController").GetComponent<StageManager>();
-
         for (int i = (int)UnitTypes.Tanker; i <= (int)UnitTypes.Healer; ++i)
         {
             var currentType = (UnitTypes)i;
 
-            var unit = Instantiate(characters[currentType], position, Quaternion.identity);
+            var unit = Instantiate(characters[currentType], SpawnPosition[currentType].position, Quaternion.identity);
             unit.GetComponent<DestructedDestroyEvent>().OnDestroyed += OnUnitDie;
-            position += unitOffset;
             var currentSoilderId = InventoryManager.GetInventoryData(currentType).equipElementID;
             var currentSoilderData = DataTableManager.SoldierTable.GetData(currentSoilderId);
             //var weaponSocket = unit.transform.Find("Bip001").Find("Bip001 Prop1");
-            var weaponPosition = unit.weaponPosition;
+            var weaponPosition = unit.RightHandPosition;
             var weaponGo = Instantiate(weapons[currentType][(int)currentSoilderData.Grade - 1], weaponPosition);
             var weaponPoint = weaponGo.transform.Find("BulletStarter");
             unit.GetComponent<UnitEffectController>().attackEffectPoint = weaponPoint;
-            
+
+            if (currentType == UnitTypes.Tanker)
+            {
+                var shieldPosition = unit.LeftHandPosition;
+                var shieldGo = Instantiate(shield, shieldPosition);
+            }
+
             PartyUnits.Add(currentType, unit);
             if (stageManager.IngameStatus != IngameStatus.LevelDesign)
             {
@@ -256,10 +263,41 @@ public class UnitPartyManager : MonoBehaviour
         OnUnitUpdated?.Invoke();
     }
 
+    public void ResetUnits(Vector3 startPos)
+    {
+        Vector3 position = startPos;
 
+        for (int i = (int)UnitTypes.Tanker; i <= (int)UnitTypes.Healer; ++i)
+        {
+            var currentType = (UnitTypes)i;
 
+            var unit = Instantiate(characters[currentType], position, Quaternion.identity);
+            unit.GetComponent<DestructedDestroyEvent>().OnDestroyed += OnUnitDie;
+            position += unitOffset;
+            var currentSoilderId = InventoryManager.GetInventoryData(currentType).equipElementID;
+            var currentSoilderData = DataTableManager.SoldierTable.GetData(currentSoilderId);
+            //var weaponSocket = unit.transform.Find("Bip001").Find("Bip001 Prop1");
+            var weaponPosition = unit.RightHandPosition;
+            var weaponGo = Instantiate(weapons[currentType][(int)currentSoilderData.Grade - 1], weaponPosition);
+            var weaponPoint = weaponGo.transform.Find("BulletStarter");
+            unit.GetComponent<UnitEffectController>().attackEffectPoint = weaponPoint;
 
+            if (currentType == UnitTypes.Tanker)
+            {
+                var shieldPosition = unit.LeftHandPosition;
+                var shieldGo = Instantiate(shield, shieldPosition);
+            }
 
+            PartyUnits.Add(currentType, unit);
+            if (stageManager.IngameStatus != IngameStatus.LevelDesign)
+            {
+                UnitCombatPowerCalculator.Init(currentType);
+            }
+            unit.SetData(currentSoilderData);
+        }
+        OnUnitCreated?.Invoke();
+        OnUnitUpdated?.Invoke();
+    }
     public bool NeedHealUnit()
     {
         foreach (var unit in PartyUnits)

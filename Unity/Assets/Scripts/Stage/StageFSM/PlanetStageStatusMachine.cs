@@ -191,8 +191,8 @@ public class PlanetStageStatusMachine : StageStatusMachine
 
     protected void NextStage()
     {
-
-        if (status == Status.ClearPlanet
+        if (Variables.stageMode == StageMode.Repeat
+            || status == Status.ClearPlanet
             || status == Status.Defeat
             || status == Status.Timeout
             || stageManager.UnitPartyManager.UnitCount != 3)
@@ -202,6 +202,7 @@ public class PlanetStageStatusMachine : StageStatusMachine
         else
         {
             stageManager.UnitPartyManager.ResetUnitHealth();
+            stageManager.UnitPartyManager.ResetUnitBarrier();
             stageManager.UnitPartyManager.ResetSkillCoolTime();
             stageManager.UnitPartyManager.ResetStatus();
 
@@ -253,11 +254,13 @@ public class PlanetStageStatusMachine : StageStatusMachine
             {
                 stageLoadData.highPlanet = CurrentPlanet;
                 stageLoadData.highStage = CurrentStage + 1;
+                FirebaseManager.Instance.UpdateHighestStageToLeaderBoard();
             }
             else if (DataTableManager.StageTable.IsExistPlanet(CurrentPlanet + 1))
             {
                 stageLoadData.highPlanet = CurrentPlanet + 1;
                 stageLoadData.highStage = 1;
+                FirebaseManager.Instance.UpdateHighestStageToLeaderBoard();
             }
             else
             {
@@ -322,6 +325,7 @@ public class PlanetStageStatusMachine : StageStatusMachine
     {
         stageManager.UnitPartyManager.UnitSpawn();
         stageManager.UnitPartyManager.ResetUnitHealth();
+        stageManager.UnitPartyManager.ResetUnitBarrier();
         stageManager.UnitPartyManager.ResetSkillCoolTime();
         stageManager.UnitPartyManager.ResetStatus();
     }

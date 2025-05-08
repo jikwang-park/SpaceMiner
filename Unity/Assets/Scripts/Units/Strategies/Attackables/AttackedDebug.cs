@@ -10,6 +10,6 @@ public class AttackedDebug : MonoBehaviour, IAttackable
         {
             Debug.Log("크리티컬!");
         }
-        Debug.Log($"{attacker.name} => {gameObject.name} : {attack.damage}");
+        Debug.Log($"{Time.time} {attacker.name} => {gameObject.name} : {attack.damage}");
     }
 }

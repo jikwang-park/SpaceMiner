@@ -10,15 +10,36 @@ public class UnitStats : CharacterStats
 
     private Grade currentGrade;
 
-    public BigNumber barrier = 0;
+    private BigNumber barrier = 0;
+    public BigNumber Barrier
+    {
+        get
+        {
+            return barrier;
+        }
+        set
+        {
+            bool wasPositive = barrier > 0;
+            barrier = value;
+
+            if (wasPositive && barrier <= 0)
+            {
+                OnBarrierDown?.Invoke();
+            }
+        }
+    }
 
     public bool hasBarrier = false;
 
     private BigNumber buffReflectionDamage;
 
+    
+
 
     private System.Action<GameObject> ReflectDelegate;
     public event System.Action OnBarrierUp;
+    public event System.Action OnBarrierDown;
+
     public event System.Action<UnitTypes> OnAttack;
     private void Awake()
     {
@@ -84,12 +105,11 @@ public class UnitStats : CharacterStats
     public void SetData(SoldierTable.Data data, UnitTypes type)
     {
         moveSpeed = data.MoveSpeed;
-
         coolDown = 100f / data.AttackSpeed;
         this.type = type;
-        
-
         currentGrade = data.Grade;
+
+        float prevRatio = maxHp > 0 ? Hp.DivideToFloat(maxHp) : 0f;
 
         coolDown = 1;
         range = data.Range;
@@ -105,7 +125,7 @@ public class UnitStats : CharacterStats
         }
         else
         {
-            RecalculateHpWithRatio();
+            Hp = maxHp * prevRatio;
         }
 
     }
@@ -256,19 +276,28 @@ public class UnitStats : CharacterStats
 
     private IEnumerator RemoveBarrierAfterDuration(float duration, BigNumber amount)
     {
-        yield return new WaitForSeconds(duration);
-        barrier -= amount;
+        float timer = 0f;
 
+        while (timer < duration)
+        {
+            if (barrier <= 0 && hasBarrier)
+            {
+                barrier = 0;
+                hasBarrier = false;
+                yield break;
+            }
+
+            timer += Time.deltaTime;
+            yield return null;
+        }
+
+        barrier -= amount;
         if (barrier < 0)
             barrier = 0;
+
         hasBarrier = false;
     }
 
-    //public void UseHealerBuff(BigNumber hpAmount)
-    //{
-    //    var takeDamage = GetComponent<AttackedTakeUnitDamage>();
-    //    takeDamage.OnDamageOverflowed += (unit) => unit.unitStats.Hp = hpAmount;
-    //}
 
 
 

@@ -28,7 +28,7 @@ public class DungeonEnterRow : MonoBehaviour
         keyItemID = dungeonData.NeedKeyItemID;
         needItemCount = dungeonData.NeedKeyItemCount;
         nameText.SetString(dungeonData.NameStringID);
-        detailText.SetString(dungeonData.NameStringID);
+        detailText.SetString(dungeonData.DetailStringID);
         iconImage.SetSprite(dungeonData.SpriteID);
         keyAmountText.SetStringArguments(needItemCount.ToString(), ItemManager.GetItemAmount(dungeonData.NeedKeyItemID).ToString());
 

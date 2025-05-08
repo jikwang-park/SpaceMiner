@@ -23,6 +23,7 @@ public class DungeonTable : DataTable
         public int WaveID { get; set; }
         public int PrefabID { get; set; }
         public int SpriteID { get; set; }
+        public int DetailStringID { get; set; }
 
         public void Set(string[] argument)
         {
@@ -42,6 +43,7 @@ public class DungeonTable : DataTable
             WaveID = int.Parse(argument[13]);
             PrefabID = int.Parse(argument[14]);
             SpriteID = int.Parse(argument[15]);
+            DetailStringID = int.Parse(argument[16]);
         }
     }
 

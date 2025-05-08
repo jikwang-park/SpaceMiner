@@ -40,6 +40,7 @@ public class UnitUiManager : MonoBehaviour
             {
                 case UnitTypes.Tanker:
                     stats.OnHpChanged += (amount) => { tankerSlider.value = amount; };
+
                     break;
                 case UnitTypes.Dealer:
                     stats.OnHpChanged += (amount) => { dealerSlider.value = amount; };
@@ -52,5 +53,6 @@ public class UnitUiManager : MonoBehaviour
             }
         }
     }
+
 
 }

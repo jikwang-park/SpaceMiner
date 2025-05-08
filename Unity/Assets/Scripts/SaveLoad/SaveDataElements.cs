@@ -72,7 +72,7 @@ public class StageSaveData
     public Dictionary<int, int> highestDungeon = new Dictionary<int, int>();
     [JsonConverter(typeof(IntKeyDictionaryConverter<int>))]
     public Dictionary<int, int> clearedDungeon = new Dictionary<int, int>();
-    public BigNumber dungeonTwoDamage = new BigNumber();
+    public BigNumber dungeonTwoDamage;
 
     public static StageSaveData CreateDefault()
     {

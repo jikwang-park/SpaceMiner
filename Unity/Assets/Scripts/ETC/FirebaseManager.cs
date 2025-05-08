@@ -154,7 +154,7 @@ public class FirebaseManager : Singleton<FirebaseManager>
             throw new InvalidOperationException("로그인 필요");
         }
 
-        BigNumber combatPower = UnitCombatPowerCalculator.ToTalCombatPower;
+        BigNumber combatPower = UnitCombatPowerCalculator.TotalCombatPower;
         string displayCombatPower = combatPower.ToString();
         string sortKeyCombatPower = combatPower.GetSortKey();
         string nickname = User.DisplayName;

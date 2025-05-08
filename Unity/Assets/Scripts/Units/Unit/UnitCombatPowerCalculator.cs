@@ -25,7 +25,7 @@ public static class UnitCombatPowerCalculator
         public float addNormalDamage;
         public float addBossDamage;
     }
-    public static BigNumber ToTalCombatPower { get; private set; }
+    public static BigNumber TotalCombatPower { get; private set; }
     static UnitCombatPowerCalculator()
     {
         CalculateTotalCombatPower();
@@ -71,9 +71,9 @@ public static class UnitCombatPowerCalculator
     public static void CalculateTotalCombatPower()
     {
         var calculatedCombatPower = GetTankerCombatPower() + GetDealerCombatPower() + GetHealerCombatPower();
-        if (ToTalCombatPower != calculatedCombatPower)
+        if (TotalCombatPower != calculatedCombatPower)
         {
-            ToTalCombatPower = calculatedCombatPower;
+            TotalCombatPower = calculatedCombatPower;
             onCombatPowerChanged?.Invoke();
         }
     }
@@ -98,9 +98,12 @@ public static class UnitCombatPowerCalculator
         BigNumber soldierHp = GetStats(UnitTypes.Tanker, UnitUpgradeTable.UpgradeType.HealthPoint);
         float soldierCriticalPossibility = GetCriticalStats(UnitTypes.Tanker, UnitUpgradeTable.UpgradeType.CriticalPossibility);
         float soldierCriticalMultiplier = GetCriticalStats(UnitTypes.Tanker, UnitUpgradeTable.UpgradeType.CriticalDamages);
+        float soldierAddNormalDamage = GetEffectItemStat(EffectItemTable.ItemType.NormalMonsterDamage);
+        float soldierAddBossDamage = GetEffectItemStat(EffectItemTable.ItemType.BossMonsterDamage);
+        BigNumber soldierAttackSpeed = soldierBaseAttackSpeed * GetEffectItemStat(EffectItemTable.ItemType.AttackSpeed);
 
         BigNumber expectedAttack = GetExpectedDamage(soldierAttack, soldierCriticalMultiplier, soldierCriticalPossibility, skillId, false);
-        BigNumber attackPowerPerSecond = GetAttackPowerPerSecond(expectedAttack, soldierBaseAttackSpeed);
+        BigNumber attackPowerPerSecond = GetAttackPowerPerSecond(expectedAttack, soldierAttackSpeed, soldierAddNormalDamage, soldierAddBossDamage);
 
         combatPower = (attackPowerPerSecond * (soldierBaseAttack / weightDivider)) + (soldierArmor * (soldierBaseArmor / weightDivider)) + ((soldierHp + (soldierArmor * skillData.ShieldRatio * tankerSkillWeight / skillData.CoolTime)) * (soldierBaseHp / weightDivider));
 
@@ -123,14 +126,17 @@ public static class UnitCombatPowerCalculator
         BigNumber soldierBaseHp = unitData.HP;
         BigNumber soldierBaseAttackSpeed = unitData.AttackSpeed;
 
-        BigNumber soldierAttack = GetStats(UnitTypes.Healer, UnitUpgradeTable.UpgradeType.AttackPoint);
-        BigNumber soldierArmor = GetStats(UnitTypes.Healer, UnitUpgradeTable.UpgradeType.DefensePoint);
-        BigNumber soldierHp = GetStats(UnitTypes.Healer, UnitUpgradeTable.UpgradeType.HealthPoint);
-        float soldierCriticalPossibility = GetCriticalStats(UnitTypes.Healer, UnitUpgradeTable.UpgradeType.CriticalPossibility);
-        float soldierCriticalMultiplier = GetCriticalStats(UnitTypes.Healer, UnitUpgradeTable.UpgradeType.CriticalDamages);
+        BigNumber soldierAttack = GetStats(UnitTypes.Dealer, UnitUpgradeTable.UpgradeType.AttackPoint);
+        BigNumber soldierArmor = GetStats(UnitTypes.Dealer, UnitUpgradeTable.UpgradeType.DefensePoint);
+        BigNumber soldierHp = GetStats(UnitTypes.Dealer, UnitUpgradeTable.UpgradeType.HealthPoint);
+        float soldierCriticalPossibility = GetCriticalStats(UnitTypes.Dealer, UnitUpgradeTable.UpgradeType.CriticalPossibility);
+        float soldierCriticalMultiplier = GetCriticalStats(UnitTypes.Dealer, UnitUpgradeTable.UpgradeType.CriticalDamages);
+        float soldierAddNormalDamage = GetEffectItemStat(EffectItemTable.ItemType.NormalMonsterDamage);
+        float soldierAddBossDamage = GetEffectItemStat(EffectItemTable.ItemType.BossMonsterDamage);
+        BigNumber soldierAttackSpeed = soldierBaseAttackSpeed * GetEffectItemStat(EffectItemTable.ItemType.AttackSpeed);
 
         BigNumber expectedAttack = GetExpectedDamage(soldierAttack, soldierCriticalMultiplier, soldierCriticalPossibility, skillId, false);
-        BigNumber attackPowerPerSecond = GetAttackPowerPerSecond(expectedAttack, soldierBaseAttackSpeed);
+        BigNumber attackPowerPerSecond = GetAttackPowerPerSecond(expectedAttack, soldierAttackSpeed, soldierAddNormalDamage, soldierAddBossDamage);
 
         BigNumber skillExpectedAttack = GetExpectedDamage(soldierAttack, soldierCriticalMultiplier, soldierCriticalPossibility, skillId, true);
 
@@ -159,9 +165,12 @@ public static class UnitCombatPowerCalculator
         BigNumber soldierHp = GetStats(UnitTypes.Healer, UnitUpgradeTable.UpgradeType.HealthPoint);
         float soldierCriticalPossibility = GetCriticalStats(UnitTypes.Healer, UnitUpgradeTable.UpgradeType.CriticalPossibility);
         float soldierCriticalMultiplier = GetCriticalStats(UnitTypes.Healer, UnitUpgradeTable.UpgradeType.CriticalDamages);
+        float soldierAddNormalDamage = GetEffectItemStat(EffectItemTable.ItemType.NormalMonsterDamage);
+        float soldierAddBossDamage = GetEffectItemStat(EffectItemTable.ItemType.BossMonsterDamage);
+        BigNumber soldierAttackSpeed = soldierBaseAttackSpeed * GetEffectItemStat(EffectItemTable.ItemType.AttackSpeed);
 
         BigNumber expectedAttack = GetExpectedDamage(soldierAttack, soldierCriticalMultiplier, soldierCriticalPossibility, skillId, false);
-        BigNumber attackPowerPerSecond = GetAttackPowerPerSecond(expectedAttack, soldierBaseAttackSpeed);
+        BigNumber attackPowerPerSecond = GetAttackPowerPerSecond(expectedAttack, soldierAttackSpeed, soldierAddNormalDamage, soldierAddBossDamage);
 
         combatPower = (attackPowerPerSecond * (soldierBaseAttack / weightDivider)) + (soldierArmor * (soldierBaseArmor / weightDivider)) + ((soldierHp + (soldierHp * skillData.HealRatio * healerSkillWeight / skillData.CoolTime)) * (soldierBaseHp / weightDivider));
 
@@ -179,17 +188,17 @@ public static class UnitCombatPowerCalculator
         unitCombatStats.soldierMaxHp = GetStats(unitType, UnitUpgradeTable.UpgradeType.HealthPoint);
         unitCombatStats.criticalPossibility = GetCriticalStats(unitType, UnitUpgradeTable.UpgradeType.CriticalPossibility);
         unitCombatStats.criticalMultiplier = GetCriticalStats(unitType, UnitUpgradeTable.UpgradeType.CriticalDamages);
-        unitCombatStats.coolDown = 100f / unitData.AttackSpeed;
+        unitCombatStats.coolDown = 100f / (unitData.AttackSpeed * GetEffectItemStat(EffectItemTable.ItemType.AttackSpeed)); 
         unitCombatStats.moveSpeed = unitData.MoveSpeed;
         unitCombatStats.attackRange = unitData.Range;
-        unitCombatStats.addNormalDamage = GetAddDamageStat(EffectItemTable.ItemType.NormalMonsterDamage);
-        unitCombatStats.addBossDamage = GetAddDamageStat(EffectItemTable.ItemType.BossMonsterDamage);
+        unitCombatStats.addNormalDamage = GetEffectItemStat(EffectItemTable.ItemType.NormalMonsterDamage);
+        unitCombatStats.addBossDamage = GetEffectItemStat(EffectItemTable.ItemType.BossMonsterDamage);
 
         return unitCombatStats;
     }
-    public static BigNumber GetAttackPowerPerSecond(BigNumber expectedDamage, BigNumber attackSpeed)
+    public static BigNumber GetAttackPowerPerSecond(BigNumber expectedDamage, BigNumber attackSpeed, float addNormalDamage, float addBossDamage)
     {
-        return expectedDamage * (attackSpeed / 100);
+        return expectedDamage * (attackSpeed / 100) *  (1 + (addNormalDamage + addBossDamage) / 2);
     }
     public static BigNumber GetExpectedDamage(BigNumber normalDamage, float criticalMul, float criticalPossibility, int skillId, bool isDealerSkill)
     {
@@ -206,20 +215,11 @@ public static class UnitCombatPowerCalculator
         }
         return expectedDamage;
     }
-    public static float GetAddDamageStat(EffectItemTable.ItemType type)
+    public static float GetEffectItemStat(EffectItemTable.ItemType type)
     {
-        switch (type)
-        {
-            case EffectItemTable.ItemType.BossMonsterDamage:
-                int bossDamageEffectItemLevel = EffectItemInventoryManager.GetLevel(type);
-                float bossDamageEffectItemValue = DataTableManager.EffectItemTable.GetDatas(type)[bossDamageEffectItemLevel].Value;
-                return 1 + bossDamageEffectItemValue;
-            case EffectItemTable.ItemType.NormalMonsterDamage:
-                int normalDamageEffectItemLevel = EffectItemInventoryManager.GetLevel(type);
-                float normalDamageEffectItemValue = DataTableManager.EffectItemTable.GetDatas(type)[normalDamageEffectItemLevel].Value;
-                return 1 + normalDamageEffectItemValue;
-        }
-        return 0;
+        int effectItemLevel = EffectItemInventoryManager.GetLevel(type);
+        float effectItemValue = DataTableManager.EffectItemTable.GetDatas(type)[effectItemLevel].Value;
+        return (1 + effectItemValue);
     }
     public static float GetCriticalStats(UnitTypes unitType, UpgradeType upgradeType)
     {
@@ -276,11 +276,9 @@ public static class UnitCombatPowerCalculator
                 var buildingAttackLevel = SaveLoadManager.Data.buildingData.buildingLevels[BuildingTable.BuildingType.AttackPoint];
                 var buildingAttackStats = buildingAttackDatas[buildingAttackLevel].Value;
 
-                var attackEffectItemDatas = DataTableManager.EffectItemTable.GetDatas(EffectItemTable.ItemType.Attack);
-                var attackEffectItemLevel = EffectItemInventoryManager.GetLevel(EffectItemTable.ItemType.Attack);
-                var attackEffectItemStats = attackEffectItemDatas[attackEffectItemLevel].Value;
+                var attackEffectItemStats = GetEffectItemStat(EffectItemTable.ItemType.Attack);
 
-                attackStat = (unitData.Attack + accountAttackStat) * (1 + buildingAttackStats) * (1 + attackEffectItemStats);
+                attackStat = (unitData.Attack + accountAttackStat) * (1 + buildingAttackStats) * attackEffectItemStats;
                 return attackStat;
             case UpgradeType.HealthPoint:
                 BigNumber hpStat = 0;
@@ -291,11 +289,9 @@ public static class UnitCombatPowerCalculator
                 var buildingHpLevel = SaveLoadManager.Data.buildingData.buildingLevels[BuildingTable.BuildingType.HealthPoint];
                 var buildingHpStats = buildingHpDatas[buildingHpLevel].Value;
 
-                var hpEffectItemDatas = DataTableManager.EffectItemTable.GetDatas(EffectItemTable.ItemType.HP);
-                var hpEffectItemLevel = EffectItemInventoryManager.GetLevel(EffectItemTable.ItemType.HP);
-                var hpEffectItemStats = hpEffectItemDatas[hpEffectItemLevel].Value;
+                var hpEffectItemStats = GetEffectItemStat(EffectItemTable.ItemType.HP);
 
-                hpStat = (unitData.HP + accountHpStat) * (1 + buildingHpStats) * (1 + hpEffectItemStats);
+                hpStat = (unitData.HP + accountHpStat) * (1 + buildingHpStats) * hpEffectItemStats;
                 return hpStat;
             case UpgradeType.DefensePoint:
                 BigNumber armorStat = 0;
@@ -306,11 +302,9 @@ public static class UnitCombatPowerCalculator
                 var buildingArmorLevel = SaveLoadManager.Data.buildingData.buildingLevels[BuildingTable.BuildingType.DefensePoint];
                 var buildingArmorStats = buildingArmorDatas[buildingArmorLevel].Value;
 
-                var armorEffectItemDatas = DataTableManager.EffectItemTable.GetDatas(EffectItemTable.ItemType.Defence);
-                var armorEffectItemLevel = EffectItemInventoryManager.GetLevel(EffectItemTable.ItemType.Defence);
-                var armorEffectItemStats = armorEffectItemDatas[armorEffectItemLevel].Value;
+                var armorEffectItemStats = GetEffectItemStat(EffectItemTable.ItemType.Defence);
 
-                armorStat = (unitData.Defence + accountArmorStat) * (1 + buildingArmorStats) * (1 + armorEffectItemStats);
+                armorStat = (unitData.Defence + accountArmorStat) * (1 + buildingArmorStats) * armorEffectItemStats;
                 return armorStat;
         }
         return 0;

@@ -156,17 +156,23 @@ public class UnitStats : CharacterStats
 
         var stats = UnitCombatPowerCalculator.statsDictionary[type];
         var criticalChance = stats.criticalPossibility;
+        var monsterType = defenderStats.GetComponent<MonsterController>().monsterType;
+
+        if (monsterType == MonsterType.Boss)
+        {
+            attack.damage = stats.soldierAttack * stats.addBossDamage;
+        }
+        else
+        {
+            attack.damage = stats.soldierAttack * stats.addNormalDamage;
+        }
 
         attack.isCritical = criticalChance >= Random.Range(0f, 1f);
         if (attack.isCritical)
         {
             var multiplier = stats.criticalMultiplier;
 
-            attack.damage = stats.soldierAttack * multiplier;
-        }
-        else
-        {
-            attack.damage = stats.soldierAttack;
+            attack.damage *= multiplier;
         }
 
         return attack;
@@ -200,8 +206,17 @@ public class UnitStats : CharacterStats
         var stats = UnitCombatPowerCalculator.statsDictionary[type];
 
         var unit = GetComponent<Unit>();
+        var monsterType = defenderStats.GetComponent<MonsterController>().monsterType;
 
         BigNumber finialSkillDamage = stats.soldierAttack * unit.Skill.Ratio;
+        if (monsterType == MonsterType.Boss)
+        {
+            attack.damage = finialSkillDamage * stats.addBossDamage;
+        }
+        else
+        {
+            attack.damage = finialSkillDamage * stats.addNormalDamage;
+        }
 
 
         var criticalChance = stats.criticalPossibility;
@@ -210,11 +225,7 @@ public class UnitStats : CharacterStats
         if (attack.isCritical)
         {
             var multiplier = stats.criticalMultiplier;
-            attack.damage = finialSkillDamage * multiplier;
-        }
-        else
-        {
-            attack.damage = finialSkillDamage;
+            attack.damage *= multiplier;
         }
 
 
@@ -297,8 +308,4 @@ public class UnitStats : CharacterStats
 
         hasBarrier = false;
     }
-
-
-
-
 }

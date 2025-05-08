@@ -59,6 +59,8 @@ public class DataTableIds
     public const string miningBattleSpawnTable = "MiningBattleSpawnTable";
 
     public const string tutorialTable = "TutorialTable";
+
+    public const string contentsOpenTable = "ContentsOpenTable";
 }
 
 public enum StageMode
@@ -144,6 +146,7 @@ public class Defines
     public const int WaveTextStringID = 147;
     public const int StageDefaultStringID = 131;
     public const int DirectStringID = 60011;
+    public const int MiningBattleMaxCount = 5;
 }
 
 public enum RankingType

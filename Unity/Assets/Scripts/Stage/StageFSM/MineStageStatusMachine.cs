@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using UnityEditorInternal.Profiling.Memory.Experimental;
 using UnityEngine;
 using UnityEngine.AI;
 
@@ -53,7 +54,7 @@ public class MineStageStatusMachine : StageStatusMachine
             stageManager.CameraManager.SetCameraRotation(stageMachineData.cameraRotation);
             stageManager.CameraManager.SetCameraOffset(stageMachineData.cameraPosition);
 
-            
+
             stageManager.StageUiManager.IngameUIManager.mineBattleButton.gameObject.SetActive(true);
 
             MiningRobotInventoryManager.onEquipRobot += OnEquipChanged;
@@ -198,7 +199,10 @@ public class MineStageStatusMachine : StageStatusMachine
     public void StartMineBattle()
     {
         status = Status.Battle;
-        battleData = DataTableManager.MiningBattleTable.GetData(101);
+
+        var datas = DataTableManager.MiningBattleTable.GetDatas(Variables.planetMiningID);
+
+        battleData = datas[Variables.planetMiningStage - 1];
         battleSpawnData = DataTableManager.MiningBattleSpawnTable.GetData(battleData.SpawnTableID);
 
         stageStartTime = Time.time;
@@ -285,13 +289,31 @@ public class MineStageStatusMachine : StageStatusMachine
     public void OnStageEnd(bool isTimeOver)
     {
         status = Status.Normal;
+
+        stageManager.StageMonsterManager.StopMonster();
+        stageManager.UnitPartyManager.UnitDespawn();
+        stageManager.StageMonsterManager.ClearMonster();
+
         if (isTimeOver && centerHP > 0)
         {
+            List<(int itemID, BigNumber amount)> gotItems = new List<(int itemID, BigNumber amount)>();
+
             ItemManager.AddItem(battleData.Reward1ItemID, battleData.Reward1ItemCount);
+            gotItems.Add((battleData.Reward1ItemID, battleData.Reward1ItemCount));
             if (Random.value < battleData.Reward2ItemProbability)
             {
                 ItemManager.AddItem(battleData.Reward2ItemID, battleData.Reward2ItemCount);
+                gotItems.Add((battleData.Reward2ItemID, battleData.Reward2ItemCount));
             }
+
+            ++SaveLoadManager.Data.mineBattleData.mineBattleCount;
+            SaveLoadManager.Data.mineBattleData.lastClearTime = TimeManager.Instance.GetEstimatedServerTime();
+
+            stageManager.StageUiManager.IngameUIManager.miningBattleResultWindow.ShowClear(battleData, gotItems);
+        }
+        else
+        {
+            stageManager.StageUiManager.IngameUIManager.miningBattleResultWindow.ShowDefeat(battleData);
         }
         stageManager.StageUiManager.IngameUIManager.timerText.gameObject.SetActive(false);
         stageManager.StageUiManager.IngameUIManager.waveText.gameObject.SetActive(false);

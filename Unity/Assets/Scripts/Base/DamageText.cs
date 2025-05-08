@@ -45,9 +45,9 @@ public class DamageText : MonoBehaviour, IObjectPoolGameObject
             Release();
             return;
         }
-        Vector3 pos = startPos;
+        Vector3 pos = Camera.main.WorldToScreenPoint(startPos);
         pos.y += risingSpeed * (Time.time - startTime);
-        transform.position = Camera.main.WorldToScreenPoint(pos);
+        transform.position = pos;
     }
 
     public void Release()

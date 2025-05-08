@@ -160,7 +160,6 @@ public class PlanetStageStatusMachine : StageStatusMachine
     protected void StageEnd(Status status)
     {
         this.status = status;
-        onStageEnd?.Invoke();
 
         switch (this.status)
         {
@@ -186,6 +185,7 @@ public class PlanetStageStatusMachine : StageStatusMachine
                 FailStageSet();
                 break;
         }
+        onStageEnd?.Invoke();
         SaveLoadManager.SaveGame();
     }
 

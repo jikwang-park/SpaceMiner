@@ -30,7 +30,7 @@ public class MonsterHPBar : MonoBehaviour, IObjectPoolGameObject
     {
         Vector3 targetPos = target.position;
 
-        Vector3 screenPos = Camera.main.WorldToScreenPoint(targetPos + offset);
+        Vector3 screenPos = Camera.main.WorldToScreenPoint(targetPos) + offset;
 
         transform.position = screenPos;
     }

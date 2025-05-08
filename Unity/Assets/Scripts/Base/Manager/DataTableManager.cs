@@ -179,6 +179,10 @@ public static class DataTableManager
         var tutorialTable = new TutorialTable();
         tutorialTable.Load(DataTableIds.tutorialTable);
         tables.Add(DataTableIds.tutorialTable, tutorialTable);
+
+        var contentsOpenTable = new ContentsOpenTable();
+        contentsOpenTable.Load(DataTableIds.contentsOpenTable);
+        tables.Add(DataTableIds.contentsOpenTable, contentsOpenTable);
     }
 
 
@@ -294,4 +298,7 @@ public static class DataTableManager
 
     public static EffectItemTable EffectItemTable
         => GetTable<EffectItemTable>(DataTableIds.effectItemTable);
+
+    public static ContentsOpenTable ContentsOpenTable
+        => GetTable<ContentsOpenTable>(DataTableIds.contentsOpenTable);
 }

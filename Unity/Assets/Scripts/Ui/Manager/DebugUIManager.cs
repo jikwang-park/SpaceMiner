@@ -144,6 +144,7 @@ public class DebugUIManager : MonoBehaviour
                 {
                     SaveLoadManager.SetDefaultData();
                     GuideQuestManager.ChangeQuest(SaveLoadManager.Data.questProgressData.currentQuest);
+                    SaveLoadManager.SaveGame();
                 };
                 break;
             case ActionType.StatReset:
@@ -151,6 +152,7 @@ public class DebugUIManager : MonoBehaviour
                 confirmAction = () =>
                 {
                     SaveLoadManager.ResetStatUpgradeData();
+                    SaveLoadManager.SaveGame();
                 };
                 break;
             case ActionType.SoldierReset:
@@ -158,6 +160,7 @@ public class DebugUIManager : MonoBehaviour
                 confirmAction = () =>
                 {
                     SaveLoadManager.ResetSoldierInventoryData();
+                    SaveLoadManager.SaveGame();
                 };
                 break;
             case ActionType.SoldierUnlock:
@@ -165,6 +168,7 @@ public class DebugUIManager : MonoBehaviour
                 confirmAction = () =>
                 {
                     InventoryManager.UnlockAllDatas();
+                    SaveLoadManager.SaveGame();
                 };
                 break;
             case ActionType.SkillReset:
@@ -172,6 +176,7 @@ public class DebugUIManager : MonoBehaviour
                 confirmAction = () =>
                 {
                     SaveLoadManager.ResetSkillUpgradeData();
+                    SaveLoadManager.SaveGame();
                 };
                 break;
             case ActionType.BuildingReset:
@@ -179,6 +184,7 @@ public class DebugUIManager : MonoBehaviour
                 confirmAction = () =>
                 {
                     SaveLoadManager.ResetBuildingUpgradeData();
+                    SaveLoadManager.SaveGame();
                 };
                 break;
             case ActionType.RobotReset:
@@ -186,6 +192,7 @@ public class DebugUIManager : MonoBehaviour
                 confirmAction = () =>
                 {
                     SaveLoadManager.ResetMiningRobotInventoryData();
+                    SaveLoadManager.SaveGame();
                 };
                 break;
             case ActionType.ShopRestock:
@@ -193,6 +200,7 @@ public class DebugUIManager : MonoBehaviour
                 confirmAction = () =>
                 {
                     SaveLoadManager.ResetDungeonKeyShopData();
+                    SaveLoadManager.SaveGame();
                 };
                 break;
             case ActionType.Time:
@@ -215,6 +223,7 @@ public class DebugUIManager : MonoBehaviour
                 confirmAction = () =>
                 {
                     SaveLoadManager.ResetStageSaveData();
+                    SaveLoadManager.SaveGame();
                 };
                 break;
             case ActionType.StageUnlock:
@@ -222,6 +231,8 @@ public class DebugUIManager : MonoBehaviour
                 confirmAction = () =>
                 {
                     SaveLoadManager.UnlockAllStage();
+                    stageManager.StageEnd();
+                    SaveLoadManager.SaveGame();
                 };
                 break;
             case ActionType.ItemReset:
@@ -229,6 +240,7 @@ public class DebugUIManager : MonoBehaviour
                 confirmAction = () =>
                 {
                     SaveLoadManager.ResetItemSaveData();
+                    SaveLoadManager.SaveGame();
                 };
                 break;
             default:

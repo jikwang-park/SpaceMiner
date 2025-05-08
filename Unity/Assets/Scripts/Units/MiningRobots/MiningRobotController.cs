@@ -24,8 +24,8 @@ public class MiningRobotController : MonoBehaviour, IObjectPoolGameObject
 
     private AnimationControl animationControl;
 
-    public float miningSpeed { get; private set; }
-    public int productCapacity { get; private set; }
+    public int MiningSpeed { get; private set; }
+    public int ProductCapacity { get; private set; }
 
     public float MoveSpeed { get; private set; }
 
@@ -134,8 +134,8 @@ public class MiningRobotController : MonoBehaviour, IObjectPoolGameObject
         int miningSpeedLevel = EffectItemInventoryManager.GetLevel(EffectItemTable.ItemType.MiningRobotProductSpeed);
         int miningSpeedEffect = (int)DataTableManager.EffectItemTable.GetDatas(EffectItemTable.ItemType.MiningRobotProductSpeed)[miningSpeedLevel].Value;
 
-        productCapacity = RobotData.ProductCapacity + productCapacityEffect;
-        miningSpeed = RobotData.MiningSpeed + miningSpeedEffect;
+        ProductCapacity = RobotData.ProductCapacity + productCapacityEffect;
+        MiningSpeed = RobotData.MiningSpeed + miningSpeedEffect;
     }
 
     private void OnEffectItemLevelUp(int itemID)

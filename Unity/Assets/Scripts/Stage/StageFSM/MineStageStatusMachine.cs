@@ -1,12 +1,10 @@
 using System.Collections;
 using System.Collections.Generic;
-using UnityEditorInternal.Profiling.Memory.Experimental;
 using UnityEngine;
 using UnityEngine.AI;
-
 public class MineStageStatusMachine : StageStatusMachine
 {
-    private const float spawnIntervalReduction = 10f;
+    private const float ChangeInterval = 10f;
 
     private enum Status
     {
@@ -34,6 +32,8 @@ public class MineStageStatusMachine : StageStatusMachine
     private float spawnIntervalReduceTime;
     private float spawnInterval;
     private float[] spawnTimers = new float[4];
+
+    private float[] weight = new float[3] { 1f, 1f, 1f };
 
     public MineStageStatusMachine(StageManager stageManager) : base(stageManager)
     {
@@ -64,6 +64,14 @@ public class MineStageStatusMachine : StageStatusMachine
             stageManager.CameraManager.enabled = true;
             stageManager.CameraManager.SetCameraRotation();
             stageManager.CameraManager.SetCameraOffset();
+
+            if (status == Status.Battle)
+            {
+                status = Status.Normal;
+                stageManager.StageMonsterManager.StopMonster();
+                stageManager.UnitPartyManager.UnitDespawn();
+                stageManager.StageMonsterManager.ClearMonster();
+            }
 
             stageManager.StageUiManager.IngameUIManager.mineBattleButton.gameObject.SetActive(false);
 
@@ -207,7 +215,7 @@ public class MineStageStatusMachine : StageStatusMachine
 
         stageStartTime = Time.time;
         stageEndTime = stageStartTime + battleData.LimitTime;
-
+        weight[1] = 1f;
         stageManager.StageUiManager.IngameUIManager.waveText.gameObject.SetActive(true);
         stageManager.StageUiManager.IngameUIManager.timerText.gameObject.SetActive(true);
         stageManager.StageUiManager.InteractableUIBackground.gameObject.SetActive(false);
@@ -222,7 +230,7 @@ public class MineStageStatusMachine : StageStatusMachine
             spawnTimers[i] = Time.time + battleSpawnData.SpawnerActivationTimes[i];
         }
 
-        spawnIntervalReduceTime = Time.time + spawnIntervalReduction;
+        spawnIntervalReduceTime = Time.time + ChangeInterval;
         spawnInterval = battleSpawnData.SpawnInterval;
 
         var minego = stageManager.ObjectPoolManager.Get(DataTableManager.AddressTable.GetData(battleData.PrefabID));
@@ -252,8 +260,10 @@ public class MineStageStatusMachine : StageStatusMachine
 
         if (spawnIntervalReduceTime < currentTime)
         {
-            spawnIntervalReduceTime += spawnIntervalReduction;
+            spawnIntervalReduceTime += ChangeInterval;
             spawnInterval -= battleSpawnData.SpawnIntervalReduction;
+            weight[1] += battleSpawnData.HPIncreasement;
+            stageManager.StageMonsterManager.SetWeight(weight);
         }
 
         for (int i = 0; i < spawnTimers.Length; ++i)
@@ -270,7 +280,6 @@ public class MineStageStatusMachine : StageStatusMachine
                 monsterController.hasTarget = true;
             }
         }
-
         stageManager.StageUiManager.IngameUIManager.SetTimer(remainingTime);
     }
 

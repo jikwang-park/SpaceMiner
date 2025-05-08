@@ -19,10 +19,10 @@ public class MiningAction : ActionNode<MiningRobotController>
         switch (context.Slot)
         {
             case 0:
-                targetTime = Time.time + (float)context.PlanetData.MiningLevel1 / context.RobotData.MiningSpeed;
+                targetTime = Time.time + (float)context.PlanetData.MiningLevel1 / context.MiningSpeed;
                 break;
             case 1:
-                targetTime = Time.time + (float)context.PlanetData.MiningLevel2 / context.RobotData.MiningSpeed;
+                targetTime = Time.time + (float)context.PlanetData.MiningLevel2 / context.MiningSpeed;
                 break;
         }
         animatorControl.Play(AnimationControl.AnimationClipID.Attack);

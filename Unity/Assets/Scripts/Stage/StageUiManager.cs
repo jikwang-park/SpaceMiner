@@ -25,7 +25,10 @@ public class StageUiManager : MonoBehaviour
     public GameObject InteractableUIBackground { get; private set; }
 
     [field: SerializeField]
-    public TutorialWindow TutorialWindow { get; private set; }
+    public TutorialPage TutorialWindow { get; private set; }
+
+    [field:SerializeField]
+    public GameObject ResourceRow { get; private set; }
 
     public event System.Action OnExitButtonClicked;
 

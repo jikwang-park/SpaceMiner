@@ -18,7 +18,11 @@ public class IdleRewardManager : MonoBehaviour
             int idleTypeBuildingLevel = SaveLoadManager.Data.buildingData.buildingLevels[BuildingTable.BuildingType.IdleTime];
             var addData = DataTableManager.BuildingTable.GetDatas(BuildingTable.BuildingType.IdleTime)[idleTypeBuildingLevel];
             var addMinute = addData.Value;
-            return defaultMaxMinute + (int)addMinute;
+
+            int idleTimeEffectItemLevel = EffectItemInventoryManager.GetLevel(EffectItemTable.ItemType.IdleTime);
+            var idleTimeEffectItemValue = DataTableManager.EffectItemTable.GetDatas(EffectItemTable.ItemType.IdleTime)[idleTimeEffectItemLevel].Value;
+
+            return defaultMaxMinute + (int)addMinute + (int)idleTimeEffectItemValue;
         }
     }
     private void Awake()

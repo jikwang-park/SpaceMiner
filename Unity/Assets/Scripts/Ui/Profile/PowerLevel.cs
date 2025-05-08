@@ -16,6 +16,6 @@ public class PowerLevel : MonoBehaviour
 
     private void CombatPowerChange()
     {
-        powerText.text = UnitCombatPowerCalculator.ToTalCombatPower.ToString();
+        powerText.text = UnitCombatPowerCalculator.TotalCombatPower.ToString();
     }
 }

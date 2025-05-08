@@ -49,6 +49,9 @@ public class UnitStatsUpgrade : MonoBehaviour
         x100Toggle.onValueChanged.AddListener((isOn) => { if (isOn) SetMultiplier(100); });
         Init();
     }
+    private void Start()
+    {
+    }
 
     private void SetMultiplier(int multiplier)
     {
@@ -76,7 +79,7 @@ public class UnitStatsUpgrade : MonoBehaviour
                     {
                         statsElement.SetData(data[currentType], DataTableManager.UnitUpgradeTable.GetData(currentType));
                         statsElement.SetInitString(currentType);
-                        statsElement.SetImage(currentType, statsSprite);
+                        statsElement.SetInitImage(currentType);
                         statsElement.SetMultiplier(currentMultiplier);
                         allElements.Add(statsElement);
                     }

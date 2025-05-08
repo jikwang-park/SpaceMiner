@@ -27,7 +27,7 @@ public class MineBattle : MonoBehaviour
     private TextMeshProUGUI rewarditem2ProbabilityText;
 
     [SerializeField]
-    private TextMeshProUGUI remainCountText;
+    private LocalizationText remainCountText;
 
     private List<MiningBattleTable.Data> datas;
 
@@ -49,7 +49,7 @@ public class MineBattle : MonoBehaviour
         datas = DataTableManager.MiningBattleTable.GetDatas(planetID);
         maxIndex = SaveLoadManager.Data.stageSaveData.HighMineStage[planetID] - 1;
         index = maxIndex;
-        planetNameText.SetString(datas[0].NameStringID);
+        planetNameText.SetString(DataTableManager.PlanetTable.GetData(datas[0].PlanetTableID).NameStringID);
         RefreshText();
         RefreshCount();
     }
@@ -86,7 +86,7 @@ public class MineBattle : MonoBehaviour
             SaveLoadManager.Data.mineBattleData.lastClearTime = TimeManager.Instance.GetEstimatedServerTime();
         }
 
-        remainCountText.text = $"Current : {SaveLoadManager.Data.mineBattleData.mineBattleCount} / {Defines.MiningBattleMaxCount}";
+        remainCountText.SetStringArguments(SaveLoadManager.Data.mineBattleData.mineBattleCount.ToString());
     }
 
     public void OnClickEnter()

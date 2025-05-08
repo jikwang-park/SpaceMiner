@@ -63,6 +63,8 @@ public class UnitStatsUpgradeElement : MonoBehaviour, IPointerDownHandler, IPoin
 
     private int statsMultiplier = 1;
 
+    private const string maxLevelString = "Max Level";
+
     [SerializeField]
     private BigNumber currentNoneCriValue = 0;
     [SerializeField]
@@ -128,7 +130,7 @@ public class UnitStatsUpgradeElement : MonoBehaviour, IPointerDownHandler, IPoin
         }
         if (level >= maxLevel)
         {
-            needGoldText.text = "Max Level";
+            needGoldText.text = maxLevelString;
         }
         else
         {

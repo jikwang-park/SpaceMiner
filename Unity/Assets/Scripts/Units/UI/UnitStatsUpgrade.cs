@@ -49,6 +49,9 @@ public class UnitStatsUpgrade : MonoBehaviour
         x100Toggle.onValueChanged.AddListener((isOn) => { if (isOn) SetMultiplier(100); });
         Init();
     }
+    private void Start()
+    {
+    }
 
     private void SetMultiplier(int multiplier)
     {

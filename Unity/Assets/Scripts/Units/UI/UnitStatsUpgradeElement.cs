@@ -344,8 +344,8 @@ public class UnitStatsUpgradeElement : MonoBehaviour, IPointerDownHandler, IPoin
     }
     private bool isLongPressed = false;
     private Coroutine longPressedCor = null;
-    private float longPressedDealyTime = 1f;
-    private float longPressedReapeatDealyTime = 0.2f;
+    private float longPressedDealyTime = 0.7f;
+    private float longPressedReapeatDealyTime = 0.1f;
     private float pressedStartTime = 0f;
     private bool isPressing = false;
 

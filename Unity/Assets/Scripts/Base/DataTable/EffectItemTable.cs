@@ -29,7 +29,7 @@ public class EffectItemTable : DataTable
         public float Value { get; set; }
         public int NeedItemID { get; set; }
         public int NeedItemCount { get; set; }
-        public int SpriteID { get; set; }
+        public int DetailStringID { get; set; }
 
         public void Set(string[] argument)
         {
@@ -46,7 +46,7 @@ public class EffectItemTable : DataTable
             Value = float.Parse(argument[3]);
             NeedItemID = int.Parse(argument[4]);
             NeedItemCount = int.Parse(argument[5]);
-            SpriteID = int.Parse(argument[6]);
+            DetailStringID = int.Parse(argument[6]);
         }
     }
 

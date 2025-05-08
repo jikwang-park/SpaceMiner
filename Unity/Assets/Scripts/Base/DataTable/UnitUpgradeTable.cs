@@ -23,6 +23,7 @@ public class UnitUpgradeTable : DataTable
         public string NeedItemCount { get; set; }
         public int MaxLevel { get; set; }
         public int NameStringID { get; set; }
+        public int SpriteID { get; set; }
 
         public void Set(string[] argument)
         {
@@ -40,6 +41,7 @@ public class UnitUpgradeTable : DataTable
             NeedItemCount = argument[4];
             MaxLevel = int.Parse(argument[5]);
             NameStringID = int.Parse(argument[6]);
+            SpriteID = int.Parse(argument[7]);
         }
     }
 

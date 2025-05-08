@@ -84,14 +84,15 @@ public static class UnitCombatPowerCalculator
         {
             SaveLoadManager.SetDefaultData();
         }
-        SoldierTable.Data unitData = DataTableManager.SoldierTable.GetData(SaveLoadManager.Data.soldierInventorySaveData[UnitTypes.Tanker].equipElementID);
-        int skillId = SaveLoadManager.Data.unitSkillUpgradeData.skillUpgradeId[unitData.UnitType][unitData.Grade];
+        SoldierTable.Data equipUnitData = DataTableManager.SoldierTable.GetData(SaveLoadManager.Data.soldierInventorySaveData[UnitTypes.Tanker].equipElementID);
+        SoldierTable.Data baseUnitData = DataTableManager.SoldierTable.GetTypeDictionary()[UnitTypes.Tanker][0];
+        int skillId = SaveLoadManager.Data.unitSkillUpgradeData.skillUpgradeId[equipUnitData.UnitType][equipUnitData.Grade];
         TankerSkillTable.Data skillData = DataTableManager.TankerSkillTable.GetData(skillId);
 
-        BigNumber soldierBaseAttack = unitData.Attack;
-        BigNumber soldierBaseArmor = unitData.Defence;
-        BigNumber soldierBaseHp = unitData.HP;
-        BigNumber soldierBaseAttackSpeed = unitData.AttackSpeed;
+        BigNumber soldierBaseAttack = baseUnitData.Attack;
+        BigNumber soldierBaseArmor = baseUnitData.Defence;
+        BigNumber soldierBaseHp = equipUnitData.HP;
+        BigNumber soldierBaseAttackSpeed = equipUnitData.AttackSpeed;
 
         BigNumber soldierAttack = GetStats(UnitTypes.Tanker, UnitUpgradeTable.UpgradeType.AttackPoint);
         BigNumber soldierArmor = GetStats(UnitTypes.Tanker, UnitUpgradeTable.UpgradeType.DefensePoint);
@@ -105,7 +106,9 @@ public static class UnitCombatPowerCalculator
         BigNumber expectedAttack = GetExpectedDamage(soldierAttack, soldierCriticalMultiplier, soldierCriticalPossibility, skillId, false);
         BigNumber attackPowerPerSecond = GetAttackPowerPerSecond(expectedAttack, soldierAttackSpeed, soldierAddNormalDamage, soldierAddBossDamage);
 
-        combatPower = (attackPowerPerSecond * (soldierBaseAttack / weightDivider)) + (soldierArmor * (soldierBaseArmor / weightDivider)) + ((soldierHp + (soldierArmor * skillData.ShieldRatio * tankerSkillWeight / skillData.CoolTime)) * (soldierBaseHp / weightDivider));
+        BigNumber bigWeightDivider = new BigNumber(weightDivider);
+
+        combatPower = (attackPowerPerSecond * bigWeightDivider.DivideToFloat(soldierBaseAttack)) + (soldierArmor * bigWeightDivider.DivideToFloat(soldierBaseArmor)) + ((soldierHp + (soldierArmor * skillData.ShieldRatio * tankerSkillWeight / skillData.CoolTime)) * bigWeightDivider.DivideToFloat(soldierBaseHp));
 
         return combatPower;
     }
@@ -117,14 +120,15 @@ public static class UnitCombatPowerCalculator
         {
             SaveLoadManager.SetDefaultData();
         }
-        SoldierTable.Data unitData = DataTableManager.SoldierTable.GetData(SaveLoadManager.Data.soldierInventorySaveData[UnitTypes.Dealer].equipElementID);
-        int skillId = SaveLoadManager.Data.unitSkillUpgradeData.skillUpgradeId[unitData.UnitType][unitData.Grade];
+        SoldierTable.Data equipUnitData = DataTableManager.SoldierTable.GetData(SaveLoadManager.Data.soldierInventorySaveData[UnitTypes.Dealer].equipElementID);
+        SoldierTable.Data baseUnitData = DataTableManager.SoldierTable.GetTypeDictionary()[UnitTypes.Tanker][0];
+        int skillId = SaveLoadManager.Data.unitSkillUpgradeData.skillUpgradeId[equipUnitData.UnitType][equipUnitData.Grade];
         DealerSkillTable.Data skillData = DataTableManager.DealerSkillTable.GetData(skillId);
 
-        BigNumber soldierBaseAttack = unitData.Attack;
-        BigNumber soldierBaseArmor = unitData.Defence;
-        BigNumber soldierBaseHp = unitData.HP;
-        BigNumber soldierBaseAttackSpeed = unitData.AttackSpeed;
+        BigNumber soldierBaseAttack = baseUnitData.Attack;
+        BigNumber soldierBaseArmor = baseUnitData.Defence;
+        BigNumber soldierBaseHp = baseUnitData.HP;
+        BigNumber soldierBaseAttackSpeed = equipUnitData.AttackSpeed;
 
         BigNumber soldierAttack = GetStats(UnitTypes.Dealer, UnitUpgradeTable.UpgradeType.AttackPoint);
         BigNumber soldierArmor = GetStats(UnitTypes.Dealer, UnitUpgradeTable.UpgradeType.DefensePoint);
@@ -139,8 +143,9 @@ public static class UnitCombatPowerCalculator
         BigNumber attackPowerPerSecond = GetAttackPowerPerSecond(expectedAttack, soldierAttackSpeed, soldierAddNormalDamage, soldierAddBossDamage);
 
         BigNumber skillExpectedAttack = GetExpectedDamage(soldierAttack, soldierCriticalMultiplier, soldierCriticalPossibility, skillId, true);
+        BigNumber bigWeightDivider = new BigNumber(weightDivider);
 
-        combatPower = (attackPowerPerSecond + (skillExpectedAttack / skillData.CoolTime) * (soldierBaseAttack / weightDivider)) + (soldierArmor * (soldierBaseArmor / weightDivider)) + (soldierHp * (soldierBaseHp / 100));
+        combatPower = (attackPowerPerSecond + (skillExpectedAttack / skillData.CoolTime) * bigWeightDivider.DivideToFloat(soldierBaseAttack)) + (soldierArmor * bigWeightDivider.DivideToFloat(soldierBaseArmor)) + (soldierHp * bigWeightDivider.DivideToFloat(soldierBaseHp));
 
         return combatPower;
     }
@@ -151,14 +156,15 @@ public static class UnitCombatPowerCalculator
         {
             SaveLoadManager.SetDefaultData();
         }
-        SoldierTable.Data unitData = DataTableManager.SoldierTable.GetData(SaveLoadManager.Data.soldierInventorySaveData[UnitTypes.Healer].equipElementID);
-        int skillId = SaveLoadManager.Data.unitSkillUpgradeData.skillUpgradeId[unitData.UnitType][unitData.Grade];
+        SoldierTable.Data equipUnitData = DataTableManager.SoldierTable.GetData(SaveLoadManager.Data.soldierInventorySaveData[UnitTypes.Healer].equipElementID);
+        SoldierTable.Data baseUnitData = DataTableManager.SoldierTable.GetTypeDictionary()[UnitTypes.Tanker][0];
+        int skillId = SaveLoadManager.Data.unitSkillUpgradeData.skillUpgradeId[equipUnitData.UnitType][equipUnitData.Grade];
         HealerSkillTable.Data skillData = DataTableManager.HealerSkillTable.GetData(skillId);
 
-        BigNumber soldierBaseAttack = unitData.Attack;
-        BigNumber soldierBaseArmor = unitData.Defence;
-        BigNumber soldierBaseHp = unitData.HP;
-        BigNumber soldierBaseAttackSpeed = unitData.AttackSpeed;
+        BigNumber soldierBaseAttack = baseUnitData.Attack;
+        BigNumber soldierBaseArmor = baseUnitData.Defence;
+        BigNumber soldierBaseHp = baseUnitData.HP;
+        BigNumber soldierBaseAttackSpeed = equipUnitData.AttackSpeed;
 
         BigNumber soldierAttack = GetStats(UnitTypes.Healer, UnitUpgradeTable.UpgradeType.AttackPoint);
         BigNumber soldierArmor = GetStats(UnitTypes.Healer, UnitUpgradeTable.UpgradeType.DefensePoint);
@@ -171,8 +177,9 @@ public static class UnitCombatPowerCalculator
 
         BigNumber expectedAttack = GetExpectedDamage(soldierAttack, soldierCriticalMultiplier, soldierCriticalPossibility, skillId, false);
         BigNumber attackPowerPerSecond = GetAttackPowerPerSecond(expectedAttack, soldierAttackSpeed, soldierAddNormalDamage, soldierAddBossDamage);
+        BigNumber bigWeightDivider = new BigNumber(weightDivider);
 
-        combatPower = (attackPowerPerSecond * (soldierBaseAttack / weightDivider)) + (soldierArmor * (soldierBaseArmor / weightDivider)) + ((soldierHp + (soldierHp * skillData.HealRatio * healerSkillWeight / skillData.CoolTime)) * (soldierBaseHp / weightDivider));
+        combatPower = (attackPowerPerSecond * bigWeightDivider.DivideToFloat(soldierBaseAttack)) + (soldierArmor * bigWeightDivider.DivideToFloat(soldierBaseArmor)) + ((soldierHp + (soldierHp * skillData.HealRatio * healerSkillWeight / skillData.CoolTime)) * bigWeightDivider.DivideToFloat(soldierBaseHp));
 
         return combatPower;
     }

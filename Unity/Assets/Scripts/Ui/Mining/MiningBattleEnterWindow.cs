@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 
-public class MineBattle : MonoBehaviour
+public class MiningBattleEnterWindow : MonoBehaviour
 {
     [SerializeField]
     private LocalizationText planetNameText;

@@ -44,8 +44,10 @@ public class TankerSkillTable : DataTable
 
             //targetPriority = SplitSoldierTarget(SoldierTarget);
         }
-        
+
     }
+
+    private Dictionary<Grade, int> gradeMaxLevel = new Dictionary<Grade, int>();
 
     public override Type DataType => typeof(Data);
 
@@ -65,6 +67,15 @@ public class TankerSkillTable : DataTable
             if (!TableData.ContainsKey(item.ID))
             {
                 TableData.Add(item.ID, item);
+
+                if (!gradeMaxLevel.ContainsKey(item.Grade))
+                {
+                    gradeMaxLevel.Add(item.Grade, item.Level);
+                }
+                if (gradeMaxLevel[item.Grade] < item.Level)
+                {
+                    gradeMaxLevel[item.Grade] = item.Level;
+                }
             }
             else
             {
@@ -74,12 +85,17 @@ public class TankerSkillTable : DataTable
     }
 
     public Data GetData(int key)
-          {
+    {
         if (!TableData.ContainsKey(key))
         {
             return null;
         }
         return (Data)TableData[key];
+    }
+
+    public int GetMaxLevel(Grade grade)
+    {
+        return gradeMaxLevel[grade];
     }
 
     public override void Set(List<string[]> data)

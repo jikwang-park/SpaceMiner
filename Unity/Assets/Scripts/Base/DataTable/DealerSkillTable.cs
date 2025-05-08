@@ -40,6 +40,8 @@ public class DealerSkillTable : DataTable
         }
     }
 
+    private Dictionary<Grade, int> gradeMaxLevel = new Dictionary<Grade, int>();
+
     public override Type DataType => typeof(Data);
 
     public override void LoadFromText(string text)
@@ -58,6 +60,15 @@ public class DealerSkillTable : DataTable
             if (!TableData.ContainsKey(item.ID))
             {
                 TableData.Add(item.ID, item);
+
+                if (!gradeMaxLevel.ContainsKey(item.Grade))
+                {
+                    gradeMaxLevel.Add(item.Grade, item.Level);
+                }
+                if (gradeMaxLevel[item.Grade] < item.Level)
+                {
+                    gradeMaxLevel[item.Grade] = item.Level;
+                }
             }
             else
             {
@@ -73,6 +84,11 @@ public class DealerSkillTable : DataTable
             return null;
         }
         return (Data)TableData[key];
+    }
+
+    public int GetMaxLevel(Grade grade)
+    {
+        return gradeMaxLevel[grade];
     }
 
     public override void Set(List<string[]> data)

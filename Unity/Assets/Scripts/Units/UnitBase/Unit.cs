@@ -140,7 +140,7 @@ public class Unit : MonoBehaviour, IObjectPoolGameObject
                 direction.y = 0f;
                 direction.Normalize();
                 direction = Vector3.Lerp(transform.forward, direction, Time.deltaTime * unitStats.moveSpeed).normalized;
-                transform.LookAt(direction);
+                transform.forward = direction;
             }
         }
         else

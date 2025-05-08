@@ -97,16 +97,5 @@ public class UnitSkillGradeToggles : MonoBehaviour
         UpdateSelectedFrame();
 
     }
-    //public Color SetTogglePressedColor(Image toggleImage , float amount)
-    //{
-    //    var currentColor = toggleImage.color;
-    //    var newColor = currentColor;
-
-    //    newColor.a = amount;
-    
-
-    //    toggleImage.color = newColor;
-    //    return toggleImage.color;
-    //}
-  
+ 
 }

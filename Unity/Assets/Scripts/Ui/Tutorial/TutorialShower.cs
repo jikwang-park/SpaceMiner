@@ -7,6 +7,9 @@ public class TutorialShower : MonoBehaviour
 
     private void Start()
     {
+        return;
+
+
         if (!SaveLoadManager.Data.TutorialOpened[targetType])
         {
             var stageManager = GameObject.FindGameObjectWithTag("GameController").GetComponent<StageManager>();

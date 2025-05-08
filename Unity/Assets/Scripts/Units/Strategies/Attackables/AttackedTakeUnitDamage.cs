@@ -34,29 +34,34 @@ public class AttackedTakeUnitDamage : MonoBehaviour,IAttackable
 
         GetDamaged?.Invoke(attacker);
 
-        if (unit.unitStats.barrier > attack.damage)
+        if (unit.unitStats.Barrier > attack.damage)
         {
-            unit.unitStats.barrier -= attack.damage;
+            unit.unitStats.Barrier -= attack.damage;
             
             return;
         }
         else
         {
-            if(unit.unitStats.barrier > 0)
+            if(unit.unitStats.Barrier > 0)
             {
                 OnBarrierDown?.Invoke();
             }
-            var trueDamage = attack.damage - unit.unitStats.barrier;
+            var trueDamage = attack.damage - unit.unitStats.Barrier;
             unit.unitStats.Hp -= trueDamage;
-            unit.unitStats.barrier = 0;
-            //if(unit.unitStats.Hp <= 0)
-            //{
-            //    OnDamageOverflowed?.Invoke(unit);
-            //    return;
-            //}
-
+            unit.unitStats.Barrier = 0;
+           
             if (unit.unitStats.Hp < 0 && gameObjectEnabled)
             {
+                var revive = unit.GetComponent<ReviveOnDeath>();
+                if (revive != null && !revive.HasRevived)
+                {
+                    revive.DoRevive();
+                    if(unit.unitStats.Hp > 0)
+                    {
+                        return;
+                    }
+                }
+
                 unit.unitStats.Hp = new BigNumber("0");
                 IDestructable[] destructables = GetComponents<IDestructable>();
                 if (destructables.Length > 0)

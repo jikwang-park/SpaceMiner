@@ -176,14 +176,7 @@ public class AnimationController : AnimationControl
         }
         var state = animations[animationDict[clipID]];
 
-        if (state.normalizedSpeed < speed)
-        {
-            state.normalizedSpeed = speed;
-        }
-        else
-        {
-            state.speed = speed;
-        }
+        state.speed = speed * 1.1f / state.length;
     }
 
 

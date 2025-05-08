@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
@@ -10,12 +11,6 @@ public class StageMonsterManager : MonoBehaviour
     [SerializeField]
     private int laneCount = 3;
 
-    private enum MonsterType
-    {
-        Normal,
-        Ranged,
-        Boss,
-    }
 
     [field: SerializeField]
     public Vector3[] SpawnPoints { get; private set; } = new Vector3[]
@@ -237,6 +232,25 @@ public class StageMonsterManager : MonoBehaviour
         return monsters;
     }
 
+    public MonsterController GetMonster(Vector3 position)
+    {
+        float sqrDistance = float.MaxValue;
+        MonsterController monsterController = null;
+        Vector3 displacement;
+        foreach (var monster in monsterControllers)
+        {
+            displacement = position - monster.transform.position;
+            displacement.y = 0f;
+            float tempsqrDist = Vector3.SqrMagnitude(displacement);
+            if (tempsqrDist < sqrDistance)
+            {
+                sqrDistance = tempsqrDist;
+                monsterController = monster;
+            }
+        }
+        return monsterController;
+    }
+
     public Transform GetLineMonster(int line)
     {
         if (!monsterLines.ContainsKey(line))
@@ -375,6 +389,34 @@ public class StageMonsterManager : MonoBehaviour
         EndLine();
     }
 
+    public MonsterController Spawn(Vector3 SpawnPosition, int monsterId)
+    {
+        var monsterData = DataTableManager.MonsterTable.GetData(monsterId);
+
+        var prefabID = DataTableManager.AddressTable.GetData(monsterData.PrefabID);
+        var monster = objectPoolManager.Get(prefabID);
+        var monsterController = monster.GetComponent<MonsterController>();
+        monsterController.enabled = true;
+        monsterController.SetMonsterId(monsterId);
+
+        monsterController.SetWeight(weights);
+
+        monster.transform.parent = null;
+        monster.transform.position = SpawnPosition;
+        monster.transform.rotation = Quaternion.LookRotation(Vector3.back, Vector3.up);
+
+        stageManager.StageUiManager.HPBarManager.SetHPBar(monster.transform);
+        ++MonsterCount;
+        monsterControllers.Add(monsterController);
+
+        monsterController.GetComponent<DestructedDestroyEvent>().OnDestroyed += (sender) =>
+        {
+            --MonsterCount;
+        };
+
+        return monsterController;
+    }
+
     private void EndLine()
     {
         if (monsterLines[currentLastLine].Count == 0 || monsterLines[currentLastLine].Count == laneCount)
@@ -418,6 +460,7 @@ public class StageMonsterManager : MonoBehaviour
         var monsterController = monster.GetComponent<MonsterController>();
         monsterController.enabled = true;
         monsterController.SetMonsterId(monsterId);
+        monsterController.monsterType = type;
 
         monster.transform.parent = null;
         monster.transform.position = frontPosition + SpawnPoints[index];

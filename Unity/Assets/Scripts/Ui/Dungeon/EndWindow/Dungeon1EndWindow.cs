@@ -108,7 +108,7 @@ public class Dungeon1EndWindow : MonoBehaviour
             return;
         }
 
-        if (UnitCombatPowerCalculator.ToTalCombatPower < nextStage.NeedPower)
+        if (UnitCombatPowerCalculator.TotalCombatPower < nextStage.NeedPower)
         {
             requirementWindow.Open(DungeonRequirementWindow.Status.Power);
             return;

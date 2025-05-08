@@ -104,6 +104,11 @@ public class AnimatorAnimationControl : AnimationControl
             return;
         }
 
+        if (!animator.enabled)
+        {
+            animator.enabled = true;
+        }
+
         if (events.ContainsKey(clipID))
         {
             for (int i = 0; i < events[clipID].Count; ++i)

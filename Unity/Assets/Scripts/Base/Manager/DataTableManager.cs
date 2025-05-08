@@ -110,6 +110,10 @@ public static class DataTableManager
         itemTable.Load(DataTableIds.itemTable);
         tables.Add(DataTableIds.itemTable, itemTable);
 
+        var effectItemTable = new EffectItemTable();
+        effectItemTable.Load(DataTableIds.effectItemTable);
+        tables.Add(DataTableIds.effectItemTable, effectItemTable);
+
         var shopTable = new ShopTable();
         shopTable.Load(DataTableIds.shopTable);
         tables.Add(DataTableIds.shopTable, shopTable);
@@ -149,6 +153,15 @@ public static class DataTableManager
         planetTable.Load(DataTableIds.planetTable);
         tables.Add(DataTableIds.planetTable, planetTable);
 
+        var miningBattleTable = new MiningBattleTable();
+        miningBattleTable.Load(DataTableIds.miningBattleTable);
+        tables.Add(DataTableIds.miningBattleTable, miningBattleTable);
+
+        var miningBattleSpawnTable = new MiningBattleSpawnTable();
+        miningBattleSpawnTable.Load(DataTableIds.miningBattleSpawnTable);
+        tables.Add(DataTableIds.miningBattleSpawnTable, miningBattleSpawnTable);
+
+
         var damageDungeonRewardTable = new DamageDungeonRewardTable();
         damageDungeonRewardTable.Load(DataTableIds.damageDungeonRewardTable);
         tables.Add(DataTableIds.damageDungeonRewardTable, damageDungeonRewardTable);
@@ -161,6 +174,15 @@ public static class DataTableManager
         var attendanceRewardTable = new AttendanceRewardTable();
         attendanceRewardTable.Load(DataTableIds.attendanceRewardTable);
         tables.Add(DataTableIds.attendanceRewardTable, attendanceRewardTable);
+
+
+        var tutorialTable = new TutorialTable();
+        tutorialTable.Load(DataTableIds.tutorialTable);
+        tables.Add(DataTableIds.tutorialTable, tutorialTable);
+
+        var contentsOpenTable = new ContentsOpenTable();
+        contentsOpenTable.Load(DataTableIds.contentsOpenTable);
+        tables.Add(DataTableIds.contentsOpenTable, contentsOpenTable);
     }
 
 
@@ -264,4 +286,19 @@ public static class DataTableManager
 
     public static AttendanceRewardTable AttendanceRewardTable
         => GetTable<AttendanceRewardTable>(DataTableIds.attendanceRewardTable);
+
+    public static MiningBattleTable MiningBattleTable
+        => GetTable<MiningBattleTable>(DataTableIds.miningBattleTable);
+
+    public static MiningBattleSpawnTable MiningBattleSpawnTable
+        => GetTable<MiningBattleSpawnTable>(DataTableIds.miningBattleSpawnTable);
+
+    public static TutorialTable TutorialTable
+        => GetTable<TutorialTable>(DataTableIds.tutorialTable);
+
+    public static EffectItemTable EffectItemTable
+        => GetTable<EffectItemTable>(DataTableIds.effectItemTable);
+
+    public static ContentsOpenTable ContentsOpenTable
+        => GetTable<ContentsOpenTable>(DataTableIds.contentsOpenTable);
 }

@@ -38,6 +38,7 @@ public class DataTableIds
     public const string gachaSoldierTable = "GachaSoldierTable";
 
     public const string itemTable = "ItemTable";
+    public const string effectItemTable = "EffectItemTable";
     public const string shopTable = "ShopTable";
 
     public const string defaultDataTable = "DefaultDataTable";
@@ -54,6 +55,12 @@ public class DataTableIds
     public const string buildingTable = "BuildingTable";
 
     public const string planetTable = "PlanetTable";
+    public const string miningBattleTable = "MiningBattleTable";
+    public const string miningBattleSpawnTable = "MiningBattleSpawnTable";
+
+    public const string tutorialTable = "TutorialTable";
+
+    public const string contentsOpenTable = "ContentsOpenTable";
 }
 
 public enum StageMode
@@ -130,4 +137,29 @@ public enum StatType
     AttackSpeed,
     MoveSpeed,
     AttackRange
+}
+
+public class Defines
+{
+    public const int DungeonKeyItemID = 5001;
+    public const int PlanetStageFormatStringID = 169;
+    public const int WaveTextStringID = 147;
+    public const int StageDefaultStringID = 131;
+    public const int DirectStringID = 60011;
+    public const int MiningBattleMaxCount = 5;
+}
+
+public enum RankingType
+{
+    Stage,
+    CombatPower,
+    DungeonDamage,
+}
+
+
+public enum MonsterType
+{
+    Normal,
+    Ranged,
+    Boss,
 }

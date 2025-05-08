@@ -32,6 +32,8 @@ public class DungeonStageStatusMachine : StageStatusMachine
 
     protected event System.Action onStageEnd;
 
+    private MonsterStats bossStats;
+
     public DungeonStageStatusMachine(StageManager stageManager) : base(stageManager)
     {
         onStageEnd += stageManager.StageEnd;
@@ -66,6 +68,10 @@ public class DungeonStageStatusMachine : StageStatusMachine
         {
             case Status.Play:
                 UpdateTimer(currentTime);
+                if (dungeonData.Type == 2)
+                {
+                    stageManager.StageUiManager.IngameUIManager.waveText.SetString(Defines.DirectStringID, (-bossStats.Hp).ToString());
+                }
                 break;
         }
     }
@@ -131,7 +137,14 @@ public class DungeonStageStatusMachine : StageStatusMachine
             stageManager.StageMonsterManager.Spawn(Vector3.zero, corpsData);
         }
 
-        stageManager.StageUiManager.IngameUIManager.SetWaveText(currentWave);
+        if (isFirstWave && dungeonData.Type == 2)
+        {
+            stageManager.StageUiManager.IngameUIManager.waveText.gameObject.SetActive(true);
+            stageManager.StageUiManager.IngameUIManager.waveText.SetString(Defines.DirectStringID, string.Empty);
+            var monsterTransform = stageManager.StageMonsterManager.GetMonsters(1);
+            bossStats = monsterTransform[0].GetComponent<MonsterStats>();
+        }
+
         ++currentWave;
     }
 
@@ -171,7 +184,7 @@ public class DungeonStageStatusMachine : StageStatusMachine
     {
         this.status = status;
         Time.timeScale = 0f;
-
+        stageManager.StageUiManager.curtain.gameObject.SetActive(false);
         onStageEnd?.Invoke();
 
         switch (this.status)
@@ -239,7 +252,14 @@ public class DungeonStageStatusMachine : StageStatusMachine
         dungeonData = DataTableManager.DungeonTable.GetData(currentType, currentStage);
         waveData = DataTableManager.WaveTable.GetData(dungeonData.WaveID);
         stageEndTime = Time.time + dungeonData.LimitTime;
-        stageManager.StageUiManager.IngameUIManager.SetDungeonStageText(dungeonData.Type, dungeonData.Stage);
+        if (dungeonData.Type == 2)
+        {
+            stageManager.StageUiManager.IngameUIManager.stageText.SetString(dungeonData.NameStringID);
+        }
+        else
+        {
+            stageManager.StageUiManager.IngameUIManager.SetDungeonStageText(dungeonData.Type, dungeonData.Stage);
+        }
 
         if (waveData.CorpsIDs.Length > 1)
         {
@@ -256,6 +276,7 @@ public class DungeonStageStatusMachine : StageStatusMachine
     {
         stageManager.UnitPartyManager.UnitSpawn();
         stageManager.UnitPartyManager.ResetUnitHealth();
+        stageManager.UnitPartyManager.ResetUnitBarrier();
         stageManager.UnitPartyManager.ResetSkillCoolTime();
         stageManager.UnitPartyManager.ResetStatus();
     }
@@ -284,6 +305,7 @@ public class DungeonStageStatusMachine : StageStatusMachine
         if (SaveLoadManager.Data.stageSaveData.dungeonTwoDamage < damage)
         {
             SaveLoadManager.Data.stageSaveData.dungeonTwoDamage = damage;
+            FirebaseManager.Instance.UpdateDungeonDamageToLeaderBoard();
         }
         var rewardsData = DataTableManager.DamageDungeonRewardTable.GetRewards(damage);
         if (rewardsData.Count > 0)

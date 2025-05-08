@@ -786,6 +786,7 @@ GameObject:
   - component: {fileID: 2442047888925537499}
   - component: {fileID: -1411330361332644318}
   - component: {fileID: -7561417034234993579}
+  - component: {fileID: 6795292635654564194}
   m_Layer: 0
   m_Name: Stone_Boss_03
   m_TagString: Enemy
@@ -832,6 +833,7 @@ MonoBehaviour:
   <minDistanceInMonster>k__BackingField: 2
   hasTarget: 0
   currentLine: -1
+  monsterType: 0
 --- !u!114 &-4108306352948201258
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1029,6 +1031,28 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 006fdbcec7b4fb14cbcd30c2d1863457, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!195 &6795292635654564194
+NavMeshAgent:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 9095426626285347002}
+  m_Enabled: 0
+  m_AgentTypeID: 0
+  m_Radius: 0.5
+  m_Speed: 3.5
+  m_Acceleration: 8
+  avoidancePriority: 50
+  m_AngularSpeed: 120
+  m_StoppingDistance: 0
+  m_AutoTraverseOffMeshLink: 1
+  m_AutoBraking: 1
+  m_AutoRepath: 1
+  m_Height: 1
+  m_BaseOffset: 0
+  m_WalkableMask: 4294967295
+  m_ObstacleAvoidanceType: 1
 --- !u!1 &9161800277901165340
 GameObject:
   m_ObjectHideFlags: 0

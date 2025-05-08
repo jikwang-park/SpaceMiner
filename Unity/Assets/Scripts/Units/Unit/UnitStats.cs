@@ -10,15 +10,36 @@ public class UnitStats : CharacterStats
 
     private Grade currentGrade;
 
-    public BigNumber barrier = 0;
+    private BigNumber barrier = 0;
+    public BigNumber Barrier
+    {
+        get
+        {
+            return barrier;
+        }
+        set
+        {
+            bool wasPositive = barrier > 0;
+            barrier = value;
+
+            if (wasPositive && barrier <= 0)
+            {
+                OnBarrierDown?.Invoke();
+            }
+        }
+    }
 
     public bool hasBarrier = false;
 
     private BigNumber buffReflectionDamage;
 
+    
+
 
     private System.Action<GameObject> ReflectDelegate;
     public event System.Action OnBarrierUp;
+    public event System.Action OnBarrierDown;
+
     public event System.Action<UnitTypes> OnAttack;
     private void Awake()
     {
@@ -84,12 +105,11 @@ public class UnitStats : CharacterStats
     public void SetData(SoldierTable.Data data, UnitTypes type)
     {
         moveSpeed = data.MoveSpeed;
-
         coolDown = 100f / data.AttackSpeed;
         this.type = type;
-        
-
         currentGrade = data.Grade;
+
+        float prevRatio = maxHp > 0 ? Hp.DivideToFloat(maxHp) : 0f;
 
         coolDown = 1;
         range = data.Range;
@@ -105,7 +125,7 @@ public class UnitStats : CharacterStats
         }
         else
         {
-            RecalculateHpWithRatio();
+            Hp = maxHp * prevRatio;
         }
 
     }
@@ -136,17 +156,23 @@ public class UnitStats : CharacterStats
 
         var stats = UnitCombatPowerCalculator.statsDictionary[type];
         var criticalChance = stats.criticalPossibility;
+        var monsterType = defenderStats.GetComponent<MonsterController>().monsterType;
+
+        if (monsterType == MonsterType.Boss)
+        {
+            attack.damage = stats.soldierAttack * stats.addBossDamage;
+        }
+        else
+        {
+            attack.damage = stats.soldierAttack * stats.addNormalDamage;
+        }
 
         attack.isCritical = criticalChance >= Random.Range(0f, 1f);
         if (attack.isCritical)
         {
             var multiplier = stats.criticalMultiplier;
 
-            attack.damage = stats.soldierAttack * multiplier;
-        }
-        else
-        {
-            attack.damage = stats.soldierAttack;
+            attack.damage *= multiplier;
         }
 
         return attack;
@@ -180,8 +206,17 @@ public class UnitStats : CharacterStats
         var stats = UnitCombatPowerCalculator.statsDictionary[type];
 
         var unit = GetComponent<Unit>();
+        var monsterType = defenderStats.GetComponent<MonsterController>().monsterType;
 
         BigNumber finialSkillDamage = stats.soldierAttack * unit.Skill.Ratio;
+        if (monsterType == MonsterType.Boss)
+        {
+            attack.damage = finialSkillDamage * stats.addBossDamage;
+        }
+        else
+        {
+            attack.damage = finialSkillDamage * stats.addNormalDamage;
+        }
 
 
         var criticalChance = stats.criticalPossibility;
@@ -190,11 +225,7 @@ public class UnitStats : CharacterStats
         if (attack.isCritical)
         {
             var multiplier = stats.criticalMultiplier;
-            attack.damage = finialSkillDamage * multiplier;
-        }
-        else
-        {
-            attack.damage = finialSkillDamage;
+            attack.damage *= multiplier;
         }
 
 
@@ -256,20 +287,25 @@ public class UnitStats : CharacterStats
 
     private IEnumerator RemoveBarrierAfterDuration(float duration, BigNumber amount)
     {
-        yield return new WaitForSeconds(duration);
-        barrier -= amount;
+        float timer = 0f;
 
+        while (timer < duration)
+        {
+            if (barrier <= 0 && hasBarrier)
+            {
+                barrier = 0;
+                hasBarrier = false;
+                yield break;
+            }
+
+            timer += Time.deltaTime;
+            yield return null;
+        }
+
+        barrier -= amount;
         if (barrier < 0)
             barrier = 0;
+
         hasBarrier = false;
     }
-
-    //public void UseHealerBuff(BigNumber hpAmount)
-    //{
-    //    var takeDamage = GetComponent<AttackedTakeUnitDamage>();
-    //    takeDamage.OnDamageOverflowed += (unit) => unit.unitStats.Hp = hpAmount;
-    //}
-
-
-
 }

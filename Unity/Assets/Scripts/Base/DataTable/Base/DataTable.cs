@@ -12,7 +12,7 @@ using CsvHelper.Configuration;
 
 public abstract class DataTable
 {
-    public static readonly string FormatPath = "DataTables/{0}";
+    public static readonly string FormatPath = "Assets/Addressables/DataTables/{0}.csv";
 
      public Dictionary<int, ITableData> TableData { get; protected set; } = new Dictionary<int, ITableData>();
 

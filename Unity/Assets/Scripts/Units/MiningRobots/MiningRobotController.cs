@@ -22,12 +22,24 @@ public class MiningRobotController : MonoBehaviour, IObjectPoolGameObject
     [HideInInspector]
     public Transform currentTarget;
 
-    public float Speed { get; private set; }
+    private AnimationControl animationControl;
+
+    public int MiningSpeed { get; private set; }
+    public int ProductCapacity { get; private set; }
+
+    public float MoveSpeed { get; private set; }
 
     private void Awake()
     {
         InitBehaviourTree();
+        animationControl = GetComponent<AnimationControl>();
     }
+
+    private void Start()
+    {
+        EffectItemInventoryManager.OnEffectItemLevelUp += OnEffectItemLevelUp;
+    }
+
 
     private void Update()
     {
@@ -59,17 +71,7 @@ public class MiningRobotController : MonoBehaviour, IObjectPoolGameObject
         currentTarget = this.ore;
         this.storage = storage;
 
-        float distance = Vector3.Distance(ore.position, storage.position);
-        Speed = RobotData.MoveSpeed * distance;
-        switch (Slot)
-        {
-            case 0:
-                Speed /= PlanetData.Distance1;
-                break;
-            case 1:
-                Speed /= PlanetData.Distance2;
-                break;
-        }
+        SetMoveSpeed();
     }
 
     private void InitBehaviourTree()
@@ -92,6 +94,8 @@ public class MiningRobotController : MonoBehaviour, IObjectPoolGameObject
         Slot = slot;
         PlanetData = DataTableManager.PlanetTable.GetData(planetID);
         RobotData = DataTableManager.RobotTable.GetData(robotID);
+
+        SetRobotStat();
     }
 
     public void ResetBehaviorTree()
@@ -104,6 +108,47 @@ public class MiningRobotController : MonoBehaviour, IObjectPoolGameObject
         Slot = 0;
         PlanetData = null;
         RobotData = null;
+        animationControl.Stop();
         ObjectPool.Release(gameObject);
+    }
+
+    private void SetMoveSpeed()
+    {
+        float distance = Vector3.Distance(ore.position, storage.position);
+        MoveSpeed = RobotData.MoveSpeed * distance;
+        switch (Slot)
+        {
+            case 0:
+                MoveSpeed /= PlanetData.Distance1;
+                break;
+            case 1:
+                MoveSpeed /= PlanetData.Distance2;
+                break;
+        }
+    }
+
+    private void SetRobotStat()
+    {
+        int productCapacityLevel = EffectItemInventoryManager.GetLevel(EffectItemTable.ItemType.MiningRobotCapacity);
+        int productCapacityEffect = (int)DataTableManager.EffectItemTable.GetDatas(EffectItemTable.ItemType.MiningRobotCapacity)[productCapacityLevel].Value;
+        int miningSpeedLevel = EffectItemInventoryManager.GetLevel(EffectItemTable.ItemType.MiningRobotProductSpeed);
+        int miningSpeedEffect = (int)DataTableManager.EffectItemTable.GetDatas(EffectItemTable.ItemType.MiningRobotProductSpeed)[miningSpeedLevel].Value;
+
+        ProductCapacity = RobotData.ProductCapacity + productCapacityEffect;
+        MiningSpeed = RobotData.MiningSpeed + miningSpeedEffect;
+    }
+
+    private void OnEffectItemLevelUp(int itemID)
+    {
+        var type = DataTableManager.EffectItemTable.GetTypeByID(itemID);
+        if (type == EffectItemTable.ItemType.MiningRobotProductSpeed)
+        {
+            SetMoveSpeed();
+        }
+        if (type == EffectItemTable.ItemType.MiningRobotCapacity
+            || type == EffectItemTable.ItemType.MiningRobotMoveSpeed)
+        {
+            SetRobotStat();
+        }
     }
 }

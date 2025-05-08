@@ -184,7 +184,7 @@ public class Dungeon1EnterWindow : MonoBehaviour
             return;
         }
 
-        if (UnitCombatPowerCalculator.ToTalCombatPower < subStages[index].NeedPower)
+        if (UnitCombatPowerCalculator.TotalCombatPower < subStages[index].NeedPower)
         {
             requirementWindow.Open(DungeonRequirementWindow.Status.Power);
             return;

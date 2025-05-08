@@ -44,6 +44,8 @@ public class HealerSkillTable : DataTable
         }
     }
 
+    private Dictionary<Grade, int> gradeMaxLevel = new Dictionary<Grade, int>();
+
     public override Type DataType => typeof(Data);
 
     public override void LoadFromText(string text)
@@ -63,6 +65,15 @@ public class HealerSkillTable : DataTable
             {
                 //item.targetPriority = SplitSoldierTarget(item.SoldierTarget);
                 TableData.Add(item.ID, item);
+
+                if (!gradeMaxLevel.ContainsKey(item.Grade))
+                {
+                    gradeMaxLevel.Add(item.Grade, item.Level);
+                }
+                if (gradeMaxLevel[item.Grade] < item.Level)
+                {
+                    gradeMaxLevel[item.Grade] = item.Level;
+                }
             }
             else
             {
@@ -80,6 +91,10 @@ public class HealerSkillTable : DataTable
         return (Data)TableData[key];
     }
 
+    public int GetMaxLevel(Grade grade)
+    {
+        return gradeMaxLevel[grade];
+    }
 
     public override void Set(List<string[]> data)
     {

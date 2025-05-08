@@ -153,4 +153,9 @@ public class StageManager : MonoBehaviour
         }
         return null;
     }
+
+    public void MiningBattleStart()
+    {
+        ((MineStageStatusMachine)machines[IngameStatus.Mine]).StartMineBattle();
+    }
 }

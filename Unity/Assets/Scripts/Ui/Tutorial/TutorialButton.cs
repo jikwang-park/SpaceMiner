@@ -10,9 +10,11 @@ public class TutorialButton : MonoBehaviour
 
     public void OnButtonClick()
     {
-        //TODO: 세이브 데이터 추가 후 수정
+        return;
+
         if (!SaveLoadManager.Data.TutorialOpened[targetType])
         {
+
             var stageManager = GameObject.FindGameObjectWithTag("GameController").GetComponent<StageManager>();
             var uiManager = stageManager.StageUiManager;
             var tutorialWindow = uiManager.TutorialWindow;

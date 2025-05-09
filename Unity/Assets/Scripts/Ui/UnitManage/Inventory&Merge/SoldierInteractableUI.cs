@@ -27,6 +27,12 @@ public class SoldierInteractableUI : MonoBehaviour
     private Button mergeButton;
     [SerializeField]
     private Button equipButton;
+    [SerializeField]
+    private Sprite canEquipSprite;
+    [SerializeField]
+    private Sprite cannotEquipSprite;
+
+    private Image equipButtonImage;
 
     private int requiredMergeCount = 0;
     private int currentElementCount = 0;
@@ -34,8 +40,12 @@ public class SoldierInteractableUI : MonoBehaviour
     private int count = 0;
     private int currentElementId;
     private int nextElementId;
-
+    private UnitTypes currentType;
     public Action equipAction;
+    private void Awake()
+    {
+        equipButtonImage = equipButton.GetComponent<Image>();
+    }
     private void Start()
     {
         minusButton.onClick.AddListener(() => OnClickMinusButton());
@@ -47,9 +57,15 @@ public class SoldierInteractableUI : MonoBehaviour
     {
         var currentElementSprite = currentElement.GetComponent<Image>().sprite;
         var nextElementSprite = nextElement.GetComponent<Image>().sprite;
+        
+        currentElementId = currentElement.soldierId;
+        nextElementId = nextElement.soldierId;
 
-        currentSoldierInfo.Initialize(currentElement.Grade, currentElement.Level, "", currentElementSprite);
-        nextSoldierInfo.Initialize(nextElement.Grade, nextElement.Level, "", nextElementSprite);
+        var currentData = DataTableManager.SoldierTable.GetData(currentElementId);
+        var nextData = DataTableManager.SoldierTable.GetData(nextElementId);
+
+        currentSoldierInfo.Initialize(currentElement.Grade, currentElement.Level, "", currentElementSprite, currentData.SpriteID);
+        nextSoldierInfo.Initialize(nextElement.Grade, nextElement.Level, "", nextElementSprite, nextData.SpriteID);
 
         currentElementCount = currentElement.Count;
         nextElementCount = nextElement.Count;
@@ -60,8 +76,12 @@ public class SoldierInteractableUI : MonoBehaviour
 
         countText.text = count.ToString();
         requiredMergeCount = 5;
-        currentElementId = currentElement.soldierId;
-        nextElementId = nextElement.soldierId;
+
+        currentType = currentData.UnitType;
+
+        int equipId = SaveLoadManager.Data.soldierInventorySaveData[currentType].equipElementID;
+
+        equipButtonImage.sprite = (!currentElement.IsLocked && currentElementId == equipId) ? canEquipSprite : cannotEquipSprite;
 
         UpdateButton();
         UpdateCountText();
@@ -151,6 +171,11 @@ public class SoldierInteractableUI : MonoBehaviour
 
     public void OnClickEquipButton()
     {
-        equipAction?.Invoke();
+        var canEquip = !InventoryManager.GetSoldierData(currentType, currentElementId).isLocked;
+        if(canEquip)
+        {
+            equipAction?.Invoke();
+            equipButtonImage.sprite = cannotEquipSprite;
+        }
     }
 }

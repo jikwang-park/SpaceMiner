@@ -12,13 +12,15 @@ public class SoldierInfoImage : MonoBehaviour
     private TextMeshProUGUI levelText;
     [SerializeField]
     private TextMeshProUGUI countText;
+    [SerializeField]
+    private AddressableImage icon;
     private Image image;
     void Awake()
     {
         image = GetComponent<Image>();
     }
 
-    public void Initialize(Grade grade, int level, string count, Sprite sprite)
+    public void Initialize(Grade grade, int level, string count, Sprite sprite, int spriteId)
     {
         int stringId = DataTableManager.DefaultDataTable.GetID(grade.ToString() + "StringID");
         gradeText.SetString(stringId);

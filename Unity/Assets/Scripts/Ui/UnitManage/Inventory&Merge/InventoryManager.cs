@@ -49,6 +49,14 @@ public static class InventoryManager
     {
         return Inventories.ContainsKey(type) ? Inventories[type] : null;
     }
+    public static SoldierInventoryElementData GetSoldierData(UnitTypes type, int soldierId)
+    {
+        var inventoryData = GetInventoryData(type);
+        
+        var soldierData = inventoryData.elements.Find((e) => e.soldierId == soldierId);
+
+        return soldierData;
+    }
     public static void Add(List<SoldierTable.Data> datas)
     {
         foreach(var data in datas) 

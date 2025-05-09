@@ -172,7 +172,7 @@ public class Dungeon1EnterWindow : MonoBehaviour
     {
         if (ItemManager.GetItemAmount(subStages[index].NeedKeyItemID) < subStages[index].NeedKeyItemCount)
         {
-            requirementWindow.Open(DungeonRequirementWindow.Status.KeyCount);
+            requirementWindow.OpenNeedKey();
             return;
         }
 
@@ -180,13 +180,13 @@ public class Dungeon1EnterWindow : MonoBehaviour
            || (SaveLoadManager.Data.stageSaveData.highPlanet == subStages[index].NeedClearPlanet
                && SaveLoadManager.Data.stageSaveData.highStage != SaveLoadManager.Data.stageSaveData.clearedStage))
         {
-            requirementWindow.Open(DungeonRequirementWindow.Status.StageClear);
+            requirementWindow.OpenNeedPlanet(subStages[index].NeedClearPlanet);
             return;
         }
 
         if (UnitCombatPowerCalculator.TotalCombatPower < subStages[index].NeedPower)
         {
-            requirementWindow.Open(DungeonRequirementWindow.Status.Power);
+            requirementWindow.OpenNeedPower(subStages[index].NeedPower);
             return;
         }
 

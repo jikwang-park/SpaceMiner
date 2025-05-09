@@ -95,6 +95,18 @@ public class LocalizationText : MonoBehaviour
         OnChangedLanguage();
     }
 
+    public void SetStringArguments(params int[] stringIds)
+    {
+        stringArgs = new string[stringIds.Length];
+        var stringTableId = DataTableIds.stringTables[(int)Variables.currentLanguage];
+        var stringTable = DataTableManager.GetTable<StringTable>(stringTableId);
+        for (int i = 0; i < stringIds.Length; ++i)
+        {
+            stringArgs[i] = stringTable.GetData(stringIds[i]);
+        }
+        OnChangedLanguage();
+    }
+
     public void SetString(int stringId, params string[] stringArguments)
     {
         this.stringId = stringId;

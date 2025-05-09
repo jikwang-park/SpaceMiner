@@ -6,12 +6,10 @@ using UnityEngine;
 using UnityEngine.Pool;
 using UnityEngine.UI;
 
-public class StageButton : MonoBehaviour, IObjectPoolGameObject
+public class LastStageButton : MonoBehaviour
 {
-    public IObjectPool<GameObject> ObjectPool { get; set; }
-
     [SerializeField]
-    private LocalizationText text;
+    private LocalizationText buttonText;
 
     private int planet;
     private int stage;
@@ -28,19 +26,18 @@ public class StageButton : MonoBehaviour, IObjectPoolGameObject
     private void Start()
     {
         stageManager = GameObject.FindGameObjectWithTag("GameController").GetComponent<StageManager>();
+        stageManager.OnStageEnd += OnStageEnd;
+        OnStageEnd();
     }
 
-    public void Release()
+    private void OnStageEnd()
     {
-        Button.interactable = false;
-        ObjectPool.Release(gameObject);
-    }
+        planet = SaveLoadManager.Data.stageSaveData.highPlanet;
+        stage = SaveLoadManager.Data.stageSaveData.highStage;
 
-    public void Set(int planet, int stage)
-    {
-        this.planet = planet;
-        this.stage = stage;
-        text.SetStringArguments(planet.ToString(),stage.ToString());
+        var stagedata = DataTableManager.StageTable.GetStageData(planet,stage);
+        string name = DataTableManager.StringTable.GetData(stagedata.NameStringID);
+        buttonText.SetStringArguments(name, planet.ToString(), stage.ToString());
     }
 
     public void MoveStage()

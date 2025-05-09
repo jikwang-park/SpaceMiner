@@ -27,8 +27,14 @@ public class StageUiManager : MonoBehaviour
     [field: SerializeField]
     public TutorialPage TutorialWindow { get; private set; }
 
-    [field:SerializeField]
+    [field: SerializeField]
     public GameObject ResourceRow { get; private set; }
+
+    [field: SerializeField]
+    public MessageWindow MessageWindow { get; private set; }
+
+    [field: SerializeField]
+    public UnitUiManager UnitUiManager { get; private set; }
 
     public event System.Action OnExitButtonClicked;
 
@@ -36,6 +42,7 @@ public class StageUiManager : MonoBehaviour
     {
         ObjectPoolManager = GetComponent<ObjectPoolManager>();
         HPBarManager = GetComponent<HPBarManager>();
+        UnitUiManager = GetComponent<UnitUiManager>();
     }
 
     public void ExitButtonClicked()

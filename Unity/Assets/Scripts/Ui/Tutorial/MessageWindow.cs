@@ -33,13 +33,18 @@ public class MessageWindow : MonoBehaviour
         background.color = tempColor;
     }
 
-    public void Show(int planet, int stage)
+    public void ShowStageRestrict(int planet, int stage)
     {
         gameObject.SetActive(true);
-        text.SetStringArguments(planet.ToString(), stage.ToString());
+        text.SetString(Defines.RestrictionStringID, planet.ToString(), stage.ToString());
         Color tempColor = background.color;
         tempColor.a = 1f;
         background.color = tempColor;
         endTime = Time.time + showTime;
+    }
+
+    public void ShowStageEndMessage()
+    {
+
     }
 }

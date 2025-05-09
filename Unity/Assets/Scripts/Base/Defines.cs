@@ -147,6 +147,7 @@ public class Defines
     public const int StageDefaultStringID = 131;
     public const int DirectStringID = 60011;
     public const int MiningBattleMaxCount = 5;
+    public const int RestrictionStringID = 200;
 }
 
 public enum RankingType

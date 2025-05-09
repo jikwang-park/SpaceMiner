@@ -13,9 +13,6 @@ public class ButtonLocker : MonoBehaviour
     [SerializeField]
     public Image buttonImage;
 
-    [SerializeField]
-    private MessageWindow messageWindow;
-
     private int targetPlanet;
     private int targetStage;
     private StageManager stageManager;
@@ -69,6 +66,6 @@ public class ButtonLocker : MonoBehaviour
 
     public void OnClickButton()
     {
-        messageWindow.Show(targetPlanet, targetStage);
+        stageManager.StageUiManager.MessageWindow.ShowStageRestrict(targetPlanet, targetStage);
     }
 }

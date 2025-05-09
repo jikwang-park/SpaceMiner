@@ -295,6 +295,8 @@ public class UnitPartyManager : MonoBehaviour
                 UnitCombatPowerCalculator.Init(currentType);
             }
             unit.SetData(currentSoilderData);
+            Debug.Log(unit.unitStats.Hp);
+            Debug.Log(unit.unitStats.maxHp);
         }
         OnUnitCreated?.Invoke();
         OnUnitUpdated?.Invoke();

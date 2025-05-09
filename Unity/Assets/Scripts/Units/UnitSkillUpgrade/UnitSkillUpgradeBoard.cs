@@ -84,14 +84,14 @@ public class UnitSkillUpgradeBoard : MonoBehaviour
             nextImage.sprite = skillImage[index];
         }
     }
-    
+
     //public void SetInitImage(UnitTypes type, Grade grade, int id)
     //{
     //    int spriteId = 0;
     //    switch (type)
     //    {
     //        case UnitTypes.Tanker:
-    //            spriteId = DataTableManager.TankerSkillTable.GetData(id).SpriteId;
+    //            spriteId = DataTableManager.TankerSkillTable.GetData(id).;
     //            Skillimage.SetSprite(spriteId);
     //            break;
     //        case UnitTypes.Dealer:
@@ -99,7 +99,7 @@ public class UnitSkillUpgradeBoard : MonoBehaviour
     //            Skillimage.SetSprite(spriteId);
     //            break;
     //        case UnitTypes.Healer:
-    //            spriteId = DataTableManager.HealerSkillTable.GetData(id).SpriteId;
+    //            spriteId = DataTableManager.HealerSkillTable.GetData(id).;
     //            Skillimage.SetSprite(spriteId);
     //            break;
     //    }

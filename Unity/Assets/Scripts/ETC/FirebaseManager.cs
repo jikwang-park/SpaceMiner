@@ -244,10 +244,9 @@ public class FirebaseManager : Singleton<FirebaseManager>
         }
 
         var result = list
-            .OrderBy(e => e.sortKey)
-            .ThenBy(e => e.timestamp)
-            .Reverse()
-            .ToList();
+                    .OrderByDescending(e => e.sortKey)
+                    .ThenBy(e => e.timestamp)
+                    .ToList();
 
         return result;
     }
@@ -277,9 +276,8 @@ public class FirebaseManager : Singleton<FirebaseManager>
         }
 
         var result = list
-                    .OrderBy(e => e.sortKey)
+                    .OrderByDescending(e => e.sortKey)
                     .ThenBy(e => e.timestamp)
-                    .Reverse()
                     .ToList();
 
         return result;
@@ -310,9 +308,8 @@ public class FirebaseManager : Singleton<FirebaseManager>
         }
 
         var result = list
-                    .OrderBy(e => e.sortKey)
+                    .OrderByDescending(e => e.sortKey)
                     .ThenBy(e => e.timestamp)
-                    .Reverse()
                     .ToList();
 
         return result;
@@ -368,23 +365,21 @@ public class FirebaseManager : Singleton<FirebaseManager>
         var nameNode = mySnap.Child("name");
         string name = (nameNode.Exists && nameNode.Value != null) ? nameNode.Value.ToString() : "";
 
-        var stageNode = mySnap.Child("stage");
-        string display = (stageNode.Exists && stageNode.Value != null) ? stageNode.Value.ToString() : "";
+        int stage = Convert.ToInt32(mySnap.Child("stage").Value);
 
         var entry = new LeaderBoardEntry
         {
             uid = userId,
-            display = display,
+            display = stage.ToString(),
             name = name
         };
 
-        string mySortKey = mySnap.Child("stage").Value as string;
 
         var snap = await root
             .Child("leaderboard")
             .Child("HighestStage")
             .OrderByChild("stage")
-            .StartAt(mySortKey)
+            .StartAt(stage)
             .GetValueAsync();
 
         MyRankEntry myRank = new MyRankEntry { rank = (int)snap.ChildrenCount, myEntry = entry };

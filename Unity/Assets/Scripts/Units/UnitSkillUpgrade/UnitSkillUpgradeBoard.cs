@@ -35,6 +35,9 @@ public class UnitSkillUpgradeBoard : MonoBehaviour
     [SerializeField]
     private TextMeshProUGUI needItemCountText;
 
+    [SerializeField]
+    private AddressableImage Skillimage;
+
 
     [SerializeField]
     private GameObject nextInfoGameobject;
@@ -81,6 +84,27 @@ public class UnitSkillUpgradeBoard : MonoBehaviour
             nextImage.sprite = skillImage[index];
         }
     }
+    
+    //public void SetInitImage(UnitTypes type, Grade grade, int id)
+    //{
+    //    int spriteId = 0;
+    //    switch (type)
+    //    {
+    //        case UnitTypes.Tanker:
+    //            spriteId = DataTableManager.TankerSkillTable.GetData(id).SpriteId;
+    //            Skillimage.SetSprite(spriteId);
+    //            break;
+    //        case UnitTypes.Dealer:
+    //            spriteId = DataTableManager.DealerSkillTable.GetData(id).SpriteId;
+    //            Skillimage.SetSprite(spriteId);
+    //            break;
+    //        case UnitTypes.Healer:
+    //            spriteId = DataTableManager.HealerSkillTable.GetData(id).SpriteId;
+    //            Skillimage.SetSprite(spriteId);
+    //            break;
+    //    }
+    //}
+
 
 
     public void SetLimit(Grade grade, UnitTypes type, int id)
@@ -111,7 +135,7 @@ public class UnitSkillUpgradeBoard : MonoBehaviour
         UpdateUpgradeUI();
     }
 
-    private void SetCurrentSkillText(UnitTypes type , int id, out int level)
+    private void SetCurrentSkillText(UnitTypes type, int id, out int level)
     {
         switch (type)
         {
@@ -141,7 +165,7 @@ public class UnitSkillUpgradeBoard : MonoBehaviour
         }
     }
 
-    private void SetNextSkillText(UnitTypes type , int id)
+    private void SetNextSkillText(UnitTypes type, int id)
     {
         switch (type)
         {

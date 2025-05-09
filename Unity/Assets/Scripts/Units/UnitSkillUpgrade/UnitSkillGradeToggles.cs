@@ -68,7 +68,7 @@ public class UnitSkillGradeToggles : MonoBehaviour
         toggleDic[grade].interactable = result;
     }
 
-    private void UpdateSelectedFrame()
+    public void UpdateSelectedFrame()
     {
         normalFrame.enabled = normalToggle.isOn;
         rareFrame.enabled = rareToggle.isOn;

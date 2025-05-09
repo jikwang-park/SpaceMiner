@@ -26,7 +26,8 @@ public class EffectItemDescribeUI : MonoBehaviour
         int itemStringId = DataTableManager.ItemTable.GetData(itemId).NameStringID;
 
         itemNameText.SetString(itemStringId);
-        currentLevelText.SetString(currentLevelData.DetailStringID, (currentLevelData.Value * 100).ToString());
+        float currentLevelValue = currentLevelData.Value < 1f ? currentLevelData.Value * 100 : currentLevelData.Value;
+        currentLevelText.SetString(currentLevelData.DetailStringID, currentLevelValue.ToString());
 
         if(level >= DataTableManager.EffectItemTable.GetDatas(type).Count - 1)
         {
@@ -38,7 +39,8 @@ public class EffectItemDescribeUI : MonoBehaviour
             arrowImage.gameObject.SetActive(true);
             nextLevelText.gameObject.SetActive(true);
             var nextLevelData = DataTableManager.EffectItemTable.GetDatas(type)[level + 1];
-            nextLevelText.SetString(nextLevelData.DetailStringID, (nextLevelData.Value * 100).ToString());
+            float nextLevelValue = nextLevelData.Value < 1f ? nextLevelData.Value * 100 : nextLevelData.Value;
+            nextLevelText.SetString(nextLevelData.DetailStringID, nextLevelValue.ToString());
         }
 
     }

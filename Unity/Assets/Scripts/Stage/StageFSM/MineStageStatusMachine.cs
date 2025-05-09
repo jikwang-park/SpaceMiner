@@ -74,6 +74,8 @@ public class MineStageStatusMachine : StageStatusMachine
             }
 
             stageManager.StageUiManager.IngameUIManager.mineBattleButton.gameObject.SetActive(false);
+            stageManager.StageUiManager.InteractableUIBackground.gameObject.SetActive(true);
+            stageManager.StageUiManager.UIGroupStatusManager.UiDict[IngameStatus.Mine].SetPopUpActive(0);
 
             mine.Release();
             mine = null;
@@ -251,11 +253,13 @@ public class MineStageStatusMachine : StageStatusMachine
         {
             remainingTime = 0f;
             OnStageEnd(true);
+            return;
         }
 
         if (stageManager.UnitPartyManager.UnitCount == 0)
         {
             OnStageEnd(false);
+            return;
         }
 
         if (spawnIntervalReduceTime < currentTime)
@@ -317,6 +321,8 @@ public class MineStageStatusMachine : StageStatusMachine
 
             ++SaveLoadManager.Data.mineBattleData.mineBattleCount;
             SaveLoadManager.Data.mineBattleData.lastClearTime = TimeManager.Instance.GetEstimatedServerTime();
+
+            SaveLoadManager.SaveGame();
 
             stageManager.StageUiManager.IngameUIManager.miningBattleResultWindow.ShowClear(battleData, gotItems);
         }

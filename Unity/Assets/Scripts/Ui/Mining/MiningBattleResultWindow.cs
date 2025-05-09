@@ -4,8 +4,13 @@ using UnityEngine;
 
 public class MiningBattleResultWindow : MonoBehaviour
 {
+    private const string prefabAddress = "Assets/Addressables/Prefabs/UI/Stage/Dungeon/DungeonClearRewardIcon.prefab";
+
     [SerializeField]
     private LocalizationText stageText;
+
+    [SerializeField]
+    private LocalizationText remainingText;
 
     [SerializeField]
     private GameObject clearView;
@@ -13,20 +18,45 @@ public class MiningBattleResultWindow : MonoBehaviour
     [SerializeField]
     private GameObject defeatView;
 
+    [SerializeField]
+    private Transform rewardRow;
+
     private StageManager stageManager;
 
-    private void Start()
+    private List<DungeonClearRewardIcon> rewardIcons = new List<DungeonClearRewardIcon>();
+
+
+    private void OnDisable()
     {
-        stageManager = GameObject.FindGameObjectWithTag("GameController").GetComponent<StageManager>();
+        for (int i = 0; i < rewardIcons.Count; ++i)
+        {
+            rewardIcons[i].Release();
+        }
+        rewardIcons.Clear();
     }
 
     public void ShowClear(MiningBattleTable.Data data, List<(int itemid, BigNumber amount)> gainItem)
     {
-        stageText.SetString(60011, data.Stage.ToString());
+        stageText.SetStringArguments(data.Stage.ToString());
         gameObject.SetActive(true);
         clearView.SetActive(true);
         defeatView.SetActive(false);
+        remainingText.SetStringArguments(SaveLoadManager.Data.mineBattleData.mineBattleCount.ToString());
 
+
+        if (stageManager is null)
+        {
+            stageManager = GameObject.FindGameObjectWithTag("GameController").GetComponent<StageManager>();
+        }
+
+        foreach (var reward in gainItem)
+        {
+            var itemIconGo = stageManager.StageUiManager.ObjectPoolManager.Get(prefabAddress);
+            itemIconGo.transform.SetParent(rewardRow);
+            var rewardIcon = itemIconGo.GetComponent<DungeonClearRewardIcon>();
+            rewardIcons.Add(rewardIcon);
+            rewardIcon.SetItem(reward.itemid, reward.amount);
+        }
     }
 
     public void ShowDefeat(MiningBattleTable.Data data)

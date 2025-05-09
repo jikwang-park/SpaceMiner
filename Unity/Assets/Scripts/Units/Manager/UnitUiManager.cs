@@ -6,11 +6,11 @@ using UnityEngine.UI;
 
 public class UnitUiManager : MonoBehaviour
 {
-    private Dictionary<UnitTypes, Slider> hpDic = new Dictionary<UnitTypes, Slider>();
+    //private Dictionary<UnitTypes, Slider> hpDic = new Dictionary<UnitTypes, Slider>();
 
-    [SerializeField]
-    private StageManager stageManager;
-    private UnitPartyManager unitPartyManager;
+    //[SerializeField]
+    //private StageManager stageManager;
+    //private UnitPartyManager unitPartyManager;
 
     [SerializeField]
     private Slider tankerSlider;
@@ -20,39 +20,55 @@ public class UnitUiManager : MonoBehaviour
     private Slider healerSlider;
 
 
-    private void Awake()
-    {
-        stageManager = GameObject.FindGameObjectWithTag("GameController").GetComponent<StageManager>();
-    }
+    //private void Awake()
+    //{
+    //    stageManager = GameObject.FindGameObjectWithTag("GameController").GetComponent<StageManager>();
+    //}
 
-    private void Start()
-    {
-        stageManager.UnitPartyManager.OnUnitCreated += DoUnitCreated;
-    }
+    //private void Start()
+    //{stageManager = GameObject.FindGameObjectWithTag("GameController").GetComponent<StageManager>();
+    //}
 
-    public void DoUnitCreated()
+    //public void DoUnitCreated()
+    //{
+    //    foreach (UnitTypes type in Enum.GetValues(typeof(UnitTypes)))
+    //    {
+    //        var unit = stageManager.UnitPartyManager.GetUnit(type);
+    //        var stats = unit.GetComponent<UnitStats>();
+    //        switch (type)
+    //        {
+    //            case UnitTypes.Tanker:
+    //                stats.OnHpChanged += (amount) => { tankerSlider.value = amount; };
+
+    //                break;
+    //            case UnitTypes.Dealer:
+    //                stats.OnHpChanged += (amount) => { dealerSlider.value = amount; };
+
+    //                break;
+    //            case UnitTypes.Healer:
+    //                stats.OnHpChanged += (amount) => { healerSlider.value = amount; };
+
+    //                break;
+    //        }
+    //    }
+    //}
+
+    public void SetUnitHpBar(UnitTypes type, UnitStats stats)
     {
-        foreach (UnitTypes type in Enum.GetValues(typeof(UnitTypes)))
+        switch (type)
         {
-            var unit = stageManager.UnitPartyManager.GetUnit(type);
-            var stats = unit.GetComponent<UnitStats>();
-            switch (type)
-            {
-                case UnitTypes.Tanker:
-                    stats.OnHpChanged += (amount) => { tankerSlider.value = amount; };
-
-                    break;
-                case UnitTypes.Dealer:
-                    stats.OnHpChanged += (amount) => { dealerSlider.value = amount; };
-
-                    break;
-                case UnitTypes.Healer:
-                    stats.OnHpChanged += (amount) => { healerSlider.value = amount; };
-
-                    break;
-            }
+            case UnitTypes.Tanker:
+                stats.OnHpChanged += (amount) => { tankerSlider.value = amount; };
+                tankerSlider.value = stats.HPRate;
+                break;
+            case UnitTypes.Dealer:
+                stats.OnHpChanged += (amount) => { dealerSlider.value = amount; };
+                dealerSlider.value = stats.HPRate;
+                break;
+            case UnitTypes.Healer:
+                stats.OnHpChanged += (amount) => { healerSlider.value = amount; };
+                healerSlider.value = stats.HPRate;
+                break;
         }
     }
-
-
 }

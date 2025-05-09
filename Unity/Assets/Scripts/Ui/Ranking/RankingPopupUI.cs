@@ -85,7 +85,7 @@ public class RankingPopupUI : MonoBehaviour
         rankingBoard.Initialize(ranks, RankingType.CombatPower);
 
         var myRank = await FirebaseManager.Instance.GetMyCombatPowerRankAsync();
-        myRankingElement.SetInfo(myRank.rank, myRank.myEntry, RankingType.Stage);
+        myRankingElement.SetInfo(myRank.rank, myRank.myEntry, RankingType.CombatPower);
     }
     private async void SetDungeonDamageRanking()
     {
@@ -110,6 +110,6 @@ public class RankingPopupUI : MonoBehaviour
         rankingBoard.Initialize(ranks, RankingType.DungeonDamage);
 
         var myRank = await FirebaseManager.Instance.GetMyDungeonDamageRankAsync();
-        myRankingElement.SetInfo(myRank.rank, myRank.myEntry, RankingType.Stage);
+        myRankingElement.SetInfo(myRank.rank, myRank.myEntry, RankingType.DungeonDamage);
     }
 }

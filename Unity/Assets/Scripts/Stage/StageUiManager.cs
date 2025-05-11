@@ -36,6 +36,8 @@ public class StageUiManager : MonoBehaviour
     [field: SerializeField]
     public UnitUiManager UnitUiManager { get; private set; }
 
+    public TutorialQueue TutorialQueue { get; private set; }
+
     public event System.Action OnExitButtonClicked;
 
     private void Awake()
@@ -43,6 +45,7 @@ public class StageUiManager : MonoBehaviour
         ObjectPoolManager = GetComponent<ObjectPoolManager>();
         HPBarManager = GetComponent<HPBarManager>();
         UnitUiManager = GetComponent<UnitUiManager>();
+        TutorialQueue = GetComponent<TutorialQueue>();
     }
 
     public void ExitButtonClicked()

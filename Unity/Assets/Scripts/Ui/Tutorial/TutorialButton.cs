@@ -10,11 +10,8 @@ public class TutorialButton : MonoBehaviour
 
     public void OnButtonClick()
     {
-        return;
-
         if (!SaveLoadManager.Data.TutorialOpened[targetType])
         {
-
             var stageManager = GameObject.FindGameObjectWithTag("GameController").GetComponent<StageManager>();
             var uiManager = stageManager.StageUiManager;
             var tutorialWindow = uiManager.TutorialWindow;

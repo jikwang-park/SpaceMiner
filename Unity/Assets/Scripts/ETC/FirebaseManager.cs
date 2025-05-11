@@ -239,7 +239,7 @@ public class FirebaseManager : Singleton<FirebaseManager>
                 name = ds.Child("name").Value?.ToString() ?? "",
                 display = ds.Child("displayCombatPower").Value?.ToString() ?? "",
                 sortKey = ds.Child("sortKeyCombatPower").Value?.ToString() ?? "",
-                timestamp = (long)(ds.Child("timestamp").Value ?? 0L)
+                timestamp = (long)(ds.Child("timeStamp").Value ?? 0L)
             });
         }
 
@@ -271,7 +271,7 @@ public class FirebaseManager : Singleton<FirebaseManager>
                 name = ds.Child("name").Value?.ToString() ?? "",
                 display = ds.Child("stage").Value?.ToString() ?? "",
                 sortKey = ds.Child("stage").Value?.ToString() ?? "",
-                timestamp = (long)(ds.Child("timestamp").Value ?? 0L)
+                timestamp = (long)(ds.Child("timeStamp").Value ?? 0L)
             });
         }
 
@@ -303,7 +303,7 @@ public class FirebaseManager : Singleton<FirebaseManager>
                 name = ds.Child("name").Value?.ToString() ?? "",
                 display = ds.Child("displayDamage").Value?.ToString() ?? "",
                 sortKey = ds.Child("sortKeyDamage").Value?.ToString() ?? "",
-                timestamp = (long)(ds.Child("timestamp").Value ?? 0L)
+                timestamp = (long)(ds.Child("timeStamp").Value ?? 0L)
             });
         }
 
@@ -403,7 +403,7 @@ public class FirebaseManager : Singleton<FirebaseManager>
         var nameNode = mySnap.Child("name");
         string name = (nameNode.Exists && nameNode.Value != null) ? nameNode.Value.ToString() : "";
 
-        var damageNode = mySnap.Child("sortKeyDamage");
+        var damageNode = mySnap.Child("displayDamage");
         string display = (damageNode.Exists && damageNode.Value != null) ? damageNode.Value.ToString() : "";
 
         var entry = new LeaderBoardEntry

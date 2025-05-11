@@ -958,6 +958,7 @@ GameObject:
   m_Component:
   - component: {fileID: 8967282442877049000}
   - component: {fileID: 6524897593043137472}
+  - component: {fileID: 544935654775626189}
   m_Layer: 5
   m_Name: Buttons
   m_TagString: Untagged
@@ -1013,6 +1014,19 @@ MonoBehaviour:
   m_ChildScaleWidth: 0
   m_ChildScaleHeight: 0
   m_ReverseArrangement: 0
+--- !u!114 &544935654775626189
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1754232299292687949}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2fafe2cfe61f6974895a912c3755e8f1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_AllowSwitchOff: 0
 --- !u!1 &1935860826033242327
 GameObject:
   m_ObjectHideFlags: 0
@@ -1142,6 +1156,8 @@ MonoBehaviour:
   plusButton: {fileID: 2994994082718878606}
   mergeButton: {fileID: 4409195292263909}
   equipButton: {fileID: 853148814136681476}
+  canEquipSprite: {fileID: -654946448, guid: 986e0f8fbb28f19448b2370800fdf4b9, type: 3}
+  cannotEquipSprite: {fileID: -467907430, guid: b2c17def00d99b74eba18ac028cf2801, type: 3}
 --- !u!1 &2879115232849040031
 GameObject:
   m_ObjectHideFlags: 0
@@ -1408,7 +1424,8 @@ GameObject:
   - component: {fileID: 5047068470327598138}
   - component: {fileID: 2705984477224474942}
   - component: {fileID: 2046138538901095699}
-  - component: {fileID: 5593245179420681279}
+  - component: {fileID: 2210819538357224710}
+  - component: {fileID: 3269140842385415262}
   m_Layer: 5
   m_Name: DisplayTanker
   m_TagString: Untagged
@@ -1464,8 +1481,8 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: 25b73cf929c850744a9d1dbeb584531b, type: 3}
-  m_Type: 0
+  m_Sprite: {fileID: -467907430, guid: b2c17def00d99b74eba18ac028cf2801, type: 3}
+  m_Type: 1
   m_PreserveAspect: 0
   m_FillCenter: 1
   m_FillMethod: 4
@@ -1474,7 +1491,7 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
---- !u!114 &5593245179420681279
+--- !u!114 &2210819538357224710
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -1483,7 +1500,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 3477591917234728980}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 4e29b1a8efbd4b44bb3f3716e73f07ff, type: 3}
+  m_Script: {fileID: 11500000, guid: 9085046f02f69544eb97fd06b6048fe2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   m_Navigation:
@@ -1515,12 +1532,15 @@ MonoBehaviour:
     m_DisabledTrigger: Disabled
   m_Interactable: 1
   m_TargetGraphic: {fileID: 2046138538901095699}
-  m_OnClick:
+  toggleTransition: 1
+  graphic: {fileID: 0}
+  m_Group: {fileID: 544935654775626189}
+  onValueChanged:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 2638276384665379203}
         m_TargetAssemblyTypeName: InventoryPanelUI, Assembly-CSharp
-        m_MethodName: OnClickDisplayTankerInventoryButton
+        m_MethodName: OnProcessToggles
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -1530,6 +1550,27 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
+  m_IsOn: 0
+--- !u!114 &3269140842385415262
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3477591917234728980}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 306cc8c2b49d7114eaa3623786fc2126, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_IgnoreLayout: 0
+  m_MinWidth: -1
+  m_MinHeight: -1
+  m_PreferredWidth: -1
+  m_PreferredHeight: -1
+  m_FlexibleWidth: 1
+  m_FlexibleHeight: 1
+  m_LayoutPriority: 1
 --- !u!1 &3538429582695051243
 GameObject:
   m_ObjectHideFlags: 0
@@ -1623,7 +1664,7 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 72
+  m_fontSize: 18
   m_fontSizeBase: 24
   m_fontWeight: 400
   m_enableAutoSizing: 1
@@ -3267,7 +3308,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: 9b95bba2b39a668439e438acbb2a6caa, type: 3}
+  m_Sprite: {fileID: -467907430, guid: b2c17def00d99b74eba18ac028cf2801, type: 3}
   m_Type: 1
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -3545,6 +3586,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3fc0306909c4d7a4dbea5d36e51096c7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  selectedSprite: {fileID: 2076964209, guid: f31b12d3dde944247b0dd543b9a35eee, type: 3}
+  deselectedSprite: {fileID: -467907430, guid: b2c17def00d99b74eba18ac028cf2801, type: 3}
+  tankerToggle: {fileID: 2210819538357224710}
+  dealerToggle: {fileID: 2524066449513445038}
+  healerToggle: {fileID: 6587286413117488877}
   tankerInventory: {fileID: 2888826204781649768}
   dealerInventory: {fileID: 4516440695537723376}
   healerInventory: {fileID: 2419853336081553424}
@@ -3709,7 +3755,8 @@ GameObject:
   - component: {fileID: 3487836826970954450}
   - component: {fileID: 6635122964420302028}
   - component: {fileID: 1002766258513901180}
-  - component: {fileID: 2167258903124191239}
+  - component: {fileID: 2524066449513445038}
+  - component: {fileID: 39868369010152255}
   m_Layer: 5
   m_Name: DisplayDealer
   m_TagString: Untagged
@@ -3765,8 +3812,8 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: 25b73cf929c850744a9d1dbeb584531b, type: 3}
-  m_Type: 0
+  m_Sprite: {fileID: -467907430, guid: b2c17def00d99b74eba18ac028cf2801, type: 3}
+  m_Type: 1
   m_PreserveAspect: 0
   m_FillCenter: 1
   m_FillMethod: 4
@@ -3775,7 +3822,7 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
---- !u!114 &2167258903124191239
+--- !u!114 &2524066449513445038
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -3784,7 +3831,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 7380005695647800910}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 4e29b1a8efbd4b44bb3f3716e73f07ff, type: 3}
+  m_Script: {fileID: 11500000, guid: 9085046f02f69544eb97fd06b6048fe2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   m_Navigation:
@@ -3816,12 +3863,15 @@ MonoBehaviour:
     m_DisabledTrigger: Disabled
   m_Interactable: 1
   m_TargetGraphic: {fileID: 1002766258513901180}
-  m_OnClick:
+  toggleTransition: 1
+  graphic: {fileID: 0}
+  m_Group: {fileID: 544935654775626189}
+  onValueChanged:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 2638276384665379203}
         m_TargetAssemblyTypeName: InventoryPanelUI, Assembly-CSharp
-        m_MethodName: OnClickDisplayDealerInventoryButton
+        m_MethodName: OnProcessToggles
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -3831,6 +3881,27 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
+  m_IsOn: 0
+--- !u!114 &39868369010152255
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7380005695647800910}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 306cc8c2b49d7114eaa3623786fc2126, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_IgnoreLayout: 0
+  m_MinWidth: -1
+  m_MinHeight: -1
+  m_PreferredWidth: -1
+  m_PreferredHeight: -1
+  m_FlexibleWidth: 1
+  m_FlexibleHeight: 1
+  m_LayoutPriority: 1
 --- !u!1 &7726201973644611010
 GameObject:
   m_ObjectHideFlags: 0
@@ -3906,7 +3977,7 @@ GameObject:
   - component: {fileID: 2360039294487009076}
   - component: {fileID: 6434866091796467675}
   - component: {fileID: 6809964785455301431}
-  - component: {fileID: 8170363434844220769}
+  - component: {fileID: 6587286413117488877}
   m_Layer: 5
   m_Name: DisplayHealer
   m_TagString: Untagged
@@ -3962,8 +4033,8 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: 25b73cf929c850744a9d1dbeb584531b, type: 3}
-  m_Type: 0
+  m_Sprite: {fileID: -467907430, guid: b2c17def00d99b74eba18ac028cf2801, type: 3}
+  m_Type: 1
   m_PreserveAspect: 0
   m_FillCenter: 1
   m_FillMethod: 4
@@ -3972,7 +4043,7 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
---- !u!114 &8170363434844220769
+--- !u!114 &6587286413117488877
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -3981,7 +4052,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 7730762280450802181}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 4e29b1a8efbd4b44bb3f3716e73f07ff, type: 3}
+  m_Script: {fileID: 11500000, guid: 9085046f02f69544eb97fd06b6048fe2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   m_Navigation:
@@ -4013,12 +4084,15 @@ MonoBehaviour:
     m_DisabledTrigger: Disabled
   m_Interactable: 1
   m_TargetGraphic: {fileID: 6809964785455301431}
-  m_OnClick:
+  toggleTransition: 1
+  graphic: {fileID: 0}
+  m_Group: {fileID: 544935654775626189}
+  onValueChanged:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 2638276384665379203}
         m_TargetAssemblyTypeName: InventoryPanelUI, Assembly-CSharp
-        m_MethodName: OnClickDisplayHealerInventoryButton
+        m_MethodName: OnProcessToggles
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -4028,6 +4102,7 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
+  m_IsOn: 0
 --- !u!1 &7732911595457649487
 GameObject:
   m_ObjectHideFlags: 0
@@ -4790,7 +4865,7 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 30
+  m_fontSize: 18
   m_fontSizeBase: 30
   m_fontWeight: 400
   m_enableAutoSizing: 1

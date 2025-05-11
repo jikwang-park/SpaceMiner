@@ -38,11 +38,8 @@ public class UnitSkillUpgradeBoard : MonoBehaviour
     [SerializeField]
     private AddressableImage nextSkillImage;
 
-
     [SerializeField]
     private GameObject nextInfoGameobject;
-
-   
 
     private int needItemId;
     private int needItemCount;

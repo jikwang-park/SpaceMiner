@@ -16,6 +16,8 @@ public class BuildingDataElement : MonoBehaviour
     private TextMeshProUGUI levelText;
     [SerializeField]
     private Image lockedImage;
+    //[SerializeField]
+    //private AddressableImage lockdImage;
     [SerializeField]
     private LocalizationText buildingName;
     [SerializeField]
@@ -58,6 +60,7 @@ public class BuildingDataElement : MonoBehaviour
 
     [SerializeField]
     private AddressableImage buildingImage;
+    
 
     [SerializeField]
     private BuildingTable.BuildingType currentType;
@@ -78,7 +81,7 @@ public class BuildingDataElement : MonoBehaviour
         currentLevel = level;
         SetLevelData(currentLevel);
     }
-
+    
     private void SetBuildingName(BuildingTable.BuildingType type, int level)
     {
         var data = DataTableManager.BuildingTable.GetDatas(type);
@@ -137,11 +140,6 @@ public class BuildingDataElement : MonoBehaviour
                 }
                 break;
         }
-
-
-
-
-
 
     }
 
@@ -292,31 +290,30 @@ public class BuildingDataElement : MonoBehaviour
             upgradeButton.interactable = false;
         }
         UpdateButtonState();
-
-
     }
 
     private void SetFirstUpgrade(bool isLocked)
     {
+        if (buildingImage == null)
+            return;
+
         if (isLocked)
         {
             lockedImage.gameObject.SetActive(true);
+            buildingImage.GetComponent<Image>().color = new Color(1f, 1f, 1f, 0.2f);
         }
         else
         {
             lockedImage.gameObject.SetActive(false);
+            buildingImage.GetComponent<Image>().color = Color.white;
         }
 
     }
     private void OnClickUpgradeButton()
     {
-        ItemManager.ConsumeItem(itemId, needItemCount);
-        if (isLocked)
-        {
-            isLocked = false;
-        }
-
+        if (!ItemManager.ConsumeItem(itemId, needItemCount))
+            return;
+        isLocked = false;
         LevelUp();
-
     }
 }

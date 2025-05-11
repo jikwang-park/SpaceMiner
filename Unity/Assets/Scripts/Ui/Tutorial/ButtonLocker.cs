@@ -56,6 +56,7 @@ public class ButtonLocker : MonoBehaviour
             ChangeImage(false);
             return;
         }
+        stageManager.OnStageEnd -= StageManager_OnStageEnd;
         ChangeImage(true);
         gameObject.SetActive(false);
     }

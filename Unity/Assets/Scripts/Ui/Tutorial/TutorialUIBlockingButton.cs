@@ -2,7 +2,6 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
-using static UnityEngine.GraphicsBuffer;
 
 public class TutorialUIBlockingButton : MonoBehaviour
 {
@@ -48,7 +47,6 @@ public class TutorialUIBlockingButton : MonoBehaviour
         }
         stageManager.OnStageEnd -= StageManager_OnStageEnd;
         stageManager.StageUiManager.TutorialQueue.EnqueueTutorial(buttonImageRect, isSideMenu);
-        gameObject.SetActive(false);
     }
 
     public void OnButtonClick()

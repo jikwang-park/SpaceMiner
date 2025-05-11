@@ -28,8 +28,6 @@ public class IngameUIManager : MonoBehaviour
     [field: SerializeField]
     public GameObject unitSkills { get; private set; }
 
-    [SerializeField]
-    private StageEndWindow stageEndWindow;
     [field: SerializeField]
     public Dungeon1EndWindow DungeonEndWindow { get; private set; }
     [field: SerializeField]
@@ -73,16 +71,6 @@ public class IngameUIManager : MonoBehaviour
     public void SetDungeonStageText(int dungeonId, int stage)
     {
         stageText.SetString(Defines.StageDefaultStringID, dungeonId.ToString(), stage.ToString());
-    }
-
-    public void OpenStageEndWindow(string message, float duration)
-    {
-        stageEndWindow.Open(message, duration);
-    }
-
-    public void CloseStageEndWindow()
-    {
-        stageEndWindow.Close();
     }
 
     public void SetGoldText()

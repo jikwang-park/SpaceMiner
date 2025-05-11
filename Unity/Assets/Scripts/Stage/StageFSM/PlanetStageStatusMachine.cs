@@ -85,7 +85,6 @@ public class PlanetStageStatusMachine : StageStatusMachine
         else
         {
             stageManager.ReleaseBackground();
-            stageManager.StageUiManager.IngameUIManager.CloseStageEndWindow();
             stageManager.StageMonsterManager.SetWeight(DefaultWeight);
             SetEvent(false);
             ClearStage();
@@ -164,7 +163,7 @@ public class PlanetStageStatusMachine : StageStatusMachine
         switch (this.status)
         {
             case Status.Clear:
-                stageManager.StageUiManager.IngameUIManager.OpenStageEndWindow("Clear", stageMachineData.stageEndWindowDuration);
+                stageManager.StageUiManager.MessageWindow.ShowStageEndMessage(true);
 
                 bool ClearedStageChanged = CheckClearedStageChange();
                 if (ClearedStageChanged && stageData.FirstClearRewardID != 0)
@@ -177,11 +176,8 @@ public class PlanetStageStatusMachine : StageStatusMachine
                 }
                 break;
             case Status.Timeout:
-                stageManager.StageUiManager.IngameUIManager.OpenStageEndWindow("Time Over", stageMachineData.stageEndWindowDuration);
-                FailStageSet();
-                break;
             case Status.Defeat:
-                stageManager.StageUiManager.IngameUIManager.OpenStageEndWindow("Defeat", stageMachineData.stageEndWindowDuration);
+                stageManager.StageUiManager.MessageWindow.ShowStageEndMessage(false);
                 FailStageSet();
                 break;
         }

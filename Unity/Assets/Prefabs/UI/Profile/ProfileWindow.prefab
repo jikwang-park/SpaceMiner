@@ -92,8 +92,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 0, y: 0}
+  m_AnchoredPosition: {x: 0, y: 7.5}
+  m_SizeDelta: {x: 0, y: -29}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &2275820782955001897
 CanvasRenderer:
@@ -217,7 +217,7 @@ GameObject:
   m_Component:
   - component: {fileID: 5351825212522986602}
   - component: {fileID: 4748695377497416267}
-  - component: {fileID: 6946972491024117459}
+  - component: {fileID: 7244589048307890876}
   - component: {fileID: 955189018174535147}
   m_Layer: 5
   m_Name: Tanker
@@ -306,8 +306,20 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
+      - m_Target: {fileID: 7244589048307890876}
+        m_TargetAssemblyTypeName: ToggleSpriteChange, Assembly-CSharp
+        m_MethodName: ChangeSprite
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
   m_IsOn: 1
---- !u!114 &6946972491024117459
+--- !u!114 &7244589048307890876
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -316,12 +328,11 @@ MonoBehaviour:
   m_GameObject: {fileID: 628148481646211877}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 759c259949b57ef45a356ec6701f53a3, type: 3}
+  m_Script: {fileID: 11500000, guid: 8bddbe016d6ca704d9c0001cb53f8897, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  onColor: {r: 1, g: 1, b: 1, a: 1}
-  offColor: {r: 0.6320754, g: 0.6320754, b: 0.6320754, a: 1}
-  colorMode: 0
+  onSprite: {fileID: 2078491318, guid: 90b002670dbaf6142bb0e28a06d67fe9, type: 3}
+  offSprite: {fileID: -467907430, guid: b2c17def00d99b74eba18ac028cf2801, type: 3}
 --- !u!114 &955189018174535147
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -400,14 +411,14 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 0.30980393, g: 0.5058824, b: 0.7411765, a: 1}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 10905, guid: 0000000000000000f000000000000000, type: 0}
+  m_Sprite: {fileID: -467907430, guid: b2c17def00d99b74eba18ac028cf2801, type: 3}
   m_Type: 1
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -602,8 +613,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 0, y: 0}
+  m_AnchoredPosition: {x: 0, y: 7.5}
+  m_SizeDelta: {x: 0, y: -29}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &3813475734062206325
 CanvasRenderer:
@@ -938,8 +949,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 0, y: 0}
+  m_AnchoredPosition: {x: 0, y: 7.5}
+  m_SizeDelta: {x: 0, y: -29}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &2917594412568906960
 CanvasRenderer:
@@ -1281,14 +1292,14 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 0.30980393, g: 0.5058824, b: 0.7411765, a: 1}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 10905, guid: 0000000000000000f000000000000000, type: 0}
+  m_Sprite: {fileID: 2078491318, guid: 90b002670dbaf6142bb0e28a06d67fe9, type: 3}
   m_Type: 1
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -1388,7 +1399,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1273333141627742622}
   - component: {fileID: 8577776668391287874}
-  - component: {fileID: 8697200377985062530}
+  - component: {fileID: 5796725192834983503}
   - component: {fileID: 2139607325711506295}
   m_Layer: 5
   m_Name: Dealer
@@ -1477,8 +1488,20 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
+      - m_Target: {fileID: 5796725192834983503}
+        m_TargetAssemblyTypeName: ToggleSpriteChange, Assembly-CSharp
+        m_MethodName: ChangeSprite
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
   m_IsOn: 0
---- !u!114 &8697200377985062530
+--- !u!114 &5796725192834983503
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -1487,12 +1510,11 @@ MonoBehaviour:
   m_GameObject: {fileID: 4127451963510929194}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 759c259949b57ef45a356ec6701f53a3, type: 3}
+  m_Script: {fileID: 11500000, guid: 8bddbe016d6ca704d9c0001cb53f8897, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  onColor: {r: 1, g: 1, b: 1, a: 1}
-  offColor: {r: 0.6320754, g: 0.6320754, b: 0.6320754, a: 1}
-  colorMode: 0
+  onSprite: {fileID: 2078491318, guid: 90b002670dbaf6142bb0e28a06d67fe9, type: 3}
+  offSprite: {fileID: -467907430, guid: b2c17def00d99b74eba18ac028cf2801, type: 3}
 --- !u!114 &2139607325711506295
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1683,14 +1705,14 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 0.30980393, g: 0.5058824, b: 0.7411765, a: 1}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 10905, guid: 0000000000000000f000000000000000, type: 0}
+  m_Sprite: {fileID: -467907430, guid: b2c17def00d99b74eba18ac028cf2801, type: 3}
   m_Type: 1
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -2440,7 +2462,7 @@ GameObject:
   m_Component:
   - component: {fileID: 5530931149732322469}
   - component: {fileID: 1890764852663157229}
-  - component: {fileID: 6496457936779813426}
+  - component: {fileID: 1208241579647506350}
   - component: {fileID: 7372138257045403127}
   m_Layer: 5
   m_Name: Healer
@@ -2529,8 +2551,20 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
+      - m_Target: {fileID: 1208241579647506350}
+        m_TargetAssemblyTypeName: ToggleSpriteChange, Assembly-CSharp
+        m_MethodName: ChangeSprite
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
   m_IsOn: 0
---- !u!114 &6496457936779813426
+--- !u!114 &1208241579647506350
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -2539,12 +2573,11 @@ MonoBehaviour:
   m_GameObject: {fileID: 8434934508037480742}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 759c259949b57ef45a356ec6701f53a3, type: 3}
+  m_Script: {fileID: 11500000, guid: 8bddbe016d6ca704d9c0001cb53f8897, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  onColor: {r: 1, g: 1, b: 1, a: 1}
-  offColor: {r: 0.6320754, g: 0.6320754, b: 0.6320754, a: 1}
-  colorMode: 0
+  onSprite: {fileID: 2078491318, guid: 90b002670dbaf6142bb0e28a06d67fe9, type: 3}
+  offSprite: {fileID: -467907430, guid: b2c17def00d99b74eba18ac028cf2801, type: 3}
 --- !u!114 &7372138257045403127
 MonoBehaviour:
   m_ObjectHideFlags: 0

@@ -141,17 +141,27 @@ public enum StatType
 
 public class Defines
 {
+    public const int MiningBattleMaxCount = 5;
+
+    // ItemID
     public const int DungeonKeyItemID = 5001;
+
+    // StringID
     public const int PlanetStageFormatStringID = 169;
     public const int WaveTextStringID = 147;
     public const int StageDefaultStringID = 131;
     public const int DirectStringID = 60011;
-    public const int MiningBattleMaxCount = 5;
     public const int RestrictionStringID = 200;
 
     public const int RequirementsFailKey = 172;
     public const int RequirementsFailPlanet = 173;
     public const int RequirementsFailPower = 174;
+
+    public const int StageAscendModeStringID = 195;
+    public const int StageRepeatModeStringID = 196;
+
+    public const int PlanetStageClearStringID = 160;
+    public const int PlanetStageFailStringID = 161;
 }
 
 public enum RankingType

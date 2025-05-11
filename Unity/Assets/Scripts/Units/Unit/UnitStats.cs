@@ -33,7 +33,7 @@ public class UnitStats : CharacterStats
 
     private BigNumber buffReflectionDamage;
 
-    
+    private bool isInitialized = false;
 
 
     private System.Action<GameObject> ReflectDelegate;
@@ -97,7 +97,7 @@ public class UnitStats : CharacterStats
         }
         maxHp = UnitCombatPowerCalculator.statsDictionary[type].soldierMaxHp;
         Hp = maxHp * ratio;
-       
+
     }
 
 
@@ -109,7 +109,7 @@ public class UnitStats : CharacterStats
         this.type = type;
         currentGrade = data.Grade;
 
-        float prevRatio = maxHp > 0 ? Hp.DivideToFloat(maxHp) : 0f;
+        float prevRatio = isInitialized && maxHp > 0 ? Hp.DivideToFloat(maxHp) : 0f;
 
         coolDown = 1;
         range = data.Range;
@@ -119,14 +119,17 @@ public class UnitStats : CharacterStats
         coolDown = UnitCombatPowerCalculator.statsDictionary[type].coolDown;
         moveSpeed = UnitCombatPowerCalculator.statsDictionary[type].moveSpeed;
 
-        if(Hp == null)
+
+        if(!isInitialized || prevRatio == 0)
         {
             Hp = maxHp;
+            isInitialized = true;
         }
         else
         {
             Hp = maxHp * prevRatio;
         }
+
 
     }
     public override void Execute(GameObject defender)
@@ -233,7 +236,7 @@ public class UnitStats : CharacterStats
         //{
         //    attack.damage -= defenderStats.armor;
         //}
-    
+
         return attack;
     }
     public void UseTankerBuff(float duration, BigNumber amount)
@@ -244,12 +247,12 @@ public class UnitStats : CharacterStats
 
         takeDamage.GetDamaged += ReflectDelegate;
 
-        StartCoroutine(RemoveBuffAfterDuration(duration,takeDamage));
+        StartCoroutine(RemoveBuffAfterDuration(duration, takeDamage));
     }
 
     public void GetReflectionDamage(GameObject defender)
     {
-        
+
         CharacterStats dStats = defender.GetComponent<CharacterStats>();
         Attack attack = CreateBuffAttack(dStats);
         IAttackable[] attackables = defender.GetComponents<IAttackable>();
@@ -266,10 +269,10 @@ public class UnitStats : CharacterStats
         return attack;
     }
 
-    private IEnumerator RemoveBuffAfterDuration(float duration , AttackedTakeUnitDamage attackedDamage)
+    private IEnumerator RemoveBuffAfterDuration(float duration, AttackedTakeUnitDamage attackedDamage)
     {
         yield return new WaitForSeconds(duration);
-        if(ReflectDelegate != null)
+        if (ReflectDelegate != null)
         {
             attackedDamage.GetDamaged -= ReflectDelegate;
             ReflectDelegate = null;

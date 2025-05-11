@@ -12,35 +12,29 @@ public class DungeonRequirementWindow : MonoBehaviour
     private GameObject twoButtons;
 
     [SerializeField]
-    private TextMeshProUGUI messageText;
+    private LocalizationText messageText;
 
-    public enum Status
-    {
-        StageClear,
-        Power,
-        KeyCount,
-    }
-
-    public void Open(Status status)
+    public void OpenNeedPlanet(int planet)
     {
         gameObject.SetActive(true);
-        switch (status)
-        {
-            case Status.StageClear:
-                twoButtons.SetActive(false);
-                oneButton.SetActive(true);
-                messageText.text = "행성 클리어 조건 부족 메시지(임시)";
-                break;
-            case Status.Power:
-                twoButtons.SetActive(false);
-                oneButton.SetActive(true);
-                messageText.text = "전투력 조건 부족 메시지(임시)";
-                break;
-            case Status.KeyCount:
-                twoButtons.SetActive(true);
-                oneButton.SetActive(false);
-                messageText.text = "던전 열쇠 부족 메시지(임시)";
-                break;
-        }
+        twoButtons.SetActive(false);
+        oneButton.SetActive(true);
+        messageText.SetString(Defines.RequirementsFailPlanet, planet.ToString());
+    }
+
+    public void OpenNeedPower(BigNumber power)
+    {
+        gameObject.SetActive(true);
+        twoButtons.SetActive(false);
+        oneButton.SetActive(true);
+        messageText.SetString(Defines.RequirementsFailPower, power.ToString());
+    }
+
+    public void OpenNeedKey()
+    {
+        gameObject.SetActive(true);
+        twoButtons.SetActive(true);
+        oneButton.SetActive(false);
+        messageText.SetString(Defines.RequirementsFailKey);
     }
 }

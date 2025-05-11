@@ -29,6 +29,7 @@ public class DamageText : MonoBehaviour, IObjectPoolGameObject
     {
         text = GetComponent<TextMeshProUGUI>();
         rectTransform = GetComponent<RectTransform>();
+
     }
 
     private void OnEnable()
@@ -45,7 +46,7 @@ public class DamageText : MonoBehaviour, IObjectPoolGameObject
             Release();
             return;
         }
-        Vector3 pos = Camera.main.WorldToScreenPoint(startPos);
+        Vector3 pos = Camera.allCameras[1].WorldToViewportPoint(startPos);
         pos.y += risingSpeed * (Time.time - startTime);
         transform.position = pos;
     }

@@ -19,6 +19,9 @@ public class TankerSkillTable : DataTable
         public int Level { get; set; }
         public int NameStringID { get; set; }
         public int DetailStringID { get; set; }
+        public int MaxLevel { get; set; }
+        public int SpriteID { get; set; }
+
 
         //public UnitTypes[] targetPriority;
 
@@ -41,6 +44,8 @@ public class TankerSkillTable : DataTable
             Level = int.Parse(argument[7]);
             NameStringID = int.Parse(argument[8]);
             DetailStringID = int.Parse(argument[9]);
+            MaxLevel = int.Parse(argument[10]);
+            SpriteID = int.Parse(argument[11]);
 
             //targetPriority = SplitSoldierTarget(SoldierTarget);
         }

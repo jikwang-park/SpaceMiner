@@ -14,12 +14,10 @@ public class UnitSkillUpgradeBoard : MonoBehaviour
     private UnitSkillUpgradePanel manager;
 
     private const string maxLevelText = "Max Level";
-    [SerializeField]
-    private Image currentImage;
+
     [SerializeField]
     private LocalizationText currentText;
-    [SerializeField]
-    private Image nextImage;
+
     [SerializeField]
     private LocalizationText nextText;
     [SerializeField]
@@ -36,15 +34,15 @@ public class UnitSkillUpgradeBoard : MonoBehaviour
     private TextMeshProUGUI needItemCountText;
 
     [SerializeField]
-    private AddressableImage Skillimage;
+    private AddressableImage currentSkillImage;
+    [SerializeField]
+    private AddressableImage nextSkillImage;
 
 
     [SerializeField]
     private GameObject nextInfoGameobject;
 
-    //юс╫ц
-    [SerializeField]
-    private List<Sprite> skillImage = new List<Sprite>();
+   
 
     private int needItemId;
     private int needItemCount;
@@ -75,36 +73,30 @@ public class UnitSkillUpgradeBoard : MonoBehaviour
         SetBoardText(id, type, grade);
     }
 
-    public void SetImage(UnitTypes type)
+    public void SetImage(UnitTypes type,int id)
     {
-        int index = (int)type - 1;
-        if (index >= 0 && index < skillImage.Count)
+        int spriteId = 0;
+        switch (type)
         {
-            currentImage.sprite = skillImage[index];
-            nextImage.sprite = skillImage[index];
+            case UnitTypes.Tanker:
+                spriteId = DataTableManager.TankerSkillTable.GetData(id).SpriteID;
+                currentSkillImage.SetSprite(spriteId);
+                nextSkillImage.SetSprite(spriteId);
+                break;
+            case UnitTypes.Dealer:
+                spriteId = DataTableManager.DealerSkillTable.GetData(id).SpriteID;
+                currentSkillImage.SetSprite(spriteId);
+                nextSkillImage.SetSprite(spriteId);
+                break;
+            case UnitTypes.Healer:
+                spriteId = DataTableManager.HealerSkillTable.GetData(id).SpriteID;
+                currentSkillImage.SetSprite(spriteId);
+                nextSkillImage.SetSprite(spriteId);
+                break;
         }
     }
 
-    //public void SetInitImage(UnitTypes type, Grade grade, int id)
-    //{
-    //    int spriteId = 0;
-    //    switch (type)
-    //    {
-    //        case UnitTypes.Tanker:
-    //            spriteId = DataTableManager.TankerSkillTable.GetData(id).;
-    //            Skillimage.SetSprite(spriteId);
-    //            break;
-    //        case UnitTypes.Dealer:
-    //            spriteId = DataTableManager.DealerSkillTable.GetData(id).SpriteId;
-    //            Skillimage.SetSprite(spriteId);
-    //            break;
-    //        case UnitTypes.Healer:
-    //            spriteId = DataTableManager.HealerSkillTable.GetData(id).;
-    //            Skillimage.SetSprite(spriteId);
-    //            break;
-    //    }
-    //}
-
+  
 
 
     public void SetLimit(Grade grade, UnitTypes type, int id)
@@ -118,7 +110,7 @@ public class UnitSkillUpgradeBoard : MonoBehaviour
         currentId = id;
         currentType = type;
         currentGrade = grade;
-        SetImage(currentType);
+        SetImage(currentType,id);
 
 
         SetCurrentSkillText(currentType, currentId, out level);

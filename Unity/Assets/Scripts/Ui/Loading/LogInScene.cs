@@ -25,6 +25,7 @@ public class LogInScene : MonoBehaviour
     private void Awake()
     {
         startButton.interactable = false;
+        resetButton.interactable = false;
         nicknamePanel.SetActive(false);
     }
     private async void Start()
@@ -32,7 +33,7 @@ public class LogInScene : MonoBehaviour
         await FirebaseManager.Instance.InitializeAsync();
 
         var user = FirebaseManager.Instance.User;
-        if(user == null)
+        if (user == null)
         {
             return;
         }
@@ -40,6 +41,7 @@ public class LogInScene : MonoBehaviour
         if (!string.IsNullOrEmpty(user.DisplayName))
         {
             startButton.interactable = true;
+            resetButton.interactable = true;
         }
         else
         {
@@ -63,6 +65,7 @@ public class LogInScene : MonoBehaviour
         }
 
         startButton.interactable = false;
+        resetButton.interactable = false;
         saveNicknameButton.interactable = false;
 
         try
@@ -73,6 +76,7 @@ public class LogInScene : MonoBehaviour
 
             nicknamePanel.SetActive(false);
             startButton.interactable = true;
+            resetButton.interactable = true;
         }
         catch (System.Exception ex)
         {

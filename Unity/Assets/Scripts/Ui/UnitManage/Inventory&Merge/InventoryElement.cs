@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using TMPro;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UI;
 public class InventoryElement : MonoBehaviour
@@ -24,25 +25,25 @@ public class InventoryElement : MonoBehaviour
     private TextMeshProUGUI levelText;
     [SerializeField]
     private GameObject alarmImage;
+    [SerializeField]
+    private AddressableImage icon;
 
     public Inventory parentInventory;
-    private Button button;
     private bool onAlarm = false;
-    void Awake()
+    private static readonly Color LockedColor = new Color(0.3f, 0.3f, 0.3f, 1f);
+    private static readonly Color UnlockedColor = Color.white;
+    private Image backgroundImage;
+    private void Awake()
     {
-        button = GetComponent<Button>();
+        backgroundImage = GetComponent<Image>();
     }
     private void Start()
     {
-        if (button != null)
-        {
-            button.interactable = !IsLocked;
-        }
+        backgroundImage.color = IsLocked ? LockedColor : UnlockedColor;
         if(alarmImage != null)
         {
             alarmImage.SetActive(false);
         }
-        button.onClick.AddListener(() => OnElementClicked());
     }
     public void UnlockElement()
     {
@@ -56,14 +57,20 @@ public class InventoryElement : MonoBehaviour
         {
             lockImage.gameObject.SetActive(false);
         }
-        if (button != null)
+        if(backgroundImage != null)
         {
-            button.interactable = true;
+            backgroundImage.color = UnlockedColor;
         }
     }
     public void SetID(int id) //250331 HKY 데이터형 변경
     {
         soldierId = id;
+        SetIcon();
+    }
+    private void SetIcon()
+    {
+        int spriteId = DataTableManager.SoldierTable.GetData(soldierId).SpriteID;
+        icon.SetSprite(spriteId);
     }
     public void SetGrade(Grade grade)
     {

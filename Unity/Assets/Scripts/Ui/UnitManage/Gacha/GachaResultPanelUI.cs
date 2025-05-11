@@ -78,7 +78,7 @@ public class GachaResultPanelUI : MonoBehaviour
                 SoldierInfoImage soldierInfoImage = elementObj.GetComponent<SoldierInfoImage>();
                 if (soldierInfoImage != null)
                 {
-                    soldierInfoImage.Initialize(data.Grade, data.Level, "", gradeSprites[(int)data.Grade - 1]);
+                    soldierInfoImage.Initialize(data.Grade, data.Level, "", gradeSprites[(int)data.Grade - 1], data.SpriteID);
                 }
             }
             else

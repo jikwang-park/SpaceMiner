@@ -16,6 +16,12 @@ public class ScoreBoard : MonoBehaviour
     public void SetBoard(RankingType type, string score)
     {
         image.sprite = sprites[(int)type];
+        if(type == RankingType.Stage)
+        {
+            var stageData = DataTableManager.StageTable.GetData(int.Parse(score));
+            scoreText.text = $"{stageData.Planet}-{stageData.Stage}";
+            return;
+        }
         scoreText.text = score;
     }
 }

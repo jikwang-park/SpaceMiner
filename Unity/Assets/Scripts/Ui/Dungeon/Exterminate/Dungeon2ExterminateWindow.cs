@@ -71,7 +71,7 @@ public class Dungeon2ExterminateWindow : MonoBehaviour
         }
         else
         {
-            requirementWindow.Open(DungeonRequirementWindow.Status.KeyCount);
+            requirementWindow.OpenNeedKey();
         }
     }
 }

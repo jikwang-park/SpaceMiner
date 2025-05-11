@@ -75,7 +75,7 @@ public class Dungeon2EndWindow : MonoBehaviour
         var stageSaveData = SaveLoadManager.Data.stageSaveData;
         if (ItemManager.GetItemAmount(curStage.NeedKeyItemID) < curStage.NeedKeyItemCount)
         {
-            requirementWindow.Open(DungeonRequirementWindow.Status.KeyCount);
+            requirementWindow.OpenNeedKey();
             return;
         }
 

@@ -95,7 +95,7 @@ public class Dungeon1EndWindow : MonoBehaviour
         var stageSaveData = SaveLoadManager.Data.stageSaveData;
         if (ItemManager.GetItemAmount(curStage.NeedKeyItemID) < curStage.NeedKeyItemCount)
         {
-            requirementWindow.Open(DungeonRequirementWindow.Status.KeyCount);
+            requirementWindow.OpenNeedKey();
             return;
         }
 
@@ -104,13 +104,13 @@ public class Dungeon1EndWindow : MonoBehaviour
             || (stageSaveData.highPlanet == nextStage.NeedClearPlanet
                 && stageSaveData.highStage != stageSaveData.clearedStage))
         {
-            requirementWindow.Open(DungeonRequirementWindow.Status.StageClear);
+            requirementWindow.OpenNeedPlanet(nextStage.NeedClearPlanet);
             return;
         }
 
         if (UnitCombatPowerCalculator.TotalCombatPower < nextStage.NeedPower)
         {
-            requirementWindow.Open(DungeonRequirementWindow.Status.Power);
+            requirementWindow.OpenNeedPower(nextStage.NeedPower);
             return;
         }
 
@@ -125,7 +125,7 @@ public class Dungeon1EndWindow : MonoBehaviour
         var stageSaveData = SaveLoadManager.Data.stageSaveData;
         if (ItemManager.GetItemAmount(curStage.NeedKeyItemID) < curStage.NeedKeyItemCount)
         {
-            requirementWindow.Open(DungeonRequirementWindow.Status.KeyCount);
+            requirementWindow.OpenNeedKey();
             return;
         }
 

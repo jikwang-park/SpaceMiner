@@ -7,12 +7,26 @@ using UnityEngine.UI;
 public class InventoryPanelUI : MonoBehaviour
 {
     [SerializeField]
+    private Sprite selectedSprite;
+    [SerializeField] 
+    private Sprite deselectedSprite;
+    [SerializeField]
+    private Toggle tankerToggle;
+    [SerializeField]
+    private Toggle dealerToggle;
+    [SerializeField]
+    private Toggle healerToggle;
+
+    [SerializeField]
     private Inventory tankerInventory;
     [SerializeField]
     private Inventory dealerInventory;
     [SerializeField]
     private Inventory healerInventory;
 
+    private Image tankerToggleImage;
+    private Image dealerToggleImage;
+    private Image healerToggleImage;
 
     private Dictionary<UnitTypes, Inventory> inventories = new Dictionary<UnitTypes, Inventory>();
     private UnitTypes currentType = UnitTypes.Healer;
@@ -23,16 +37,44 @@ public class InventoryPanelUI : MonoBehaviour
         inventories.Add(UnitTypes.Tanker, tankerInventory);
         inventories.Add(UnitTypes.Dealer, dealerInventory);
         inventories.Add(UnitTypes.Healer, healerInventory);
+        tankerToggleImage = tankerToggle.GetComponent<Image>();
+        dealerToggleImage = dealerToggle.GetComponent<Image>();
+        healerToggleImage = healerToggle.GetComponent<Image>();
     }
     public void OnEnable()
     {
-        DisplayInventory(UnitTypes.Tanker);
+        tankerToggle.isOn = false;
+        dealerToggle.isOn = false;
+        healerToggle.isOn = false;
+        tankerToggle.isOn = true;
     }
     public void OnClickCloseButton()
     {
         gameObject.SetActive(false);
     }
+    public void OnProcessToggles()
+    {
+        if (tankerToggle.isOn)
+        {
+            OnClickDisplayTankerInventoryButton();
+        }
+        else if (dealerToggle.isOn)
+        {
+            OnClickDisplayDealerInventoryButton();
+        }
+        else if (healerToggle.isOn)
+        {
+            OnClickDisplayHealerInventoryButton();
+        }
 
+        UpdateToggleSprites();
+    }
+    private void UpdateToggleSprites()
+    {
+        tankerToggleImage.sprite = tankerToggle.isOn ? selectedSprite : deselectedSprite;
+        healerToggleImage.sprite = healerToggle.isOn ? selectedSprite : deselectedSprite;
+        dealerToggleImage.sprite = dealerToggle.isOn ? selectedSprite : deselectedSprite;
+    }
     public void DisplayInventory(UnitTypes type)
     {
         if(currentType == type)

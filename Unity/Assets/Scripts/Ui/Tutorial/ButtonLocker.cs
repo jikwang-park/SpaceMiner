@@ -5,7 +5,7 @@ using UnityEngine.UI;
 
 public class ButtonLocker : MonoBehaviour
 {
-    private static readonly Color grey = new Color(0.75f, 0.75f, 0.75f);
+    private static readonly Color grey = new Color(0.60f, 0.60f, 0.60f);
 
     [SerializeField]
     public int TargetID;
@@ -13,12 +13,12 @@ public class ButtonLocker : MonoBehaviour
     [SerializeField]
     public Image buttonImage;
 
-    [SerializeField]
-    private MessageWindow messageWindow;
-
     private int targetPlanet;
     private int targetStage;
     private StageManager stageManager;
+
+    [SerializeField]
+    private bool shouldHide;
 
     private void Start()
     {
@@ -59,7 +59,12 @@ public class ButtonLocker : MonoBehaviour
         }
         if (isOn)
         {
+            buttonImage.enabled = true;
             buttonImage.color = Color.white;
+        }
+        else if (shouldHide)
+        {
+            buttonImage.enabled = false;
         }
         else
         {
@@ -69,6 +74,6 @@ public class ButtonLocker : MonoBehaviour
 
     public void OnClickButton()
     {
-        messageWindow.Show(targetPlanet, targetStage);
+        stageManager.StageUiManager.MessageWindow.ShowStageRestrict(targetPlanet, targetStage);
     }
 }

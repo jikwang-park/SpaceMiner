@@ -112,7 +112,7 @@ public class Dungeon2EnterWindow : MonoBehaviour
     {
         if (ItemManager.GetItemAmount(dungeonData.NeedKeyItemID) < dungeonData.NeedKeyItemCount)
         {
-            requirementWindow.Open(DungeonRequirementWindow.Status.KeyCount);
+            requirementWindow.OpenNeedKey();
             return;
         }
 

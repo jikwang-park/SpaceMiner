@@ -13,7 +13,7 @@ public class EffectItemElement : MonoBehaviour
     [SerializeField]
     private Image alarmImage;
     
-    private int level = 0;
+    public int level = 0;
 
     public EffectItemTable.ItemType type;
     public EffectItemInventory parentInventory;
@@ -66,6 +66,6 @@ public class EffectItemElement : MonoBehaviour
 
     public void OnClickEffectItem()
     {
-        parentInventory.OnClickEffectItem(type, level);
+        parentInventory.OnClickEffectItem(this);
     }
 }

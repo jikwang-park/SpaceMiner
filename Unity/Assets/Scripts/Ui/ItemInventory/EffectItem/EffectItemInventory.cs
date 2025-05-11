@@ -6,11 +6,14 @@ using UnityEngine.ResourceManagement.AsyncOperations;
 
 public class EffectItemInventory : MonoBehaviour
 {
-    private const string prefabFormat = "Prefabs/UI/EffectItemElement";
     [SerializeField]
     private Transform contentParent;
     [SerializeField]
     private EffectItemDescribeUI effectItemDescribeUI;
+
+    private List<EffectItemElement> elements = new List<EffectItemElement>();
+    private const string prefabFormat = "Prefabs/UI/EffectItemElement";
+    private bool isInitialized = false;
 
     private void Awake()
     {
@@ -18,6 +21,8 @@ public class EffectItemInventory : MonoBehaviour
     }
     public void Initialize()
     {
+        int totalCount = EffectItemInventoryManager.EffectItemInventory.Count;
+
         foreach (var data in EffectItemInventoryManager.EffectItemInventory)
         {
             var type = data.Key;
@@ -28,9 +33,13 @@ public class EffectItemInventory : MonoBehaviour
                     GameObject elementObj = handle.Result;
                     EffectItemElement inventoryElement = elementObj.GetComponent<EffectItemElement>();
                     inventoryElement.parentInventory = this;
-                    if (inventoryElement != null)
+                    inventoryElement.Initialize(type);
+                    elements.Add(inventoryElement);
+
+                    if (elements.Count == totalCount)
                     {
-                        inventoryElement.Initialize(type);
+                        isInitialized = true;
+                        OnClickEffectItem(elements[0]);
                     }
                 }
                 else
@@ -40,8 +49,15 @@ public class EffectItemInventory : MonoBehaviour
             };
         }
     }
-    public void OnClickEffectItem(EffectItemTable.ItemType type, int level)
+    private void OnEnable()
     {
-        effectItemDescribeUI.SetInfo(type, level);
+        if(isInitialized)
+        {
+            OnClickEffectItem(elements[0]);
+        }
+    }
+    public void OnClickEffectItem(EffectItemElement element)
+    {
+        effectItemDescribeUI.SetInfo(element.type, element.level);
     }
 }

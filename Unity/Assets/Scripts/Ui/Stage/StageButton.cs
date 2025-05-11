@@ -11,7 +11,7 @@ public class StageButton : MonoBehaviour, IObjectPoolGameObject
     public IObjectPool<GameObject> ObjectPool { get; set; }
 
     [SerializeField]
-    private TextMeshProUGUI text;
+    private LocalizationText text;
 
     private int planet;
     private int stage;
@@ -40,7 +40,7 @@ public class StageButton : MonoBehaviour, IObjectPoolGameObject
     {
         this.planet = planet;
         this.stage = stage;
-        text.text = $"{planet}-{stage}";
+        text.SetStringArguments(planet.ToString(),stage.ToString());
     }
 
     public void MoveStage()

@@ -13,6 +13,7 @@ public class ItemTable : DataTable
         public int ItemType { get; set; }
         public string MaxStack { get; set; }
         public int SpriteID { get; set; }
+        public int DetailStringID { get; set; }
 
 
         public void Set(string[] argument)
@@ -22,6 +23,7 @@ public class ItemTable : DataTable
             ItemType = int.Parse(argument[2]);
             MaxStack = argument[3];
             SpriteID = int.Parse(argument[4]);
+            DetailStringID = int.Parse(argument[5]);
         }
     }
 

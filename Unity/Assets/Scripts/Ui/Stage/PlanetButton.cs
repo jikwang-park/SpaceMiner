@@ -18,7 +18,7 @@ public class PlanetButton : MonoBehaviour, IObjectPoolGameObject
     public Button Button { get; private set; }
 
     [SerializeField]
-    private Transform planetPosition;
+    private AddressableImage planetImage;
 
     private GameObject planetModel;
 
@@ -49,8 +49,6 @@ public class PlanetButton : MonoBehaviour, IObjectPoolGameObject
         var planetData = DataTableManager.PlanetTable.GetData(this.planet);
         var planetName = DataTableManager.StringTable.GetData(planetData.NameStringID);
         text.SetStringArguments(planet.ToString(), planetName);
-
-        var address = DataTableManager.AddressTable.GetData(planetData.SpriteID);
-        planetModel = Addressables.InstantiateAsync(address, planetPosition).WaitForCompletion();
+        planetImage.SetSprite(planetData.SpriteID);
     }
 }

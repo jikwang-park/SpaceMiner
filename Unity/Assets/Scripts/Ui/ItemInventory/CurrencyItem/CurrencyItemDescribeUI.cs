@@ -6,11 +6,13 @@ using UnityEngine;
 public class CurrencyItemDescribeUI : MonoBehaviour
 {
     [SerializeField]
+    private AddressableImage icon;
+    [SerializeField]
     private LocalizationText nameText;
     [SerializeField]
     private LocalizationText descriptionText;
     [SerializeField]
-    private TextMeshProUGUI amountText;
+    private LocalizationText amountText;
 
     private int currentItemId;
 
@@ -20,10 +22,11 @@ public class CurrencyItemDescribeUI : MonoBehaviour
 
         var currentItemData = DataTableManager.ItemTable.GetData(currentItemId);
 
+        icon.SetItemSprite(currentItemId);
         nameText.SetString(currentItemData.NameStringID);
-        // descriptionText.SetString(currentItemData.)
+        descriptionText.SetString(currentItemData.DetailStringID);
         var amount = ItemManager.GetItemAmount(currentItemId);
-        amountText.text = amount.ToString();
+        amountText.SetStringArguments(amount.ToString());
     }
 
     private void OnEnable()
@@ -40,6 +43,6 @@ public class CurrencyItemDescribeUI : MonoBehaviour
         {
             return;
         }
-        amountText.text = count.ToString();
+        amountText.SetStringArguments(count.ToString());
     }
 }

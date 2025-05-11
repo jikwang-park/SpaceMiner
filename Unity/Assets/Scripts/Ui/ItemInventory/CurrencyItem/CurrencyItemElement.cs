@@ -33,7 +33,7 @@ public class CurrencyItemElement : MonoBehaviour
         amountText.text = count.ToString();
     }
 
-    public void OnClickEffectItem()
+    public void OnClickCurrencyItem()
     {
         parentInventory.OnClickCurrencyItem(this);
     }

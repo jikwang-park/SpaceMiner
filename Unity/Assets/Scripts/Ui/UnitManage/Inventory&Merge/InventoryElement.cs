@@ -25,6 +25,8 @@ public class InventoryElement : MonoBehaviour
     private TextMeshProUGUI levelText;
     [SerializeField]
     private GameObject alarmImage;
+    [SerializeField]
+    private AddressableImage icon;
 
     public Inventory parentInventory;
     private bool onAlarm = false;
@@ -63,6 +65,12 @@ public class InventoryElement : MonoBehaviour
     public void SetID(int id) //250331 HKY 데이터형 변경
     {
         soldierId = id;
+        SetIcon();
+    }
+    private void SetIcon()
+    {
+        int spriteId = DataTableManager.SoldierTable.GetData(soldierId).SpriteID;
+        icon.SetSprite(spriteId);
     }
     public void SetGrade(Grade grade)
     {

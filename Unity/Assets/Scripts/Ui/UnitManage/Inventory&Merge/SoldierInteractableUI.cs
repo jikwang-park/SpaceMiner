@@ -81,7 +81,7 @@ public class SoldierInteractableUI : MonoBehaviour
 
         int equipId = SaveLoadManager.Data.soldierInventorySaveData[currentType].equipElementID;
 
-        equipButtonImage.sprite = (!currentElement.IsLocked && currentElementId == equipId) ? canEquipSprite : cannotEquipSprite;
+        equipButtonImage.sprite = (!currentElement.IsLocked && currentElementId != equipId) ? canEquipSprite : cannotEquipSprite;
 
         UpdateButton();
         UpdateCountText();

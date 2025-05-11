@@ -26,7 +26,8 @@ public class SoldierInfoImage : MonoBehaviour
         gradeText.SetString(stringId);
         levelText.text = $"Lv. {level}";
         countText.text = count;
-        if(image == null)
+        icon.SetSprite(spriteId);
+        if (image == null)
         {
             image = GetComponent<Image>();
         }

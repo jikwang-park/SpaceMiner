@@ -101,11 +101,13 @@ public class FirebaseManager : Singleton<FirebaseManager>
             else
             {
                 SaveLoadManager.SetDefaultData();
+                UpdateLeaderBoard();
             }
         }
         catch
         {
             SaveLoadManager.SetDefaultData();
+            UpdateLeaderBoard();
         }
     }
     private void OnApplicationQuit()
@@ -139,6 +141,7 @@ public class FirebaseManager : Singleton<FirebaseManager>
 
         await dbRef.RemoveValueAsync();
         SaveLoadManager.SetDefaultData();
+        UpdateLeaderBoard();
     }
     public async void DoCombatPowerChanged()
     {

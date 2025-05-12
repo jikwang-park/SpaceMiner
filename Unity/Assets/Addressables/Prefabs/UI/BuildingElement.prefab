@@ -200,6 +200,7 @@ MonoBehaviour:
   isLocked: 1
   buildingImage: {fileID: 7007148437202923565}
   currentType: 0
+  longpressButton: {fileID: 3267728891644796581}
 --- !u!222 &7098853661526105493
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -596,7 +597,7 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 37.95
+  m_fontSize: 25.65
   m_fontSizeBase: 36
   m_fontWeight: 400
   m_enableAutoSizing: 1
@@ -1896,6 +1897,7 @@ GameObject:
   - component: {fileID: 1618509505071778147}
   - component: {fileID: 5940264090243946438}
   - component: {fileID: 4573067559033284641}
+  - component: {fileID: 3267728891644796581}
   m_Layer: 5
   m_Name: UpgradeButton
   m_TagString: Untagged
@@ -2032,6 +2034,23 @@ MonoBehaviour:
   m_ChildScaleWidth: 0
   m_ChildScaleHeight: 0
   m_ReverseArrangement: 0
+--- !u!114 &3267728891644796581
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8519905355953488965}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 46db5f6226817ee4ab626b3d9a97b5eb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  OnLongPress:
+    m_PersistentCalls:
+      m_Calls: []
+  minTime: 0.2
+  interval: 0.1
 --- !u!1 &8715984102081311454
 GameObject:
   m_ObjectHideFlags: 0

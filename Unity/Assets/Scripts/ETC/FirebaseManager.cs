@@ -18,14 +18,17 @@ public class FirebaseManager : Singleton<FirebaseManager>
     private DatabaseReference root;
     public FirebaseUser User { get; private set; }
     private long serverTimeOffsetMs;
-    public async Task InitializeAsync()
+    public async Task InitializeAsync(IProgress<float> progress = null)
     {
+        progress?.Report(0f);
         await Firebase.FirebaseApp.CheckAndFixDependenciesAsync();
+        progress?.Report(0.25f);
 #if UNITY_EDITOR 
         FirebaseDatabase.DefaultInstance.SetPersistenceEnabled(false); 
 #endif
         auth = FirebaseAuth.DefaultInstance;
         root = FirebaseDatabase.DefaultInstance.RootReference;
+        progress?.Report(0.50f);
 
         if (auth.CurrentUser == null)
         {
@@ -38,17 +41,19 @@ public class FirebaseManager : Singleton<FirebaseManager>
             User = auth.CurrentUser;
             Debug.Log($"Restored session for user: {User.UserId}");
         }
+        progress?.Report(0.7f);
 
         var offsetRef = FirebaseDatabase.DefaultInstance.GetReference(".info/serverTimeOffset");
         offsetRef.ValueChanged += (s, e) => {
             if (long.TryParse(e.Snapshot.Value?.ToString(), out var ms))
                 serverTimeOffsetMs = ms;
         };
-
+        progress?.Report(0.9f);
         auth.StateChanged += AuthStateChanged;
         SaveLoadManager.onSaveRequested += SaveToFirebaseAsync;
         await LoadFromFirebaseAsync();
         UnitCombatPowerCalculator.onCombatPowerChanged += DoCombatPowerChanged;
+        progress?.Report(1f);
     }
     private async void AuthStateChanged(object sender, EventArgs e)
     {

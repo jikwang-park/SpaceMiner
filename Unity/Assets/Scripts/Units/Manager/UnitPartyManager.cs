@@ -26,7 +26,7 @@ public class UnitPartyManager : MonoBehaviour
     public Dictionary<UnitTypes, Unit> PartyUnits { get; private set; } = new Dictionary<UnitTypes, Unit>();
 
     public event System.Action OnUnitCreated;
-    public event System.Action OnUnitUpdated;
+    public event System.Action<UnitTypes,Grade> OnUnitUpdated;
 
     public event System.Action OnUnitAllDead;
 
@@ -38,6 +38,7 @@ public class UnitPartyManager : MonoBehaviour
     public int UnitCount => PartyUnits.Count;
 
     private StageManager stageManager;
+ 
 
     private void Awake()
     {
@@ -92,6 +93,7 @@ public class UnitPartyManager : MonoBehaviour
             PartyUnits[type].SetData(data);
             ParticleEffectManager.Instance.PlayOneShot("UnitChangeEffect", PartyUnits[type].transform);
             UnitCombatPowerCalculator.CalculateTotalCombatPower();
+            OnUnitUpdated?.Invoke(type,data.Grade);
         }
     }
 
@@ -261,7 +263,7 @@ public class UnitPartyManager : MonoBehaviour
             unit.SetData(currentSoilderData);
         }
         OnUnitCreated?.Invoke();
-        OnUnitUpdated?.Invoke();
+        //OnUnitUpdated?.Invoke();
     }
 
     public void ResetUnits(Vector3 startPos)
@@ -299,7 +301,7 @@ public class UnitPartyManager : MonoBehaviour
             Debug.Log(unit.unitStats.maxHp);
         }
         OnUnitCreated?.Invoke();
-        OnUnitUpdated?.Invoke();
+        //OnUnitUpdated?.Invoke();
     }
     public bool NeedHealUnit()
     {

@@ -63,7 +63,6 @@ public class UnitSkillTypeButtons : MonoBehaviour
         tankerImage.sprite = tankerToggle.isOn ? selectedSprite : deselectedSprite;
         dealerImage.sprite = dealerToggle.isOn ? selectedSprite : deselectedSprite;
         healerImage.sprite = healerToggle.isOn ? selectedSprite : deselectedSprite;
-        toggle.toggleDic[Grade.Normal].isOn = true;
         toggle.OnClickToggle();
     }
 }

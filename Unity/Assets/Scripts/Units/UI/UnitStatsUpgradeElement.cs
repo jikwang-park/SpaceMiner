@@ -75,10 +75,12 @@ public class UnitStatsUpgradeElement : MonoBehaviour, IPointerDownHandler, IPoin
     [SerializeField]
     private float currentCritValue = 0f;
 
+    private bool canConsume = false;
+
     private void Awake()
     {
         stageManager = GameObject.FindGameObjectWithTag("GameController").GetComponent<StageManager>();
-
+        ItemManager.OnItemAmountChanged += ItemManager_OnItemAmountChanged;
     }
 
     private void Start()
@@ -111,7 +113,7 @@ public class UnitStatsUpgradeElement : MonoBehaviour, IPointerDownHandler, IPoin
         nextLevel = Mathf.Min(maxLevel, level + statsMultiplier);
         levelText.text = $"Level + {level} \n-> + {nextLevel}";
 
-        BigNumber afterGold = GetCurrentGold(nextLevel);
+        BigNumber afterGold = GetUpgradeCost(level, 1);
 
         switch (currentType)
         {
@@ -142,7 +144,7 @@ public class UnitStatsUpgradeElement : MonoBehaviour, IPointerDownHandler, IPoin
         }
         else
         {
-            BigNumber neededGold = GetGoldForMultipleLevels(level, statsMultiplier);
+            BigNumber neededGold = GetUpgradeCost(level, statsMultiplier);
 
             needGoldText.text = $" +{neededGold}";
         }
@@ -204,11 +206,104 @@ public class UnitStatsUpgradeElement : MonoBehaviour, IPointerDownHandler, IPoin
         }
     }
 
+    private void ItemManager_OnItemAmountChanged(int itemID, BigNumber amount)
+    {
+        if (itemID != (int)Currency.Gold)
+        {
+            return;
+        }
+
+        ButtonUpdate();
+    }
+
+    private BigNumber GetUpgradeCost(int startLevel, int length)
+    {
+        BigNumber cost = 0;
+        if (startLevel + length > maxLevel)
+        {
+            length = maxLevel - startLevel;
+        }
+        switch (currentType)
+        {
+            case UpgradeType.AttackPoint:
+            case UpgradeType.HealthPoint:
+            case UpgradeType.DefensePoint:
+                if (startLevel <= 100)
+                {
+                    int min = Mathf.Min(startLevel + length, 101);
+                    int sumlength = min - startLevel;
+                    cost = 300 * Mathf.Pow(1.05f, startLevel - 1) * ((1 - Mathf.Pow(1.05f, sumlength)) / (1 - 1.05f));
+
+                    if (startLevel + length > 101)
+                    {
+                        length = startLevel + length - 101;
+                        startLevel = 101;
+                    }
+                }
+                if (startLevel > 100 && startLevel <= 1000)
+                {
+                    int min = Mathf.Min(startLevel + length, 1001);
+                    int sumlength = min - startLevel;
+                    cost += 300 * Mathf.Pow(1.05f, 99) * Mathf.Pow(1.005f, startLevel - 100) * ((1 - Mathf.Pow(1.005f, sumlength)) / (1 - 1.005f));
+
+                    if (startLevel + length > 1001)
+                    {
+                        length = startLevel + length - 1001;
+                        startLevel = 1001;
+                    }
+                }
+                if (startLevel > 1000)
+                {
+                    cost += 300 * Mathf.Pow(1.05f, 99) * Mathf.Pow(1.005f, 900) * Mathf.Pow(1.001f, startLevel - 1000) * ((1 - Mathf.Pow(1.001f, length)) / (1 - 1.001f));
+                }
+                break;
+            case UpgradeType.CriticalPossibility:
+            case UpgradeType.CriticalDamages:
+
+                if (startLevel <= 10)
+                {
+                    int min = Mathf.Min(startLevel + length, 11);
+                    int sumlength = min - startLevel;
+                    float pow105 = Mathf.Pow(1.05f, 10);
+                    cost = 300 * Mathf.Pow(pow105, startLevel - 1) * ((1 - Mathf.Pow(pow105, sumlength)) / (1 - pow105));
+
+                    if (startLevel + length > 11)
+                    {
+                        length = startLevel + length - 11;
+                        startLevel = 11;
+                    }
+                }
+                if (startLevel > 10 && startLevel <= 100)
+                {
+                    int min = Mathf.Min(startLevel + length, 101);
+                    int sumlength = min - startLevel;
+                    float pow105 = Mathf.Pow(1.05f, 10);
+                    float pow1005 = Mathf.Pow(1.005f, 10);
+                    cost += 300 * Mathf.Pow(pow105, 9) * Mathf.Pow(pow1005, startLevel - 10) * ((1 - Mathf.Pow(pow1005, sumlength)) / (1 - pow1005));
+
+                    if (startLevel + length > 101)
+                    {
+                        length = startLevel + length - 101;
+                        startLevel = 101;
+                    }
+                }
+                if (startLevel > 100)
+                {
+                    float pow105 = Mathf.Pow(1.05f, 10);
+                    float pow1005 = Mathf.Pow(1.005f, 10);
+                    float pow1001 = Mathf.Pow(1.001f, 10);
+                    cost += 300 * Mathf.Pow(pow105, 9) * Mathf.Pow(pow1005, 90) * Mathf.Pow(pow1001, startLevel - 100) * ((1 - Mathf.Pow(pow1001, length)) / (1 - pow1001));
+                }
+                break;
+        }
+
+        return cost;
+    }
 
 
     public BigNumber GetGoldForMultipleLevels(int currentLevel, int multiplier)
     {
-    
+
         BigNumber result = 0;
         int end = Mathf.Min(currentLevel + multiplier, maxLevel);
 
@@ -238,8 +333,8 @@ public class UnitStatsUpgradeElement : MonoBehaviour, IPointerDownHandler, IPoin
         {
             currentNoneCriValue = GetCurrentValue(level);
         }
-      
-        currentGold = GetCurrentGold(level);
+
+        currentGold = GetUpgradeCost(level, 1);
         SetStatsInfo();
     }
 
@@ -274,10 +369,6 @@ public class UnitStatsUpgradeElement : MonoBehaviour, IPointerDownHandler, IPoin
         }
         return result;
     }
-    private void Update()
-    {
-        ButtonUpdate();
-    }
 
     private void LevelUp()
     {
@@ -303,7 +394,7 @@ public class UnitStatsUpgradeElement : MonoBehaviour, IPointerDownHandler, IPoin
         {
             currentNoneCriValue = GetCurrentValue(level);
         }
-        currentGold += GetCurrentGold(level);
+        currentGold = GetUpgradeCost(level, statsMultiplier);
 
 
         SaveLoadManager.Data.unitStatUpgradeData.upgradeLevels[currentType] = level;
@@ -315,22 +406,33 @@ public class UnitStatsUpgradeElement : MonoBehaviour, IPointerDownHandler, IPoin
         if (level >= maxLevel)
             return false;
 
-        BigNumber totalGold = GetGoldForMultipleLevels(level, statsMultiplier);
+        BigNumber totalGold = GetUpgradeCost(level, statsMultiplier);
         return ItemManager.CanConsume((int)Currency.Gold, totalGold);
     }
 
     private void ButtonUpdate()
     {
-        BigNumber totalGold = GetGoldForMultipleLevels(level, statsMultiplier);
+        if (canConsume)
+        {
+            return;
+        }
+        BigNumber totalGold = GetUpgradeCost(level, statsMultiplier);
+
         if (ItemManager.CanConsume((int)Currency.Gold, totalGold))
         {
             needGoldText.color = Color.white;
             goldText.SetColor(Color.white);
             goldimage.color = Color.white;
             buttonImage.color = Color.white;
+            canConsume = true;
         }
         else
         {
+            if (needGoldText.color.a == 0.3f)
+            {
+                return;
+            }
+
             needGoldText.color = new Color(1f, 1f, 1f, 0.3f);
             goldText.SetColor(new Color(1f, 1f, 1f, 0.3f));
             goldimage.color = new Color(1f, 1f, 1f, 0.3f);
@@ -340,10 +442,11 @@ public class UnitStatsUpgradeElement : MonoBehaviour, IPointerDownHandler, IPoin
 
     private void OnClickAddStatsButton()
     {
-        BigNumber totalGold = GetGoldForMultipleLevels(level, statsMultiplier);
+        BigNumber totalGold = GetUpgradeCost(level, statsMultiplier);
         if (ItemManager.CanConsume((int)Currency.Gold, totalGold))
         {
             ItemManager.ConsumeCurrency(Currency.Gold, totalGold);
+            canConsume = false;
             LevelUp();
             SetStatsInfo();
             stageManager.UnitPartyManager.AddStats(currentType, value * statsMultiplier);
@@ -396,7 +499,7 @@ public class UnitStatsUpgradeElement : MonoBehaviour, IPointerDownHandler, IPoin
                 OnClickAddStatsButton();
             }
         }
-    }   
+    }
 
     private IEnumerator LongPressedCoroutine()
     {
@@ -404,7 +507,7 @@ public class UnitStatsUpgradeElement : MonoBehaviour, IPointerDownHandler, IPoin
 
         while (CanUpgrade())
         {
-            BigNumber totalGold = GetGoldForMultipleLevels(level, statsMultiplier);
+            BigNumber totalGold = GetUpgradeCost(level, statsMultiplier);
             if (ItemManager.CanConsume((int)Currency.Gold, totalGold))
             {
                 ItemManager.ConsumeCurrency(Currency.Gold, totalGold);

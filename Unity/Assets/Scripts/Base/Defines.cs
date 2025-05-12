@@ -83,6 +83,7 @@ public enum Currency
     Tungsten,
     Titanium,
     Spinel,
+    Metal
 }
 
 public enum Grade

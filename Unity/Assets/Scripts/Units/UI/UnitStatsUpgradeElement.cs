@@ -48,9 +48,13 @@ public class UnitStatsUpgradeElement : MonoBehaviour, IPointerDownHandler, IPoin
     private LocalizationText titleText;
 
     [SerializeField]
-    private AddressableImage statsImage;
+    private AddressableImage goldImage;
+    private Image goldimage;
+
     [SerializeField]
-    private Image goldImage;
+    private AddressableImage statsImage;
+    //[SerializeField]
+    //private Image goldImage;
     [SerializeField]
     private Image buttonImage;
 
@@ -77,7 +81,10 @@ public class UnitStatsUpgradeElement : MonoBehaviour, IPointerDownHandler, IPoin
 
     }
 
-
+    private void Start()
+    {
+        goldimage = goldImage.GetComponent<Image>();
+    }
 
     public void SetMultiplier(int multiplier)
     {
@@ -95,6 +102,7 @@ public class UnitStatsUpgradeElement : MonoBehaviour, IPointerDownHandler, IPoin
     {
         var spriteId = DataTableManager.UnitUpgradeTable.GetData(type).SpriteID;
         statsImage.SetSprite(spriteId);
+        goldImage.SetSprite(10000);
     }
 
 
@@ -318,14 +326,14 @@ public class UnitStatsUpgradeElement : MonoBehaviour, IPointerDownHandler, IPoin
         {
             needGoldText.color = Color.white;
             goldText.SetColor(Color.white);
-            goldImage.color = Color.white;
+            goldimage.color = Color.white;
             buttonImage.color = Color.white;
         }
         else
         {
             needGoldText.color = new Color(1f, 1f, 1f, 0.3f);
             goldText.SetColor(new Color(1f, 1f, 1f, 0.3f));
-            goldImage.color = new Color(1f, 1f, 1f, 0.3f);
+            goldimage.color = new Color(1f, 1f, 1f, 0.3f);
             buttonImage.color = new Color(1f, 1f, 1f, 0.3f);
         }
     }

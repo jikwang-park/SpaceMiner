@@ -523,7 +523,7 @@ MonoBehaviour:
   m_MinHeight: -1
   m_PreferredWidth: 0
   m_PreferredHeight: -1
-  m_FlexibleWidth: 70
+  m_FlexibleWidth: 60
   m_FlexibleHeight: -1
   m_LayoutPriority: 1
 --- !u!1 &2718120764495507194
@@ -984,6 +984,7 @@ GameObject:
   - component: {fileID: 7178753098916134924}
   - component: {fileID: 1758579330995813724}
   - component: {fileID: 8342853467242511739}
+  - component: {fileID: 8455742096640965838}
   m_Layer: 5
   m_Name: GoldImage
   m_TagString: Untagged
@@ -1065,9 +1066,23 @@ MonoBehaviour:
   m_MinHeight: -1
   m_PreferredWidth: 0
   m_PreferredHeight: -1
-  m_FlexibleWidth: 35
+  m_FlexibleWidth: 40
   m_FlexibleHeight: -1
   m_LayoutPriority: 1
+--- !u!114 &8455742096640965838
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3848994381963162820}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ff92eb57f213b9c4e875edaab18b759a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  spriteID: 0
+  type: 0
 --- !u!1 &4344684755331601374
 GameObject:
   m_ObjectHideFlags: 0
@@ -1907,8 +1922,8 @@ MonoBehaviour:
   beforeStatsInfo: {fileID: 8606583165148560664}
   afterStatsInfo: {fileID: 9066673587787347402}
   titleText: {fileID: 5721489703931999604}
+  goldImage: {fileID: 8455742096640965838}
   statsImage: {fileID: 3354567342879874133}
-  goldImage: {fileID: 1758579330995813724}
   buttonImage: {fileID: 5355625981371564517}
   buttonTransform: {fileID: 3178706036892909795}
   target: {fileID: 86120909384467571}

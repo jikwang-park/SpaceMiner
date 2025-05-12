@@ -75,6 +75,9 @@ public class UnitStatsUpgradeElement : MonoBehaviour, IPointerDownHandler, IPoin
     [SerializeField]
     private float currentCritValue = 0f;
 
+    private Dictionary<int, BigNumber> upgradeStatsCost = new Dictionary<int, BigNumber>();
+    private Dictionary<int, BigNumber> upgradeGoldCost = new Dictionary<int, BigNumber>();
+
     private void Awake()
     {
         stageManager = GameObject.FindGameObjectWithTag("GameController").GetComponent<StageManager>();
@@ -194,27 +197,40 @@ public class UnitStatsUpgradeElement : MonoBehaviour, IPointerDownHandler, IPoin
 
     private BigNumber GetUpgradeCost(int level)
     {
+        if (upgradeStatsCost.TryGetValue(level, out var chachedCost))
+            return chachedCost;
+
+        BigNumber cost;
+
+
         if (currentType == UpgradeType.CriticalPossibility || currentType == UpgradeType.CriticalDamages)
         {
-            return GetCriticalUpgradeCost(level);
+            cost = GetCriticalUpgradeCost(level);
         }
         else
         {
-            return GetStatUpgradeCost(level);
+            cost = GetStatUpgradeCost(level);
         }
+        upgradeStatsCost[level] = cost;
+        return cost;
     }
 
 
 
     public BigNumber GetGoldForMultipleLevels(int currentLevel, int multiplier)
     {
-    
+
         BigNumber result = 0;
         int end = Mathf.Min(currentLevel + multiplier, maxLevel);
 
         for (int i = currentLevel + 1; i <= end; ++i)
         {
-            result += GetUpgradeCost(i);
+            if(!upgradeGoldCost.TryGetValue(i, out var cost))
+            {
+                cost = GetUpgradeCost(i);
+                upgradeGoldCost[i] = cost;
+            }
+            result += cost;
         }
 
         return result;
@@ -238,7 +254,7 @@ public class UnitStatsUpgradeElement : MonoBehaviour, IPointerDownHandler, IPoin
         {
             currentNoneCriValue = GetCurrentValue(level);
         }
-      
+
         currentGold = GetCurrentGold(level);
         SetStatsInfo();
     }
@@ -396,11 +412,13 @@ public class UnitStatsUpgradeElement : MonoBehaviour, IPointerDownHandler, IPoin
                 OnClickAddStatsButton();
             }
         }
-    }   
+    }
 
     private IEnumerator LongPressedCoroutine()
     {
         yield return new WaitForSeconds(longPressedDealyTime);
+
+        bool doneUpgrade = false;
 
         while (CanUpgrade())
         {
@@ -411,7 +429,7 @@ public class UnitStatsUpgradeElement : MonoBehaviour, IPointerDownHandler, IPoin
                 LevelUp();
                 SetStatsInfo();
                 stageManager.UnitPartyManager.AddStats(currentType, value * statsMultiplier);
-                SaveLoadManager.SaveGame();
+                doneUpgrade = true;
             }
             else
             {
@@ -419,6 +437,11 @@ public class UnitStatsUpgradeElement : MonoBehaviour, IPointerDownHandler, IPoin
             }
 
             yield return new WaitForSeconds(longPressedReapeatDealyTime);
+        }
+
+        if (doneUpgrade)
+        {
+            SaveLoadManager.SaveGame();
         }
     }
 }

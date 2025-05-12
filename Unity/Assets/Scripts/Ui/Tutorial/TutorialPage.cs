@@ -56,7 +56,7 @@ public class TutorialPage : MonoBehaviour
             ++index;
             ShowData();
             if (!SaveLoadManager.Data.TutorialRewardGot[tutorialType]
-                && index + 1 == datas.Count && datas[index].RewardItemID != 0)
+                && index == datas.Count - 1)
             {
                 SaveLoadManager.Data.TutorialRewardGot[tutorialType] = true;
                 SaveLoadManager.Data.TutorialOpened[tutorialType] = true;
@@ -66,7 +66,10 @@ public class TutorialPage : MonoBehaviour
                     closeButton.interactable = true;
                 }
 
-                ItemManager.AddItem(datas[index].RewardItemID, datas[index].RewardItemCount);
+                if (datas[index].RewardItemID != 0)
+                {
+                    ItemManager.AddItem(datas[index].RewardItemID, datas[index].RewardItemCount);
+                }
 
                 SaveLoadManager.SaveGame();
             }

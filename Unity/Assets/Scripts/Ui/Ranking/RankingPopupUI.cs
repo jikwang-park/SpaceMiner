@@ -7,9 +7,9 @@ using UnityEngine;
 public class RankingPopupUI : MonoBehaviour
 {
     [SerializeField]
-    private TextMeshProUGUI titleText;
+    private LocalizationText titleText;
     [SerializeField]
-    private TextMeshProUGUI currentFirstText;
+    private LocalizationText currentFirstText;
     [SerializeField]
     private TextMeshProUGUI currentFirstNicknameText;
     [SerializeField]
@@ -39,11 +39,10 @@ public class RankingPopupUI : MonoBehaviour
     private async void SetStageRanking()
     {
         List<LeaderBoardEntry> ranks = await FirebaseManager.Instance.GetTopHighestStageAsync(topN);
-
+        titleText.SetString(100004);
+        currentFirstText.SetString(100006);
         if (ranks == null || ranks.Count == 0)
         {
-            titleText.text = "스테이지 진행도 순위";
-            currentFirstText.text = "데이터가 없습니다";
             currentFirstNicknameText.text = "--";
             currentFirstScoreBoard.gameObject.SetActive(false);
             rankingBoard.Initialize(new List<LeaderBoardEntry>(), RankingType.Stage);
@@ -52,8 +51,6 @@ public class RankingPopupUI : MonoBehaviour
 
         var first = ranks[0];
 
-        titleText.text = "스테이지 진행도 순위";
-        currentFirstText.text = "현재 1등\n스테이지 진행도";
         currentFirstNicknameText.text = first.name;
         currentFirstScoreBoard.gameObject.SetActive(true);
         currentFirstScoreBoard.SetBoard(RankingType.Stage, first.display);
@@ -65,10 +62,10 @@ public class RankingPopupUI : MonoBehaviour
     private async void SetCombatPowerRanking()
     {
         List<LeaderBoardEntry> ranks = await FirebaseManager.Instance.GetTopCombatPowerAsync(topN);
+        titleText.SetString(100003);
+        currentFirstText.SetString(100007);
         if (ranks == null || ranks.Count == 0)
         {
-            titleText.text = "전투력 순위";
-            currentFirstText.text = "데이터가 없습니다";
             currentFirstNicknameText.text = "--";
             currentFirstScoreBoard.gameObject.SetActive(false);
             rankingBoard.Initialize(new List<LeaderBoardEntry>(), RankingType.CombatPower);
@@ -77,8 +74,6 @@ public class RankingPopupUI : MonoBehaviour
 
         var first = ranks[0];
 
-        titleText.text = "전투력 순위";
-        currentFirstText.text = "현재 1등\n전투력";
         currentFirstNicknameText.text = first.name;
         currentFirstScoreBoard.gameObject.SetActive(true);
         currentFirstScoreBoard.SetBoard(RankingType.CombatPower, first.display);
@@ -90,10 +85,10 @@ public class RankingPopupUI : MonoBehaviour
     private async void SetDungeonDamageRanking()
     {
         List<LeaderBoardEntry> ranks = await FirebaseManager.Instance.GetTopDungeonDamageAsync(topN);
+        titleText.SetString(100005);
+        currentFirstText.SetString(100008);
         if (ranks == null || ranks.Count == 0)
         {
-            titleText.text = "던전2 데미지 순위";
-            currentFirstText.text = "데이터가 없습니다";
             currentFirstNicknameText.text = "--";
             currentFirstScoreBoard.gameObject.SetActive(false);
             rankingBoard.Initialize(new List<LeaderBoardEntry>(), RankingType.DungeonDamage);
@@ -102,8 +97,6 @@ public class RankingPopupUI : MonoBehaviour
 
         var first = ranks[0];
 
-        titleText.text = "던전2 데미지 순위";
-        currentFirstText.text = "현재 1등\n던전2 데미지";
         currentFirstNicknameText.text = first.name;
         currentFirstScoreBoard.gameObject.SetActive(true);
         currentFirstScoreBoard.SetBoard(RankingType.DungeonDamage, first.display);

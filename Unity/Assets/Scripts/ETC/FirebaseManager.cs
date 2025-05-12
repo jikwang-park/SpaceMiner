@@ -18,14 +18,17 @@ public class FirebaseManager : Singleton<FirebaseManager>
     private DatabaseReference root;
     public FirebaseUser User { get; private set; }
     private long serverTimeOffsetMs;
-    public async Task InitializeAsync()
+    public async Task InitializeAsync(IProgress<float> progress = null)
     {
+        progress?.Report(0f);
         await Firebase.FirebaseApp.CheckAndFixDependenciesAsync();
+        progress?.Report(0.25f);
 #if UNITY_EDITOR 
         FirebaseDatabase.DefaultInstance.SetPersistenceEnabled(false); 
 #endif
         auth = FirebaseAuth.DefaultInstance;
         root = FirebaseDatabase.DefaultInstance.RootReference;
+        progress?.Report(0.50f);
 
         if (auth.CurrentUser == null)
         {
@@ -38,17 +41,19 @@ public class FirebaseManager : Singleton<FirebaseManager>
             User = auth.CurrentUser;
             Debug.Log($"Restored session for user: {User.UserId}");
         }
+        progress?.Report(0.7f);
 
         var offsetRef = FirebaseDatabase.DefaultInstance.GetReference(".info/serverTimeOffset");
         offsetRef.ValueChanged += (s, e) => {
             if (long.TryParse(e.Snapshot.Value?.ToString(), out var ms))
                 serverTimeOffsetMs = ms;
         };
-
+        progress?.Report(0.9f);
         auth.StateChanged += AuthStateChanged;
         SaveLoadManager.onSaveRequested += SaveToFirebaseAsync;
         await LoadFromFirebaseAsync();
         UnitCombatPowerCalculator.onCombatPowerChanged += DoCombatPowerChanged;
+        progress?.Report(1f);
     }
     private async void AuthStateChanged(object sender, EventArgs e)
     {
@@ -96,11 +101,13 @@ public class FirebaseManager : Singleton<FirebaseManager>
             else
             {
                 SaveLoadManager.SetDefaultData();
+                UpdateLeaderBoard();
             }
         }
         catch
         {
             SaveLoadManager.SetDefaultData();
+            UpdateLeaderBoard();
         }
     }
     private void OnApplicationQuit()
@@ -134,6 +141,7 @@ public class FirebaseManager : Singleton<FirebaseManager>
 
         await dbRef.RemoveValueAsync();
         SaveLoadManager.SetDefaultData();
+        UpdateLeaderBoard();
     }
     public async void DoCombatPowerChanged()
     {
@@ -327,16 +335,18 @@ public class FirebaseManager : Singleton<FirebaseManager>
             return new MyRankEntry { rank = -1, myEntry = null };
         }
 
-        var userId = mySnap.Key;
-        var nameNode = mySnap.Child("name");
-        string name = (nameNode.Exists && nameNode.Value != null) ? nameNode.Value.ToString() : "";
-
-        var combatPowerNode = mySnap.Child("displayCombatPower");
-        string display = (combatPowerNode.Exists && combatPowerNode.Value != null) ? combatPowerNode.Value.ToString() : "";
-
-        var entry = new LeaderBoardEntry { uid = userId, display = display, name = name };
-
+        string myUid = mySnap.Key;
+        string myName = mySnap.Child("name").Value?.ToString() ?? "";
+        string myDisplay = mySnap.Child("displayCombatPower").Value?.ToString() ?? "";
         string mySortKey = mySnap.Child("sortKeyCombatPower").Value as string;
+        long myTimestamp = (long)(mySnap.Child("timeStamp").Value ?? 0L);
+
+        var myEntry = new LeaderBoardEntry
+        {
+            uid = myUid,
+            name = myName,
+            display = myDisplay
+        };
 
         var snap = await root
             .Child("leaderboard")
@@ -345,7 +355,23 @@ public class FirebaseManager : Singleton<FirebaseManager>
             .StartAt(mySortKey)
             .GetValueAsync();
 
-        MyRankEntry myRank = new MyRankEntry { rank = (int)snap.ChildrenCount, myEntry = entry };
+        int rank = 0;
+        foreach (var child in snap.Children)
+        {
+            string childKey = child.Child("sortKeyCombatPower").Value as string;
+            long childTimestamp = (long)(child.Child("timeStamp").Value ?? 0L);
+
+            if (String.Compare(childKey, mySortKey, StringComparison.Ordinal) > 0)
+            {
+                rank++;
+            }
+            else if (childKey == mySortKey && childTimestamp <= myTimestamp)
+            {
+                rank++;
+            }
+        }
+
+        MyRankEntry myRank = new MyRankEntry { rank = rank, myEntry = myEntry };
         return myRank;
     }
     public async Task<MyRankEntry> GetMyHighestStageRankAsync()
@@ -361,28 +387,38 @@ public class FirebaseManager : Singleton<FirebaseManager>
             return new MyRankEntry { rank = -1, myEntry = null };
         }
 
-        var userId = mySnap.Key;
-        var nameNode = mySnap.Child("name");
-        string name = (nameNode.Exists && nameNode.Value != null) ? nameNode.Value.ToString() : "";
+        string myUid = mySnap.Key;
+        string myName = mySnap.Child("name").Value?.ToString() ?? "";
+        int myStage = Convert.ToInt32(mySnap.Child("stage").Value);
+        long myTimestamp = (long)(mySnap.Child("timeStamp").Value ?? 0L);
 
-        int stage = Convert.ToInt32(mySnap.Child("stage").Value);
-
-        var entry = new LeaderBoardEntry
+        var myEntry = new LeaderBoardEntry
         {
-            uid = userId,
-            display = stage.ToString(),
-            name = name
+            uid = myUid,
+            name = myName,
+            display = myStage.ToString()
         };
-
 
         var snap = await root
             .Child("leaderboard")
             .Child("HighestStage")
             .OrderByChild("stage")
-            .StartAt(stage)
+            .StartAt(myStage)
             .GetValueAsync();
 
-        MyRankEntry myRank = new MyRankEntry { rank = (int)snap.ChildrenCount, myEntry = entry };
+        int rank = 0;
+        foreach (var child in snap.Children)
+        {
+            int childStage = Convert.ToInt32(child.Child("stage").Value);
+            long childTimestamp = (long)(child.Child("timeStamp").Value ?? 0L);
+
+            if (childStage > myStage || (childStage == myStage && childTimestamp <= myTimestamp))
+            {
+                rank++;
+            }
+        }
+
+        MyRankEntry myRank = new MyRankEntry { rank = rank, myEntry = myEntry };
         return myRank;
     }
 
@@ -399,21 +435,18 @@ public class FirebaseManager : Singleton<FirebaseManager>
             return new MyRankEntry { rank = -1, myEntry = null };
         }
 
-        var userId = mySnap.Key;
-        var nameNode = mySnap.Child("name");
-        string name = (nameNode.Exists && nameNode.Value != null) ? nameNode.Value.ToString() : "";
-
-        var damageNode = mySnap.Child("displayDamage");
-        string display = (damageNode.Exists && damageNode.Value != null) ? damageNode.Value.ToString() : "";
-
-        var entry = new LeaderBoardEntry
-        {
-            uid = userId,
-            display = display,
-            name = name
-        };
-
+        string myUid = mySnap.Key;
+        string myName = mySnap.Child("name").Value?.ToString() ?? "";
+        string myDisplay = mySnap.Child("displayDamage").Value?.ToString() ?? "";
         string mySortKey = mySnap.Child("sortKeyDamage").Value as string;
+        long myTimestamp = (long)(mySnap.Child("timeStamp").Value ?? 0L);
+
+        var myEntry = new LeaderBoardEntry
+        {
+            uid = myUid,
+            name = myName,
+            display = myDisplay
+        };
 
         var snap = await root
             .Child("leaderboard")
@@ -422,7 +455,23 @@ public class FirebaseManager : Singleton<FirebaseManager>
             .StartAt(mySortKey)
             .GetValueAsync();
 
-        MyRankEntry myRank = new MyRankEntry { rank = (int)snap.ChildrenCount, myEntry = entry };
+        int rank = 0;
+        foreach (var child in snap.Children)
+        {
+            string childKey = child.Child("sortKeyDamage").Value as string;
+            long childTimestamp = (long)(child.Child("timeStamp").Value ?? 0L);
+
+            if (String.Compare(childKey, mySortKey, StringComparison.Ordinal) > 0)
+            {
+                rank++;
+            }
+            else if (childKey == mySortKey && childTimestamp <= myTimestamp)
+            {
+                rank++;
+            }
+        }
+
+        MyRankEntry myRank = new MyRankEntry { rank = rank, myEntry = myEntry };
         return myRank;
     }
 }

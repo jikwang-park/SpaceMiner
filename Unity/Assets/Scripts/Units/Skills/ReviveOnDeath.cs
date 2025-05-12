@@ -6,9 +6,10 @@ public class ReviveOnDeath : MonoBehaviour
 {
     public bool HasRevived { get; private set; } = false;
     private float reviveHpPercent;
-
+    private UnitEffectController effectController;
     public void Initialize(float hpPercent)
     {
+        effectController = GetComponent<UnitEffectController>();    
         reviveHpPercent = hpPercent;
         HasRevived = false;
     }
@@ -20,6 +21,7 @@ public class ReviveOnDeath : MonoBehaviour
         HasRevived = true;
 
         var unit = GetComponent<Unit>();
+        effectController.DoRevive(gameObject.transform);
         BigNumber revivedHp = (unit.unitStats.maxHp * reviveHpPercent) / 100f;
         unit.unitStats.Hp = revivedHp;
 

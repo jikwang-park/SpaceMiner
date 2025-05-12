@@ -14,6 +14,7 @@ public class UnitDealerSkill : UnitSkillBase
         targetTransforms = unit.StageManager.StageMonsterManager.GetMonsters(monsterMaxTarget);
         for (int i = 0; i < targetTransforms.Count; ++i)
         {
+            ParticleEffectManager.Instance.PlayOneShot("DealerSkillAttackEffect", targetTransforms[i].position);
             unit.unitStats.SkillExecute(targetTransforms[i].gameObject);
         }
         unit.lastSkillTime = Time.time;

@@ -25,7 +25,6 @@ public class TutorialUIBlocker : MonoBehaviour
     [SerializeField]
     private RectTransform bottom;
 
-    [SerializeField]
     private RectTransform canvasRect;
 
     [SerializeField]
@@ -34,6 +33,33 @@ public class TutorialUIBlocker : MonoBehaviour
     private RectTransform targetRect;
 
     public bool isShowing { get; private set; }
+
+#if UNITY_EDITOR
+    [SerializeField]
+    private RectTransform debugTarget;
+
+    [SerializeField]
+    private bool useDebug;
+
+    private void Update()
+    {
+        if (useDebug)
+        {
+            Rect rect = GetWorldRect(debugTarget);
+            SetBlock(rect);
+        }
+        else
+        {
+            Rect rect = GetWorldRect(targetRect);
+            SetBlock(rect);
+        }
+    }
+#endif
+
+    private void Awake()
+    {
+        canvasRect = GetComponent<RectTransform>();
+    }
 
     private void SetBlock(Rect rect)
     {
@@ -66,7 +92,9 @@ public class TutorialUIBlocker : MonoBehaviour
         Vector3[] corners = new Vector3[4];
         rectTransform.GetWorldCorners(corners);
         Vector3 topLeft = corners[0];
-
+        topLeft.x /= canvasRect.lossyScale.x;
+        topLeft.y /= canvasRect.lossyScale.y;
+        
         Vector2 scaledSize = new Vector2(rectTransform.rect.size.x, rectTransform.rect.size.y);
         Rect rect = new Rect(topLeft, scaledSize);
         return rect;

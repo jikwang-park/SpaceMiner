@@ -21,7 +21,7 @@ public class TutorialQueue : MonoBehaviour
     [SerializeField]
     private GameObject maximizedSidebar;
 
-    private Queue<(RectTransform rect, bool isSideBar)> queue = new Queue<(RectTransform rect, bool isSideBar)>();
+    private Queue<TutorialList> queue = new Queue<TutorialList>();
 
     [field: SerializeField]
     public TutorialUIBlocker TutorialUIBlocker { get; private set; }
@@ -34,6 +34,9 @@ public class TutorialQueue : MonoBehaviour
 
     private StageManager stageManager;
 
+    private bool maximize = false;
+
+    private int currentId;
 
     private void Update()
     {
@@ -43,31 +46,39 @@ public class TutorialQueue : MonoBehaviour
         }
         if (queue.Count > 0)
         {
-            if (queue.Peek().isSideBar)
+            if (queue.Peek().isSideMenu)
             {
                 if (!maximizedSidebar.activeInHierarchy && !TutorialUIBlocker.isShowing)
                 {
                     TutorialUIBlocker.SetBlock(sideMenuOpenButton);
                     TutorialUIBlocker.ShowArrow(TutorialUIBlocker.Position.Down);
+                    maximize = true;
                 }
-                if (maximizedSidebar.activeInHierarchy)
+                if (maximizedSidebar.activeInHierarchy
+                    && ((TutorialUIBlocker.isShowing && maximize) || !TutorialUIBlocker.isShowing))
                 {
+                    maximize = false;
+
                     TutorialUIBlocker.Close();
-                    TutorialUIBlocker.SetBlock(queue.Dequeue().rect);
+                    var queueItem = queue.Dequeue();
+                    TutorialUIBlocker.SetBlock(queueItem.buttonImageRect);
+                    currentId = queueItem.targetID;
                     TutorialUIBlocker.ShowArrow(TutorialUIBlocker.Position.Down);
                 }
             }
             else if (!TutorialUIBlocker.isShowing)
             {
-                TutorialUIBlocker.SetBlock(queue.Dequeue().rect);
+                var queueItem = queue.Dequeue();
+                TutorialUIBlocker.SetBlock(queueItem.buttonImageRect);
+                currentId = queueItem.targetID;
                 TutorialUIBlocker.ShowArrow(TutorialUIBlocker.Position.Up);
             }
         }
     }
 
-    public void EnqueueTutorial(RectTransform rectTransform, bool isSideBar)
+    public void EnqueueTutorial(TutorialList listItem)
     {
-        queue.Enqueue((rectTransform, isSideBar));
+        queue.Enqueue(listItem);
     }
 
     // 사이드 메뉴 한번도 안연 경우 제대로 표시되지 않는 버그로 인해 매니저에 포함
@@ -84,8 +95,7 @@ public class TutorialQueue : MonoBehaviour
             var stageData = DataTableManager.StageTable.GetData(stageID);
             int targetPlanet = stageData.Planet;
             int targetStage = stageData.Stage;
-            unlocks[i].isShown = targetPlanet < stageSaveData.clearedPlanet
-            || (targetPlanet == stageSaveData.clearedPlanet && targetStage <= stageSaveData.clearedStage);
+            unlocks[i].isShown = SaveLoadManager.Data.contentsOpened[unlocks[i].targetID];
             if (unlocks[i].isShown)
             {
                 ++shownCount;
@@ -93,6 +103,8 @@ public class TutorialQueue : MonoBehaviour
         }
         if (shownCount < unlocks.Length)
         {
+            StartCoroutine(DelayedEnqueue());
+
             stageManager.OnStageEnd += StageManager_OnStageEnd;
         }
         else
@@ -104,7 +116,7 @@ public class TutorialQueue : MonoBehaviour
     private void StageManager_OnStageEnd()
     {
         var stageSaveData = SaveLoadManager.Data.stageSaveData;
-
+        //SaveLoadManager.Data.contentsOpened;
         int shownCount = 0;
 
         for (int i = 0; i < unlocks.Length; ++i)
@@ -127,18 +139,47 @@ public class TutorialQueue : MonoBehaviour
             }
             ++shownCount;
             unlocks[i].isShown = true;
-            stageManager.StageUiManager.TutorialQueue.EnqueueTutorial(unlocks[i].buttonImageRect, unlocks[i].isSideMenu);
+            stageManager.StageUiManager.TutorialQueue.EnqueueTutorial(unlocks[i]);
         }
 
         if (shownCount == unlocks.Length)
         {
             stageManager.OnStageEnd -= StageManager_OnStageEnd;
-            enabled = false;
         }
+    }
+
+    private IEnumerator DelayedEnqueue()
+    {
+        yield return new WaitForEndOfFrame();
+        StageManager_OnStageEnd();
     }
 
     public void CloseUIBlocker()
     {
         TutorialUIBlocker.Close();
+
+        SaveLoadManager.Data.contentsOpened[currentId] = true;
+        SaveLoadManager.SaveGame();
+
+        if (queue.Count > 0)
+        {
+            return;
+        }
+
+        int shownCount = 0;
+
+
+        for (int i = 0; i < unlocks.Length; ++i)
+        {
+            if (unlocks[i].isShown)
+            {
+                ++shownCount;
+            }
+        }
+
+        if (shownCount == unlocks.Length)
+        {
+            enabled = false;
+        }
     }
 }

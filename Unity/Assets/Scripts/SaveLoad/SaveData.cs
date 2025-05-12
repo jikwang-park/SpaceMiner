@@ -92,6 +92,8 @@ public class SaveDataV4 : SaveDataV3
     public Dictionary<EffectItemTable.ItemType, int> possessionEffectItemDatas;
     public Dictionary<TutorialTable.QuestTypes, bool> TutorialOpened;
     public Dictionary<TutorialTable.QuestTypes, bool> TutorialRewardGot;
+    public Dictionary<int, bool> contentsOpened;
+    public float healerSkillSliderValue;
     public SaveDataV4() : base()
     {
         attendanceStates = new Dictionary<int, AttendanceData>();
@@ -115,6 +117,13 @@ public class SaveDataV4 : SaveDataV3
         {
             possessionEffectItemDatas.Add((EffectItemTable.ItemType)type, 0);
         }
+
+        contentsOpened = new Dictionary<int, bool>();
+        foreach(var id in DataTableManager.ContentsOpenTable.GetIds())
+        {
+            contentsOpened.Add(id, false);
+        }
+        healerSkillSliderValue = 0.5f;
         Version = 4;
     }
     public SaveDataV4(SaveDataV3 oldData) : base(oldData)
@@ -139,6 +148,12 @@ public class SaveDataV4 : SaveDataV3
             possessionEffectItemDatas.Add((EffectItemTable.ItemType)type, 0);
         }
 
+        contentsOpened = new Dictionary<int, bool>();
+        foreach (var id in DataTableManager.ContentsOpenTable.GetIds())
+        {
+            contentsOpened.Add(id, false);
+        }
+        healerSkillSliderValue = 0.5f;
         Version = 4;
     }
     public override SaveData VersionUp()

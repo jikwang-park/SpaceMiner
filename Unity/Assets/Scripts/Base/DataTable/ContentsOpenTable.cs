@@ -16,11 +16,13 @@ public class ContentsOpenTable : DataTable
         }
     }
 
+    private List<int> ids = new List<int>();
     public override System.Type DataType => typeof(Data);
 
     public override void LoadFromText(string text)
     {
         TableData.Clear();
+        ids.Clear();
 
         if (string.IsNullOrEmpty(text))
         {
@@ -34,6 +36,7 @@ public class ContentsOpenTable : DataTable
             if (!TableData.ContainsKey(item.ID))
             {
                 TableData.Add(item.ID, item);
+                ids.Add(item.ID);
             }
             else
             {
@@ -49,6 +52,11 @@ public class ContentsOpenTable : DataTable
             throw new System.ArgumentException("Key Not Found");
         }
         return ((Data)TableData[type]).TargetStageID;
+    }
+
+    public List<int> GetIds()
+    {
+        return ids;
     }
 
     public override void Set(List<string[]> data)

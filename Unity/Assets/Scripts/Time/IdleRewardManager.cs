@@ -33,13 +33,6 @@ public class IdleRewardManager : MonoBehaviour
     {
         CalculateIdleReward();
     }
-    private void OnApplicationFocus(bool focus)
-    {
-        if(focus)
-        {
-            CalculateIdleReward();
-        }
-    }
     private void CalculateIdleReward()
     {
         DateTime quitTime = SaveLoadManager.Data.quitTime;

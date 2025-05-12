@@ -155,7 +155,10 @@ public class StageMonsterManager : MonoBehaviour
             {
                 return;
             }
-            ++currentFrontLine;
+            if (currentFrontLine == createdLine)
+            {
+                ++currentFrontLine;
+            }
             foreach (var nextMonster in monsterLines[currentFrontLine])
             {
                 nextMonster.Value.currentLine = -1;

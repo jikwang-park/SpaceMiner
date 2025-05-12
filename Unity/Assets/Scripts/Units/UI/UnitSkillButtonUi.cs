@@ -23,7 +23,10 @@ public class UnitSkillButtonUi : MonoBehaviour
     [SerializeField]
     private TextMeshProUGUI coolTimeText;
 
+    [SerializeField]
+    private AddressableImage skillImage;
 
+    private int spriteId;
     private void Start()
     {
         stageManager = GameObject.FindGameObjectWithTag("GameController").GetComponent<StageManager>();
@@ -33,6 +36,30 @@ public class UnitSkillButtonUi : MonoBehaviour
     {
         ShowCooltime();
         ButtonUpdate();
+    }
+
+    public void SetSkillImage(UnitTypes type, Grade grade)
+    {
+        var skillDic = SaveLoadManager.Data.unitSkillUpgradeData.skillUpgradeId;
+
+        switch (type)
+        {
+            case UnitTypes.Tanker:
+                var tankerSkillId = skillDic[type][grade];
+                spriteId = DataTableManager.TankerSkillTable.GetData(tankerSkillId).SpriteID;
+                skillImage.SetSprite(spriteId);
+                break;
+            case UnitTypes.Dealer:
+                var dealerSkillId = skillDic[type][grade];
+                spriteId = DataTableManager.DealerSkillTable.GetData(dealerSkillId).SpriteID;
+                skillImage.SetSprite(spriteId);
+                break;
+            case UnitTypes.Healer:
+                var healerSkillId = skillDic[type][grade];
+                spriteId = DataTableManager.HealerSkillTable.GetData(healerSkillId).SpriteID;
+                skillImage.SetSprite(spriteId);
+                break;
+        }
 
     }
     private void ButtonUpdate()
@@ -71,16 +98,11 @@ public class UnitSkillButtonUi : MonoBehaviour
         unit.EnqueueSkill();
 
 
-        //if(unit.IsSkillCoolTimeOn)
-        //{
-        //    unit.isSkillButtonPressed = true;
-        //    unit.UseSkill();
-        //    unit.isSkillButtonPressed = false;
-        //}
     }
 
     public void SetUnit(Unit unit)
     {
         this.unit = unit;
+        SetSkillImage(unit.UnitTypes, unit.Grade);
     }
 }

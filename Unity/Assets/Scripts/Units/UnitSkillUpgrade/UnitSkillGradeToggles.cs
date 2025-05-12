@@ -56,24 +56,24 @@ public class UnitSkillGradeToggles : MonoBehaviour
   
     public void Init()
     {
- 
         toggleDic.Add(Grade.Normal,normalToggle);
         toggleDic.Add(Grade.Rare,rareToggle);
         toggleDic.Add(Grade.Epic,epicToggle);
         toggleDic.Add(Grade.Legend,legendToggle);
         panel.SetGradeToggles();
     }
+
     public void SetToggle(Grade grade, bool result)
     {   
         toggleDic[grade].interactable = result;
     }
 
-    public void UpdateSelectedFrame()
+    public void UpdateSelectedFrame(Grade grade)
     {
-        normalFrame.enabled = normalToggle.isOn;
-        rareFrame.enabled = rareToggle.isOn;
-        epicFrame.enabled = epicToggle.isOn;
-        legendFrame.enabled = legendToggle.isOn;
+        normalFrame.enabled = (grade == Grade.Normal);
+        rareFrame.enabled = (grade == Grade.Rare);
+        epicFrame.enabled = (grade == Grade.Epic);
+        legendFrame.enabled = (grade == Grade.Legend);
     }
 
     public void OnClickToggle()
@@ -94,8 +94,6 @@ public class UnitSkillGradeToggles : MonoBehaviour
         {
             panel.SetGrade(Grade.Legend);
         }
-        UpdateSelectedFrame();
-
     }
  
 }

@@ -196,14 +196,22 @@ public class UnitStatsUpgradeElement : MonoBehaviour, IPointerDownHandler, IPoin
 
     private BigNumber GetUpgradeCost(int level)
     {
+        if (upgradeStatsCost.TryGetValue(level, out var chachedCost))
+            return chachedCost;
+
+        BigNumber cost;
+
+
         if (currentType == UpgradeType.CriticalPossibility || currentType == UpgradeType.CriticalDamages)
         {
-            return GetCriticalUpgradeCost(level);
+            cost = GetCriticalUpgradeCost(level);
         }
         else
         {
-            return GetStatUpgradeCost(level);
+            cost = GetStatUpgradeCost(level);
         }
+        upgradeStatsCost[level] = cost;
+        return cost;
     }
 
     private void ItemManager_OnItemAmountChanged(int itemID, BigNumber amount)
@@ -309,7 +317,12 @@ public class UnitStatsUpgradeElement : MonoBehaviour, IPointerDownHandler, IPoin
 
         for (int i = currentLevel + 1; i <= end; ++i)
         {
-            result += GetUpgradeCost(i);
+            if(!upgradeGoldCost.TryGetValue(i, out var cost))
+            {
+                cost = GetUpgradeCost(i);
+                upgradeGoldCost[i] = cost;
+            }
+            result += cost;
         }
 
         return result;
@@ -505,6 +518,8 @@ public class UnitStatsUpgradeElement : MonoBehaviour, IPointerDownHandler, IPoin
     {
         yield return new WaitForSeconds(longPressedDealyTime);
 
+        bool doneUpgrade = false;
+
         while (CanUpgrade())
         {
             BigNumber totalGold = GetUpgradeCost(level, statsMultiplier);
@@ -514,7 +529,7 @@ public class UnitStatsUpgradeElement : MonoBehaviour, IPointerDownHandler, IPoin
                 LevelUp();
                 SetStatsInfo();
                 stageManager.UnitPartyManager.AddStats(currentType, value * statsMultiplier);
-                SaveLoadManager.SaveGame();
+                doneUpgrade = true;
             }
             else
             {
@@ -522,6 +537,11 @@ public class UnitStatsUpgradeElement : MonoBehaviour, IPointerDownHandler, IPoin
             }
 
             yield return new WaitForSeconds(longPressedReapeatDealyTime);
+        }
+
+        if (doneUpgrade)
+        {
+            SaveLoadManager.SaveGame();
         }
     }
 }

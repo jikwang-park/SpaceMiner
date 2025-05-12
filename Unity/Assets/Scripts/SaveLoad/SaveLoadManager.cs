@@ -105,6 +105,13 @@ public static class SaveLoadManager
             defaultSaveData.TutorialOpened.Add((TutorialTable.QuestTypes)type, false);
             defaultSaveData.TutorialRewardGot.Add((TutorialTable.QuestTypes)type, false);
         }
+
+        defaultSaveData.contentsOpened = new Dictionary<int, bool>();
+        foreach (var id in DataTableManager.ContentsOpenTable.GetIds())
+        {
+            defaultSaveData.contentsOpened.Add(id, false);
+        }
+        defaultSaveData.healerSkillSliderValue = 0.5f;
         Data = defaultSaveData;
     }
     public static void ResetStatUpgradeData()

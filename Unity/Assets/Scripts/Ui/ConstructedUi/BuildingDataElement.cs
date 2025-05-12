@@ -68,13 +68,17 @@ public class BuildingDataElement : MonoBehaviour
     private List<BuildingTable.Data> data;
 
     private StageManager stageManager;
-
+    [SerializeField]
+    private LongPressButton longpressButton;
     private void Awake()
     {
         stageManager = GameObject.FindGameObjectWithTag("GameController").GetComponent<StageManager>();
         upgradeButton.onClick.AddListener(() => OnClickUpgradeButton());
     }
-
+    private void Start()
+    {
+        longpressButton.OnLongPress.AddListener(() => OnClickUpgradeButton());
+    }
     public void Init(List<BuildingTable.Data> data, int level)
     {
         this.data = data;

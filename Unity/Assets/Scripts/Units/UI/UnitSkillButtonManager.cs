@@ -48,7 +48,10 @@ public class UnitSkillButtonManager : MonoBehaviour
         OnHealthSilderholdChanaged(healthSlider.value);
         stageManager = GameObject.FindGameObjectWithTag("GameController").GetComponent<StageManager>();
         stageManager.UnitPartyManager.OnUnitCreated += Init;
+        stageManager.UnitPartyManager.OnUnitUpdated += SetSkillImage;
     }
+
+  
     private void OnHealthSilderholdChanaged(float value)
     {
         currentValue = value * 100;
@@ -72,8 +75,25 @@ public class UnitSkillButtonManager : MonoBehaviour
         unitList.Add(healerUnit);
 
         autoToggle.isOn = Variables.isAutoSkillMode;
-
+        
     }
+
+    private void SetSkillImage(UnitTypes type, Grade grade)
+    {
+        switch (type)
+        {
+            case UnitTypes.Tanker:
+                tankerSkillButtonUi.SetSkillImage(type, grade);
+                break;
+            case UnitTypes.Dealer:
+                dealerSkillButton.SetSkillImage(type, grade);
+                break;
+            case UnitTypes.Healer:
+                healerSkillButton.SetSkillImage(type, grade);
+                break;
+        }
+    }
+
 
     private void OnClickHealthSliderButton()
     {

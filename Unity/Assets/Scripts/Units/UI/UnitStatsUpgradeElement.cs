@@ -196,8 +196,8 @@ public class UnitStatsUpgradeElement : MonoBehaviour, IPointerDownHandler, IPoin
 
     private BigNumber GetUpgradeCost(int level)
     {
-        if (upgradeStatsCost.TryGetValue(level, out var chachedCost))
-            return chachedCost;
+        //if (upgradeStatsCost.TryGetValue(level, out var chachedCost))
+        //    return chachedCost;
 
         BigNumber cost;
 
@@ -210,7 +210,7 @@ public class UnitStatsUpgradeElement : MonoBehaviour, IPointerDownHandler, IPoin
         {
             cost = GetStatUpgradeCost(level);
         }
-        upgradeStatsCost[level] = cost;
+        //upgradeStatsCost[level] = cost;
         return cost;
     }
 
@@ -317,12 +317,12 @@ public class UnitStatsUpgradeElement : MonoBehaviour, IPointerDownHandler, IPoin
 
         for (int i = currentLevel + 1; i <= end; ++i)
         {
-            if(!upgradeGoldCost.TryGetValue(i, out var cost))
-            {
-                cost = GetUpgradeCost(i);
-                upgradeGoldCost[i] = cost;
-            }
-            result += cost;
+            //if(!upgradeGoldCost.TryGetValue(i, out var cost))
+            //{
+            //    cost = GetUpgradeCost(i);
+            //    upgradeGoldCost[i] = cost;
+            //}
+            //result += cost;
         }
 
         return result;

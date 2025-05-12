@@ -306,6 +306,7 @@ public class StageMonsterManager : MonoBehaviour
 
     public void Spawn(Vector3 frontPosition, CorpsTable.Data data)
     {
+        frontPosition.x = 0f;
         if (data.FrontSlots == 0 && data.BackSlots == 0 && data.BossMonsterID != 0)
         {
             int lane = 1;

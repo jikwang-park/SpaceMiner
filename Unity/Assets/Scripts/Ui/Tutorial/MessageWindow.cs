@@ -17,6 +17,8 @@ public class MessageWindow : MonoBehaviour
 
     private float endTime;
 
+    private bool fadeout;
+
     private void Update()
     {
         float currentTime = Time.time;
@@ -24,6 +26,11 @@ public class MessageWindow : MonoBehaviour
         if (currentTime > endTime)
         {
             gameObject.SetActive(false);
+        }
+
+        if (!fadeout)
+        {
+            return;
         }
 
         var ratio = (endTime - currentTime) / showTime;
@@ -36,15 +43,50 @@ public class MessageWindow : MonoBehaviour
     public void ShowStageRestrict(int planet, int stage)
     {
         gameObject.SetActive(true);
+
+        showTime = 1.5f;
+        endTime = Time.time + showTime;
+        fadeout = true;
+
         text.SetString(Defines.RestrictionStringID, planet.ToString(), stage.ToString());
         Color tempColor = background.color;
         tempColor.a = 1f;
         background.color = tempColor;
-        endTime = Time.time + showTime;
     }
 
-    public void ShowStageEndMessage()
+    public void ShowStageEndMessage(bool cleared)
     {
+        gameObject.SetActive(true);
 
+        showTime = 2f;
+        endTime = Time.time + showTime;
+        fadeout = false;
+
+        if (cleared)
+        {
+            text.SetString(Defines.PlanetStageClearStringID);
+        }
+        else
+        {
+            text.SetString(Defines.PlanetStageFailStringID);
+        }
+    }
+
+    public void ShowPlanetStageMode(bool ascend)
+    {
+        gameObject.SetActive(true);
+
+        showTime = 2f;
+        endTime = Time.time + showTime;
+        fadeout = false;
+
+        if (ascend)
+        {
+            text.SetString(Defines.StageAscendModeStringID);
+        }
+        else
+        {
+            text.SetString(Defines.StageRepeatModeStringID);
+        }
     }
 }

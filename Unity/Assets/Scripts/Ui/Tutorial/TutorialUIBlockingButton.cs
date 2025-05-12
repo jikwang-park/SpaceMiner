@@ -3,39 +3,34 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class ButtonLocker : MonoBehaviour
+public class TutorialUIBlockingButton : MonoBehaviour
 {
-    private static readonly Color grey = new Color(0.60f, 0.60f, 0.60f);
+    [SerializeField]
+    private bool isSideMenu = false;
 
     [SerializeField]
     public int TargetID;
-
-    [SerializeField]
-    public Image buttonImage;
 
     private int targetPlanet;
     private int targetStage;
     private StageManager stageManager;
 
     [SerializeField]
-    private bool shouldButtonImageHide;
+    private RectTransform buttonImageRect;
 
     private void Start()
     {
         stageManager = GameObject.FindGameObjectWithTag("GameController").GetComponent<StageManager>();
-
         var stageID = DataTableManager.ContentsOpenTable.GetData(TargetID);
         var stageData = DataTableManager.StageTable.GetData(stageID);
         targetPlanet = stageData.Planet;
         targetStage = stageData.Stage;
 
-        Check();
-
         var stageSaveData = SaveLoadManager.Data.stageSaveData;
-
         if (targetPlanet < stageSaveData.clearedPlanet
             || (targetPlanet == stageSaveData.clearedPlanet && targetStage <= stageSaveData.clearedStage))
         {
+            gameObject.SetActive(false);
             return;
         }
 
@@ -44,46 +39,22 @@ public class ButtonLocker : MonoBehaviour
 
     private void StageManager_OnStageEnd()
     {
-        Check();
-    }
-
-    private void Check()
-    {
         var stageSaveData = SaveLoadManager.Data.stageSaveData;
         if (targetPlanet > stageSaveData.clearedPlanet
             || (targetPlanet == stageSaveData.clearedPlanet && targetStage > stageSaveData.clearedStage))
         {
-            ChangeImage(false);
             return;
         }
         stageManager.OnStageEnd -= StageManager_OnStageEnd;
-        ChangeImage(true);
-        gameObject.SetActive(false);
+        stageManager.StageUiManager.TutorialQueue.EnqueueTutorial(buttonImageRect, isSideMenu);
     }
 
-    private void ChangeImage(bool isOn)
+    public void OnButtonClick()
     {
-        if (buttonImage is null)
+        if (stageManager is null)
         {
-            return;
+            stageManager = GameObject.FindGameObjectWithTag("GameController").GetComponent<StageManager>();
         }
-        if (isOn)
-        {
-            buttonImage.enabled = true;
-            buttonImage.color = Color.white;
-        }
-        else if (shouldButtonImageHide)
-        {
-            buttonImage.enabled = false;
-        }
-        else
-        {
-            buttonImage.color = grey;
-        }
-    }
-
-    public void OnClickButton()
-    {
-        stageManager.StageUiManager.MessageWindow.ShowStageRestrict(targetPlanet, targetStage);
+        stageManager.StageUiManager.TutorialQueue.TutorialUIBlocker.Close();
     }
 }

@@ -154,6 +154,7 @@ public class Unit : MonoBehaviour, IObjectPoolGameObject
                 HasTarget = true;
                 var monster = StageManager.StageMonsterManager.GetMonsters(1)[0];
                 target = monster;
+                TargetDistance = target.position.z - transform.position.z;
                 target.GetComponent<DestructedDestroyEvent>().OnDestroyed += OnTargetDie;
             }
         }

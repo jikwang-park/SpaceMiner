@@ -13,6 +13,9 @@ public class MiningBattleResultWindow : MonoBehaviour
     private LocalizationText remainingText;
 
     [SerializeField]
+    private LocalizationText clearMessageText;
+
+    [SerializeField]
     private GameObject clearView;
 
     [SerializeField]
@@ -42,7 +45,7 @@ public class MiningBattleResultWindow : MonoBehaviour
         clearView.SetActive(true);
         defeatView.SetActive(false);
         remainingText.SetStringArguments(SaveLoadManager.Data.mineBattleData.mineBattleCount.ToString());
-
+        clearMessageText.SetString(Defines.PlanetStageClearStringID);
 
         if (stageManager is null)
         {
@@ -64,6 +67,8 @@ public class MiningBattleResultWindow : MonoBehaviour
         gameObject.SetActive(true);
         defeatView.SetActive(true);
         clearView.SetActive(false);
+        remainingText.SetStringArguments(SaveLoadManager.Data.mineBattleData.mineBattleCount.ToString());
+        clearMessageText.SetString(Defines.PlanetStageFailStringID);
     }
 
     public void NextStage()

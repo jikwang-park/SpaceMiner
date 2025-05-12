@@ -34,6 +34,8 @@ public class TutorialQueue : MonoBehaviour
 
     private StageManager stageManager;
 
+    private bool maximize = false;
+
 
     private void Update()
     {
@@ -49,9 +51,13 @@ public class TutorialQueue : MonoBehaviour
                 {
                     TutorialUIBlocker.SetBlock(sideMenuOpenButton);
                     TutorialUIBlocker.ShowArrow(TutorialUIBlocker.Position.Down);
+                    maximize = true;
                 }
-                if (maximizedSidebar.activeInHierarchy)
+                if (maximizedSidebar.activeInHierarchy
+                    && ((TutorialUIBlocker.isShowing && maximize) || !TutorialUIBlocker.isShowing))
                 {
+                    maximize = false;
+
                     TutorialUIBlocker.Close();
                     TutorialUIBlocker.SetBlock(queue.Dequeue().rect);
                     TutorialUIBlocker.ShowArrow(TutorialUIBlocker.Position.Down);
@@ -133,12 +139,30 @@ public class TutorialQueue : MonoBehaviour
         if (shownCount == unlocks.Length)
         {
             stageManager.OnStageEnd -= StageManager_OnStageEnd;
-            enabled = false;
         }
     }
 
     public void CloseUIBlocker()
     {
         TutorialUIBlocker.Close();
+        if (queue.Count > 0)
+        {
+            return;
+        }
+
+        int shownCount = 0;
+
+        for (int i = 0; i < unlocks.Length; ++i)
+        {
+            if (unlocks[i].isShown)
+            {
+                ++shownCount;
+            }
+        }
+
+        if (shownCount == unlocks.Length)
+        {
+            enabled = false;
+        }
     }
 }

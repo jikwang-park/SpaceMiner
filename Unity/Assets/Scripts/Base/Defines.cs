@@ -167,9 +167,9 @@ public class Defines
 
 public enum RankingType
 {
-    Stage,
     CombatPower,
     DungeonDamage,
+    Stage,
 }
 
 

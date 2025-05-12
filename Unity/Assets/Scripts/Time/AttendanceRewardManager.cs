@@ -6,7 +6,6 @@ using UnityEngine;
 
 public class AttendanceRewardManager : Singleton<AttendanceRewardManager>
 {
-    
     private Dictionary<int, AttendanceData> Attendances
     {
         get
@@ -14,7 +13,29 @@ public class AttendanceRewardManager : Singleton<AttendanceRewardManager>
             return SaveLoadManager.Data.attendanceStates;
         }
     }
-    
+    [SerializeField]
+    private GameObject attendancePopup;
+    private void Start()
+    {
+        if(HasAnyClaimableReward())
+        {
+            attendancePopup.gameObject.SetActive(true);
+        }
+    }
+    public bool HasAnyClaimableReward()
+    {
+        foreach (var attendance in DataTableManager.AttendanceTable.GetList())
+        {
+            int id = attendance.ID;
+            int dayIndex = Attendances[id].currentIndex;
+
+            if (CanClaim(id, dayIndex))
+            { 
+                return true;
+            }
+        }
+        return false;
+    }
     public void CheckDailyReset()
     {
         DateTime now = TimeManager.Instance.GetEstimatedServerTime();
@@ -45,9 +66,8 @@ public class AttendanceRewardManager : Singleton<AttendanceRewardManager>
         }
 
         var attendanceData = DataTableManager.AttendanceTable.GetList().Find((e) => e.ID == attendanceId);
-        DateTime now = TimeManager.Instance.GetEstimatedServerTime();
 
-       if(now.Date <= Attendances[attendanceId].lastClaimTime.Date)
+       if(!TimeManager.Instance.IsNewDay(Attendances[attendanceId].lastClaimTime.Date))
         {
             return false;
         }

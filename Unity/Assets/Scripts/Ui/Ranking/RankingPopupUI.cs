@@ -57,6 +57,10 @@ public class RankingPopupUI : MonoBehaviour
         rankingBoard.Initialize(ranks, RankingType.Stage);
 
         var myRank = await FirebaseManager.Instance.GetMyHighestStageRankAsync();
+        if(myRank.rank <= topN)
+        {
+            rankingBoard.UpdateElement(myRank.rank);
+        }
         myRankingElement.SetInfo(myRank.rank, myRank.myEntry, RankingType.Stage);
     }
     private async void SetCombatPowerRanking()

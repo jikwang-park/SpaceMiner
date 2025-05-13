@@ -149,7 +149,8 @@ public class UnitStatsUpgradeElement : MonoBehaviour, IPointerDownHandler, IPoin
             needGoldText.text = $" +{neededGold}";
         }
 
-
+        canConsume = false;
+        ButtonUpdate();
     }
     public BigNumber GetStatUpgradeCost(int level)
     {
@@ -459,12 +460,10 @@ public class UnitStatsUpgradeElement : MonoBehaviour, IPointerDownHandler, IPoin
         if (ItemManager.CanConsume((int)Currency.Gold, totalGold))
         {
             ItemManager.ConsumeCurrency(Currency.Gold, totalGold);
-            canConsume = false;
             LevelUp();
             SetStatsInfo();
             stageManager.UnitPartyManager.AddStats(currentType, value * statsMultiplier);
             SaveLoadManager.SaveGame();
-            ButtonUpdate();
         }
     }
     private bool isLongPressed = false;
@@ -531,8 +530,6 @@ public class UnitStatsUpgradeElement : MonoBehaviour, IPointerDownHandler, IPoin
                 SetStatsInfo();
                 stageManager.UnitPartyManager.AddStats(currentType, value * statsMultiplier);
                 doneUpgrade = true;
-                canConsume = false;
-                ButtonUpdate();
             }
             else
             {

@@ -26,9 +26,10 @@ public static class EffectItemInventoryManager
             ++count;
         }
 
-        if(count>0)
+        if(count > 0)
         {
             OnEffectItemLevelUp?.Invoke(itemId);
+            UnitCombatPowerCalculator.CalculateTotalCombatPower();
         }
     }
     public static bool LevelUp(EffectItemTable.ItemType type)

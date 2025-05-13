@@ -354,8 +354,8 @@ RectTransform:
   m_Children: []
   m_Father: {fileID: 7148300003410501148}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 1, y: 1}
+  m_AnchorMin: {x: 0, y: 0.25}
+  m_AnchorMax: {x: 1, y: 0.75}
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
@@ -387,8 +387,8 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: 3fd80e7e05e07ff4da4a9df72049e769, type: 3}
-  m_Type: 0
+  m_Sprite: {fileID: 1710404857, guid: 3fd80e7e05e07ff4da4a9df72049e769, type: 3}
+  m_Type: 1
   m_PreserveAspect: 0
   m_FillCenter: 1
   m_FillMethod: 4
@@ -844,6 +844,7 @@ MonoBehaviour:
   icon: {fileID: 3481188032280963060}
   amountSlider: {fileID: 7178809054844438386}
   alarmImage: {fileID: 2432854611437539514}
+  level: 0
   type: 0
   parentInventory: {fileID: 0}
 --- !u!1001 &5279638728396093030
@@ -854,13 +855,21 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 6381821686022135877}
     m_Modifications:
+    - target: {fileID: 1296362504868849428, guid: d33fd87cacfc69d48a93be5d326f0d54, type: 3}
+      propertyPath: m_SizeDelta.x
+      value: 80
+      objectReference: {fileID: 0}
+    - target: {fileID: 1296362504868849428, guid: d33fd87cacfc69d48a93be5d326f0d54, type: 3}
+      propertyPath: m_SizeDelta.y
+      value: 80
+      objectReference: {fileID: 0}
     - target: {fileID: 1400624503320995873, guid: d33fd87cacfc69d48a93be5d326f0d54, type: 3}
       propertyPath: m_Name
       value: EffectItemIcon
       objectReference: {fileID: 0}
     - target: {fileID: 3184486196380486049, guid: d33fd87cacfc69d48a93be5d326f0d54, type: 3}
       propertyPath: m_fontSize
-      value: 18
+      value: 21.05
       objectReference: {fileID: 0}
     - target: {fileID: 3446580981823332185, guid: d33fd87cacfc69d48a93be5d326f0d54, type: 3}
       propertyPath: m_Pivot.x

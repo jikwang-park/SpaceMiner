@@ -34,5 +34,6 @@ public class IdleRewardPopup : MonoBehaviour
         {
             Destroy(child.gameObject);
         }
+        AttendanceRewardManager.Instance.StartPopup();
     }
 }

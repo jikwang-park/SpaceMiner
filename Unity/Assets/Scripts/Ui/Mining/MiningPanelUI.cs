@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UI;
 using static MiningRobotInventoryManager;
@@ -26,6 +27,14 @@ public class MiningPanelUI : MonoBehaviour
         stageManager = GameObject.FindGameObjectWithTag("GameController").GetComponent<StageManager>();
         planetIds = DataTableManager.PlanetTable.GetIds();
         onRequestMerge += ShowMergePopup;
+    }
+    private void Start()
+    {
+        for(int i = 0; i < planetIds.Count; i++)
+        {
+            var spriteId = DataTableManager.PlanetTable.GetData(planetIds[i]).SpriteID;
+            planetButtons[i].GetComponent<AddressableImage>().SetSprite(spriteId);
+        }
     }
     private void ShowMergePopup(int mergedRobotId, MergeResponseCallback callback)
     {

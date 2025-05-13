@@ -13,6 +13,8 @@ public class AttendanceElements : MonoBehaviour
     [SerializeField]
     private LocalizationText dayText;
     [SerializeField]
+    private TextMeshProUGUI amountText;
+    [SerializeField]
     private Image completeImage;
     [SerializeField] 
     private Button claimButton;
@@ -29,6 +31,8 @@ public class AttendanceElements : MonoBehaviour
 
         currencyImage.SetSprite(DataTableManager.ItemTable.GetData(data.RewardItemID).SpriteID);
         dayText.SetStringArguments(dayIndex.ToString());
+        BigNumber amount = data.RewardItemCount;
+        amountText.text = amount.ToString();
 
         UpdateUI();
     }

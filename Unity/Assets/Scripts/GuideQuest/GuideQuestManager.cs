@@ -132,6 +132,10 @@ public static class GuideQuestManager
 
     public static void RefreshQuest()
     {
+        if(currentQuestData is null)
+        {
+            return;
+        }
         QuestProgressChange(currentQuestData.MissionClearType);
     }
 
@@ -139,6 +143,7 @@ public static class GuideQuestManager
     {
         isCleared = false;
         SaveLoadManager.Data.questProgressData.currentQuest = turn;
+        SaveLoadManager.SaveGame();
         currentQuestData = DataTableManager.GuideQuestTable.GetDataByOrder(turn);
         OnQuestChanged?.Invoke();
         RefreshQuest();

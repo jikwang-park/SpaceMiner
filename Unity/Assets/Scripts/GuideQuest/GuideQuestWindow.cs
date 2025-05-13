@@ -49,6 +49,10 @@ public class GuideQuestWindow : MonoBehaviour
             UpdateProgress();
             GuideQuestManager.RefreshQuest();
         }
+        else
+        {
+            EmptyQuest();
+        }
     }
 
     private void UpdateProgress()
@@ -85,6 +89,12 @@ public class GuideQuestWindow : MonoBehaviour
         questClearMark.SetActive(false);
         var questData = GuideQuestManager.currentQuestData;
 
+        if (questData is null)
+        {
+            EmptyQuest();
+            return;
+        }
+        questRewardIcon.SetEnabled(true);
         switch (questData.MissionClearType)
         {
             case GuideQuestTable.MissionType.Exterminate:
@@ -133,5 +143,13 @@ public class GuideQuestWindow : MonoBehaviour
             background.color = clearedImageColor;
             questClearMark.SetActive(true);
         }
+    }
+
+    private void EmptyQuest()
+    {
+        questRewardIcon.SetEnabled(false);
+        questDetailText.SetString(Defines.EmptyGuideQuest);
+        questProgressText.text = string.Empty;
+        rewardCountText.text = string.Empty;
     }
 }

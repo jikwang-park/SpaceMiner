@@ -22,17 +22,16 @@ public class RankingElement : MonoBehaviour
     private readonly Color goldColor = new Color(1f, 0.84f, 0f, 1f);
     private readonly Color silverColor = new Color(0.75f, 0.75f, 0.75f, 1f);
     private readonly Color bronzeColor = new Color(0.72f, 0.45f, 0.20f, 1f);
-    private bool isMyElement;
     private void Awake()
     {
         backgroundImage = GetComponent<Image>();
     }
-    public void SetInfo(int grade, LeaderBoardEntry entry, RankingType type)
+    public void SetInfo(int grade, LeaderBoardEntry entry, RankingType type, bool isMyEntry = false)
     {
         rankText.text = $"{grade}";
         nicknameText.text = entry.name;
         scoreBoard.SetBoard(type, entry.display);
-        UpdateBackground(false);
+        UpdateBackground(isMyEntry);
         UpdateImage(grade);
     }
 
@@ -56,10 +55,6 @@ public class RankingElement : MonoBehaviour
     }
     public void UpdateBackground(bool isMyEntry)
     {
-        if(isMyElement != isMyEntry)
-        {
-            isMyElement = isMyEntry;
-            backgroundImage.sprite = isMyElement ? sprites[1] : sprites[0];
-        }
+        backgroundImage.sprite = isMyEntry ? sprites[0] : sprites[1];
     }
 }

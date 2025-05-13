@@ -6,6 +6,7 @@ using UnityEngine;
 
 public class AttendanceRewardManager : Singleton<AttendanceRewardManager>
 {
+    private readonly int attendanceOpenId = 4103000;
     private Dictionary<int, AttendanceData> Attendances
     {
         get
@@ -17,7 +18,7 @@ public class AttendanceRewardManager : Singleton<AttendanceRewardManager>
     private GameObject attendancePopup;
     private void Start()
     {
-        if(HasAnyClaimableReward())
+        if(HasAnyClaimableReward() && IsOpenedContents())
         {
             attendancePopup.gameObject.SetActive(true);
         }
@@ -78,11 +79,31 @@ public class AttendanceRewardManager : Singleton<AttendanceRewardManager>
         }
 
        if(dayIndex > attendanceData.Period && attendanceData.IsRepeat != 1)
+       {
+            return false;
+       }
+
+       
+        return true;
+    }
+    public bool IsOpenedContents()
+    {
+        var data = SaveLoadManager.Data.stageSaveData;
+
+        int stageId = DataTableManager.ContentsOpenTable.GetData(attendanceOpenId);
+        var stageData = DataTableManager.StageTable.GetData(stageId);
+
+        if(stageData == null)
         {
             return false;
         }
 
-        return true;
+        if(data.highPlanet >= stageData.Planet && data.highStage >= stageData.Stage)
+        {
+            return true;
+        }
+
+        return false;
     }
     public void Claim(int attendanceId, int dayIndex)
     {

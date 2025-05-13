@@ -25,6 +25,6 @@ public class RankingBoardUI : MonoBehaviour
     }
     public void UpdateElement(int rank)
     {
-        // rankingElements[rank].UpdateBackground(true);
+        rankingElements[rank - 1].UpdateBackground(true);
     }
 }

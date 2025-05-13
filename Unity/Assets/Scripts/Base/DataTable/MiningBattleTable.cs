@@ -16,14 +16,18 @@ public class MiningBattleTable : DataTable
         public float LimitTime { get; set; }
         public int Reward1ItemID { get; set; }
         public string Reward1ItemCount { get; set; }
-        public int Reward2ItemID { get; set; }
+        public string Reward2ItemID { get; set; }
         public string Reward2ItemCount { get; set; }
-        public float Reward2ItemProbability { get; set; }
+        public string Reward2ItemProbability { get; set; }
         public int PlanetTableID { get; set; }
         public int Stage { get; set; }
         public int HitCount { get; set; }
         public int SpriteID { get; set; }
         public int PrefabID { get; set; }
+
+        public int[] Reward2ItemIDs;
+        public int[] Reward2ItemCounts;
+        public float[] Reward2ItemProbabilities;
 
         public void Set(string[] argument)
         {
@@ -34,9 +38,12 @@ public class MiningBattleTable : DataTable
             LimitTime = float.Parse(argument[4]);
             Reward1ItemID = int.Parse(argument[5]);
             Reward1ItemCount = argument[6];
-            Reward2ItemID = int.Parse(argument[7]);
+            Reward2ItemID = argument[7];
+            Reward2ItemIDs = DataTableUtilities.SplitColumnToInt(Reward2ItemID);
             Reward2ItemCount = argument[8];
-            Reward2ItemProbability = float.Parse(argument[9]);
+            Reward2ItemCounts = DataTableUtilities.SplitColumnToInt(Reward2ItemCount);
+            Reward2ItemProbability = argument[9];
+            Reward2ItemProbabilities = DataTableUtilities.SplitColumnToFloat(Reward2ItemProbability);
             PlanetTableID = int.Parse(argument[10]);
             Stage = int.Parse(argument[11]);
             HitCount = int.Parse(argument[12]);
@@ -65,6 +72,10 @@ public class MiningBattleTable : DataTable
         {
             if (!TableData.ContainsKey(item.ID))
             {
+                item.Reward2ItemIDs = DataTableUtilities.SplitColumnToInt(item.Reward2ItemID);
+                item.Reward2ItemCounts = DataTableUtilities.SplitColumnToInt(item.Reward2ItemCount);
+                item.Reward2ItemProbabilities = DataTableUtilities.SplitColumnToFloat(item.Reward2ItemProbability);
+
                 TableData.Add(item.ID, item);
 
                 if (!planetStages.ContainsKey(item.PlanetTableID))

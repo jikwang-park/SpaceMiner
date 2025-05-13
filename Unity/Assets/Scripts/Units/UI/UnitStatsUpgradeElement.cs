@@ -12,6 +12,9 @@ using static UnitUpgradeTable;
 
 public class UnitStatsUpgradeElement : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
 {
+    private static readonly Color disabledColor = new Color(1f, 1f, 1f, 0.3f);
+
+
     public UpgradeType currentType;
 
     public float value;
@@ -35,10 +38,6 @@ public class UnitStatsUpgradeElement : MonoBehaviour, IPointerDownHandler, IPoin
     private TextMeshProUGUI levelText;
     [SerializeField]
     private int currentNum = 0;
-    [SerializeField]
-    private BigNumber currentValue = 0;
-    [SerializeField]
-    private BigNumber currentGold = 0;
 
     [SerializeField]
     private TextMeshProUGUI beforeStatsInfo;
@@ -74,8 +73,6 @@ public class UnitStatsUpgradeElement : MonoBehaviour, IPointerDownHandler, IPoin
     private BigNumber currentNoneCriValue = 0;
     [SerializeField]
     private float currentCritValue = 0f;
-
-    private bool canConsume = false;
 
     private void Awake()
     {
@@ -113,8 +110,6 @@ public class UnitStatsUpgradeElement : MonoBehaviour, IPointerDownHandler, IPoin
         nextLevel = Mathf.Min(maxLevel, level + statsMultiplier);
         levelText.text = $"Level + {level} \n-> + {nextLevel}";
 
-        BigNumber afterGold = GetUpgradeCost(level, 1);
-
         switch (currentType)
         {
             case UpgradeType.AttackPoint:
@@ -145,10 +140,10 @@ public class UnitStatsUpgradeElement : MonoBehaviour, IPointerDownHandler, IPoin
         else
         {
             BigNumber neededGold = GetUpgradeCost(level, statsMultiplier);
+            ButtonUpdate(neededGold);
 
             needGoldText.text = $" +{neededGold}";
         }
-
 
     }
     public BigNumber GetStatUpgradeCost(int level)
@@ -220,8 +215,9 @@ public class UnitStatsUpgradeElement : MonoBehaviour, IPointerDownHandler, IPoin
         {
             return;
         }
+        BigNumber totalGold = GetUpgradeCost(level, statsMultiplier);
 
-        ButtonUpdate();
+        ButtonUpdate(totalGold);
     }
 
     private BigNumber GetUpgradeCost(int startLevel, int length)
@@ -347,7 +343,6 @@ public class UnitStatsUpgradeElement : MonoBehaviour, IPointerDownHandler, IPoin
             currentNoneCriValue = GetCurrentValue(level);
         }
 
-        currentGold = GetUpgradeCost(level, 1);
         SetStatsInfo();
     }
 
@@ -407,29 +402,27 @@ public class UnitStatsUpgradeElement : MonoBehaviour, IPointerDownHandler, IPoin
         {
             currentNoneCriValue = GetCurrentValue(level);
         }
-        currentGold = GetUpgradeCost(level, statsMultiplier);
-
 
         SaveLoadManager.Data.unitStatUpgradeData.upgradeLevels[currentType] = level;
         GuideQuestManager.QuestProgressChange(GuideQuestTable.MissionType.StatUpgrade);
+
     }
 
-    private bool CanUpgrade()
+    private bool CanUpgrade(BigNumber totalGold)
     {
         if (level >= maxLevel)
             return false;
 
-        BigNumber totalGold = GetUpgradeCost(level, statsMultiplier);
         return ItemManager.CanConsume((int)Currency.Gold, totalGold);
     }
 
-    private void ButtonUpdate()
+    private void ButtonUpdate(BigNumber totalGold)
     {
-        if (canConsume)
+        if (needGoldText is null
+            || goldimage is null)
         {
             return;
         }
-        BigNumber totalGold = GetUpgradeCost(level, statsMultiplier);
 
         if (ItemManager.CanConsume((int)Currency.Gold, totalGold))
         {
@@ -437,29 +430,26 @@ public class UnitStatsUpgradeElement : MonoBehaviour, IPointerDownHandler, IPoin
             goldText.SetColor(Color.white);
             goldimage.color = Color.white;
             buttonImage.color = Color.white;
-            canConsume = true;
         }
         else
         {
-            if (needGoldText.color.a == 0.3f)
+            if (needGoldText.color == disabledColor)
             {
                 return;
             }
 
-            needGoldText.color = new Color(1f, 1f, 1f, 0.3f);
-            goldText.SetColor(new Color(1f, 1f, 1f, 0.3f));
-            goldimage.color = new Color(1f, 1f, 1f, 0.3f);
-            buttonImage.color = new Color(1f, 1f, 1f, 0.3f);
+            needGoldText.color = disabledColor;
+            goldText.SetColor(disabledColor);
+            goldimage.color = disabledColor;
+            buttonImage.color = disabledColor;
         }
     }
 
-    private void OnClickAddStatsButton()
+    private void OnClickAddStatsButton(BigNumber totalGold)
     {
-        BigNumber totalGold = GetUpgradeCost(level, statsMultiplier);
         if (ItemManager.CanConsume((int)Currency.Gold, totalGold))
         {
             ItemManager.ConsumeCurrency(Currency.Gold, totalGold);
-            canConsume = false;
             LevelUp();
             SetStatsInfo();
             stageManager.UnitPartyManager.AddStats(currentType, value * statsMultiplier);
@@ -507,9 +497,10 @@ public class UnitStatsUpgradeElement : MonoBehaviour, IPointerDownHandler, IPoin
 
         if (Time.time - pressedStartTime < longPressedDealyTime)
         {
-            if (CanUpgrade())
+            BigNumber totalGold = GetUpgradeCost(level, statsMultiplier);
+            if (CanUpgrade(totalGold))
             {
-                OnClickAddStatsButton();
+                OnClickAddStatsButton(totalGold);
             }
         }
     }
@@ -519,10 +510,9 @@ public class UnitStatsUpgradeElement : MonoBehaviour, IPointerDownHandler, IPoin
         yield return new WaitForSeconds(longPressedDealyTime);
 
         bool doneUpgrade = false;
-
-        while (CanUpgrade())
+        BigNumber totalGold = GetUpgradeCost(level, statsMultiplier);
+        while (CanUpgrade(totalGold))
         {
-            BigNumber totalGold = GetUpgradeCost(level, statsMultiplier);
             if (ItemManager.CanConsume((int)Currency.Gold, totalGold))
             {
                 ItemManager.ConsumeCurrency(Currency.Gold, totalGold);
@@ -537,6 +527,7 @@ public class UnitStatsUpgradeElement : MonoBehaviour, IPointerDownHandler, IPoin
             }
 
             yield return new WaitForSeconds(longPressedReapeatDealyTime);
+            totalGold = GetUpgradeCost(level, statsMultiplier);
         }
 
         if (doneUpgrade)

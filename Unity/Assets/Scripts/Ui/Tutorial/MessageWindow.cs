@@ -19,6 +19,14 @@ public class MessageWindow : MonoBehaviour
 
     private bool fadeout;
 
+    public bool isShowing
+    {
+        get
+        {
+            return endTime <= Time.time;
+        }
+    }
+
     private void Update()
     {
         float currentTime = Time.time;

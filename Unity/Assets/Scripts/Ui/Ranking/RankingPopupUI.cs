@@ -1,11 +1,21 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using TMPro;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class RankingPopupUI : MonoBehaviour
 {
+    [SerializeField]
+    private List<Sprite> sprites = new List<Sprite>();
+    [SerializeField]
+    private Toggle stageToggle;
+    [SerializeField]
+    private Toggle combatPowerToggle;
+    [SerializeField]
+    private Toggle dungeonDamageToggle;
     [SerializeField]
     private LocalizationText titleText;
     [SerializeField]
@@ -19,94 +29,224 @@ public class RankingPopupUI : MonoBehaviour
     [SerializeField]
     private RankingElement myRankingElement;
 
+    private Image stageToggleImage;
+    private Image combatPowerToggleImage;
+    private Image dungeonDamageToggleImage;
+
     private const int topN = 50;
+    private void Awake()
+    {
+        stageToggleImage = stageToggle.GetComponent<Image>();
+        combatPowerToggleImage = combatPowerToggle.GetComponent<Image>();
+        dungeonDamageToggleImage = dungeonDamageToggle.GetComponent<Image>();
+    }
+
+    public void ProcessToggles()
+    {
+        if (stageToggle.isOn)
+        {
+            OnClickStageRankingButton();
+        }
+        else if (combatPowerToggle.isOn)
+        {
+            OnClickCombatPowerRankingButton();
+        }
+        else if (dungeonDamageToggle.isOn)
+        {
+            OnClickDungeonDamageRankingButton();
+        }
+
+        UpdateToggleSprites();
+    }
+    private void UpdateToggleSprites()
+    {
+        stageToggleImage.sprite = stageToggle.isOn ? sprites[1] : sprites[0];
+        combatPowerToggleImage.sprite = combatPowerToggle.isOn ? sprites[1] : sprites[0];
+        dungeonDamageToggleImage.sprite = dungeonDamageToggle.isOn ? sprites[1] : sprites[0];
+    }
     private void OnEnable()
     {
-        OnClickStageRankingButton();
+        stageToggle.isOn = false;
+        combatPowerToggle.isOn = false;
+        dungeonDamageToggle.isOn = false;
+        stageToggle.isOn = true;
     }
-    public void OnClickStageRankingButton()
+    public async void OnClickStageRankingButton()
     {
-        SetStageRanking();
+        stageToggle.interactable = false;
+        combatPowerToggle.interactable = false;
+        dungeonDamageToggle.interactable = false;
+        await SetStageRanking();
+        stageToggle.interactable = true;
+        combatPowerToggle.interactable = true;
+        dungeonDamageToggle.interactable = true;
     }
-    public void OnClickCombatPowerRankingButton()
+    public async void OnClickCombatPowerRankingButton()
     {
-        SetCombatPowerRanking();
+        stageToggle.interactable = false;
+        combatPowerToggle.interactable = false;
+        dungeonDamageToggle.interactable = false;
+        await SetCombatPowerRanking();
+        stageToggle.interactable = true;
+        combatPowerToggle.interactable = true;
+        dungeonDamageToggle.interactable = true;
     }
-    public void OnClickDungeonDamageRankingButton()
+    public async void OnClickDungeonDamageRankingButton()
     {
-        SetDungeonDamageRanking();
+        stageToggle.interactable = false;
+        combatPowerToggle.interactable = false;
+        dungeonDamageToggle.interactable = false;
+        await SetDungeonDamageRanking();
+        stageToggle.interactable = true;
+        combatPowerToggle.interactable = true;
+        dungeonDamageToggle.interactable = true;
     }
-    private async void SetStageRanking()
+    private async Task SetStageRanking()
     {
-        List<LeaderBoardEntry> ranks = await FirebaseManager.Instance.GetTopHighestStageAsync(topN);
         titleText.SetString(100004);
         currentFirstText.SetString(100006);
-        if (ranks == null || ranks.Count == 0)
+
+        var ranksTask = FirebaseManager.Instance.GetTopHighestStageAsync(topN);
+        var myRankTask = FirebaseManager.Instance.GetMyHighestStageRankAsync();
+
+        List<LeaderBoardEntry> ranks = null;
+        MyRankEntry myRank = null;
+
+        try
+        {
+            ranks = await ranksTask;
+        }
+        catch
+        {
+            ranks = new List<LeaderBoardEntry>();
+        }
+
+        if (ranks.Count > 0)
+        {
+            var first = ranks[0];
+            currentFirstNicknameText.text = first.name;
+            currentFirstScoreBoard.gameObject.SetActive(true);
+            currentFirstScoreBoard.SetBoard(RankingType.Stage, first.display);
+        }
+        else
         {
             currentFirstNicknameText.text = "--";
             currentFirstScoreBoard.gameObject.SetActive(false);
-            rankingBoard.Initialize(new List<LeaderBoardEntry>(), RankingType.Stage);
-            return;
         }
 
-        var first = ranks[0];
-
-        currentFirstNicknameText.text = first.name;
-        currentFirstScoreBoard.gameObject.SetActive(true);
-        currentFirstScoreBoard.SetBoard(RankingType.Stage, first.display);
         rankingBoard.Initialize(ranks, RankingType.Stage);
 
-        var myRank = await FirebaseManager.Instance.GetMyHighestStageRankAsync();
-        if(myRank.rank <= topN)
+        try
+        {
+            myRank = await myRankTask;
+        }
+        catch
+        {
+            myRank = new MyRankEntry { rank = -1, myEntry = null };
+        }
+        myRankingElement.SetInfo(myRank.rank, myRank.myEntry, RankingType.Stage, true);
+
+        if (myRank.rank > 0 && myRank.rank <= topN)
         {
             rankingBoard.UpdateElement(myRank.rank);
         }
-        myRankingElement.SetInfo(myRank.rank, myRank.myEntry, RankingType.Stage);
     }
-    private async void SetCombatPowerRanking()
+    private async Task SetCombatPowerRanking()
     {
-        List<LeaderBoardEntry> ranks = await FirebaseManager.Instance.GetTopCombatPowerAsync(topN);
         titleText.SetString(100003);
         currentFirstText.SetString(100007);
-        if (ranks == null || ranks.Count == 0)
+        var ranksTask = FirebaseManager.Instance.GetTopCombatPowerAsync(topN);
+        var myRankTask = FirebaseManager.Instance.GetMyCombatPowerRankAsync();
+
+        List<LeaderBoardEntry> ranks = null;
+        MyRankEntry myRank = null;
+
+        try
+        {
+            ranks = await ranksTask;
+        }
+        catch
+        {
+            ranks = new List<LeaderBoardEntry>();
+        }
+
+        if (ranks.Count > 0)
+        {
+            var first = ranks[0];
+            currentFirstNicknameText.text = first.name;
+            currentFirstScoreBoard.gameObject.SetActive(true);
+            currentFirstScoreBoard.SetBoard(RankingType.CombatPower, first.display);
+        }
+        else
         {
             currentFirstNicknameText.text = "--";
             currentFirstScoreBoard.gameObject.SetActive(false);
-            rankingBoard.Initialize(new List<LeaderBoardEntry>(), RankingType.CombatPower);
-            return;
         }
 
-        var first = ranks[0];
-
-        currentFirstNicknameText.text = first.name;
-        currentFirstScoreBoard.gameObject.SetActive(true);
-        currentFirstScoreBoard.SetBoard(RankingType.CombatPower, first.display);
         rankingBoard.Initialize(ranks, RankingType.CombatPower);
 
-        var myRank = await FirebaseManager.Instance.GetMyCombatPowerRankAsync();
-        myRankingElement.SetInfo(myRank.rank, myRank.myEntry, RankingType.CombatPower);
+        try
+        {
+            myRank = await myRankTask;
+        }
+        catch
+        {
+            myRank = new MyRankEntry { rank = -1, myEntry = null };
+        }
+        myRankingElement.SetInfo(myRank.rank, myRank.myEntry, RankingType.CombatPower, true);
+
+        if (myRank.rank > 0 && myRank.rank <= topN)
+        {
+            rankingBoard.UpdateElement(myRank.rank);
+        }
     }
-    private async void SetDungeonDamageRanking()
+    private async Task SetDungeonDamageRanking()
     {
-        List<LeaderBoardEntry> ranks = await FirebaseManager.Instance.GetTopDungeonDamageAsync(topN);
         titleText.SetString(100005);
         currentFirstText.SetString(100008);
-        if (ranks == null || ranks.Count == 0)
+        var ranksTask = FirebaseManager.Instance.GetTopDungeonDamageAsync(topN);
+        var myRankTask = FirebaseManager.Instance.GetMyDungeonDamageRankAsync();
+
+        List<LeaderBoardEntry> ranks = null;
+        MyRankEntry myRank = null;
+
+        try
+        {
+            ranks = await ranksTask;
+        }
+        catch
+        {
+            ranks = new List<LeaderBoardEntry>();
+        }
+
+        if (ranks.Count > 0)
+        {
+            var first = ranks[0];
+            currentFirstNicknameText.text = first.name;
+            currentFirstScoreBoard.gameObject.SetActive(true);
+            currentFirstScoreBoard.SetBoard(RankingType.DungeonDamage, first.display);
+        }
+        else
         {
             currentFirstNicknameText.text = "--";
             currentFirstScoreBoard.gameObject.SetActive(false);
-            rankingBoard.Initialize(new List<LeaderBoardEntry>(), RankingType.DungeonDamage);
-            return;
         }
 
-        var first = ranks[0];
-
-        currentFirstNicknameText.text = first.name;
-        currentFirstScoreBoard.gameObject.SetActive(true);
-        currentFirstScoreBoard.SetBoard(RankingType.DungeonDamage, first.display);
         rankingBoard.Initialize(ranks, RankingType.DungeonDamage);
 
-        var myRank = await FirebaseManager.Instance.GetMyDungeonDamageRankAsync();
-        myRankingElement.SetInfo(myRank.rank, myRank.myEntry, RankingType.DungeonDamage);
+        try
+        {
+            myRank = await myRankTask;
+        }
+        catch
+        {
+            myRank = new MyRankEntry { rank = -1, myEntry = null };
+        }
+        myRankingElement.SetInfo(myRank.rank, myRank.myEntry, RankingType.DungeonDamage, true);
+
+        if (myRank.rank > 0 && myRank.rank <= topN)
+        {
+            rankingBoard.UpdateElement(myRank.rank);
+        }
     }
 }

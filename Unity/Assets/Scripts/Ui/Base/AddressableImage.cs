@@ -30,6 +30,7 @@ public class AddressableImage : MonoBehaviour
         {
             return;
         }
+
         var imageAddress = DataTableManager.AddressTable.GetData(spriteID);
         if (string.IsNullOrEmpty(imageAddress))
         {
@@ -70,5 +71,10 @@ public class AddressableImage : MonoBehaviour
         this.type = type;
         this.spriteID = spriteID;
         LoadSprite();
+    }
+
+    public void SetEnabled(bool isOn)
+    {
+        image.enabled = isOn;
     }
 }

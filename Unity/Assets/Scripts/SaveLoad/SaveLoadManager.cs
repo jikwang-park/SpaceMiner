@@ -14,6 +14,7 @@ public static class SaveLoadManager
     public static SaveDataVC Data { get; private set; }
 
     public static event Action onSaveRequested;
+    public static event Action onSetDeaultData;
     private static JsonSerializerSettings settings = new JsonSerializerSettings
     {
         Formatting = Formatting.Indented,
@@ -113,6 +114,7 @@ public static class SaveLoadManager
         }
         defaultSaveData.healerSkillSliderValue = 0.5f;
         Data = defaultSaveData;
+        onSetDeaultData?.Invoke();
     }
     public static void ResetStatUpgradeData()
     {
@@ -165,6 +167,7 @@ public static class SaveLoadManager
         foreach (var data in lastDungeonData)
         {
             Data.stageSaveData.highestDungeon[data.Key] = data.Value.Stage;
+            Data.stageSaveData.clearedDungeon[data.Key] = data.Value.Stage;
         }
 
         var planetIds = DataTableManager.PlanetTable.GetIds();

@@ -39,7 +39,10 @@ public class RushSelectToggle : MonoBehaviour
         {
             text.SetString(Repeat);
             Variables.stageMode = StageMode.Repeat;
-            messageWindow.ShowPlanetStageMode(false);
+            if (!messageWindow.isShowing)
+            {
+                messageWindow.ShowPlanetStageMode(false);
+            }
         }
     }
 }

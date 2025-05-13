@@ -18,6 +18,9 @@ public class LastStageButton : MonoBehaviour
     public Button Button { get; private set; }
     private StageManager stageManager;
 
+    [SerializeField]
+    private AddressableImage planetImage;
+
     private void Awake()
     {
         Button = GetComponent<Button>();
@@ -35,9 +38,11 @@ public class LastStageButton : MonoBehaviour
         planet = SaveLoadManager.Data.stageSaveData.highPlanet;
         stage = SaveLoadManager.Data.stageSaveData.highStage;
 
-        var stagedata = DataTableManager.StageTable.GetStageData(planet,stage);
-        string name = DataTableManager.StringTable.GetData(stagedata.NameStringID);
-        buttonText.SetStringArguments(name, planet.ToString(), stage.ToString());
+        var planetData = DataTableManager.PlanetTable.GetData(this.planet);
+        var planetName = DataTableManager.StringTable.GetData(planetData.NameStringID);
+
+        buttonText.SetStringArguments(planetName, planet.ToString(), stage.ToString());
+        planetImage.SetSprite(planetData.SpriteID);
     }
 
     public void MoveStage()

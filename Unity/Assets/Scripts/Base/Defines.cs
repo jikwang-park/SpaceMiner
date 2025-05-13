@@ -154,6 +154,7 @@ public class Defines
     public const int StageDefaultStringID = 131;
     public const int DirectStringID = 60011;
     public const int RestrictionStringID = 200;
+    public const int EmptyGuideQuest = 50020;
 
     public const int RequirementsFailKey = 172;
     public const int RequirementsFailPlanet = 173;

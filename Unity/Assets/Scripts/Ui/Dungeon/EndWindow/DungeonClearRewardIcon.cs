@@ -28,8 +28,16 @@ public class DungeonClearRewardIcon : MonoBehaviour, IObjectPoolGameObject
     public void SetItem(int itemId, BigNumber amount)
     {
         itemIcon.SetItemSprite(itemId);
-        
+
         itemAmountText.gameObject.SetActive(true);
         itemAmountText.text = amount.ToString();
+    }
+
+    public void SetItem(int itemId, BigNumber minAmount, BigNumber maxAmount)
+    {
+        itemIcon.SetItemSprite(itemId);
+
+        itemAmountText.gameObject.SetActive(true);
+        itemAmountText.text = $"{minAmount}~{maxAmount}";
     }
 }

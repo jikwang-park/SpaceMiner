@@ -37,11 +37,7 @@ public class MiningBattleEnterWindow : MonoBehaviour
 
     private void OnDisable()
     {
-        for (int i = 0; i < rewardIcons.Count; ++i)
-        {
-            rewardIcons[i].Release();
-        }
-        rewardIcons.Clear();
+        ClearIcons();
     }
 
     public void Show()
@@ -73,17 +69,24 @@ public class MiningBattleEnterWindow : MonoBehaviour
     private void RefreshText()
     {
         stageText.text = datas[index].Stage.ToString();
+        
+        ClearIcons();
 
         AddIcon(datas[index].Reward1ItemID, datas[index].Reward1ItemCount);
 
         for (int i = 0; i < datas[index].Reward2ItemIDs.Length; ++i)
         {
-            AddIcon(datas[index].Reward2ItemIDs[i], 0, datas[index].Reward2ItemIDs[i]);
+            AddIcon(datas[index].Reward2ItemIDs[i], 0, datas[index].Reward2ItemCounts[i]);
         }
     }
 
     private void AddIcon(int itemID, BigNumber amount)
     {
+        if(stageManager is null)
+        {
+            stageManager = GameObject.FindGameObjectWithTag("GameController").GetComponent<StageManager>();
+        }
+
         var itemIconGo = stageManager.StageUiManager.ObjectPoolManager.Get(prefabAddress);
         itemIconGo.transform.SetParent(iconParent);
         var rewardIcon = itemIconGo.GetComponent<DungeonClearRewardIcon>();
@@ -93,6 +96,11 @@ public class MiningBattleEnterWindow : MonoBehaviour
 
     private void AddIcon(int itemID, BigNumber minAmount, BigNumber maxAmount)
     {
+        if (stageManager is null)
+        {
+            stageManager = GameObject.FindGameObjectWithTag("GameController").GetComponent<StageManager>();
+        }
+
         var itemIconGo = stageManager.StageUiManager.ObjectPoolManager.Get(prefabAddress);
         itemIconGo.transform.SetParent(iconParent);
         var rewardIcon = itemIconGo.GetComponent<DungeonClearRewardIcon>();
@@ -109,6 +117,15 @@ public class MiningBattleEnterWindow : MonoBehaviour
         }
 
         remainCountText.SetStringArguments(SaveLoadManager.Data.mineBattleData.mineBattleCount.ToString());
+    }
+
+    private void ClearIcons()
+    {
+        for (int i = 0; i < rewardIcons.Count; ++i)
+        {
+            rewardIcons[i].Release();
+        }
+        rewardIcons.Clear();
     }
 
     public void OnClickEnter()

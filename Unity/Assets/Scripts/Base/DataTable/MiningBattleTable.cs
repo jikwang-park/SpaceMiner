@@ -72,6 +72,10 @@ public class MiningBattleTable : DataTable
         {
             if (!TableData.ContainsKey(item.ID))
             {
+                item.Reward2ItemIDs = DataTableUtilities.SplitColumnToInt(item.Reward2ItemID);
+                item.Reward2ItemCounts = DataTableUtilities.SplitColumnToInt(item.Reward2ItemCount);
+                item.Reward2ItemProbabilities = DataTableUtilities.SplitColumnToFloat(item.Reward2ItemProbability);
+
                 TableData.Add(item.ID, item);
 
                 if (!planetStages.ContainsKey(item.PlanetTableID))

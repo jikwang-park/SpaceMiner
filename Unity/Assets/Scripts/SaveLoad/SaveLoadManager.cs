@@ -14,6 +14,7 @@ public static class SaveLoadManager
     public static SaveDataVC Data { get; private set; }
 
     public static event Action onSaveRequested;
+    public static event Action onSetDeaultData;
     private static JsonSerializerSettings settings = new JsonSerializerSettings
     {
         Formatting = Formatting.Indented,
@@ -113,6 +114,7 @@ public static class SaveLoadManager
         }
         defaultSaveData.healerSkillSliderValue = 0.5f;
         Data = defaultSaveData;
+        onSetDeaultData?.Invoke();
     }
     public static void ResetStatUpgradeData()
     {

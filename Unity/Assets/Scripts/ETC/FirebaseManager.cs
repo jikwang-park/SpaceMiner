@@ -51,6 +51,7 @@ public class FirebaseManager : Singleton<FirebaseManager>
         progress?.Report(0.9f);
         auth.StateChanged += AuthStateChanged;
         SaveLoadManager.onSaveRequested += SaveToFirebaseAsync;
+        SaveLoadManager.onSetDeaultData += UpdateLeaderBoard;
         await LoadFromFirebaseAsync();
         UnitCombatPowerCalculator.onCombatPowerChanged += DoCombatPowerChanged;
         progress?.Report(1f);
@@ -101,17 +102,16 @@ public class FirebaseManager : Singleton<FirebaseManager>
             else
             {
                 SaveLoadManager.SetDefaultData();
-                UpdateLeaderBoard();
             }
         }
         catch
         {
             SaveLoadManager.SetDefaultData();
-            UpdateLeaderBoard();
         }
     }
     private void OnApplicationQuit()
     {
+        UpdateLeaderBoard();
         SetQuitTime();
     }
     public void SetQuitTime()
@@ -141,7 +141,6 @@ public class FirebaseManager : Singleton<FirebaseManager>
 
         await dbRef.RemoveValueAsync();
         SaveLoadManager.SetDefaultData();
-        UpdateLeaderBoard();
     }
     public async void DoCombatPowerChanged()
     {

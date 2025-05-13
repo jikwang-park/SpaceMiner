@@ -2,7 +2,6 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using System.Reflection;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
@@ -147,22 +146,66 @@ public class StageMonsterManager : MonoBehaviour
             monsterLines[createdLine].Remove(lane);
             --laneMonsterCounts[lane];
         }
-
         if (monsterLines[createdLine].Count == 0)
         {
             monsterLines.Remove(createdLine);
-            if (!monsterLines.ContainsKey(currentFrontLine + 1))
-            {
-                return;
-            }
-            if (currentFrontLine == createdLine)
+            //if (!monsterLines.ContainsKey(currentFrontLine + 1))
+            //{
+            //    return;
+            //}
+
+            if (monsterLines.Count == 0)
             {
                 ++currentFrontLine;
             }
-            foreach (var nextMonster in monsterLines[currentFrontLine])
+            else
             {
-                nextMonster.Value.currentLine = -1;
+                int frontLine = int.MaxValue;
+
+                foreach (var monsterLine in monsterLines)
+                {
+                    frontLine = Mathf.Min(frontLine, monsterLine.Key);
+                }
+                int previousFrontLine = currentFrontLine;
+                currentFrontLine = frontLine;
+
+                //foreach (var nextMonster in monsterLines[currentFrontLine])
+                //{
+                //    nextMonster.Value.currentLine = -1;
+                //}
+
+                //if (previousFrontLine != createdLine)
+                //{
+                //    int back = createdLine;
+                //    int front = createdLine;
+                //    while (back < currentLastLine)
+                //    {
+                //        ++back;
+                //        if (monsterLines.ContainsKey(back))
+                //        {
+                //            break;
+                //        }
+                //    }
+                //    while (front > currentFrontLine)
+                //    {
+                //        ++front;
+                //        if (monsterLines.ContainsKey(front))
+                //        {
+                //            break;
+                //        }
+                //    }
+
+                //    if (back != currentLastLine)
+                //    {
+                //        foreach (var nextMonster in monsterLines[currentFrontLine])
+                //        {
+                //            nextMonster.Value.currentLine = -1;
+                //        }
+                //    }
+                //}
             }
+
+
         }
     }
 
@@ -279,6 +322,27 @@ public class StageMonsterManager : MonoBehaviour
 
     public Transform GetFrontLineMonster(int line)
     {
+        int findline = line - 1;
+
+        while (findline >= currentFrontLine)
+        {
+            if (monsterLines.ContainsKey(findline) && monsterLines[findline].Count > 0)
+            {
+                for (int i = 0; i < laneCount; ++i)
+                {
+                    if (monsterLines[findline].ContainsKey(i))
+                    {
+                        return monsterLines[findline][i].transform;
+                    }
+                }
+            }
+
+            --findline;
+        }
+
+        return null;
+
+
         int front = line - 1;
 
         if (!monsterLines.ContainsKey(front))
@@ -304,7 +368,16 @@ public class StageMonsterManager : MonoBehaviour
 
     public bool IsFrontLine(int line)
     {
-        return !monsterLines.ContainsKey(line - 1);
+        int findline = line - 1;
+        while (findline >= currentFrontLine)
+        {
+            if (monsterLines.ContainsKey(findline))
+            {
+                return false;
+            }
+            --findline;
+        }
+        return true;
     }
 
     public void Spawn(Vector3 frontPosition, CorpsTable.Data data)

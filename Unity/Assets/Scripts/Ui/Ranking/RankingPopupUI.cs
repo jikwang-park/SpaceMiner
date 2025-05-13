@@ -134,7 +134,6 @@ public class RankingPopupUI : MonoBehaviour
             currentFirstScoreBoard.gameObject.SetActive(false);
         }
 
-        rankingBoard.Initialize(ranks, RankingType.Stage);
 
         try
         {
@@ -144,12 +143,10 @@ public class RankingPopupUI : MonoBehaviour
         {
             myRank = new MyRankEntry { rank = -1, myEntry = null };
         }
+
+        rankingBoard.Initialize(ranks, RankingType.Stage, myRank.rank);
         myRankingElement.SetInfo(myRank.rank, myRank.myEntry, RankingType.Stage, true);
 
-        if (myRank.rank > 0 && myRank.rank <= topN)
-        {
-            rankingBoard.UpdateElement(myRank.rank);
-        }
     }
     private async Task SetCombatPowerRanking()
     {
@@ -183,8 +180,6 @@ public class RankingPopupUI : MonoBehaviour
             currentFirstScoreBoard.gameObject.SetActive(false);
         }
 
-        rankingBoard.Initialize(ranks, RankingType.CombatPower);
-
         try
         {
             myRank = await myRankTask;
@@ -193,12 +188,9 @@ public class RankingPopupUI : MonoBehaviour
         {
             myRank = new MyRankEntry { rank = -1, myEntry = null };
         }
-        myRankingElement.SetInfo(myRank.rank, myRank.myEntry, RankingType.CombatPower, true);
 
-        if (myRank.rank > 0 && myRank.rank <= topN)
-        {
-            rankingBoard.UpdateElement(myRank.rank);
-        }
+        rankingBoard.Initialize(ranks, RankingType.CombatPower, myRank.rank);
+        myRankingElement.SetInfo(myRank.rank, myRank.myEntry, RankingType.CombatPower, true);
     }
     private async Task SetDungeonDamageRanking()
     {
@@ -232,8 +224,6 @@ public class RankingPopupUI : MonoBehaviour
             currentFirstScoreBoard.gameObject.SetActive(false);
         }
 
-        rankingBoard.Initialize(ranks, RankingType.DungeonDamage);
-
         try
         {
             myRank = await myRankTask;
@@ -242,11 +232,8 @@ public class RankingPopupUI : MonoBehaviour
         {
             myRank = new MyRankEntry { rank = -1, myEntry = null };
         }
-        myRankingElement.SetInfo(myRank.rank, myRank.myEntry, RankingType.DungeonDamage, true);
 
-        if (myRank.rank > 0 && myRank.rank <= topN)
-        {
-            rankingBoard.UpdateElement(myRank.rank);
-        }
+        rankingBoard.Initialize(ranks, RankingType.DungeonDamage, myRank.rank);
+        myRankingElement.SetInfo(myRank.rank, myRank.myEntry, RankingType.DungeonDamage, true);
     }
 }

@@ -11,20 +11,11 @@ public class TutorialTabButton : MonoBehaviour
     [SerializeField]
     private TutorialTable.QuestTypes type;
 
-    [SerializeField]
-    private LocalizationText text;
-
     private Button button;
 
     private void Awake()
     {
         button = GetComponent<Button>();
-    }
-
-    private void Start()
-    {
-        var data = DataTableManager.TutorialTable.GetDatas(type)[0];
-        text.SetString(data.NameStringID);
     }
 
     private void OnEnable()

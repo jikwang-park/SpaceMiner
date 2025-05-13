@@ -25,7 +25,6 @@ public class TutorialUIBlocker : MonoBehaviour
     [SerializeField]
     private RectTransform bottom;
 
-    [SerializeField]
     private RectTransform canvasRect;
 
     [SerializeField]
@@ -34,6 +33,48 @@ public class TutorialUIBlocker : MonoBehaviour
     private RectTransform targetRect;
 
     public bool isShowing { get; private set; }
+
+    private Position arrowPosition;
+
+    private Vector2 screenSize;
+
+#if UNITY_EDITOR
+    [SerializeField]
+    private RectTransform debugTarget;
+
+    [SerializeField]
+    private bool useDebug;
+#endif
+
+    private void Update()
+    {
+#if UNITY_EDITOR
+        if (useDebug)
+        {
+            Rect rect = GetWorldRect(debugTarget);
+            SetBlock(rect);
+        }
+        else
+        {
+            Rect rect = GetWorldRect(targetRect);
+            SetBlock(rect);
+        }
+#endif
+
+        if (screenSize.x != canvasRect.rect.size.x)
+        {
+            screenSize = canvasRect.rect.size;
+            Rect rect = GetWorldRect(targetRect);
+            SetBlock(rect);
+            ShowArrow(arrowPosition);
+        }
+    }
+
+    private void Awake()
+    {
+        canvasRect = GetComponent<RectTransform>();
+        screenSize = canvasRect.rect.size;
+    }
 
     private void SetBlock(Rect rect)
     {
@@ -66,16 +107,19 @@ public class TutorialUIBlocker : MonoBehaviour
         Vector3[] corners = new Vector3[4];
         rectTransform.GetWorldCorners(corners);
         Vector3 topLeft = corners[0];
+        topLeft.x /= canvasRect.lossyScale.x;
+        topLeft.y /= canvasRect.lossyScale.y;
 
         Vector2 scaledSize = new Vector2(rectTransform.rect.size.x, rectTransform.rect.size.y);
         Rect rect = new Rect(topLeft, scaledSize);
         return rect;
     }
 
-    public void ShowArrow(Position direction)
+    public void ShowArrow(Position arrowPosition)
     {
         var rect = GetWorldRect(targetRect);
-        switch (direction)
+        this.arrowPosition = arrowPosition;
+        switch (arrowPosition)
         {
             case Position.Up:
                 arrow.anchoredPosition = new Vector2(rect.center.x, rect.yMax);

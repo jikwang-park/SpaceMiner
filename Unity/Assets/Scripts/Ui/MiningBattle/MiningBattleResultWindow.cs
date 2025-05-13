@@ -16,6 +16,9 @@ public class MiningBattleResultWindow : MonoBehaviour
     private LocalizationText clearMessageText;
 
     [SerializeField]
+    private LocalizationText waitTimeText;
+
+    [SerializeField]
     private GameObject clearView;
 
     [SerializeField]
@@ -27,6 +30,17 @@ public class MiningBattleResultWindow : MonoBehaviour
     private StageManager stageManager;
 
     private List<DungeonClearRewardIcon> rewardIcons = new List<DungeonClearRewardIcon>();
+
+    private float endTime;
+
+    private void Update()
+    {
+        if (endTime < Time.time)
+        {
+            gameObject.SetActive(false);
+        }
+        waitTimeText.SetStringArguments((endTime - Time.time).ToString("F0"));
+    }
 
 
     private void OnDisable()
@@ -60,6 +74,9 @@ public class MiningBattleResultWindow : MonoBehaviour
             rewardIcons.Add(rewardIcon);
             rewardIcon.SetItem(reward.itemid, reward.amount);
         }
+
+
+        endTime = Time.time + Defines.MiningBattleResultWait;
     }
 
     public void ShowDefeat(MiningBattleTable.Data data)
@@ -68,7 +85,8 @@ public class MiningBattleResultWindow : MonoBehaviour
         defeatView.SetActive(true);
         clearView.SetActive(false);
         remainingText.SetStringArguments(SaveLoadManager.Data.mineBattleData.mineBattleCount.ToString());
-        clearMessageText.SetString(Defines.PlanetStageFailStringID);
+        clearMessageText.SetString(Defines.StageFailStringID);
+        endTime = Time.time + Defines.MiningBattleResultWait;
     }
 
     public void NextStage()
@@ -77,6 +95,15 @@ public class MiningBattleResultWindow : MonoBehaviour
         {
             gameObject.SetActive(false);
             ++Variables.planetMiningStage;
+            stageManager.MiningBattleStart();
+        }
+    }
+
+    public void RetryStage()
+    {
+        if (SaveLoadManager.Data.mineBattleData.mineBattleCount < Defines.MiningBattleMaxCount)
+        {
+            gameObject.SetActive(false);
             stageManager.MiningBattleStart();
         }
     }

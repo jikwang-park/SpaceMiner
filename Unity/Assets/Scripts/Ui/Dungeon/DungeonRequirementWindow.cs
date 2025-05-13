@@ -37,4 +37,12 @@ public class DungeonRequirementWindow : MonoBehaviour
         oneButton.SetActive(false);
         messageText.SetString(Defines.RequirementsFailKey);
     }
+
+    public void OpenMiningFullCount()
+    {
+        gameObject.SetActive(true);
+        twoButtons.SetActive(false);
+        oneButton.SetActive(true);
+        messageText.SetString(Defines.RequirementsFailKey);
+    }
 }

@@ -2381,6 +2381,7 @@ GameObject:
   - component: {fileID: 3839671504206729769}
   - component: {fileID: 4266241617968580912}
   - component: {fileID: 1923110896348259726}
+  - component: {fileID: 8179908290890414761}
   m_Layer: 5
   m_Name: NextStageButton
   m_TagString: Untagged
@@ -2501,6 +2502,35 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 1
         m_CallState: 2
+--- !u!114 &8179908290890414761
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5680422931241939083}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 46db5f6226817ee4ab626b3d9a97b5eb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  OnLongPress:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 6610413617922941894}
+        m_TargetAssemblyTypeName: MiningBattleEnterWindow, Assembly-CSharp
+        m_MethodName: ChangeStage
+        m_Mode: 6
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 1
+        m_CallState: 2
+  minTime: 0.2
+  interval: 0.1
 --- !u!1 &6182536337944077782
 GameObject:
   m_ObjectHideFlags: 0
@@ -3144,7 +3174,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 0}
+      - m_Target: {fileID: 3118337279590522614}
         m_TargetAssemblyTypeName: UnityEngine.GameObject, UnityEngine
         m_MethodName: SetActive
         m_Mode: 6
@@ -3452,6 +3482,7 @@ GameObject:
   - component: {fileID: 1742760398412064853}
   - component: {fileID: 116156212830988159}
   - component: {fileID: 2940750426540055330}
+  - component: {fileID: 5216452075576481777}
   m_Layer: 5
   m_Name: PreviousStageButton
   m_TagString: Untagged
@@ -3572,6 +3603,35 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
+--- !u!114 &5216452075576481777
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7868035208358998193}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 46db5f6226817ee4ab626b3d9a97b5eb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  OnLongPress:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 6610413617922941894}
+        m_TargetAssemblyTypeName: MiningBattleEnterWindow, Assembly-CSharp
+        m_MethodName: ChangeStage
+        m_Mode: 6
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+  minTime: 0.2
+  interval: 0.1
 --- !u!1 &8573412412345869477
 GameObject:
   m_ObjectHideFlags: 0

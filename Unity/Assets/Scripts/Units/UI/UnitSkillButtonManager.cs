@@ -44,7 +44,7 @@ public class UnitSkillButtonManager : MonoBehaviour
         sliderGameObject.gameObject.SetActive(false);
         healerHpOptionButton.onClick.AddListener(() => OnClickHealthSliderButton());
         healthSlider.onValueChanged.AddListener(OnHealthSilderholdChanaged);
-        healthSlider.value = 0.5f;
+        healthSlider.value = SaveLoadManager.Data.healerSkillSliderValue;
         OnHealthSilderholdChanaged(healthSlider.value);
         stageManager = GameObject.FindGameObjectWithTag("GameController").GetComponent<StageManager>();
         stageManager.UnitPartyManager.OnUnitCreated += Init;
@@ -60,6 +60,7 @@ public class UnitSkillButtonManager : MonoBehaviour
         {
             healthSliderPercentageText.text = $"{currentValue:F0}%";
         }
+        SaveLoadManager.Data.healerSkillSliderValue = value;
     }
     private void Init()
     {

@@ -1,10 +1,13 @@
 using System.Collections;
 using System.Collections.Generic;
 using TMPro;
+using UnityEditor.U2D.Aseprite;
 using UnityEngine;
 
 public class MiningBattleEnterWindow : MonoBehaviour
 {
+    private const string prefabAddress = "Assets/Addressables/Prefabs/UI/Stage/Dungeon/DungeonClearRewardIcon.prefab";
+
     [SerializeField]
     private LocalizationText planetNameText;
 
@@ -12,24 +15,14 @@ public class MiningBattleEnterWindow : MonoBehaviour
     private TextMeshProUGUI stageText;
 
     [SerializeField]
-    private AddressableImage rewarditem1Icon;
-
-    [SerializeField]
-    private TextMeshProUGUI rewarditem1Text;
-
-    [SerializeField]
-    private AddressableImage rewarditem2Icon;
-
-    [SerializeField]
-    private TextMeshProUGUI rewarditem2Text;
-
-    [SerializeField]
-    private TextMeshProUGUI rewarditem2ProbabilityText;
+    private Transform iconParent;
 
     [SerializeField]
     private LocalizationText remainCountText;
 
     private List<MiningBattleTable.Data> datas;
+
+    private List<DungeonClearRewardIcon> rewardIcons = new List<DungeonClearRewardIcon>();
 
     private int planetID;
     private int index;
@@ -40,6 +33,15 @@ public class MiningBattleEnterWindow : MonoBehaviour
     private void Start()
     {
         stageManager = GameObject.FindGameObjectWithTag("GameController").GetComponent<StageManager>();
+    }
+
+    private void OnDisable()
+    {
+        for (int i = 0; i < rewardIcons.Count; ++i)
+        {
+            rewardIcons[i].Release();
+        }
+        rewardIcons.Clear();
     }
 
     public void Show()
@@ -71,11 +73,31 @@ public class MiningBattleEnterWindow : MonoBehaviour
     private void RefreshText()
     {
         stageText.text = datas[index].Stage.ToString();
-        rewarditem1Icon.SetItemSprite(datas[index].Reward1ItemID);
-        rewarditem1Text.text = datas[index].Reward1ItemCount.ToString();
-        rewarditem2Icon.SetItemSprite(datas[index].Reward2ItemID);
-        rewarditem2Text.text = datas[index].Reward2ItemCount.ToString();
-        rewarditem2ProbabilityText.text = datas[index].Reward2ItemProbability.ToString("P2");
+
+        AddIcon(datas[index].Reward1ItemID, datas[index].Reward1ItemCount);
+
+        for (int i = 0; i < datas[index].Reward2ItemIDs.Length; ++i)
+        {
+            AddIcon(datas[index].Reward2ItemIDs[i], 0, datas[index].Reward2ItemIDs[i]);
+        }
+    }
+
+    private void AddIcon(int itemID, BigNumber amount)
+    {
+        var itemIconGo = stageManager.StageUiManager.ObjectPoolManager.Get(prefabAddress);
+        itemIconGo.transform.SetParent(iconParent);
+        var rewardIcon = itemIconGo.GetComponent<DungeonClearRewardIcon>();
+        rewardIcons.Add(rewardIcon);
+        rewardIcon.SetItem(itemID, amount);
+    }
+
+    private void AddIcon(int itemID, BigNumber minAmount, BigNumber maxAmount)
+    {
+        var itemIconGo = stageManager.StageUiManager.ObjectPoolManager.Get(prefabAddress);
+        itemIconGo.transform.SetParent(iconParent);
+        var rewardIcon = itemIconGo.GetComponent<DungeonClearRewardIcon>();
+        rewardIcons.Add(rewardIcon);
+        rewardIcon.SetItem(itemID, minAmount, maxAmount);
     }
 
     private void RefreshCount()

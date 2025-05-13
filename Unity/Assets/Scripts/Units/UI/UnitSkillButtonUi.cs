@@ -26,16 +26,28 @@ public class UnitSkillButtonUi : MonoBehaviour
     [SerializeField]
     private AddressableImage skillImage;
 
+    [SerializeField]
+    private readonly Color deafaultColor = Color.white;
+    [SerializeField]
+    private readonly Color changedColor = new Color(1f, 1f, 1f, 0.3f);
+
     private int spriteId;
     private void Start()
     {
         stageManager = GameObject.FindGameObjectWithTag("GameController").GetComponent<StageManager>();
         SkillButton.onClick.AddListener(() => OnClickSkill());
+        stageManager.UnitPartyManager.OnUnitCreated += OnUnitRespawn;
     }
     private void Update()
     {
         ShowCooltime();
         ButtonUpdate();
+    }
+
+    private void OnUnitRespawn()
+    {
+        skillImage.gameObject.GetComponent<Image>().color = deafaultColor;
+        skillCoolImage.gameObject.SetActive(true);
     }
 
     public void SetSkillImage(UnitTypes type, Grade grade)
@@ -67,17 +79,21 @@ public class UnitSkillButtonUi : MonoBehaviour
         if (unit.UnitStatus == Unit.Status.Dead)
         {
             SkillButton.interactable = false;
-            target.SetActive(false);
+            skillImage.gameObject.GetComponent<Image>().color = changedColor;
+            coolTimeText.text = null;
             return;
         }
 
-        target.SetActive(true);
 
         SkillButton.interactable = unit.Skill.SkillCoolTimeRatio >= 1f;
 
     }
     private void ShowCooltime()
     {
+        if(unit.UnitStatus == Unit.Status.Dead)
+        {
+            skillCoolImage.gameObject.SetActive(false);
+        }
         if (unit.Skill.SkillCoolTimeRatio >= 1f)
         {
             skillCoolImage.fillAmount = 0f;
@@ -96,8 +112,6 @@ public class UnitSkillButtonUi : MonoBehaviour
             return;
         }
         unit.EnqueueSkill();
-
-
     }
 
     public void SetUnit(Unit unit)

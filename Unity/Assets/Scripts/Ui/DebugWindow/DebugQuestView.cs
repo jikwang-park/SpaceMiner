@@ -36,6 +36,11 @@ public class DebugQuestView : MonoBehaviour
     public void RefreshText()
     {
         var questData = GuideQuestManager.currentQuestData;
+        if(questData is null)
+        {
+            turnText.text = SaveLoadManager.Data.questProgressData.currentQuest.ToString();
+            return;
+        }
         idText.text = questData.ID.ToString();
         turnText.text = questData.Turn.ToString();
         missionTypeText.text = questData.MissionClearType.ToString();

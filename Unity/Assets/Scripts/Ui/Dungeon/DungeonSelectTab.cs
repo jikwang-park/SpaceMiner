@@ -21,7 +21,16 @@ public class DungeonSelectTab : MonoBehaviour
     private Dungeon2EnterWindow dungeon2EnterWindow;
 
     [SerializeField]
-    private LocalizationText keyText;
+    private AddressableImage key1image;
+
+    [SerializeField]
+    private AddressableImage key2image;
+
+    [SerializeField]
+    private LocalizationText key1Text;
+
+    [SerializeField]
+    private LocalizationText key2Text;
 
     private void Start()
     {
@@ -35,7 +44,11 @@ public class DungeonSelectTab : MonoBehaviour
 
         ItemManager.OnItemAmountChanged += ItemManager_OnItemAmountChanged;
 
-        keyText.SetStringArguments(ItemManager.GetItemAmount(Defines.DungeonKeyItemID).ToString(), one);
+        key1image.SetItemSprite(Defines.DungeonKeyItemID);
+        key2image.SetItemSprite(Defines.DungeonKey2ItemID);
+
+        key1Text.SetStringArguments(ItemManager.GetItemAmount(Defines.DungeonKeyItemID).ToString(), one);
+        key2Text.SetStringArguments(ItemManager.GetItemAmount(Defines.DungeonKey2ItemID).ToString(), one);
     }
 
     private void OnRowLoaded(UnityEngine.ResourceManagement.AsyncOperations.AsyncOperationHandle<GameObject> handle, int type)
@@ -73,7 +86,11 @@ public class DungeonSelectTab : MonoBehaviour
     {
         if (itemID == Defines.DungeonKeyItemID)
         {
-            keyText.SetStringArguments(one, Amount.ToString());
+            key1Text.SetStringArguments(ItemManager.GetItemAmount(Defines.DungeonKeyItemID).ToString(), one);
+        }
+        if (itemID == Defines.DungeonKey2ItemID)
+        {
+            key2Text.SetStringArguments(ItemManager.GetItemAmount(Defines.DungeonKey2ItemID).ToString(), one);
         }
     }
 }

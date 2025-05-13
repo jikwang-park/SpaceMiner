@@ -11,6 +11,8 @@ public class DungeonEnterRow : MonoBehaviour
     private LocalizationText detailText;
     [SerializeField]
     private AddressableImage iconImage;
+    [SerializeField]
+    private AddressableImage keyImage;
 
     private int dungeonType;
 
@@ -23,6 +25,7 @@ public class DungeonEnterRow : MonoBehaviour
         nameText.SetString(dungeonData.NameStringID);
         detailText.SetString(dungeonData.DetailStringID);
         iconImage.SetSprite(dungeonData.SpriteID);
+        keyImage.SetItemSprite(dungeonData.NeedKeyItemID);
     }
 
     public void OnButtonClick()

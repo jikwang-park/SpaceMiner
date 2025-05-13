@@ -147,6 +147,7 @@ public class Defines
 
     // ItemID
     public const int DungeonKeyItemID = 5001;
+    public const int DungeonKey2ItemID = 5002;
 
     // StringID
     public const int PlanetStageFormatStringID = 169;

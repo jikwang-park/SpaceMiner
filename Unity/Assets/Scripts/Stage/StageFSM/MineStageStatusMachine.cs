@@ -98,8 +98,8 @@ public class MineStageStatusMachine : StageStatusMachine
             stageManager.StageMonsterManager.ClearMonster();
             stageManager.StageUiManager.HPBarManager.ClearHPBar();
 
-            stageManager.StageUiManager.IngameUIManager.timerGameObject.gameObject.SetActive(false);
-            stageManager.StageUiManager.IngameUIManager.waveGameObject.gameObject.SetActive(false);
+            stageManager.StageUiManager.IngameUIManager.miningBattleTimerGameObject.SetActive(false);
+            stageManager.StageUiManager.IngameUIManager.miningBattleCenterHpBar.gameObject.SetActive(false);
             stageManager.StageUiManager.IngameUIManager.unitHpBars.SetActive(false);
             stageManager.StageUiManager.IngameUIManager.unitSkills.gameObject.SetActive(false);
 
@@ -241,8 +241,8 @@ public class MineStageStatusMachine : StageStatusMachine
         stageEndTime = stageStartTime + battleData.LimitTime;
         weight[1] = 1f;
         stageManager.StageUiManager.ResourceRow.SetActive(false);
-        stageManager.StageUiManager.IngameUIManager.waveGameObject.gameObject.SetActive(true);
-        stageManager.StageUiManager.IngameUIManager.timerGameObject.gameObject.SetActive(true);
+        stageManager.StageUiManager.IngameUIManager.miningBattleCenterHpBar.gameObject.SetActive(true);
+        stageManager.StageUiManager.IngameUIManager.miningBattleTimerGameObject.SetActive(true);
         stageManager.StageUiManager.InteractableUIBackground.gameObject.SetActive(false);
         stageManager.StageUiManager.UIGroupStatusManager.UiDict[IngameStatus.Mine].SetPopUpInactive(0);
 
@@ -251,7 +251,7 @@ public class MineStageStatusMachine : StageStatusMachine
 
         centerHP = battleData.HitCount;
         //TODO: 스트링 테이블 넣어야함
-        stageManager.StageUiManager.IngameUIManager.waveText.SetString(Defines.DirectStringID, $"HP : {centerHP}");
+        stageManager.StageUiManager.IngameUIManager.miningBattleCenterHpBar.value = 1f;
 
         for (int i = 0; i < battleSpawnData.SpawnerActivationTimes.Length; ++i)
         {
@@ -310,7 +310,7 @@ public class MineStageStatusMachine : StageStatusMachine
                 monsterController.hasTarget = true;
             }
         }
-        stageManager.StageUiManager.IngameUIManager.SetTimer(remainingTime);
+        stageManager.StageUiManager.IngameUIManager.miningBattleTimerText.SetString(Defines.DirectStringID, remainingTime.ToString("F2"));
     }
 
     private void OnAttacked(AttackedEvent sender)
@@ -322,13 +322,14 @@ public class MineStageStatusMachine : StageStatusMachine
             OnStageEnd(false);
         }
         //TODO: 스트링 테이블 넣어야함
-        stageManager.StageUiManager.IngameUIManager.waveText.SetString(Defines.DirectStringID, $"HP : {centerHP}");
+        stageManager.StageUiManager.IngameUIManager.miningBattleCenterHpBar.value = (float)centerHP / battleData.HitCount;
     }
 
     public void OnStageEnd(bool isTimeOver)
     {
         status = Status.Normal;
 
+        stageManager.StageUiManager.ResourceRow.SetActive(true);
         stageManager.StageUiManager.IngameUIManager.mineBattleButton.gameObject.SetActive(true);
         stageManager.StageMonsterManager.StopMonster();
         stageManager.UnitPartyManager.UnitDespawn();
@@ -363,8 +364,8 @@ public class MineStageStatusMachine : StageStatusMachine
         {
             stageManager.StageUiManager.IngameUIManager.miningBattleResultWindow.ShowDefeat(battleData);
         }
-        stageManager.StageUiManager.IngameUIManager.timerGameObject.gameObject.SetActive(false);
-        stageManager.StageUiManager.IngameUIManager.waveGameObject.gameObject.SetActive(false);
+        stageManager.StageUiManager.IngameUIManager.miningBattleTimerGameObject.SetActive(false);
+        stageManager.StageUiManager.IngameUIManager.miningBattleCenterHpBar.gameObject.SetActive(false);
         stageManager.StageUiManager.IngameUIManager.unitHpBars.SetActive(false);
         stageManager.StageUiManager.IngameUIManager.unitSkills.gameObject.SetActive(false);
 

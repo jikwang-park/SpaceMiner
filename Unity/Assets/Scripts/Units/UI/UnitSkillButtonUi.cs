@@ -47,6 +47,7 @@ public class UnitSkillButtonUi : MonoBehaviour
     private void OnUnitRespawn()
     {
         skillImage.gameObject.GetComponent<Image>().color = deafaultColor;
+        skillCoolImage.gameObject.SetActive(true);
     }
 
     public void SetSkillImage(UnitTypes type, Grade grade)

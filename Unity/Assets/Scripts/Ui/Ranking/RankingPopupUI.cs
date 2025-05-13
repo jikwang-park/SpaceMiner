@@ -4,9 +4,18 @@ using System.Linq;
 using System.Threading.Tasks;
 using TMPro;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class RankingPopupUI : MonoBehaviour
 {
+    [SerializeField]
+    private List<Sprite> sprites = new List<Sprite>();
+    [SerializeField]
+    private Toggle stageToggle;
+    [SerializeField]
+    private Toggle combatPowerToggle;
+    [SerializeField]
+    private Toggle dungeonDamageToggle;
     [SerializeField]
     private LocalizationText titleText;
     [SerializeField]
@@ -20,22 +29,77 @@ public class RankingPopupUI : MonoBehaviour
     [SerializeField]
     private RankingElement myRankingElement;
 
+    private Image stageToggleImage;
+    private Image combatPowerToggleImage;
+    private Image dungeonDamageToggleImage;
+
     private const int topN = 50;
+    private void Awake()
+    {
+        stageToggleImage = stageToggle.GetComponent<Image>();
+        combatPowerToggleImage = combatPowerToggle.GetComponent<Image>();
+        dungeonDamageToggleImage = dungeonDamageToggle.GetComponent<Image>();
+    }
+
+    public void ProcessToggles()
+    {
+        if (stageToggle.isOn)
+        {
+            OnClickStageRankingButton();
+        }
+        else if (combatPowerToggle.isOn)
+        {
+            OnClickCombatPowerRankingButton();
+        }
+        else if (dungeonDamageToggle.isOn)
+        {
+            OnClickDungeonDamageRankingButton();
+        }
+
+        UpdateToggleSprites();
+    }
+    private void UpdateToggleSprites()
+    {
+        stageToggleImage.sprite = stageToggle.isOn ? sprites[1] : sprites[0];
+        combatPowerToggleImage.sprite = combatPowerToggle.isOn ? sprites[1] : sprites[0];
+        dungeonDamageToggleImage.sprite = dungeonDamageToggle.isOn ? sprites[1] : sprites[0];
+    }
     private void OnEnable()
     {
-        OnClickStageRankingButton();
+        stageToggle.isOn = false;
+        combatPowerToggle.isOn = false;
+        dungeonDamageToggle.isOn = false;
+        stageToggle.isOn = true;
     }
     public async void OnClickStageRankingButton()
     {
+        stageToggle.interactable = false;
+        combatPowerToggle.interactable = false;
+        dungeonDamageToggle.interactable = false;
         await SetStageRanking();
+        stageToggle.interactable = true;
+        combatPowerToggle.interactable = true;
+        dungeonDamageToggle.interactable = true;
     }
     public async void OnClickCombatPowerRankingButton()
     {
+        stageToggle.interactable = false;
+        combatPowerToggle.interactable = false;
+        dungeonDamageToggle.interactable = false;
         await SetCombatPowerRanking();
+        stageToggle.interactable = true;
+        combatPowerToggle.interactable = true;
+        dungeonDamageToggle.interactable = true;
     }
     public async void OnClickDungeonDamageRankingButton()
     {
+        stageToggle.interactable = false;
+        combatPowerToggle.interactable = false;
+        dungeonDamageToggle.interactable = false;
         await SetDungeonDamageRanking();
+        stageToggle.interactable = true;
+        combatPowerToggle.interactable = true;
+        dungeonDamageToggle.interactable = true;
     }
     private async Task SetStageRanking()
     {

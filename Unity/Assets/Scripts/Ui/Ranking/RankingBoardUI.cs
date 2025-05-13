@@ -7,20 +7,21 @@ public class RankingBoardUI : MonoBehaviour
     [SerializeField]
     private List<RankingElement> rankingElements = new List<RankingElement>();
 
-    public void Initialize(List<LeaderBoardEntry> list, RankingType type)
+    public void Initialize(List<LeaderBoardEntry> list, RankingType type, int myRank = -1)
     {
-        foreach(var element in rankingElements)
+        for (int i = 0; i < rankingElements.Count; i++)
         {
-            element.gameObject.SetActive(false);
-        }
-
-        int count = Mathf.Min(list.Count, rankingElements.Count);
-
-        for(int i = 0; i < count; i++)
-        {
-            var element = rankingElements[i];
-            element.gameObject.SetActive(true);
-            element.SetInfo(i + 1, list[i], type);
+            var e = rankingElements[i];
+            if (i < list.Count)
+            {
+                e.gameObject.SetActive(true);
+                bool isMine = (i + 1) == myRank;
+                e.SetInfo(i + 1, list[i], type, isMine);
+            }
+            else
+            {
+                e.gameObject.SetActive(false);
+            }
         }
     }
     public void UpdateElement(int rank)

@@ -16,9 +16,9 @@ public class AttendanceRewardManager : Singleton<AttendanceRewardManager>
     }
     [SerializeField]
     private GameObject attendancePopup;
-    private void Start()
+    public void StartPopup()
     {
-        if(HasAnyClaimableReward() && IsOpenedContents())
+        if (HasAnyClaimableReward() && IsOpenedContents())
         {
             attendancePopup.gameObject.SetActive(true);
         }

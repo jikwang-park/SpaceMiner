@@ -58,4 +58,8 @@ public class UnitEffectController : MonoBehaviour, IDestructable
             ParticleEffectManager.Instance.PlayOneShot(type.ToString() +"AttackEffect", attackEffectPoint);
         }
     }
+    public void DoRevive(Transform transform)
+    {
+        ParticleEffectManager.Instance.PlayOneShot("ResurrectionEffect", transform);
+    }
 }

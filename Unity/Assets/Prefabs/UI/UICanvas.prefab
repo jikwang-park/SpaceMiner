@@ -118,6 +118,7 @@ GameObject:
   - component: {fileID: 6250126663663657802}
   - component: {fileID: 7485907355936178721}
   - component: {fileID: 2371884391610977322}
+  - component: {fileID: 2652364951806158453}
   m_Layer: 5
   m_Name: UICanvas
   m_TagString: Untagged
@@ -335,6 +336,19 @@ MonoBehaviour:
     targetID: 6103000
     buttonImageRect: {fileID: 7141660461492914147}
     isShown: 0
+--- !u!114 &2652364951806158453
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7612752129160410589}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2f647567b1d90914f9435ab2069068a7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  attendancePopup: {fileID: 6979519774320940892}
 --- !u!1001 &239754841397256104
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -1367,10 +1381,6 @@ PrefabInstance:
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[1].m_Target
       value: 
       objectReference: {fileID: 4811314445054020240}
-    - target: {fileID: 6226245661325831620, guid: 0af74f571ab8da54488f9815f479a012, type: 3}
-      propertyPath: m_AnchorMax.y
-      value: 0
-      objectReference: {fileID: 0}
     - target: {fileID: 6253100478947789017, guid: 0af74f571ab8da54488f9815f479a012, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.size
       value: 1
@@ -9179,14 +9189,6 @@ PrefabInstance:
     - target: {fileID: 5094055616061229510, guid: d64535c847ce7404e8d885c1390f8812, type: 3}
       propertyPath: m_AnchoredPosition.y
       value: -3150
-      objectReference: {fileID: 0}
-    - target: {fileID: 5105370166870322810, guid: d64535c847ce7404e8d885c1390f8812, type: 3}
-      propertyPath: m_Enabled
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 5105370166870322810, guid: d64535c847ce7404e8d885c1390f8812, type: 3}
-      propertyPath: m_Interactable
-      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 5116654327512415159, guid: d64535c847ce7404e8d885c1390f8812, type: 3}
       propertyPath: m_AnchorMax.y

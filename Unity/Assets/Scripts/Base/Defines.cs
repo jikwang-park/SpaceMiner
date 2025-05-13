@@ -142,6 +142,7 @@ public enum StatType
 
 public class Defines
 {
+    public const float MiningBattleResultWait = 5f;
     public const int MiningBattleMaxCount = 5;
 
     // ItemID
@@ -162,14 +163,15 @@ public class Defines
     public const int StageRepeatModeStringID = 196;
 
     public const int PlanetStageClearStringID = 160;
-    public const int PlanetStageFailStringID = 161;
+    public const int PlanetStageFailStringID = 197;
+    public const int StageFailStringID = 161;
 }
 
 public enum RankingType
 {
-    Stage,
     CombatPower,
     DungeonDamage,
+    Stage,
 }
 
 

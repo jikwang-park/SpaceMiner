@@ -14,7 +14,7 @@ public class TutorialTable : DataTable
         SoldierInventory,
         SkillUpgrade,
         Dungeon,
-        Store,
+        Building,
         Mine,
         Mining,
     }

@@ -212,8 +212,8 @@ public class Unit : MonoBehaviour, IObjectPoolGameObject
                 Skill.InitSkill(this);
                 break;
         }
-
         StageManager.StageUiManager.UnitUiManager.SetUnitHpBar(UnitTypes, unitStats);
+        
     }
 
     private void OnTargetDie(DestructedDestroyEvent sender)

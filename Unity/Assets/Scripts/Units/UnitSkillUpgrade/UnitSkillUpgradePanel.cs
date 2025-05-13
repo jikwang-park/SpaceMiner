@@ -32,8 +32,13 @@ public class UnitSkillUpgradePanel : MonoBehaviour
 
         InventoryManager.onChangedInventory += SetGradeToggles;
     }
+    private void OnEnable()
+    {
+        SetType(UnitTypes.Tanker);
 
-   
+        gradeToggle.UpdateSelectedFrame(Grade.Normal);
+    }
+
     private void Start()
     {
         board.ShowFirstOpened(id, currentType,currentGrade);
@@ -63,17 +68,18 @@ public class UnitSkillUpgradePanel : MonoBehaviour
         SetGradeToggles();
         board.SetBoardText(GetCurrentId(), currentType,currentGrade);
     }
-    private void OnEnable()
-    {
-        SetType(UnitTypes.Tanker);
-    }
-
+  
     public void SetGrade(Grade grade)
     {
         if (currentGrade == grade)
             return;
 
         currentGrade = grade;
+        gradeToggle.toggleDic[grade].SetIsOnWithoutNotify(true);
+
+        gradeToggle.UpdateSelectedFrame(grade);
+
         board.SetBoardText(GetCurrentId(), currentType, currentGrade);
+
     }
 }

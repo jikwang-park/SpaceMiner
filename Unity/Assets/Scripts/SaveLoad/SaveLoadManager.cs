@@ -57,7 +57,7 @@ public static class SaveLoadManager
         }
         catch (Exception e)
         {
-            Debug.LogError(e.Message);
+            Debug.LogError(e.Message);  
             SetDefaultData();
         }
     }
@@ -165,6 +165,14 @@ public static class SaveLoadManager
         foreach (var data in lastDungeonData)
         {
             Data.stageSaveData.highestDungeon[data.Key] = data.Value.Stage;
+        }
+
+        var planetIds = DataTableManager.PlanetTable.GetIds();
+        foreach (var planetid in planetIds)
+        {
+            var datas = DataTableManager.MiningBattleTable.GetDatas(planetid);
+            Data.stageSaveData.ClearedMineStage[planetid] = datas[datas.Count - 1].Stage;
+            Data.stageSaveData.HighMineStage[planetid] = datas[datas.Count - 1].Stage;
         }
     }
 }

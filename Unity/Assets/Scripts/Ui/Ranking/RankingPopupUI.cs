@@ -144,7 +144,7 @@ public class RankingPopupUI : MonoBehaviour
         {
             myRank = new MyRankEntry { rank = -1, myEntry = null };
         }
-        myRankingElement.SetInfo(myRank.rank, myRank.myEntry, RankingType.Stage);
+        myRankingElement.SetInfo(myRank.rank, myRank.myEntry, RankingType.Stage, true);
 
         if (myRank.rank > 0 && myRank.rank <= topN)
         {
@@ -193,7 +193,7 @@ public class RankingPopupUI : MonoBehaviour
         {
             myRank = new MyRankEntry { rank = -1, myEntry = null };
         }
-        myRankingElement.SetInfo(myRank.rank, myRank.myEntry, RankingType.CombatPower);
+        myRankingElement.SetInfo(myRank.rank, myRank.myEntry, RankingType.CombatPower, true);
 
         if (myRank.rank > 0 && myRank.rank <= topN)
         {
@@ -242,7 +242,7 @@ public class RankingPopupUI : MonoBehaviour
         {
             myRank = new MyRankEntry { rank = -1, myEntry = null };
         }
-        myRankingElement.SetInfo(myRank.rank, myRank.myEntry, RankingType.DungeonDamage);
+        myRankingElement.SetInfo(myRank.rank, myRank.myEntry, RankingType.DungeonDamage, true);
 
         if (myRank.rank > 0 && myRank.rank <= topN)
         {

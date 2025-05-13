@@ -26,12 +26,12 @@ public class RankingElement : MonoBehaviour
     {
         backgroundImage = GetComponent<Image>();
     }
-    public void SetInfo(int grade, LeaderBoardEntry entry, RankingType type)
+    public void SetInfo(int grade, LeaderBoardEntry entry, RankingType type, bool isMyEntry = false)
     {
         rankText.text = $"{grade}";
         nicknameText.text = entry.name;
         scoreBoard.SetBoard(type, entry.display);
-        UpdateBackground(false);
+        UpdateBackground(isMyEntry);
         UpdateImage(grade);
     }
 

@@ -163,7 +163,7 @@ public class PlanetStageStatusMachine : StageStatusMachine
         switch (this.status)
         {
             case Status.Clear:
-                stageManager.StageUiManager.MessageWindow.ShowStageEndMessage(true);
+                stageManager.StageUiManager.StageEndWindow.ShowStageEndMessage(true);
 
                 bool ClearedStageChanged = CheckClearedStageChange();
                 if (ClearedStageChanged && stageData.FirstClearRewardID != 0)
@@ -177,7 +177,7 @@ public class PlanetStageStatusMachine : StageStatusMachine
                 break;
             case Status.Timeout:
             case Status.Defeat:
-                stageManager.StageUiManager.MessageWindow.ShowStageEndMessage(false);
+                stageManager.StageUiManager.StageEndWindow.ShowStageEndMessage(false);
                 FailStageSet();
                 break;
         }
@@ -197,10 +197,10 @@ public class PlanetStageStatusMachine : StageStatusMachine
         }
         else
         {
+            stageManager.UnitPartyManager.ResetStatus();
             stageManager.UnitPartyManager.ResetUnitHealth();
             stageManager.UnitPartyManager.ResetUnitBarrier();
             stageManager.UnitPartyManager.ResetSkillCoolTime();
-            stageManager.UnitPartyManager.ResetStatus();
 
             SetStageText();
             LoadStageData();
@@ -320,10 +320,10 @@ public class PlanetStageStatusMachine : StageStatusMachine
     protected void UnitSpawn()
     {
         stageManager.UnitPartyManager.UnitSpawn();
+        stageManager.UnitPartyManager.ResetStatus();
         stageManager.UnitPartyManager.ResetUnitHealth();
         stageManager.UnitPartyManager.ResetUnitBarrier();
         stageManager.UnitPartyManager.ResetSkillCoolTime();
-        stageManager.UnitPartyManager.ResetStatus();
     }
 
     protected void SetEvent(bool set)

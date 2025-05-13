@@ -2,31 +2,85 @@ using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class StageEndWindow : MonoBehaviour
 {
     [SerializeField]
-    private TextMeshProUGUI messageText;
+    private Image background;
 
-    private float targetTime = 0f;
+    [SerializeField]
+    private float showTime = 1.5f;
 
-    private void Update()
+    [SerializeField]
+    private LocalizationText text;
+
+    private float endTime;
+
+    private bool fadeout;
+
+    public bool isShowing
     {
-        if (Time.time > targetTime)
+        get
         {
-            Close();
+            return endTime <= Time.time;
         }
     }
 
-    public void Open(string text, float duration)
+    private void Update()
     {
-        messageText.text = text;
-        gameObject.SetActive(true);
-        targetTime = Time.time + duration;
+        float currentTime = Time.time;
+
+        if (currentTime > endTime)
+        {
+            gameObject.SetActive(false);
+        }
+
+        if (!fadeout)
+        {
+            return;
+        }
+
+        var ratio = (endTime - currentTime) / showTime;
+
+        Color tempColor = background.color;
+        tempColor.a = ratio;
+        background.color = tempColor;
     }
 
-    public void Close()
+    public void ShowStageEndMessage(bool cleared)
     {
-        gameObject.SetActive(false);
+        gameObject.SetActive(true);
+
+        showTime = 2f;
+        endTime = Time.time + showTime;
+        fadeout = false;
+
+        if (cleared)
+        {
+            text.SetString(Defines.PlanetStageClearStringID);
+        }
+        else
+        {
+            text.SetString(Defines.PlanetStageFailStringID);
+        }
+    }
+
+    public void ShowPlanetStageMode(bool ascend)
+    {
+        gameObject.SetActive(true);
+
+        showTime = 2f;
+        endTime = Time.time + showTime;
+        fadeout = false;
+
+        if (ascend)
+        {
+            text.SetString(Defines.StageAscendModeStringID);
+        }
+        else
+        {
+            text.SetString(Defines.StageRepeatModeStringID);
+        }
     }
 }

@@ -34,6 +34,9 @@ public class StageUiManager : MonoBehaviour
     public MessageWindow MessageWindow { get; private set; }
 
     [field: SerializeField]
+    public StageEndWindow StageEndWindow { get; private set; }
+
+    [field: SerializeField]
     public UnitUiManager UnitUiManager { get; private set; }
 
     public TutorialQueue TutorialQueue { get; private set; }

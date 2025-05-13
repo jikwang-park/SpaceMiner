@@ -104,8 +104,14 @@ public class BuildingDataElement : MonoBehaviour
         }
 
         SetNextLevel(level);
+        SetLockedImage(level);
         SetBuildingInfo(currentData, currentLevel);
         SetButtonState();
+    }
+
+    private void SetLockedImage(int level)
+    {
+        lockedImage.gameObject.SetActive(level <= 0);
     }
 
     private void SetMaxLevel(BuildingTable.Data buildingData)
@@ -173,7 +179,7 @@ public class BuildingDataElement : MonoBehaviour
         if(level >= 0 && level< data.Count)
         {
             var spriteId = data[level].NeedItemID;
-            currentNeedItemImage.SetSprite(spriteId);
+            currentNeedItemImage.SetItemSprite(spriteId);
         }
     }
 

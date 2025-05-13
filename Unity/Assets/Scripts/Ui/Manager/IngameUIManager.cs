@@ -30,7 +30,7 @@ public class IngameUIManager : MonoBehaviour
     [field: SerializeField]
     public Slider miningBattleCenterHpBar { get; private set; }
 
-    [SerializeField]
+    [field: SerializeField]
     public GameObject bossDamageGameObject { get; private set; }
 
     [SerializeField]

@@ -47,8 +47,8 @@ public class DungeonSelectTab : MonoBehaviour
         key1image.SetItemSprite(Defines.DungeonKeyItemID);
         key2image.SetItemSprite(Defines.DungeonKey2ItemID);
 
-        key1Text.SetStringArguments(ItemManager.GetItemAmount(Defines.DungeonKeyItemID).ToString(), one);
-        key2Text.SetStringArguments(ItemManager.GetItemAmount(Defines.DungeonKey2ItemID).ToString(), one);
+        key1Text.SetStringArguments(one, ItemManager.GetItemAmount(Defines.DungeonKeyItemID).ToString());
+        key2Text.SetStringArguments(one, ItemManager.GetItemAmount(Defines.DungeonKey2ItemID).ToString());
     }
 
     private void OnRowLoaded(UnityEngine.ResourceManagement.AsyncOperations.AsyncOperationHandle<GameObject> handle, int type)

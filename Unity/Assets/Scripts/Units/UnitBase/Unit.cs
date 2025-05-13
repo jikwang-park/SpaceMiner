@@ -128,10 +128,16 @@ public class Unit : MonoBehaviour, IObjectPoolGameObject
 
             if (!HasTarget && StageManager.StageMonsterManager.MonsterCount > 0)
             {
-                HasTarget = true;
-                var monster = StageManager.StageMonsterManager.GetMonster(transform.position);
-                target = monster.transform;
-                target.GetComponent<DestructedDestroyEvent>().OnDestroyed += OnTargetDie;
+                var monster = StageManager.StageMonsterManager.GetMonster(transform.position, unitStats.range);
+                if (monster is not null)
+                {
+                    HasTarget = true;
+                    target = monster.transform;
+                    var targetDisplacement = target.position - transform.position;
+                    targetDisplacement.y = 0f;
+                    TargetDistance = Vector3.Magnitude(targetDisplacement);
+                    target.GetComponent<DestructedDestroyEvent>().OnDestroyed += OnTargetDie;
+                }
             }
 
             if (HasTarget)
@@ -213,7 +219,7 @@ public class Unit : MonoBehaviour, IObjectPoolGameObject
                 break;
         }
         StageManager.StageUiManager.UnitUiManager.SetUnitHpBar(UnitTypes, unitStats);
-        
+
     }
 
     private void OnTargetDie(DestructedDestroyEvent sender)

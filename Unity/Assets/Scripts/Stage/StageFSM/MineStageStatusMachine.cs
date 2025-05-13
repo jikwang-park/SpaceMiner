@@ -88,7 +88,28 @@ public class MineStageStatusMachine : StageStatusMachine
     }
     public override void Exit()
     {
-        stageManager.SetStatus(IngameStatus.Planet);
+        if (status == Status.Battle)
+        {
+            status = Status.Normal;
+            stageManager.StageUiManager.ResourceRow.SetActive(true);
+            stageManager.StageUiManager.IngameUIManager.mineBattleButton.gameObject.SetActive(true);
+            stageManager.StageMonsterManager.StopMonster();
+            stageManager.UnitPartyManager.UnitDespawn();
+            stageManager.StageMonsterManager.ClearMonster();
+            stageManager.StageUiManager.HPBarManager.ClearHPBar();
+
+            stageManager.StageUiManager.IngameUIManager.timerGameObject.gameObject.SetActive(false);
+            stageManager.StageUiManager.IngameUIManager.waveGameObject.gameObject.SetActive(false);
+            stageManager.StageUiManager.IngameUIManager.unitHpBars.SetActive(false);
+            stageManager.StageUiManager.IngameUIManager.unitSkills.gameObject.SetActive(false);
+
+            stageManager.StageUiManager.InteractableUIBackground.gameObject.SetActive(true);
+            stageManager.StageUiManager.UIGroupStatusManager.UiDict[IngameStatus.Mine].SetPopUpActive(0);
+        }
+        else
+        {
+            stageManager.SetStatus(IngameStatus.Planet);
+        }
     }
 
     public override void Reset()
@@ -209,6 +230,7 @@ public class MineStageStatusMachine : StageStatusMachine
     public void StartMineBattle()
     {
         status = Status.Battle;
+        stageManager.StageUiManager.IngameUIManager.mineBattleButton.gameObject.SetActive(false);
 
         var datas = DataTableManager.MiningBattleTable.GetDatas(Variables.planetMiningID);
 
@@ -218,10 +240,14 @@ public class MineStageStatusMachine : StageStatusMachine
         stageStartTime = Time.time;
         stageEndTime = stageStartTime + battleData.LimitTime;
         weight[1] = 1f;
-        stageManager.StageUiManager.IngameUIManager.waveText.gameObject.SetActive(true);
-        stageManager.StageUiManager.IngameUIManager.timerText.gameObject.SetActive(true);
+        stageManager.StageUiManager.ResourceRow.SetActive(false);
+        stageManager.StageUiManager.IngameUIManager.waveGameObject.gameObject.SetActive(true);
+        stageManager.StageUiManager.IngameUIManager.timerGameObject.gameObject.SetActive(true);
         stageManager.StageUiManager.InteractableUIBackground.gameObject.SetActive(false);
         stageManager.StageUiManager.UIGroupStatusManager.UiDict[IngameStatus.Mine].SetPopUpInactive(0);
+
+        stageManager.StageUiManager.IngameUIManager.unitHpBars.SetActive(true);
+        stageManager.StageUiManager.IngameUIManager.unitSkills.gameObject.SetActive(true);
 
         centerHP = battleData.HitCount;
         //TODO: 스트링 테이블 넣어야함
@@ -303,9 +329,11 @@ public class MineStageStatusMachine : StageStatusMachine
     {
         status = Status.Normal;
 
+        stageManager.StageUiManager.IngameUIManager.mineBattleButton.gameObject.SetActive(true);
         stageManager.StageMonsterManager.StopMonster();
         stageManager.UnitPartyManager.UnitDespawn();
         stageManager.StageMonsterManager.ClearMonster();
+        stageManager.StageUiManager.HPBarManager.ClearHPBar();
 
         if (isTimeOver && centerHP > 0)
         {
@@ -335,8 +363,8 @@ public class MineStageStatusMachine : StageStatusMachine
         {
             stageManager.StageUiManager.IngameUIManager.miningBattleResultWindow.ShowDefeat(battleData);
         }
-        stageManager.StageUiManager.IngameUIManager.timerText.gameObject.SetActive(false);
-        stageManager.StageUiManager.IngameUIManager.waveText.gameObject.SetActive(false);
+        stageManager.StageUiManager.IngameUIManager.timerGameObject.gameObject.SetActive(false);
+        stageManager.StageUiManager.IngameUIManager.waveGameObject.gameObject.SetActive(false);
         stageManager.StageUiManager.IngameUIManager.unitHpBars.SetActive(false);
         stageManager.StageUiManager.IngameUIManager.unitSkills.gameObject.SetActive(false);
 

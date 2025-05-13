@@ -221,18 +221,12 @@ public class PlanetStageStatusMachine : StageStatusMachine
     protected void GetFirstReward()
     {
         ItemManager.AddItem(stageData.FirstClearRewardID, stageData.FirstClearRewardCount);
-
-        if (stageData.FirstClearRewardID == (int)Currency.Gold)
-        {
-            stageManager.StageUiManager.IngameUIManager.SetGoldText();
-        }
     }
 
     protected void OnMonsterDie()
     {
         ++SaveLoadManager.Data.questProgressData.monsterCount;
         GuideQuestManager.QuestProgressChange(GuideQuestTable.MissionType.Exterminate);
-        stageManager.StageUiManager.IngameUIManager.SetGoldText();
     }
 
     protected bool CheckClearedStageChange()

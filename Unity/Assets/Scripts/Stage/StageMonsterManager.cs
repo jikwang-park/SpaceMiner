@@ -278,7 +278,7 @@ public class StageMonsterManager : MonoBehaviour
         return monsters;
     }
 
-    public MonsterController GetMonster(Vector3 position)
+    public MonsterController GetMonster(Vector3 position, float range)
     {
         float sqrDistance = float.MaxValue;
         MonsterController monsterController = null;
@@ -294,7 +294,14 @@ public class StageMonsterManager : MonoBehaviour
                 monsterController = monster;
             }
         }
-        return monsterController;
+        if (sqrDistance < range * range)
+        {
+            return monsterController;
+        }
+        else
+        {
+            return null;
+        }
     }
 
     public Transform GetLineMonster(int line)

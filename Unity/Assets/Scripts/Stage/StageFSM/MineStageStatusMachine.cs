@@ -313,10 +313,15 @@ public class MineStageStatusMachine : StageStatusMachine
 
             ItemManager.AddItem(battleData.Reward1ItemID, battleData.Reward1ItemCount);
             gotItems.Add((battleData.Reward1ItemID, battleData.Reward1ItemCount));
-            if (Random.value < battleData.Reward2ItemProbability)
+
+            for (int i = 0; i < battleData.Reward2ItemIDs.Length; ++i)
             {
-                ItemManager.AddItem(battleData.Reward2ItemID, battleData.Reward2ItemCount);
-                gotItems.Add((battleData.Reward2ItemID, battleData.Reward2ItemCount));
+                if (Random.value < battleData.Reward2ItemProbabilities[i])
+                {
+                    int itemCount = Random.Range(0, battleData.Reward2ItemCounts[i]) + 1;
+                    ItemManager.AddItem(battleData.Reward2ItemIDs[i], itemCount);
+                    gotItems.Add((battleData.Reward2ItemIDs[i], itemCount));
+                }
             }
 
             ++SaveLoadManager.Data.mineBattleData.mineBattleCount;

@@ -15,7 +15,7 @@ public class MiningBattleExterminateWindow : MonoBehaviour
     [SerializeField]
     private Transform iconParent;
 
-    private DungeonTable.Data stageData;
+    private MiningBattleTable.Data stageData;
 
     private StageManager stageManager;
 
@@ -29,18 +29,15 @@ public class MiningBattleExterminateWindow : MonoBehaviour
 
     private void OnEnable()
     {
-        var subStages = DataTableManager.DungeonTable.GetDungeonList(Variables.currentDungeonType);
-        stageData = subStages[0];
-        var lastDamage = SaveLoadManager.Data.stageSaveData.dungeonTwoDamage;
-        var totalReward = DataTableManager.DamageDungeonRewardTable.GetRewards(lastDamage);
+        var subStages = DataTableManager.MiningBattleTable.GetDatas(Variables.planetMiningID);
+        var clearedStageIndex = SaveLoadManager.Data.stageSaveData.ClearedMineStage[Variables.planetMiningStage];
+        stageData = subStages[clearedStageIndex];
 
-        foreach (var reward in totalReward)
+        AddIcon(stageData.Reward1ItemID, stageData.Reward1ItemCount);
+
+        for (int i = 0; i < stageData.Reward2ItemIDs.Length; ++i)
         {
-            var itemIconGo = stageManager.StageUiManager.ObjectPoolManager.Get(prefabAddress);
-            itemIconGo.transform.SetParent(iconParent);
-            var rewardIcon = itemIconGo.GetComponent<DungeonClearRewardIcon>();
-            rewardIcons.Add(rewardIcon);
-            rewardIcon.SetItem(reward.Key, reward.Value);
+            AddIcon(stageData.Reward2ItemIDs[i], 0, stageData.Reward2ItemIDs[i]);
         }
     }
 
@@ -53,25 +50,43 @@ public class MiningBattleExterminateWindow : MonoBehaviour
         rewardIcons.Clear();
     }
 
+    private void AddIcon(int itemID, BigNumber amount)
+    {
+        var itemIconGo = stageManager.StageUiManager.ObjectPoolManager.Get(prefabAddress);
+        itemIconGo.transform.SetParent(iconParent);
+        var rewardIcon = itemIconGo.GetComponent<DungeonClearRewardIcon>();
+        rewardIcons.Add(rewardIcon);
+        rewardIcon.SetItem(itemID, amount);
+    }
+
+    private void AddIcon(int itemID, BigNumber minAmount, BigNumber maxAmount)
+    {
+        var itemIconGo = stageManager.StageUiManager.ObjectPoolManager.Get(prefabAddress);
+        itemIconGo.transform.SetParent(iconParent);
+        var rewardIcon = itemIconGo.GetComponent<DungeonClearRewardIcon>();
+        rewardIcons.Add(rewardIcon);
+        rewardIcon.SetItem(itemID, minAmount, maxAmount);
+    }
+
     public void OnConfirm()
     {
-        if (ItemManager.CanConsume(stageData.NeedKeyItemID, stageData.NeedKeyItemCount))
-        {
-            ItemManager.ConsumeItem(stageData.NeedKeyItemID, stageData.NeedKeyItemCount);
+        //if (ItemManager.CanConsume(stageData.NeedKeyItemID, stageData.NeedKeyItemCount))
+        //{
+        //    ItemManager.ConsumeItem(stageData.NeedKeyItemID, stageData.NeedKeyItemCount);
 
-            var damage = SaveLoadManager.Data.stageSaveData.dungeonTwoDamage;
-            var rewards = DataTableManager.DamageDungeonRewardTable.GetRewards(damage);
+        //    var damage = SaveLoadManager.Data.stageSaveData.dungeonTwoDamage;
+        //    var rewards = DataTableManager.DamageDungeonRewardTable.GetRewards(damage);
 
-            foreach (var reward in rewards)
-            {
-                ItemManager.AddItem(reward.Key, reward.Value);
-            }
+        //    foreach (var reward in rewards)
+        //    {
+        //        ItemManager.AddItem(reward.Key, reward.Value);
+        //    }
 
-            exterminateResult.Open(rewards);
-        }
-        else
-        {
-            requirementWindow.OpenNeedKey();
-        }
+        //    exterminateResult.Open(rewards);
+        //}
+        //else
+        //{
+        //    requirementWindow.OpenNeedKey();
+        //}
     }
 }

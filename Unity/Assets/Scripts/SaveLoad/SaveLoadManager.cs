@@ -165,6 +165,7 @@ public static class SaveLoadManager
         foreach (var data in lastDungeonData)
         {
             Data.stageSaveData.highestDungeon[data.Key] = data.Value.Stage;
+            Data.stageSaveData.clearedDungeon[data.Key] = data.Value.Stage;
         }
 
         var planetIds = DataTableManager.PlanetTable.GetIds();

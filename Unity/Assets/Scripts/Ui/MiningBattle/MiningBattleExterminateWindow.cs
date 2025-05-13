@@ -21,6 +21,8 @@ public class MiningBattleExterminateWindow : MonoBehaviour
 
     private List<DungeonClearRewardIcon> rewardIcons = new List<DungeonClearRewardIcon>();
 
+    public event System.Action OnExterminate;
+
     private void Awake()
     {
         stageManager = GameObject.FindGameObjectWithTag("GameController").GetComponent<StageManager>();
@@ -30,14 +32,14 @@ public class MiningBattleExterminateWindow : MonoBehaviour
     private void OnEnable()
     {
         var subStages = DataTableManager.MiningBattleTable.GetDatas(Variables.planetMiningID);
-        var clearedStageIndex = SaveLoadManager.Data.stageSaveData.ClearedMineStage[Variables.planetMiningStage];
+        var clearedStageIndex = SaveLoadManager.Data.stageSaveData.ClearedMineStage[Variables.planetMiningStage] - 1;
         stageData = subStages[clearedStageIndex];
 
         AddIcon(stageData.Reward1ItemID, stageData.Reward1ItemCount);
 
         for (int i = 0; i < stageData.Reward2ItemIDs.Length; ++i)
         {
-            AddIcon(stageData.Reward2ItemIDs[i], 0, stageData.Reward2ItemIDs[i]);
+            AddIcon(stageData.Reward2ItemIDs[i], 0, stageData.Reward2ItemCounts[i]);
         }
     }
 
@@ -70,23 +72,31 @@ public class MiningBattleExterminateWindow : MonoBehaviour
 
     public void OnConfirm()
     {
-        //if (ItemManager.CanConsume(stageData.NeedKeyItemID, stageData.NeedKeyItemCount))
-        //{
-        //    ItemManager.ConsumeItem(stageData.NeedKeyItemID, stageData.NeedKeyItemCount);
+        if (SaveLoadManager.Data.mineBattleData.mineBattleCount < Defines.MiningBattleMaxCount)
+        {
+            SortedList<int, BigNumber> gotItems = new SortedList<int, BigNumber>();
 
-        //    var damage = SaveLoadManager.Data.stageSaveData.dungeonTwoDamage;
-        //    var rewards = DataTableManager.DamageDungeonRewardTable.GetRewards(damage);
+            ItemManager.AddItem(stageData.Reward1ItemID, stageData.Reward1ItemCount);
+            gotItems.Add(stageData.Reward1ItemID, stageData.Reward1ItemCount);
 
-        //    foreach (var reward in rewards)
-        //    {
-        //        ItemManager.AddItem(reward.Key, reward.Value);
-        //    }
+            for (int i = 0; i < stageData.Reward2ItemIDs.Length; ++i)
+            {
+                if (Random.value < stageData.Reward2ItemProbabilities[i])
+                {
+                    int itemCount = Random.Range(0, stageData.Reward2ItemCounts[i]) + 1;
+                    ItemManager.AddItem(stageData.Reward2ItemIDs[i], itemCount);
+                    gotItems.Add(stageData.Reward2ItemIDs[i], itemCount);
+                }
+            }
+            ++SaveLoadManager.Data.mineBattleData.mineBattleCount;
+            SaveLoadManager.Data.mineBattleData.lastClearTime = TimeManager.Instance.GetEstimatedServerTime();
 
-        //    exterminateResult.Open(rewards);
-        //}
-        //else
-        //{
-        //    requirementWindow.OpenNeedKey();
-        //}
+            exterminateResult.Open(gotItems);
+            OnExterminate?.Invoke();
+        }
+        else
+        {
+            requirementWindow.OpenMiningFullCount();
+        }
     }
 }

@@ -159,6 +159,7 @@ public class Defines
     public const int RequirementsFailKey = 172;
     public const int RequirementsFailPlanet = 173;
     public const int RequirementsFailPower = 174;
+    public const int RequirementsFailMiningBattleCount = 200087;
 
     public const int StageAscendModeStringID = 195;
     public const int StageRepeatModeStringID = 196;

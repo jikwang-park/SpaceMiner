@@ -43,6 +43,6 @@ public class DungeonRequirementWindow : MonoBehaviour
         gameObject.SetActive(true);
         twoButtons.SetActive(false);
         oneButton.SetActive(true);
-        messageText.SetString(Defines.RequirementsFailKey);
+        messageText.SetString(Defines.RequirementsFailMiningBattleCount);
     }
 }

@@ -111,7 +111,12 @@ public class BuildingDataElement : MonoBehaviour
 
     private void SetLockedImage(int level)
     {
-        lockedImage.gameObject.SetActive(level <= 0);
+        bool isLocked = level <= 0;
+        lockedImage.gameObject.SetActive(isLocked);
+
+        var color = buildingImage.GetComponent<Image>().color;
+        color.a = isLocked ? 0.2f : 1f;
+        buildingImage.GetComponent<Image>().color = color;
     }
 
     private void SetMaxLevel(BuildingTable.Data buildingData)

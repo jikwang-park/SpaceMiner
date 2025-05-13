@@ -8,10 +8,11 @@ using UnityEngine.UI;
 public class IngameUIManager : MonoBehaviour
 {
     [field: SerializeField]
-    public GameObject stageTextGameObject { get; private set; }
+    public LocalizationText stageText { get; private set; }
+
 
     [field: SerializeField]
-    public LocalizationText stageText { get; private set; }
+    public GameObject waveGameObject { get; private set; }
 
     [field: SerializeField]
     public LocalizationText waveText { get; private set; }
@@ -19,8 +20,21 @@ public class IngameUIManager : MonoBehaviour
     [field: SerializeField]
     public LocalizationText timerText { get; private set; }
 
+
+    [field: SerializeField]
+    public GameObject miningBattleTimerGameObject { get; private set; }
+
+    [field: SerializeField]
+    public LocalizationText miningBattleTimerText { get; private set; }
+
+    [field: SerializeField]
+    public Slider miningBattleCenterHpBar { get; private set; }
+
     [SerializeField]
-    private TextMeshProUGUI goldText;
+    public GameObject bossDamageGameObject { get; private set; }
+
+    [SerializeField]
+    public TextMeshProUGUI bossDamageText { get; private set; }
 
     [field: SerializeField]
     public GameObject unitHpBars { get; private set; }
@@ -73,10 +87,6 @@ public class IngameUIManager : MonoBehaviour
         stageText.SetString(Defines.StageDefaultStringID, dungeonId.ToString(), stage.ToString());
     }
 
-    public void SetGoldText()
-    {
-        goldText.text = $"{ItemManager.GetItemAmount((int)Currency.Gold)}G";
-    }
 
     public void SetStatus(IngameStatus status)
     {

@@ -61,40 +61,4 @@ public class MessageWindow : MonoBehaviour
         tempColor.a = 1f;
         background.color = tempColor;
     }
-
-    public void ShowStageEndMessage(bool cleared)
-    {
-        gameObject.SetActive(true);
-
-        showTime = 2f;
-        endTime = Time.time + showTime;
-        fadeout = false;
-
-        if (cleared)
-        {
-            text.SetString(Defines.PlanetStageClearStringID);
-        }
-        else
-        {
-            text.SetString(Defines.PlanetStageFailStringID);
-        }
-    }
-
-    public void ShowPlanetStageMode(bool ascend)
-    {
-        gameObject.SetActive(true);
-
-        showTime = 2f;
-        endTime = Time.time + showTime;
-        fadeout = false;
-
-        if (ascend)
-        {
-            text.SetString(Defines.StageAscendModeStringID);
-        }
-        else
-        {
-            text.SetString(Defines.StageRepeatModeStringID);
-        }
-    }
 }

@@ -68,9 +68,10 @@ public class DungeonStageStatusMachine : StageStatusMachine
         {
             case Status.Play:
                 UpdateTimer(currentTime);
+                
                 if (dungeonData.Type == 2)
                 {
-                    stageManager.StageUiManager.IngameUIManager.waveText.SetString(Defines.DirectStringID, (-bossStats.Hp).ToString());
+                    stageManager.StageUiManager.IngameUIManager.bossDamageText.text = (-bossStats.Hp).ToString();
                 }
                 break;
         }
@@ -92,6 +93,8 @@ public class DungeonStageStatusMachine : StageStatusMachine
             stageManager.StageMonsterManager.StopMonster();
             stageManager.UnitPartyManager.UnitDespawn();
             stageManager.StageMonsterManager.ClearMonster();
+
+            stageManager.StageUiManager.IngameUIManager.bossDamageGameObject.SetActive(false);
 
             var prefabID = DataTableManager.AddressTable.GetData(dungeonData.PrefabID);
         }
@@ -139,8 +142,8 @@ public class DungeonStageStatusMachine : StageStatusMachine
 
         if (isFirstWave && dungeonData.Type == 2)
         {
-            stageManager.StageUiManager.IngameUIManager.waveText.gameObject.SetActive(true);
-            stageManager.StageUiManager.IngameUIManager.waveText.SetString(Defines.DirectStringID, string.Empty);
+            stageManager.StageUiManager.IngameUIManager.waveGameObject.SetActive(false);
+            stageManager.StageUiManager.IngameUIManager.bossDamageGameObject.SetActive(true);
             var monsterTransform = stageManager.StageMonsterManager.GetMonsters(1);
             bossStats = monsterTransform[0].GetComponent<MonsterStats>();
         }
@@ -263,12 +266,12 @@ public class DungeonStageStatusMachine : StageStatusMachine
 
         if (waveData.CorpsIDs.Length > 1)
         {
-            stageManager.StageUiManager.IngameUIManager.waveText.gameObject.SetActive(true);
+            stageManager.StageUiManager.IngameUIManager.waveGameObject.SetActive(true);
             stageManager.StageUiManager.IngameUIManager.SetWaveText(currentWave);
         }
         else
         {
-            stageManager.StageUiManager.IngameUIManager.waveText.gameObject.SetActive(false);
+            stageManager.StageUiManager.IngameUIManager.waveGameObject.SetActive(false);
         }
     }
 

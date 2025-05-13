@@ -1,7 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
 using TMPro;
-using UnityEditor.U2D.Aseprite;
 using UnityEngine;
 
 public class MiningBattleEnterWindow : MonoBehaviour
@@ -20,6 +19,12 @@ public class MiningBattleEnterWindow : MonoBehaviour
     [SerializeField]
     private LocalizationText remainCountText;
 
+    [SerializeField]
+    private DungeonRequirementWindow requirementWindow;
+
+    [SerializeField]
+    private MiningBattleExterminateWindow exterminateWindow;
+
     private List<MiningBattleTable.Data> datas;
 
     private List<DungeonClearRewardIcon> rewardIcons = new List<DungeonClearRewardIcon>();
@@ -30,10 +35,13 @@ public class MiningBattleEnterWindow : MonoBehaviour
 
     private StageManager stageManager;
 
+    
     private void Start()
     {
         stageManager = GameObject.FindGameObjectWithTag("GameController").GetComponent<StageManager>();
+        exterminateWindow.OnExterminate += OnExterminate;
     }
+
 
     private void OnDisable()
     {
@@ -136,5 +144,15 @@ public class MiningBattleEnterWindow : MonoBehaviour
             Variables.planetMiningStage = index + 1;
             stageManager.MiningBattleStart();
         }
+        else
+        {
+            requirementWindow.OpenMiningFullCount();
+        }
+    }
+
+
+    private void OnExterminate()
+    {
+        remainCountText.SetStringArguments(SaveLoadManager.Data.mineBattleData.mineBattleCount.ToString());
     }
 }

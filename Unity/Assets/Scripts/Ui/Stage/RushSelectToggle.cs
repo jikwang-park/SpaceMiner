@@ -12,7 +12,7 @@ public class RushSelectToggle : MonoBehaviour
     [SerializeField]
     private LocalizationText text;
 
-    private MessageWindow messageWindow;
+    private StageEndWindow stageEndWindow;
 
     private void Start()
     {
@@ -24,24 +24,24 @@ public class RushSelectToggle : MonoBehaviour
 
     public void OnRushToggleChanged(bool isOn)
     {
-        if (messageWindow is null)
+        if (stageEndWindow is null)
         {
-            messageWindow = GameObject.FindGameObjectWithTag("GameController").GetComponent<StageManager>().StageUiManager.MessageWindow;
+            stageEndWindow = GameObject.FindGameObjectWithTag("GameController").GetComponent<StageManager>().StageUiManager.StageEndWindow;
         }
 
         if (isOn)
         {
             text.SetString(Ascend);
             Variables.stageMode = StageMode.Ascend;
-            messageWindow.ShowPlanetStageMode(true);
+            stageEndWindow.ShowPlanetStageMode(true);
         }
         else
         {
             text.SetString(Repeat);
             Variables.stageMode = StageMode.Repeat;
-            if (!messageWindow.isShowing)
+            if (!stageEndWindow.isShowing)
             {
-                messageWindow.ShowPlanetStageMode(false);
+                stageEndWindow.ShowPlanetStageMode(false);
             }
         }
     }

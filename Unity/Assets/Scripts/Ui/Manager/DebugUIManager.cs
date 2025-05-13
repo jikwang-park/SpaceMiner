@@ -260,4 +260,9 @@ public class DebugUIManager : MonoBehaviour
             stageManager.SetStatus(IngameStatus.Planet);
         }
     }
+
+    public void ResetMiningBattleCount()
+    {
+        SaveLoadManager.Data.mineBattleData.mineBattleCount = 0;
+    }
 }

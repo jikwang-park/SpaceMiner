@@ -37,16 +37,7 @@ public class StageManager : MonoBehaviour
         ObjectPoolManager = GetComponent<ObjectPoolManager>();
         CameraManager = GetComponent<CameraManager>();
         StageUiManager.OnExitButtonClicked += StageUiManager_OnExitButtonClicked;
-        ItemManager.OnItemAmountChanged += OnItemAmountChanged;
         InitStatusMachines();
-    }
-
-    private void OnItemAmountChanged(int itemID, BigNumber Amount)
-    {
-        if (itemID == (int)Currency.Gold)
-        {
-            StageUiManager.IngameUIManager.SetGoldText();
-        }
     }
 
     private void StageUiManager_OnExitButtonClicked()
@@ -57,7 +48,6 @@ public class StageManager : MonoBehaviour
     private void Start()
     {
         machines[IngameStatus].Start();
-        StageUiManager.IngameUIManager.SetGoldText();
         //stageStatusMachine.Start();
     }
 

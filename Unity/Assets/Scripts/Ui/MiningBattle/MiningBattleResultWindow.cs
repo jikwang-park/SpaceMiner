@@ -27,6 +27,9 @@ public class MiningBattleResultWindow : MonoBehaviour
     [SerializeField]
     private Transform rewardRow;
 
+    [SerializeField]
+    private DungeonRequirementWindow requirementWindow;
+
     private StageManager stageManager;
 
     private List<DungeonClearRewardIcon> rewardIcons = new List<DungeonClearRewardIcon>();
@@ -97,6 +100,10 @@ public class MiningBattleResultWindow : MonoBehaviour
             ++Variables.planetMiningStage;
             stageManager.MiningBattleStart();
         }
+        else
+        {
+            requirementWindow.OpenMiningFullCount();
+        }
     }
 
     public void RetryStage()
@@ -105,6 +112,10 @@ public class MiningBattleResultWindow : MonoBehaviour
         {
             gameObject.SetActive(false);
             stageManager.MiningBattleStart();
+        }
+        else
+        {
+            requirementWindow.OpenMiningFullCount();
         }
     }
 }

@@ -409,9 +409,9 @@ public class UnitStatsUpgradeElement : MonoBehaviour, IPointerDownHandler, IPoin
         }
         currentGold = GetUpgradeCost(level, statsMultiplier);
 
-
         SaveLoadManager.Data.unitStatUpgradeData.upgradeLevels[currentType] = level;
         GuideQuestManager.QuestProgressChange(GuideQuestTable.MissionType.StatUpgrade);
+        
     }
 
     private bool CanUpgrade()
@@ -464,6 +464,7 @@ public class UnitStatsUpgradeElement : MonoBehaviour, IPointerDownHandler, IPoin
             SetStatsInfo();
             stageManager.UnitPartyManager.AddStats(currentType, value * statsMultiplier);
             SaveLoadManager.SaveGame();
+            ButtonUpdate();
         }
     }
     private bool isLongPressed = false;
@@ -530,6 +531,8 @@ public class UnitStatsUpgradeElement : MonoBehaviour, IPointerDownHandler, IPoin
                 SetStatsInfo();
                 stageManager.UnitPartyManager.AddStats(currentType, value * statsMultiplier);
                 doneUpgrade = true;
+                canConsume = false;
+                ButtonUpdate();
             }
             else
             {

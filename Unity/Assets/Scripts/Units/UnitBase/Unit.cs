@@ -70,10 +70,13 @@ public class Unit : MonoBehaviour, IObjectPoolGameObject
     public bool HasTarget { get; private set; }
 
 
+    private UnitColorPaletteSetter colorSetter;
+
     private void Awake()
     {
         AnimationControl = GetComponent<AnimationControl>();
         unitStats = GetComponent<UnitStats>();
+        colorSetter = GetComponent<UnitColorPaletteSetter>();
     }
 
     private void Start()
@@ -203,6 +206,7 @@ public class Unit : MonoBehaviour, IObjectPoolGameObject
 
         UnitTypes = data.UnitType;
         Grade = data.Grade;
+        colorSetter.SetColor(Grade, UnitTypes);
         switch (UnitTypes)
         {
             case UnitTypes.Tanker:

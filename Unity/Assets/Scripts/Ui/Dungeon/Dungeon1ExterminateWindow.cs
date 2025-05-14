@@ -13,6 +13,9 @@ public class Dungeon1ExterminateWindow : MonoBehaviour
     private TextMeshProUGUI rewardText;
 
     [SerializeField]
+    private LocalizationText stageText;
+
+    [SerializeField]
     private DungeonRequirementWindow requirementWindow;
 
     [SerializeField]
@@ -29,6 +32,7 @@ public class Dungeon1ExterminateWindow : MonoBehaviour
         rewardImage.SetSprite(itemdata.SpriteID);
         rewardItemName.SetString(itemdata.NameStringID);
         rewardText.text = stageData.ClearRewardItemCount.ToString();
+        stageText.SetStringArguments(stageData.Stage.ToString());
     }
 
     public void OnConfirm()

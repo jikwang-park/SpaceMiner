@@ -2,11 +2,14 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AddressableAssets;
+using UnityEngine.Audio;
 using UnityEngine.ResourceManagement.AsyncOperations;
 
 [RequireComponent(typeof(AudioSource))]
 public class SoundManager : Singleton<SoundManager>
 {
+    [SerializeField]
+    private AudioMixer audioMixer;
     [SerializeField]
     private SoundDatabase database;
     [SerializeField]
@@ -87,5 +90,15 @@ public class SoundManager : Singleton<SoundManager>
     public void StopSFX()
     {
         sfxSource.Stop();
+    }
+    public void SetSFXVolume(float volume)
+    {
+        SaveLoadManager.Data.sfxVolume = volume;
+        audioMixer.SetFloat("SFX", Mathf.Log10(SaveLoadManager.Data.sfxVolume) * 20);
+    }
+    public void SetBGMVolume(float volume)
+    {
+        SaveLoadManager.Data.bgmVolume = volume;
+        audioMixer.SetFloat("BGM", Mathf.Log10(SaveLoadManager.Data.bgmVolume) * 20);
     }
 }

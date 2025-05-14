@@ -22,6 +22,10 @@ public static class GachaManager
             }
         }
     }
+    public static void Clear()
+    {
+        onUseTicketChanged = null;
+    }
     public static void ToggleUseTicket()
     {
         useTicket = !useTicket;

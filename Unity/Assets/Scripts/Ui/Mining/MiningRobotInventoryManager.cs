@@ -21,6 +21,12 @@ public static class MiningRobotInventoryManager
         }
     }
     public delegate void MergeResponseCallback(bool confirmed);
+    public static void Clear()
+    {
+        onChangedInventory = null;
+        onEquipRobot = null;
+        onRequestMerge = null;
+    }
     public static void AddRobot(int robotId)
     {
         if(DataTableManager.RobotTable.GetData(robotId) == null)

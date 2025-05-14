@@ -52,8 +52,6 @@ public class FirebaseManager : Singleton<FirebaseManager>
         auth.StateChanged += AuthStateChanged;
         SaveLoadManager.onSaveRequested += SaveToFirebaseAsync;
         SaveLoadManager.onSetDeaultData += UpdateLeaderBoard;
-        await LoadFromFirebaseAsync();
-        UnitCombatPowerCalculator.onCombatPowerChanged += DoCombatPowerChanged;
         progress?.Report(1f);
     }
     private async void AuthStateChanged(object sender, EventArgs e)
@@ -85,7 +83,7 @@ public class FirebaseManager : Singleton<FirebaseManager>
             .Child("SaveData")
             .SetRawJsonValueAsync(json);
     }
-    private async Task LoadFromFirebaseAsync()
+    public async Task LoadFromFirebaseAsync()
     {
         if (User == null) return;
 
@@ -108,11 +106,19 @@ public class FirebaseManager : Singleton<FirebaseManager>
         {
             SaveLoadManager.SetDefaultData();
         }
+        UnitCombatPowerCalculator.onCombatPowerChanged += DoCombatPowerChanged;
     }
     private void OnApplicationQuit()
     {
         UpdateLeaderBoard();
         SetQuitTime();
+    }
+    private async void Update()
+    {
+        if (Input.GetKeyDown(KeyCode.Escape))
+        {
+            await ResetUserDataAsync();
+        }
     }
     public void SetQuitTime()
     {
@@ -132,15 +138,42 @@ public class FirebaseManager : Singleton<FirebaseManager>
     }
     public async Task ResetUserDataAsync()
     {
-        var auth = FirebaseAuth.DefaultInstance;
-        if (auth.CurrentUser == null)
+        if (User == null)
             throw new System.InvalidOperationException("로그인된 사용자가 없습니다.");
 
-        string uid = auth.CurrentUser.UserId;
-        var dbRef = FirebaseDatabase.DefaultInstance.GetReference("users").Child(uid);
+        string uid = User.UserId;
 
-        await dbRef.RemoveValueAsync();
-        SaveLoadManager.SetDefaultData();
+        await root.Child("users").Child(uid).RemoveValueAsync();
+
+        var lb = root.Child("leaderboard");
+        var tasks = new List<Task>
+        {
+            lb.Child("CombatPower").Child(uid).RemoveValueAsync(),
+            lb.Child("DungeonDamage").Child(uid).RemoveValueAsync(),
+            lb.Child("HighestStage").Child(uid).RemoveValueAsync()
+        };
+        await Task.WhenAll(tasks);
+
+        var profile = new UserProfile { DisplayName = "" };
+        await User.UpdateUserProfileAsync(profile);
+
+        ResetGame();
+    }
+
+    public void ResetGame()
+    {
+        ClearStaticEventListeners();
+        Addressables.LoadSceneAsync("TitleScene", LoadSceneMode.Single);
+    }
+    public void ClearStaticEventListeners()
+    {
+        ItemManager.Clear();
+        InventoryManager.Clear();
+        EffectItemInventoryManager.Clear();
+        SaveLoadManager.Clear();
+        GuideQuestManager.Clear();
+        UnitCombatPowerCalculator.Clear();
+        MiningRobotInventoryManager.Clear();
     }
     public async void DoCombatPowerChanged()
     {

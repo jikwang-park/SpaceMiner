@@ -57,7 +57,6 @@ public class TitleScene : MonoBehaviour
         loadingSlider.gameObject.SetActive(false);
         loginTouchPanel.gameObject.SetActive(true);
     }
-
     public void OnClickLoginButton()
     {
         var user = FirebaseManager.Instance.User;
@@ -76,13 +75,14 @@ public class TitleScene : MonoBehaviour
         }
     }
 
-    private void PlayGame()
+    private async void PlayGame()
     {
         welcomeText.text = String.Format(welcomeText.text, FirebaseManager.Instance.User.DisplayName);
         welcomeText.gameObject.SetActive(true);
         loginButton.gameObject.SetActive(false);
         loadingSlider.gameObject.SetActive(true);
         loadingSlider.value = 0f;
+        await FirebaseManager.Instance.LoadFromFirebaseAsync();
         StartCoroutine(LoadSceneWithAddressables());
     }
 
@@ -114,12 +114,12 @@ public class TitleScene : MonoBehaviour
         if(isCorrect)
         {
             nickname = nick;
-            alarmText.gameObject.SetActive(!alarmText.gameObject.activeSelf);
+            alarmText.gameObject.SetActive(!isCorrect);
             saveNicknameButton.interactable = true;
         }
         else
         {
-            alarmText.gameObject.SetActive(true);
+            alarmText.gameObject.SetActive(isCorrect);
         }
     }
 

@@ -8,11 +8,13 @@ public class MiningAccumulator : MonoBehaviour
     private List<int> planetIds;
     private StageManager stageManager;
     private bool isAccumulating = true;
+
+    private const float rewardCycleTime = 10f;
+    private float accumulateTime = 0f;
     private void Awake()
     {
         stageManager = GetComponent<StageManager>();
         stageManager.OnIngameStatusChanged += DoIngameStatusChanged;
-        stageManager.OnStageEnd += DoStageEnd;
     }
     void Start()
     {
@@ -30,7 +32,15 @@ public class MiningAccumulator : MonoBehaviour
         {
             return;
         }
+
         float delta = Time.deltaTime;
+        accumulateTime += delta;
+
+        if(accumulateTime >= rewardCycleTime)
+        {
+            RewardMining();
+            accumulateTime = 0f;
+        }
 
         foreach (var planet in planetIds)
         {
@@ -41,7 +51,7 @@ public class MiningAccumulator : MonoBehaviour
             accumulatedMines[planet] += productionThisFrame;
         }
     }
-    public void DoStageEnd()
+    public void RewardMining()
     {
         foreach(var accumulatedMine in accumulatedMines)
         {
@@ -62,5 +72,6 @@ public class MiningAccumulator : MonoBehaviour
     public void DoIngameStatusChanged(IngameStatus ingameStatus)
     {
         isAccumulating = (ingameStatus != IngameStatus.Mine);
+        accumulateTime = 0f;
     }
 }

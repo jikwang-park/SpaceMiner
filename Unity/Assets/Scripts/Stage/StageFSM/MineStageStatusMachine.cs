@@ -92,6 +92,7 @@ public class MineStageStatusMachine : StageStatusMachine
         if (status == Status.Battle)
         {
             status = Status.Normal;
+            mineDefence.Release();
             stageManager.StageUiManager.ResourceRow.SetActive(true);
             stageManager.StageUiManager.IngameUIManager.mineBattleButton.gameObject.SetActive(true);
             stageManager.StageMonsterManager.StopMonster();
@@ -332,6 +333,8 @@ public class MineStageStatusMachine : StageStatusMachine
     {
         status = Status.Normal;
 
+        mineDefence.Release();
+        
         stageManager.StageUiManager.ResourceRow.SetActive(true);
         stageManager.StageUiManager.IngameUIManager.mineBattleButton.gameObject.SetActive(true);
         stageManager.StageMonsterManager.StopMonster();

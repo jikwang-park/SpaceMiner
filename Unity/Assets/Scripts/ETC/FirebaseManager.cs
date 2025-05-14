@@ -114,6 +114,13 @@ public class FirebaseManager : Singleton<FirebaseManager>
         UpdateLeaderBoard();
         SetQuitTime();
     }
+    private async void Update()
+    {
+        if (Input.GetKeyDown(KeyCode.Escape))
+        {
+            await ResetUserDataAsync();
+        }
+    }
     public void SetQuitTime()
     {
         if(SaveLoadManager.Data is not null)
@@ -132,15 +139,26 @@ public class FirebaseManager : Singleton<FirebaseManager>
     }
     public async Task ResetUserDataAsync()
     {
-        var auth = FirebaseAuth.DefaultInstance;
-        if (auth.CurrentUser == null)
+        if (User == null)
             throw new System.InvalidOperationException("로그인된 사용자가 없습니다.");
 
-        string uid = auth.CurrentUser.UserId;
-        var dbRef = FirebaseDatabase.DefaultInstance.GetReference("users").Child(uid);
+        string uid = User.UserId;
 
-        await dbRef.RemoveValueAsync();
-        SaveLoadManager.SetDefaultData();
+        await root.Child("users").Child(uid).RemoveValueAsync();
+
+        var lb = root.Child("leaderboard");
+        var tasks = new List<Task>
+        {
+            lb.Child("CombatPower").Child(uid).RemoveValueAsync(),
+            lb.Child("DungeonDamage").Child(uid).RemoveValueAsync(),
+            lb.Child("HighestStage").Child(uid).RemoveValueAsync()
+        };
+        await Task.WhenAll(tasks);
+
+        var profile = new UserProfile { DisplayName = "" };
+        await User.UpdateUserProfileAsync(profile);
+
+        Addressables.LoadSceneAsync("TitleScene", LoadSceneMode.Single);
     }
     public async void DoCombatPowerChanged()
     {

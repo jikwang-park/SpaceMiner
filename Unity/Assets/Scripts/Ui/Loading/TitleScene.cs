@@ -57,7 +57,6 @@ public class TitleScene : MonoBehaviour
         loadingSlider.gameObject.SetActive(false);
         loginTouchPanel.gameObject.SetActive(true);
     }
-
     public void OnClickLoginButton()
     {
         var user = FirebaseManager.Instance.User;
@@ -114,12 +113,12 @@ public class TitleScene : MonoBehaviour
         if(isCorrect)
         {
             nickname = nick;
-            alarmText.gameObject.SetActive(!alarmText.gameObject.activeSelf);
+            alarmText.gameObject.SetActive(!isCorrect);
             saveNicknameButton.interactable = true;
         }
         else
         {
-            alarmText.gameObject.SetActive(true);
+            alarmText.gameObject.SetActive(isCorrect);
         }
     }
 

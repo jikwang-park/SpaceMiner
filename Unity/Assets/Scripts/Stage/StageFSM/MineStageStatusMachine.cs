@@ -273,6 +273,7 @@ public class MineStageStatusMachine : StageStatusMachine
 
         stageManager.UnitPartyManager.UnitSpawn(mineDefence.UnitSpawnPoints);
 
+        stageManager.UnitPartyManager.GetUnit(UnitTypes.Tanker).GetComponent<UnitStats>().range = 5f;
     }
 
     public void UpdateTimer(float currentTime)

@@ -51,6 +51,7 @@ public class AttendanceElements : MonoBehaviour
     {
         if(AttendanceRewardManager.Instance.CanClaim(attendanceId, dayIndex))
         {
+            SoundManager.Instance.PlaySFX("GainRewardSFX");
             AttendanceRewardManager.Instance.Claim(attendanceId, dayIndex);
             UpdateUI();
         }

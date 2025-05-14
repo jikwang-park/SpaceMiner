@@ -57,6 +57,8 @@ public class MiningBattleResultWindow : MonoBehaviour
 
     public void ShowClear(MiningBattleTable.Data data, List<(int itemid, BigNumber amount)> gainItem)
     {
+        SoundManager.Instance.StopBGM();
+        SoundManager.Instance.PlaySFX("DungeonSuccessSFX");
         stageText.SetStringArguments(data.Stage.ToString());
         gameObject.SetActive(true);
         clearView.SetActive(true);
@@ -84,6 +86,8 @@ public class MiningBattleResultWindow : MonoBehaviour
 
     public void ShowDefeat(MiningBattleTable.Data data)
     {
+        SoundManager.Instance.StopBGM();
+        SoundManager.Instance.PlaySFX("DungeonFailSFX");
         gameObject.SetActive(true);
         defeatView.SetActive(true);
         clearView.SetActive(false);

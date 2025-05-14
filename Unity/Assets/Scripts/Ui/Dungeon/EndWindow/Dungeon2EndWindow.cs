@@ -46,7 +46,7 @@ public class Dungeon2EndWindow : MonoBehaviour
     public void Open(BigNumber damage, SortedList<int, BigNumber> rewards)
     {
         Open(damage);
-
+        SoundManager.Instance.PlaySFX("SuccessDungeonSFX");
         foreach (var reward in rewards)
         {
             var itemIconGo = stageManager.StageUiManager.ObjectPoolManager.Get(prefabAddress);

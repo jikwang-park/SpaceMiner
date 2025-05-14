@@ -56,6 +56,7 @@ public class GachaResultPanelUI : MonoBehaviour
             {
                 break;
             }
+            SoundManager.Instance.PlaySFX("GachaSFX");
             InstantiateGachaResult(datas[i]);
             yield return waitSecondsToNextResult;
         }

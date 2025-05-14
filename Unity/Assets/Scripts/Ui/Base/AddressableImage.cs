@@ -77,4 +77,9 @@ public class AddressableImage : MonoBehaviour
     {
         image.enabled = isOn;
     }
+
+    public void SetColor(Color color)
+    {
+        image.color = color;
+    }
 }

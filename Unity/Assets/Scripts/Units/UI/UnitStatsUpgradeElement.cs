@@ -48,7 +48,6 @@ public class UnitStatsUpgradeElement : MonoBehaviour, IPointerDownHandler, IPoin
 
     [SerializeField]
     private AddressableImage goldImage;
-    private Image goldimage;
 
     [SerializeField]
     private AddressableImage statsImage;
@@ -78,11 +77,6 @@ public class UnitStatsUpgradeElement : MonoBehaviour, IPointerDownHandler, IPoin
     {
         stageManager = GameObject.FindGameObjectWithTag("GameController").GetComponent<StageManager>();
         ItemManager.OnItemAmountChanged += ItemManager_OnItemAmountChanged;
-    }
-
-    private void Start()
-    {
-        goldimage = goldImage.GetComponent<Image>();
     }
 
     public void SetMultiplier(int multiplier)
@@ -418,8 +412,7 @@ public class UnitStatsUpgradeElement : MonoBehaviour, IPointerDownHandler, IPoin
 
     private void ButtonUpdate(BigNumber totalGold)
     {
-        if (needGoldText is null
-            || goldimage is null)
+        if (needGoldText is null)
         {
             return;
         }
@@ -428,7 +421,7 @@ public class UnitStatsUpgradeElement : MonoBehaviour, IPointerDownHandler, IPoin
         {
             needGoldText.color = Color.white;
             goldText.SetColor(Color.white);
-            goldimage.color = Color.white;
+            goldImage.SetColor(Color.white);
             buttonImage.color = Color.white;
         }
         else
@@ -440,7 +433,7 @@ public class UnitStatsUpgradeElement : MonoBehaviour, IPointerDownHandler, IPoin
 
             needGoldText.color = disabledColor;
             goldText.SetColor(disabledColor);
-            goldimage.color = disabledColor;
+            goldImage.SetColor(disabledColor);
             buttonImage.color = disabledColor;
         }
     }

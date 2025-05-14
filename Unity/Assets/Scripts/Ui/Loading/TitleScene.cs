@@ -75,13 +75,14 @@ public class TitleScene : MonoBehaviour
         }
     }
 
-    private void PlayGame()
+    private async void PlayGame()
     {
         welcomeText.text = String.Format(welcomeText.text, FirebaseManager.Instance.User.DisplayName);
         welcomeText.gameObject.SetActive(true);
         loginButton.gameObject.SetActive(false);
         loadingSlider.gameObject.SetActive(true);
         loadingSlider.value = 0f;
+        await FirebaseManager.Instance.LoadFromFirebaseAsync();
         StartCoroutine(LoadSceneWithAddressables());
     }
 

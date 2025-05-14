@@ -52,8 +52,6 @@ public class FirebaseManager : Singleton<FirebaseManager>
         auth.StateChanged += AuthStateChanged;
         SaveLoadManager.onSaveRequested += SaveToFirebaseAsync;
         SaveLoadManager.onSetDeaultData += UpdateLeaderBoard;
-        await LoadFromFirebaseAsync();
-        UnitCombatPowerCalculator.onCombatPowerChanged += DoCombatPowerChanged;
         progress?.Report(1f);
     }
     private async void AuthStateChanged(object sender, EventArgs e)
@@ -85,7 +83,7 @@ public class FirebaseManager : Singleton<FirebaseManager>
             .Child("SaveData")
             .SetRawJsonValueAsync(json);
     }
-    private async Task LoadFromFirebaseAsync()
+    public async Task LoadFromFirebaseAsync()
     {
         if (User == null) return;
 
@@ -108,6 +106,7 @@ public class FirebaseManager : Singleton<FirebaseManager>
         {
             SaveLoadManager.SetDefaultData();
         }
+        UnitCombatPowerCalculator.onCombatPowerChanged += DoCombatPowerChanged;
     }
     private void OnApplicationQuit()
     {

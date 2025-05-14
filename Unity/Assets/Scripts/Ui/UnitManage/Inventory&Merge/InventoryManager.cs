@@ -14,6 +14,10 @@ public static class InventoryManager
     }
     public static readonly int requireMergeCount = 5;
     public static event Action onChangedInventory;
+    public static void Clear()
+    {
+        onChangedInventory = null;
+    }
     public static void Initialize()
     {
         var datasByType = DataTableManager.SoldierTable.GetTypeDictionary();

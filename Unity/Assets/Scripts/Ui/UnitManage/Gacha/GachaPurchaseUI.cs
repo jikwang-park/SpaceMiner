@@ -20,7 +20,6 @@ public class GachaPurchaseUI : MonoBehaviour
         gachaOneButton.onClickGachaButton += DoGacha;
         gachaRepeatButton.onClickGachaButton += DoGacha;
         gachaRepeat2Button.onClickGachaButton += DoGacha;
-        GachaManager.onUseTicketChanged += DoUseTicketChanged;
     }
     public void Initialize(GachaTable.Data data)
     {

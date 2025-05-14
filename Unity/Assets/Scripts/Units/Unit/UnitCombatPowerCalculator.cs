@@ -30,6 +30,10 @@ public static class UnitCombatPowerCalculator
     {
         CalculateTotalCombatPower();
     }
+    public static void Clear()
+    {
+        onCombatPowerChanged = null;
+    }
     public static void Init(UnitTypes type)
     {
         var stats = GetUnitCombatStats(type);

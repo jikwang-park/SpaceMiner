@@ -19,6 +19,11 @@ public static class SaveLoadManager
     {
         Formatting = Formatting.Indented,
     };
+    public static void Clear()
+    {
+        onSaveRequested = null;
+        onSetDeaultData = null;
+    }
     public static void SaveGame()
     {
         onSaveRequested?.Invoke();

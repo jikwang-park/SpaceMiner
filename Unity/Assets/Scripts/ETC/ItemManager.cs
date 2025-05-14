@@ -39,6 +39,11 @@ public static class ItemManager
             return 1 + miningUpgradeValue + resourceEffectItemValue;
         }
     }
+    public static void Clear()
+    {
+        OnItemAmountChanged = null;
+
+    }
     public static bool AddItem(int itemId, BigNumber amount)
     {
         if(DataTableManager.ItemTable.GetData(itemId) == null)

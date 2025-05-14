@@ -158,7 +158,23 @@ public class FirebaseManager : Singleton<FirebaseManager>
         var profile = new UserProfile { DisplayName = "" };
         await User.UpdateUserProfileAsync(profile);
 
+        ResetGame();
+    }
+
+    public void ResetGame()
+    {
+        ClearStaticEventListeners();
         Addressables.LoadSceneAsync("TitleScene", LoadSceneMode.Single);
+    }
+    public void ClearStaticEventListeners()
+    {
+        ItemManager.Clear();
+        InventoryManager.Clear();
+        EffectItemInventoryManager.Clear();
+        SaveLoadManager.Clear();
+        GuideQuestManager.Clear();
+        UnitCombatPowerCalculator.Clear();
+        MiningRobotInventoryManager.Clear();
     }
     public async void DoCombatPowerChanged()
     {

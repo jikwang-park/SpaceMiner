@@ -17,6 +17,10 @@ public static class EffectItemInventoryManager
     {
         ItemManager.OnGainEffectItem += DoGainEffectItem;
     }
+    public static void Clear()
+    {
+        OnEffectItemLevelUp = null;
+    }
     public static void DoGainEffectItem(int itemId)
     {
         var effectType = DataTableManager.EffectItemTable.GetTypeByID(itemId);

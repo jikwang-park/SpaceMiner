@@ -78,7 +78,10 @@ public class UnitStatsUpgradeElement : MonoBehaviour, IPointerDownHandler, IPoin
         stageManager = GameObject.FindGameObjectWithTag("GameController").GetComponent<StageManager>();
         ItemManager.OnItemAmountChanged += ItemManager_OnItemAmountChanged;
     }
-
+    private void OnDestroy()
+    {
+        ItemManager.OnItemAmountChanged -= ItemManager_OnItemAmountChanged;
+    }
     public void SetMultiplier(int multiplier)
     {
         statsMultiplier = multiplier;

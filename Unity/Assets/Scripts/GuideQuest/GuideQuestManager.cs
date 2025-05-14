@@ -21,6 +21,12 @@ public static class GuideQuestManager
 
     public static BigNumber Progress;
 
+    public static void Clear()
+    {
+        OnClear = null;
+        OnQuestProgressChanged = null;
+        OnQuestChanged = null;
+    }
     public static void QuestProgressChange(GuideQuestTable.MissionType type)
     {
         if (currentQuestData is null)

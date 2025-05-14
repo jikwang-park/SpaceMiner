@@ -86,11 +86,11 @@ public class DungeonSelectTab : MonoBehaviour
     {
         if (itemID == Defines.DungeonKeyItemID)
         {
-            key1Text.SetStringArguments(ItemManager.GetItemAmount(Defines.DungeonKeyItemID).ToString(), one);
+            key1Text.SetStringArguments(one, ItemManager.GetItemAmount(Defines.DungeonKeyItemID).ToString());
         }
         if (itemID == Defines.DungeonKey2ItemID)
         {
-            key2Text.SetStringArguments(ItemManager.GetItemAmount(Defines.DungeonKey2ItemID).ToString(), one);
+            key2Text.SetStringArguments(one, ItemManager.GetItemAmount(Defines.DungeonKey2ItemID).ToString());
         }
     }
 }

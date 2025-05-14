@@ -32,7 +32,7 @@ public class MiningBattleExterminateWindow : MonoBehaviour
     private void OnEnable()
     {
         var subStages = DataTableManager.MiningBattleTable.GetDatas(Variables.planetMiningID);
-        var clearedStageIndex = SaveLoadManager.Data.stageSaveData.ClearedMineStage[Variables.planetMiningStage] - 1;
+        var clearedStageIndex = SaveLoadManager.Data.stageSaveData.ClearedMineStage[Variables.planetMiningID] - 1;
         stageData = subStages[clearedStageIndex];
 
         AddIcon(stageData.Reward1ItemID, stageData.Reward1ItemCount);

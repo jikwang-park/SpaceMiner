@@ -1,13 +1,12 @@
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.AddressableAssets;
 
 public class DungeonSelectTab : MonoBehaviour
 {
-    private const string one = "1";
-
     [SerializeField]
     private Transform scrollContent;
 
@@ -27,10 +26,10 @@ public class DungeonSelectTab : MonoBehaviour
     private AddressableImage key2image;
 
     [SerializeField]
-    private LocalizationText key1Text;
+    private TextMeshProUGUI key1Text;
 
     [SerializeField]
-    private LocalizationText key2Text;
+    private TextMeshProUGUI key2Text;
 
     private void Start()
     {
@@ -47,8 +46,8 @@ public class DungeonSelectTab : MonoBehaviour
         key1image.SetItemSprite(Defines.DungeonKeyItemID);
         key2image.SetItemSprite(Defines.DungeonKey2ItemID);
 
-        key1Text.SetStringArguments(one, ItemManager.GetItemAmount(Defines.DungeonKeyItemID).ToString());
-        key2Text.SetStringArguments(one, ItemManager.GetItemAmount(Defines.DungeonKey2ItemID).ToString());
+        key1Text.text = ItemManager.GetItemAmount(Defines.DungeonKeyItemID).ToString();
+        key2Text.text = ItemManager.GetItemAmount(Defines.DungeonKey2ItemID).ToString();
     }
 
     private void OnRowLoaded(UnityEngine.ResourceManagement.AsyncOperations.AsyncOperationHandle<GameObject> handle, int type)
@@ -86,11 +85,11 @@ public class DungeonSelectTab : MonoBehaviour
     {
         if (itemID == Defines.DungeonKeyItemID)
         {
-            key1Text.SetStringArguments(one, ItemManager.GetItemAmount(Defines.DungeonKeyItemID).ToString());
+            key1Text.text = ItemManager.GetItemAmount(Defines.DungeonKeyItemID).ToString();
         }
         if (itemID == Defines.DungeonKey2ItemID)
         {
-            key2Text.SetStringArguments(one, ItemManager.GetItemAmount(Defines.DungeonKey2ItemID).ToString());
+            key2Text.text = ItemManager.GetItemAmount(Defines.DungeonKey2ItemID).ToString();
         }
     }
 }

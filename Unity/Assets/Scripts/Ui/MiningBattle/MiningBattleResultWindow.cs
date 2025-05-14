@@ -84,6 +84,7 @@ public class MiningBattleResultWindow : MonoBehaviour
 
     public void ShowDefeat(MiningBattleTable.Data data)
     {
+        stageText.SetStringArguments(data.Stage.ToString());
         gameObject.SetActive(true);
         defeatView.SetActive(true);
         clearView.SetActive(false);

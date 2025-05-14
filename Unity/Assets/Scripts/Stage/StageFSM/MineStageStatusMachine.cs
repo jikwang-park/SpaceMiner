@@ -321,7 +321,7 @@ public class MineStageStatusMachine : StageStatusMachine
     private void OnAttacked(AttackedEvent sender)
     {
         --centerHP;
-        if (centerHP <= 0)
+        if (centerHP <= 0 && status == Status.Battle)
         {
             centerHP = 0;
             OnStageEnd(false);

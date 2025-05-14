@@ -100,6 +100,7 @@ public class UnitPartyManager : MonoBehaviour
     private void OnUnitDie(DestructedDestroyEvent sender)
     {
         var unit = sender.GetComponent<Unit>();
+        stageManager.StageUiManager.UnitUiManager.SetUnitDead(unit.UnitTypes);
         PartyUnits.Remove(unit.UnitTypes);
         unit.gameObject.SetActive(false);
         if (PartyUnits.Count == 0)
@@ -299,6 +300,7 @@ public class UnitPartyManager : MonoBehaviour
             unit.SetData(currentSoilderData);
             Debug.Log(unit.unitStats.Hp);
             Debug.Log(unit.unitStats.maxHp);
+            stageManager.StageUiManager.UnitUiManager.SetUnitRevive(currentType);
         }
         OnUnitCreated?.Invoke();
         //OnUnitUpdated?.Invoke();

@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 
 public class Dungeon2ExterminateWindow : MonoBehaviour
@@ -14,6 +15,9 @@ public class Dungeon2ExterminateWindow : MonoBehaviour
 
     [SerializeField]
     private Transform iconParent;
+
+    [SerializeField]
+    private TextMeshProUGUI damageText;
 
     private DungeonTable.Data stageData;
 
@@ -32,6 +36,7 @@ public class Dungeon2ExterminateWindow : MonoBehaviour
         var subStages = DataTableManager.DungeonTable.GetDungeonList(Variables.currentDungeonType);
         stageData = subStages[0];
         var lastDamage = SaveLoadManager.Data.stageSaveData.dungeonTwoDamage;
+        damageText.text = lastDamage.ToString();
         var totalReward = DataTableManager.DamageDungeonRewardTable.GetRewards(lastDamage);
 
         foreach (var reward in totalReward)

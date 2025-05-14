@@ -1,8 +1,11 @@
+#define UseDebug
+
 using AYellowpaper.SerializedCollections;
 using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
+
 public class StageManager : MonoBehaviour
 {
     public StageMonsterManager StageMonsterManager { get; private set; }
@@ -69,8 +72,11 @@ public class StageManager : MonoBehaviour
         stageStatusMachine.SetStageData(statusMachineDatas[IngameStatus.Mine]);
         machines.Add(IngameStatus.Mine, stageStatusMachine);
 
+#if UseDebug
+
         stageStatusMachine = new LevelDesignStageStatusMachine(this);
         machines.Add(IngameStatus.LevelDesign, stageStatusMachine);
+#endif
     }
 
     public void SetStatus(IngameStatus status)

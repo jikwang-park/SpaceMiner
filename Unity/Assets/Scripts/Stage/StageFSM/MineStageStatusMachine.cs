@@ -76,6 +76,7 @@ public class MineStageStatusMachine : StageStatusMachine
             stageManager.StageUiManager.IngameUIManager.mineBattleButton.gameObject.SetActive(false);
             stageManager.StageUiManager.InteractableUIBackground.gameObject.SetActive(true);
             stageManager.StageUiManager.UIGroupStatusManager.UiDict[IngameStatus.Mine].SetPopUpActive(0);
+            stageManager.StageUiManager.UIGroupStatusManager.UiDict[IngameStatus.Mine].SetPopUpActive(1);
 
             mine.Release();
             mine = null;
@@ -105,6 +106,7 @@ public class MineStageStatusMachine : StageStatusMachine
 
             stageManager.StageUiManager.InteractableUIBackground.gameObject.SetActive(true);
             stageManager.StageUiManager.UIGroupStatusManager.UiDict[IngameStatus.Mine].SetPopUpActive(0);
+            stageManager.StageUiManager.UIGroupStatusManager.UiDict[IngameStatus.Mine].SetPopUpActive(1);
         }
         else
         {
@@ -245,6 +247,7 @@ public class MineStageStatusMachine : StageStatusMachine
         stageManager.StageUiManager.IngameUIManager.miningBattleTimerGameObject.SetActive(true);
         stageManager.StageUiManager.InteractableUIBackground.gameObject.SetActive(false);
         stageManager.StageUiManager.UIGroupStatusManager.UiDict[IngameStatus.Mine].SetPopUpInactive(0);
+        stageManager.StageUiManager.UIGroupStatusManager.UiDict[IngameStatus.Mine].SetPopUpInactive(1);
 
         stageManager.StageUiManager.IngameUIManager.unitHpBars.SetActive(true);
         stageManager.StageUiManager.IngameUIManager.unitSkills.gameObject.SetActive(true);
@@ -371,5 +374,6 @@ public class MineStageStatusMachine : StageStatusMachine
 
         stageManager.StageUiManager.InteractableUIBackground.gameObject.SetActive(true);
         stageManager.StageUiManager.UIGroupStatusManager.UiDict[IngameStatus.Mine].SetPopUpActive(0);
+        stageManager.StageUiManager.UIGroupStatusManager.UiDict[IngameStatus.Mine].SetPopUpActive(1);
     }
 }

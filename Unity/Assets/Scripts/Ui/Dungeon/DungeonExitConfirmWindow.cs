@@ -9,20 +9,8 @@ public class DungeonExitConfirmWindow : MonoBehaviour
     [SerializeField]
     private LocalizationText exitConfirmWindowMessage;
 
-    private StageManager stageManager;
-
-    private void Start()
-    {
-        stageManager = GameObject.FindGameObjectWithTag("GameController").GetComponent<StageManager>();
-    }
-
     private void OnEnable()
     {
         exitConfirmWindowMessage.SetString(dungeonTypeExitConfirm[Variables.currentDungeonType - 1]);
-    }
-
-    public void OnExitConfirm()
-    {
-        stageManager.OnExitClicked();
     }
 }

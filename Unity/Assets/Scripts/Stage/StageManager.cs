@@ -36,13 +36,8 @@ public class StageManager : MonoBehaviour
         UnitPartyManager = GetComponent<UnitPartyManager>();
         ObjectPoolManager = GetComponent<ObjectPoolManager>();
         CameraManager = GetComponent<CameraManager>();
-        StageUiManager.OnExitButtonClicked += StageUiManager_OnExitButtonClicked;
+        StageUiManager.OnExitButtonClicked += OnExitClicked;
         InitStatusMachines();
-    }
-
-    private void StageUiManager_OnExitButtonClicked()
-    {
-        SetStatus(IngameStatus.Planet);
     }
 
     private void Start()

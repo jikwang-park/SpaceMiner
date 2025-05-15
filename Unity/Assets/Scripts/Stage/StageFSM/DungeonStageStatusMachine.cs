@@ -58,7 +58,6 @@ public class DungeonStageStatusMachine : StageStatusMachine
         stageManager.CameraManager.SetCameraOffset();
         NextWave(true);
         stageManager.StageMonsterManager.OnMonsterCleared += OnMonsterCleared;
-
         SoundManager.Instance.PlayBGM("DungeonBGM");
     }
 
@@ -301,6 +300,7 @@ public class DungeonStageStatusMachine : StageStatusMachine
 
         stageManager.CameraManager.SetCameraOffset();
         NextWave(true);
+        SoundManager.Instance.PlayBGM("DungeonBGM");
     }
 
     private void Dungeon2End()

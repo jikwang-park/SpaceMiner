@@ -176,9 +176,8 @@ public class AnimationController : AnimationControl
         }
         var state = animations[animationDict[clipID]];
 
-        state.speed = speed * 1.1f / state.length;
+        state.speed = speed * (state.length + 2.2f * fadeLength);
     }
-
 
     public override void SetLoop(AnimationClipID clipID, bool isLoop)
     {

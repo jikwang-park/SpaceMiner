@@ -202,7 +202,7 @@ public class Unit : MonoBehaviour, IObjectPoolGameObject
         unitStats.SetData(data, data.UnitType);
 
         AnimationControl.SetSpeed(AnimationControl.AnimationClipID.Attack, 1f / UnitCombatPowerCalculator.statsDictionary[data.UnitType].coolDown);
-        if (UnitTypes == UnitTypes.Healer)
+        if (data.UnitType == UnitTypes.Healer)
         {
             AnimationControl.SetSpeed(AnimationControl.AnimationClipID.Idle, 1f / UnitCombatPowerCalculator.statsDictionary[data.UnitType].coolDown);
         }

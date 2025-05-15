@@ -26,6 +26,8 @@ public class TitleScene : MonoBehaviour
     [SerializeField]
     private Button saveNicknameButton;
     [SerializeField]
+    private GameObject alarmPanel;
+    [SerializeField]
     private LocalizationText alarmText;
     [SerializeField]
     private TMP_InputField nicknameInput;
@@ -33,6 +35,8 @@ public class TitleScene : MonoBehaviour
     private TextMeshProUGUI welcomeText;
     
     private string nickname;
+    private int correctStringId = 300011;
+    private int incorrectStringId = 300001;
 
     private readonly int NicknameMinLength = 2;
     private readonly int NicknameMaxLength = 8;
@@ -117,7 +121,9 @@ public class TitleScene : MonoBehaviour
             nickname = nick;
             saveNicknameButton.interactable = true;
         }
-        alarmText.gameObject.SetActive(!isCorrect);
+        var stringId = isCorrect ? correctStringId : incorrectStringId;
+        alarmText.SetString(stringId);
+        alarmPanel.gameObject.SetActive(true);
     }
 
     public async void OnClickSaveNicknameButton()

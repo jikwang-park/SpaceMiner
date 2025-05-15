@@ -17,10 +17,11 @@ public class ShopPanelUI : MonoBehaviour
     private Toggle goldShopToggle;
 
     private int currentIndex = -1;
-    private void OnEnable()
+    private void Start()
     {
         keyShopToggle.isOn = true;
     }
+
     private void DisplayPanel(int index)
     {
         int newIndex = index - 1;

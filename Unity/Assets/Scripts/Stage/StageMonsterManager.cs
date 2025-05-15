@@ -278,6 +278,56 @@ public class StageMonsterManager : MonoBehaviour
         return monsters;
     }
 
+    public List<Transform> GetMonsters(int count, Transform unit, float range)
+    {
+        List<Transform> monsters = new List<Transform>();
+
+        int line = currentFrontLine;
+
+        while (line <= currentLastLine && monsters.Count < count)
+        {
+            if (!monsterLines.ContainsKey(line)
+                || monsterLines[line].Count == 0)
+            {
+                ++line;
+                continue;
+            }
+
+            for (int i = 0; i < laneCount; ++i)
+            {
+                if (!monsterLines[line].ContainsKey(i))
+                {
+                    continue;
+                }
+                switch (stageManager.IngameStatus)
+                {
+                    case IngameStatus.Planet:
+                    case IngameStatus.Dungeon:
+                    case IngameStatus.LevelDesign:
+                        if (monsterLines[line][i].transform.position.z - unit.position.z <= range)
+                        {
+                            monsters.Add(monsterLines[line][i].transform);
+                        }
+                        break;
+                    case IngameStatus.Mine:
+                        Vector3 displacement = monsterLines[line][i].transform.position - unit.position;
+                        displacement.y = 0f;
+                        if (Vector3.Magnitude(displacement) <= range)
+                        {
+                            monsters.Add(monsterLines[line][i].transform);
+                        }
+                        break;
+                }
+                if (monsters.Count >= count)
+                {
+                    break;
+                }
+            }
+            ++line;
+        }
+        return monsters;
+    }
+
     public MonsterController GetMonster(Vector3 position, float range)
     {
         float sqrDistance = float.MaxValue;

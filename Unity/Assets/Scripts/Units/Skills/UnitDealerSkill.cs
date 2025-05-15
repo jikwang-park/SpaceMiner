@@ -11,7 +11,7 @@ public class UnitDealerSkill : UnitSkillBase
     public override void ExecuteSkill()
     {
         List<Transform> targetTransforms = new List<Transform>();
-        targetTransforms = unit.StageManager.StageMonsterManager.GetMonsters(monsterMaxTarget);
+        targetTransforms = unit.StageManager.StageMonsterManager.GetMonsters(monsterMaxTarget, unit.transform, unit.unitStats.range);
         for (int i = 0; i < targetTransforms.Count; ++i)
         {
             ParticleEffectManager.Instance.PlayOneShot("DealerSkillAttackEffect", targetTransforms[i].position);
@@ -30,15 +30,9 @@ public class UnitDealerSkill : UnitSkillBase
         monsterMaxTarget = data.MonsterMaxTarget;
     }
 
-
-
-  
-
-
-
     public override void UpgradeUnitSkillStats(int id)
     {
-        
+
         var data = DataTableManager.DealerSkillTable.GetData(id);
         this.data = data;
         CoolTime = data.CoolTime;

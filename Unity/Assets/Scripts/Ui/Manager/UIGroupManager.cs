@@ -24,12 +24,20 @@ public class UIGroupManager : MonoBehaviour
         {
             return;
         }
+
+        for (int i = 0; i < tabs.Length; ++i)
+        {
+            if (i != index)
+            {
+                tabs[i].gameObject.SetActive(false);
+            }
+        }
+
         if (currentTab == index)
         {
             return;
         }
 
-        tabs[currentTab].gameObject.SetActive(false);
         tabs[index].gameObject.SetActive(true);
         currentTab = index;
     }

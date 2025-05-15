@@ -246,7 +246,7 @@ public class UnitSkillUpgradeBoard : MonoBehaviour
         manager.unitSkillDictionary[currentType][currentGrade] = currentId;
 
         SetBoardText(currentId, currentType, currentGrade);
-        stageManager.UnitPartyManager.UpgradeSkillStats(currentId, currentType);
+        stageManager.UnitPartyManager.UpgradeSkillStats(currentId, currentType, currentGrade);
         SaveLoadManager.Data.unitSkillUpgradeData.skillUpgradeId[currentType][currentGrade] = currentId;
         SaveLoadManager.SaveGame();
     }

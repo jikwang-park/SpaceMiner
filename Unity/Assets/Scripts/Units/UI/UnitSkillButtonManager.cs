@@ -24,18 +24,12 @@ public class UnitSkillButtonManager : MonoBehaviour
 
     public bool IsClicked = false;
 
-    private const string Auto = "자동";
-    private const string Manual = "수동";
-
     [SerializeField]
     private Toggle autoToggle;
-    [SerializeField]
-    private TextMeshProUGUI text;
     [SerializeField]
     private TextMeshProUGUI healthSliderPercentageText;
     [SerializeField]
     public float currentValue { get; private set; }
-
 
     private StageManager stageManager;
 
@@ -106,19 +100,9 @@ public class UnitSkillButtonManager : MonoBehaviour
     {
         OnAutoToggleChanaged(autoToggle.isOn);
     }
+
     public void OnAutoToggleChanaged(bool isOn)
     {
         Variables.isAutoSkillMode = isOn;
-        if (isOn)
-        {
-            //TODO: 스트링테이블
-            text.text = Auto;
-        }
-        else
-        {
-            text.text = Manual;
-        }
     }
-
-
 }

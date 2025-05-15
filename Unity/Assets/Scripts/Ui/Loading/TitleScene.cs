@@ -115,13 +115,9 @@ public class TitleScene : MonoBehaviour
         if(isCorrect)
         {
             nickname = nick;
-            alarmText.gameObject.SetActive(!isCorrect);
             saveNicknameButton.interactable = true;
         }
-        else
-        {
-            alarmText.gameObject.SetActive(isCorrect);
-        }
+        alarmText.gameObject.SetActive(!isCorrect);
     }
 
     public async void OnClickSaveNicknameButton()

@@ -171,7 +171,7 @@ public class PlanetStageStatusMachine : StageStatusMachine
                 {
                     GetFirstReward();
                 }
-                if (Variables.stageMode == StageMode.Ascend)
+                if (SaveLoadManager.Data.stageMode == StageMode.Ascend)
                 {
                     CheckPlanetClear();
                 }
@@ -188,7 +188,7 @@ public class PlanetStageStatusMachine : StageStatusMachine
 
     protected void NextStage()
     {
-        if (Variables.stageMode == StageMode.Repeat
+        if (SaveLoadManager.Data.stageMode == StageMode.Repeat
             || status == Status.ClearPlanet
             || status == Status.Defeat
             || status == Status.Timeout

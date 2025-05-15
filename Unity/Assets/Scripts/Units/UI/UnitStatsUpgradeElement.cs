@@ -1,16 +1,12 @@
 using System;
 using System.Collections;
-using System.Collections.Generic;
 using TMPro;
-using Unity.VisualScripting;
-using Unity.VisualScripting.Antlr3.Runtime.Misc;
 using UnityEngine;
 using UnityEngine.EventSystems;
-using UnityEngine.Rendering;
 using UnityEngine.UI;
 using static UnitUpgradeTable;
 
-public class UnitStatsUpgradeElement : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
+public class UnitStatsUpgradeElement : MonoBehaviour//, IPointerDownHandler, IPointerUpHandler
 {
     private static readonly Color disabledColor = new Color(1f, 1f, 1f, 0.3f);
 
@@ -73,12 +69,16 @@ public class UnitStatsUpgradeElement : MonoBehaviour, IPointerDownHandler, IPoin
     [SerializeField]
     private float currentCritValue = 0f;
 
+    [SerializeField]
+    private Button upgradeButton;
+
+
     private void Awake()
     {
         stageManager = GameObject.FindGameObjectWithTag("GameController").GetComponent<StageManager>();
         ItemManager.OnItemAmountChanged += ItemManager_OnItemAmountChanged;
     }
-    
+
     public void SetMultiplier(int multiplier)
     {
         statsMultiplier = multiplier;
@@ -102,7 +102,7 @@ public class UnitStatsUpgradeElement : MonoBehaviour, IPointerDownHandler, IPoin
     private void SetStatsInfo()
     {
         nextLevel = Mathf.Min(maxLevel, level + statsMultiplier);
-        levelText.text = $"Level + {level} \n-> + {nextLevel}";
+        levelText.text = $"Level + {level.ToString().PadLeft(5,' ')}\n-> + {nextLevel.ToString().PadLeft(5, ' ')}";
 
         switch (currentType)
         {
@@ -130,13 +130,15 @@ public class UnitStatsUpgradeElement : MonoBehaviour, IPointerDownHandler, IPoin
         if (level >= maxLevel)
         {
             needGoldText.text = maxLevelString;
+            levelText.text = $"Level {maxLevel}";
+            upgradeButton.interactable = false;
         }
         else
         {
             BigNumber neededGold = GetUpgradeCost(level, statsMultiplier);
             ButtonUpdate(neededGold);
 
-            needGoldText.text = $" {neededGold}";
+            needGoldText.text = neededGold.ToString();
         }
 
     }
@@ -417,6 +419,10 @@ public class UnitStatsUpgradeElement : MonoBehaviour, IPointerDownHandler, IPoin
             return;
         }
 
+        upgradeButton.interactable = ItemManager.CanConsume((int)Currency.Gold, totalGold);
+
+        return;
+
         if (ItemManager.CanConsume((int)Currency.Gold, totalGold))
         {
             needGoldText.color = Color.white;
@@ -449,83 +455,105 @@ public class UnitStatsUpgradeElement : MonoBehaviour, IPointerDownHandler, IPoin
             SaveLoadManager.SaveGame();
         }
     }
-    private bool isLongPressed = false;
-    private Coroutine longPressedCor = null;
-    private float longPressedDealyTime = 0.7f;
-    private float longPressedReapeatDealyTime = 0.1f;
-    private float pressedStartTime = 0f;
-    private bool isPressing = false;
 
-    private bool IsPointerOnButton(PointerEventData eventData)
+    public void OnClickAddStatButton(bool saveImmediate)
     {
-        return RectTransformUtility.RectangleContainsScreenPoint(buttonImage.rectTransform, eventData.position, eventData.pressEventCamera);
-    }
-    public void OnPointerDown(PointerEventData eventData)
-    {
-        if (!IsPointerOnButton(eventData))
-            return;
-
-        buttonTransform.localScale = pressedScale;
-        isPressing = true;
-        pressedStartTime = Time.time;
-        if (longPressedCor == null)
-        {
-            longPressedCor = StartCoroutine(LongPressedCoroutine());
-        }
-
-
-    }
-
-    public void OnPointerUp(PointerEventData eventData)
-    {
-
-
-        buttonTransform.localScale = defaultScale;
-        isPressing = false;
-        if (longPressedCor != null)
-        {
-            StopCoroutine(longPressedCor);
-            longPressedCor = null;
-        }
-
-        if (Time.time - pressedStartTime < longPressedDealyTime)
-        {
-            BigNumber totalGold = GetUpgradeCost(level, statsMultiplier);
-            if (CanUpgrade(totalGold))
-            {
-                OnClickAddStatsButton(totalGold);
-            }
-        }
-    }
-
-    private IEnumerator LongPressedCoroutine()
-    {
-        yield return new WaitForSeconds(longPressedDealyTime);
-
-        bool doneUpgrade = false;
         BigNumber totalGold = GetUpgradeCost(level, statsMultiplier);
-        while (CanUpgrade(totalGold))
+        if (ItemManager.CanConsume((int)Currency.Gold, totalGold))
         {
-            if (ItemManager.CanConsume((int)Currency.Gold, totalGold))
+            ItemManager.ConsumeCurrency(Currency.Gold, totalGold);
+            LevelUp();
+            SetStatsInfo();
+            stageManager.UnitPartyManager.AddStats(currentType, value * statsMultiplier);
+            if (saveImmediate)
             {
-                ItemManager.ConsumeCurrency(Currency.Gold, totalGold);
-                LevelUp();
-                SetStatsInfo();
-                stageManager.UnitPartyManager.AddStats(currentType, value * statsMultiplier);
-                doneUpgrade = true;
+                SaveLoadManager.SaveGame();
             }
-            else
-            {
-                break;
-            }
-
-            yield return new WaitForSeconds(longPressedReapeatDealyTime);
-            totalGold = GetUpgradeCost(level, statsMultiplier);
-        }
-
-        if (doneUpgrade)
-        {
-            SaveLoadManager.SaveGame();
         }
     }
+
+    public void OnAddStatButtonLongPressEnd()
+    {
+        SaveLoadManager.SaveGame();
+    }
+
+    //private bool isLongPressed = false;
+    //private Coroutine longPressedCor = null;
+    //private float longPressedDealyTime = 0.7f;
+    //private float longPressedReapeatDealyTime = 0.1f;
+    //private float pressedStartTime = 0f;
+    //private bool isPressing = false;
+
+    //private bool IsPointerOnButton(PointerEventData eventData)
+    //{
+    //    return RectTransformUtility.RectangleContainsScreenPoint(buttonImage.rectTransform, eventData.position, eventData.pressEventCamera);
+    //}
+    //public void OnPointerDown(PointerEventData eventData)
+    //{
+    //    if (!IsPointerOnButton(eventData))
+    //        return;
+
+    //    buttonTransform.localScale = pressedScale;
+    //    isPressing = true;
+    //    pressedStartTime = Time.time;
+    //    if (longPressedCor == null)
+    //    {
+    //        longPressedCor = StartCoroutine(LongPressedCoroutine());
+    //    }
+
+
+    //}
+
+    //public void OnPointerUp(PointerEventData eventData)
+    //{
+
+
+    //    buttonTransform.localScale = defaultScale;
+    //    isPressing = false;
+    //    if (longPressedCor != null)
+    //    {
+    //        StopCoroutine(longPressedCor);
+    //        longPressedCor = null;
+    //    }
+
+    //    if (Time.time - pressedStartTime < longPressedDealyTime)
+    //    {
+    //        BigNumber totalGold = GetUpgradeCost(level, statsMultiplier);
+    //        if (CanUpgrade(totalGold))
+    //        {
+    //            OnClickAddStatsButton(totalGold);
+    //        }
+    //    }
+    //}
+
+    //private IEnumerator LongPressedCoroutine()
+    //{
+    //    yield return new WaitForSeconds(longPressedDealyTime);
+
+    //    bool doneUpgrade = false;
+    //    BigNumber totalGold = GetUpgradeCost(level, statsMultiplier);
+    //    while (CanUpgrade(totalGold))
+    //    {
+    //        if (ItemManager.CanConsume((int)Currency.Gold, totalGold))
+    //        {
+    //            ItemManager.ConsumeCurrency(Currency.Gold, totalGold);
+    //            LevelUp();
+    //            SetStatsInfo();
+    //            stageManager.UnitPartyManager.AddStats(currentType, value * statsMultiplier);
+    //            doneUpgrade = true;
+    //        }
+    //        else
+    //        {
+    //            break;
+    //        }
+
+    //        yield return new WaitForSeconds(longPressedReapeatDealyTime);
+    //        totalGold = GetUpgradeCost(level, statsMultiplier);
+    //    }
+
+    //    if (doneUpgrade)
+    //    {
+    //        SaveLoadManager.SaveGame();
+    //    }
+    //}
 }

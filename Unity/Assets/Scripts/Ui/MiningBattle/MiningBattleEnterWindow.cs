@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class MiningBattleEnterWindow : MonoBehaviour
 {
@@ -35,7 +36,9 @@ public class MiningBattleEnterWindow : MonoBehaviour
 
     private StageManager stageManager;
 
-    
+    [SerializeField]
+    private Button exterminateButton;
+
     private void Start()
     {
         stageManager = GameObject.FindGameObjectWithTag("GameController").GetComponent<StageManager>();
@@ -58,6 +61,7 @@ public class MiningBattleEnterWindow : MonoBehaviour
         planetNameText.SetString(DataTableManager.PlanetTable.GetData(datas[0].PlanetTableID).NameStringID);
         RefreshText();
         RefreshCount();
+        exterminateButton.interactable = SaveLoadManager.Data.stageSaveData.ClearedMineStage[planetID] > 0;
     }
 
     public void ChangeStage(bool isUp)
@@ -77,7 +81,7 @@ public class MiningBattleEnterWindow : MonoBehaviour
     private void RefreshText()
     {
         stageText.text = datas[index].Stage.ToString();
-        
+
         ClearIcons();
 
         AddIcon(datas[index].Reward1ItemID, datas[index].Reward1ItemCount);
@@ -90,7 +94,7 @@ public class MiningBattleEnterWindow : MonoBehaviour
 
     private void AddIcon(int itemID, BigNumber amount)
     {
-        if(stageManager is null)
+        if (stageManager is null)
         {
             stageManager = GameObject.FindGameObjectWithTag("GameController").GetComponent<StageManager>();
         }

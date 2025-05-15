@@ -102,7 +102,7 @@ public class UnitStatsUpgradeElement : MonoBehaviour//, IPointerDownHandler, IPo
     private void SetStatsInfo()
     {
         nextLevel = Mathf.Min(maxLevel, level + statsMultiplier);
-        levelText.text = $"Level + {level.ToString().PadLeft(5,' ')}\n-> + {nextLevel.ToString().PadLeft(5, ' ')}";
+        levelText.text = $"Level + {level.ToString().PadLeft(5, ' ')}\n-> + {nextLevel.ToString().PadLeft(5, ' ')}";
 
         switch (currentType)
         {
@@ -419,7 +419,7 @@ public class UnitStatsUpgradeElement : MonoBehaviour//, IPointerDownHandler, IPo
             return;
         }
 
-        upgradeButton.interactable = ItemManager.CanConsume((int)Currency.Gold, totalGold);
+        upgradeButton.interactable = level < maxLevel && ItemManager.CanConsume((int)Currency.Gold, totalGold);
 
         return;
 

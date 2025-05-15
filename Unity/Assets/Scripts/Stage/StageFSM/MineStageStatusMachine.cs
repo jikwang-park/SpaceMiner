@@ -92,6 +92,7 @@ public class MineStageStatusMachine : StageStatusMachine
         if (status == Status.Battle)
         {
             status = Status.Normal;
+            mineDefence.Release();
             stageManager.StageUiManager.ResourceRow.SetActive(true);
             stageManager.StageUiManager.IngameUIManager.mineBattleButton.gameObject.SetActive(true);
             stageManager.StageMonsterManager.StopMonster();
@@ -254,7 +255,7 @@ public class MineStageStatusMachine : StageStatusMachine
         stageManager.StageUiManager.IngameUIManager.unitSkills.gameObject.SetActive(true);
 
         centerHP = battleData.HitCount;
-        //TODO: ½ºÆ®¸µ Å×ÀÌºí ³Ö¾î¾ßÇÔ
+        //TODO: ï¿½ï¿½Æ®ï¿½ï¿½ ï¿½ï¿½ï¿½Ìºï¿½ ï¿½Ö¾ï¿½ï¿½ï¿½ï¿½
         stageManager.StageUiManager.IngameUIManager.miningBattleCenterHpBar.value = 1f;
 
         for (int i = 0; i < battleSpawnData.SpawnerActivationTimes.Length; ++i)
@@ -274,6 +275,7 @@ public class MineStageStatusMachine : StageStatusMachine
         stageManager.UnitPartyManager.UnitSpawn(mineDefence.UnitSpawnPoints);
 
         SoundManager.Instance.PlayBGM("DungeonBGM");
+        stageManager.UnitPartyManager.GetUnit(UnitTypes.Tanker).GetComponent<UnitStats>().range = 5f;
     }
 
     public void UpdateTimer(float currentTime)
@@ -321,12 +323,12 @@ public class MineStageStatusMachine : StageStatusMachine
     private void OnAttacked(AttackedEvent sender)
     {
         --centerHP;
-        if (centerHP <= 0)
+        if (centerHP <= 0 && status == Status.Battle)
         {
             centerHP = 0;
             OnStageEnd(false);
         }
-        //TODO: ½ºÆ®¸µ Å×ÀÌºí ³Ö¾î¾ßÇÔ
+        //TODO: ï¿½ï¿½Æ®ï¿½ï¿½ ï¿½ï¿½ï¿½Ìºï¿½ ï¿½Ö¾ï¿½ï¿½ï¿½ï¿½
         SoundManager.Instance.PlaySFX("ObjectHitSFX");
         stageManager.StageUiManager.IngameUIManager.miningBattleCenterHpBar.value = (float)centerHP / battleData.HitCount;
     }
@@ -336,6 +338,8 @@ public class MineStageStatusMachine : StageStatusMachine
         SoundManager.Instance.StopBGM();
         status = Status.Normal;
 
+        mineDefence.Release();
+        
         stageManager.StageUiManager.ResourceRow.SetActive(true);
         stageManager.StageUiManager.IngameUIManager.mineBattleButton.gameObject.SetActive(true);
         stageManager.StageMonsterManager.StopMonster();

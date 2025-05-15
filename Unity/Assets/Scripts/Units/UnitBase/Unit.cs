@@ -87,7 +87,6 @@ public class Unit : MonoBehaviour, IObjectPoolGameObject
         {
             AnimationControl.AddEvent(AnimationControl.AnimationClipID.Idle, skillTime, ExecuteSkill);
             AnimationControl.AddEvent(AnimationControl.AnimationClipID.Idle, 1f, OnSkillEnd);
-            AnimationControl.SetSpeed(AnimationControl.AnimationClipID.Idle, 1f);
         }
         else
         {
@@ -203,6 +202,14 @@ public class Unit : MonoBehaviour, IObjectPoolGameObject
         unitStats.SetData(data, data.UnitType);
 
         AnimationControl.SetSpeed(AnimationControl.AnimationClipID.Attack, 1f / UnitCombatPowerCalculator.statsDictionary[data.UnitType].coolDown);
+        if (UnitTypes == UnitTypes.Healer)
+        {
+            AnimationControl.SetSpeed(AnimationControl.AnimationClipID.Idle, 1f / UnitCombatPowerCalculator.statsDictionary[data.UnitType].coolDown);
+        }
+        else
+        {
+            AnimationControl.SetSpeed(AnimationControl.AnimationClipID.Skill, 1f / UnitCombatPowerCalculator.statsDictionary[data.UnitType].coolDown);
+        }
 
         UnitTypes = data.UnitType;
         Grade = data.Grade;

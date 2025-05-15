@@ -18,6 +18,8 @@ public class SoundManager : Singleton<SoundManager>
     private AudioSource bgmSource;
 
     private Dictionary<string, AudioClip> soundDictionary = new Dictionary<string, AudioClip>();
+    public float sfxVolume;
+    public float bgmVolume;
     private int maxConcurrentSFX = 10;
     private int currentConcurrentSFX = 0;
     private void Start()
@@ -40,6 +42,10 @@ public class SoundManager : Singleton<SoundManager>
                 }
             };
         }
+        sfxVolume = PlayerPrefs.GetFloat("SFXVolume", 0.5f);
+        bgmVolume = PlayerPrefs.GetFloat("BGMVolume", 0.5f);
+        audioMixer.SetFloat("SFX", Mathf.Log10(sfxVolume) * 20);
+        audioMixer.SetFloat("BGM", Mathf.Log10(bgmVolume) * 20);
     }
     private void Update()
     {
@@ -93,12 +99,18 @@ public class SoundManager : Singleton<SoundManager>
     }
     public void SetSFXVolume(float volume)
     {
-        SaveLoadManager.Data.sfxVolume = volume;
-        audioMixer.SetFloat("SFX", Mathf.Log10(SaveLoadManager.Data.sfxVolume) * 20);
+        sfxVolume = volume;
+        audioMixer.SetFloat("SFX", Mathf.Log10(sfxVolume) * 20);
+        PlayerPrefs.SetFloat("SFXVolume", sfxVolume);
     }
     public void SetBGMVolume(float volume)
     {
-        SaveLoadManager.Data.bgmVolume = volume;
-        audioMixer.SetFloat("BGM", Mathf.Log10(SaveLoadManager.Data.bgmVolume) * 20);
+        bgmVolume = volume;
+        audioMixer.SetFloat("BGM", Mathf.Log10(bgmVolume) * 20);
+        PlayerPrefs.SetFloat("BGMVolume", bgmVolume);
+    }
+    private void OnApplicationQuit()
+    {
+        PlayerPrefs.Save();
     }
 }

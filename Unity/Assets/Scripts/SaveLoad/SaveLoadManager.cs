@@ -118,8 +118,6 @@ public static class SaveLoadManager
             defaultSaveData.contentsOpened.Add(id, false);
         }
         defaultSaveData.healerSkillSliderValue = 0.5f;
-        defaultSaveData.sfxVolume = 0.5f;
-        defaultSaveData.bgmVolume = 0.5f;
         Data = defaultSaveData;
         onSetDeaultData?.Invoke();
     }

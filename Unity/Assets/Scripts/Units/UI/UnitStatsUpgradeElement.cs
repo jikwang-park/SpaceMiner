@@ -139,7 +139,7 @@ public class UnitStatsUpgradeElement : MonoBehaviour, IPointerDownHandler, IPoin
             BigNumber neededGold = GetUpgradeCost(level, statsMultiplier);
             ButtonUpdate(neededGold);
 
-            needGoldText.text = $" +{neededGold}";
+            needGoldText.text = $" {neededGold}";
         }
 
     }

@@ -56,7 +56,6 @@ public class BuildingDataElement : MonoBehaviour
     [SerializeField]
     private bool isLocked = true;
 
-    private const int maxlevelText = 60010;
 
     [SerializeField]
     private AddressableImage buildingImage;
@@ -108,6 +107,7 @@ public class BuildingDataElement : MonoBehaviour
         SetBuildingInfo(currentData, currentLevel);
         SetButtonState();
     }
+   
 
     private void SetLockedImage(int level)
     {
@@ -134,7 +134,7 @@ public class BuildingDataElement : MonoBehaviour
     private void SetBuildingInfo(BuildingTable.Data buildingData, int level)
     {
         SetBuildingName(buildingData.Type, level);
-        SetBuildingText();
+        SetBuildingText(level);
         SetBuildingExplanationText(buildingData.Type, level);
         SetCurrentNeedImage(buildingData.Type, level);
         SetBuildingImage(buildingData.Type, level);
@@ -152,9 +152,18 @@ public class BuildingDataElement : MonoBehaviour
         }
     }
 
-    private void SetBuildingText()
+    private void SetBuildingText(int level)
     {
-        buildingText.SetString(90); // 테이블 추가 필요
+        bool isLocked = level <= 0;
+        if (isLocked)
+        {
+            buildingText.SetString(Defines.ConstructStringId);
+        }
+        else
+        {
+            buildingText.SetString(Defines.UpgradeStringId);
+        }
+        // 테이블 추가 필요
     }
 
     private void SetBuildingExplanationText(BuildingTable.BuildingType type, int level)
@@ -174,7 +183,7 @@ public class BuildingDataElement : MonoBehaviour
         }
         else
         {
-            nextValueText.SetString(maxlevelText);
+            nextValueText.SetString(Defines.MaxLevelStringId);
         }
     }
 

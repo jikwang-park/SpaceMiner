@@ -103,8 +103,6 @@ public class MineStageStatusMachine : StageStatusMachine
 
             stageManager.StageUiManager.IngameUIManager.miningBattleTimerGameObject.SetActive(false);
             stageManager.StageUiManager.IngameUIManager.miningBattleCenterHpBar.gameObject.SetActive(false);
-            stageManager.StageUiManager.IngameUIManager.unitHpBars.SetActive(false);
-            stageManager.StageUiManager.IngameUIManager.unitSkills.gameObject.SetActive(false);
 
             stageManager.StageUiManager.InteractableUIBackground.gameObject.SetActive(true);
             stageManager.StageUiManager.UIGroupStatusManager.UiDict[IngameStatus.Mine].SetPopUpActive(0);
@@ -255,9 +253,6 @@ public class MineStageStatusMachine : StageStatusMachine
         stageManager.StageUiManager.UIGroupStatusManager.UiDict[IngameStatus.Mine].SetPopUpInactive(0);
         stageManager.StageUiManager.UIGroupStatusManager.UiDict[IngameStatus.Mine].SetPopUpInactive(1);
 
-        stageManager.StageUiManager.IngameUIManager.unitHpBars.SetActive(true);
-        stageManager.StageUiManager.IngameUIManager.unitSkills.gameObject.SetActive(true);
-
         centerHP = battleData.HitCount;
         //TODO: 스트링 테이블 넣어야함
         stageManager.StageUiManager.IngameUIManager.miningBattleCenterHpBar.value = 1f;
@@ -277,6 +272,11 @@ public class MineStageStatusMachine : StageStatusMachine
         mineDefence.MonsterGoals[1].GetComponent<AttackedEvent>().OnAttacked += OnAttacked;
 
         stageManager.UnitPartyManager.UnitSpawn(mineDefence.UnitSpawnPoints);
+
+        for (UnitTypes type = UnitTypes.Tanker; type <= UnitTypes.Healer; ++type)
+        {
+            stageManager.UnitPartyManager.GetUnit(type).transform.forward = Vector3.back;
+        }
 
         SoundManager.Instance.PlayBGM("DungeonBGM");
         stageManager.UnitPartyManager.GetUnit(UnitTypes.Tanker).GetComponent<UnitStats>().range = 5f;
@@ -381,8 +381,6 @@ public class MineStageStatusMachine : StageStatusMachine
         }
         stageManager.StageUiManager.IngameUIManager.miningBattleTimerGameObject.SetActive(false);
         stageManager.StageUiManager.IngameUIManager.miningBattleCenterHpBar.gameObject.SetActive(false);
-        stageManager.StageUiManager.IngameUIManager.unitHpBars.SetActive(false);
-        stageManager.StageUiManager.IngameUIManager.unitSkills.gameObject.SetActive(false);
 
         stageManager.StageUiManager.InteractableUIBackground.gameObject.SetActive(true);
         stageManager.StageUiManager.UIGroupStatusManager.UiDict[IngameStatus.Mine].SetPopUpActive(0);

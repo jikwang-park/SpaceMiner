@@ -263,7 +263,7 @@ public class DungeonStageStatusMachine : StageStatusMachine
         }
         else
         {
-            stageManager.StageUiManager.IngameUIManager.SetDungeonStageText(dungeonData.Type, dungeonData.Stage);
+            stageManager.StageUiManager.IngameUIManager.SetDungeonStageText(dungeonData.Stage);
         }
 
         if (waveData.CorpsIDs.Length > 1)

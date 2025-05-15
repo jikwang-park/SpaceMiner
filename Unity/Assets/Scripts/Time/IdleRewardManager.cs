@@ -49,6 +49,17 @@ public class IdleRewardManager : MonoBehaviour
         }
         GetIdleReward(idleMinute);
     }
+    private void OnApplicationPause(bool pause)
+    {
+        if(!pause)
+        {
+            CalculateIdleReward();
+        }
+        else
+        {
+            FirebaseManager.Instance.SetQuitTime();
+        }
+    }
     private void GetIdleReward(int idleTime)
     {
         // 스테이지 매니저? 에서 최대 스테이지를 얻어온다 -> 열려있는 행성 반영도 이걸 활용 해야할듯?

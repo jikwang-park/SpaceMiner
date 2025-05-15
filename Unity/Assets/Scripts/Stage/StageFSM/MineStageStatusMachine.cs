@@ -255,7 +255,7 @@ public class MineStageStatusMachine : StageStatusMachine
         stageManager.StageUiManager.IngameUIManager.unitSkills.gameObject.SetActive(true);
 
         centerHP = battleData.HitCount;
-        //TODO: ½ºÆ®¸µ Å×ÀÌºí ³Ö¾î¾ßÇÔ
+        //TODO: ï¿½ï¿½Æ®ï¿½ï¿½ ï¿½ï¿½ï¿½Ìºï¿½ ï¿½Ö¾ï¿½ï¿½ï¿½ï¿½
         stageManager.StageUiManager.IngameUIManager.miningBattleCenterHpBar.value = 1f;
 
         for (int i = 0; i < battleSpawnData.SpawnerActivationTimes.Length; ++i)
@@ -328,7 +328,7 @@ public class MineStageStatusMachine : StageStatusMachine
             centerHP = 0;
             OnStageEnd(false);
         }
-        //TODO: ½ºÆ®¸µ Å×ÀÌºí ³Ö¾î¾ßÇÔ
+        //TODO: ï¿½ï¿½Æ®ï¿½ï¿½ ï¿½ï¿½ï¿½Ìºï¿½ ï¿½Ö¾ï¿½ï¿½ï¿½ï¿½
         SoundManager.Instance.PlaySFX("ObjectHitSFX");
         stageManager.StageUiManager.IngameUIManager.miningBattleCenterHpBar.value = (float)centerHP / battleData.HitCount;
     }

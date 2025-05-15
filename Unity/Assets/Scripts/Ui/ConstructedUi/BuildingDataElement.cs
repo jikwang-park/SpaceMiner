@@ -52,7 +52,7 @@ public class BuildingDataElement : MonoBehaviour
     [SerializeField]
     private int uisequence;
     [SerializeField]
-    private int needItemCount;
+    private BigNumber needItemCount;
     [SerializeField]
     private bool isLocked = true;
 

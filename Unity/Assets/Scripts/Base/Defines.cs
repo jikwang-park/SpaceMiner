@@ -153,6 +153,7 @@ public class Defines
     public const int PlanetStageFormatStringID = 169;
     public const int WaveTextStringID = 147;
     public const int StageDefaultStringID = 131;
+    public const int Dungeon1StringID = 203;
     public const int DirectStringID = 60011;
     public const int RestrictionStringID = 200;
     public const int EmptyGuideQuest = 50020;

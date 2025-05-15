@@ -93,6 +93,7 @@ public class Dungeon2EnterWindow : MonoBehaviour
 
         foreach (var reward in totalReward)
         {
+            rewardIcons[iconIndex].transform.parent.gameObject.SetActive(true);
             rewardIcons[iconIndex].SetItemSprite(reward.Key);
             ++iconIndex;
             if (iconIndex == rewardIcons.Length)
@@ -103,7 +104,7 @@ public class Dungeon2EnterWindow : MonoBehaviour
 
         for (int i = iconIndex; i < rewardIcons.Length; ++i)
         {
-            rewardIcons[i].gameObject.SetActive(false);
+            rewardIcons[i].transform.parent.gameObject.SetActive(false);
         }
     }
 

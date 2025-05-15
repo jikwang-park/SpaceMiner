@@ -82,9 +82,9 @@ public class IngameUIManager : MonoBehaviour
         waveText.SetString(Defines.WaveTextStringID, wave.ToString());
     }
 
-    public void SetDungeonStageText(int dungeonId, int stage)
+    public void SetDungeonStageText(int stage)
     {
-        stageText.SetString(Defines.StageDefaultStringID, dungeonId.ToString(), stage.ToString());
+        stageText.SetString(Defines.Dungeon1StringID, stage.ToString());
     }
 
 

@@ -85,7 +85,7 @@ public class Dungeon2EndWindow : MonoBehaviour
 
     public void MoveToShop()
     {
-        stageManager.StageUiManager.UIGroupStatusManager.UiDict[IngameStatus.Planet].SetPopUpInactive(1);
+        stageManager.StageUiManager.UIGroupStatusManager.UiDict[IngameStatus.Planet].SetPopUpInactive(3);
         stageManager.SetStatus(IngameStatus.Planet);
         stageManager.StageUiManager.UIGroupStatusManager.UiDict[IngameStatus.Planet].SetTabActive(3);
         gameObject.SetActive(false);

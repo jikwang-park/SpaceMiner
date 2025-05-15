@@ -48,6 +48,8 @@ public class MiningBattleResultWindow : MonoBehaviour
 
     private void OnDisable()
     {
+        stageManager.StageUiManager.curtain.SetFade(true);
+
         for (int i = 0; i < rewardIcons.Count; ++i)
         {
             rewardIcons[i].Release();

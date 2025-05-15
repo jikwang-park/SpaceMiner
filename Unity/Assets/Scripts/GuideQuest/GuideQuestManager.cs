@@ -69,7 +69,7 @@ public static class GuideQuestManager
             case GuideQuestTable.MissionType.DungeonClear:
                 var dungeonData = DataTableManager.DungeonTable.GetData(currentQuestData.Target);
                 var clearedDungeon = SaveLoadManager.Data.stageSaveData.clearedDungeon;
-                
+
                 isClearedNow = clearedDungeon[dungeonData.Type] >= dungeonData.Stage;
                 if (isClearedNow)
                 {
@@ -104,9 +104,8 @@ public static class GuideQuestManager
                 break;
 
             case GuideQuestTable.MissionType.Building:
-                var buildingData = DataTableManager.BuildingTable.GetData(currentQuestData.Target);
 
-                isClearedNow = SaveLoadManager.Data.buildingData.buildingLevels[buildingData.Type] >= buildingData.Level;
+                isClearedNow = SaveLoadManager.Data.buildingData.buildingLevels[(BuildingTable.BuildingType)currentQuestData.Target] >= int.Parse(currentQuestData.TargetCount);
 
                 if (isClearedNow)
                 {
@@ -138,7 +137,7 @@ public static class GuideQuestManager
 
     public static void RefreshQuest()
     {
-        if(currentQuestData is null)
+        if (currentQuestData is null)
         {
             return;
         }

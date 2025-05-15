@@ -15,7 +15,7 @@ public class MiningAction : ActionNode<MiningRobotController>
     protected override void OnStart()
     {
         base.OnStart();
-
+        SoundManager.Instance.PlayLoopSFX("MiningSFX", true);
         switch (context.Slot)
         {
             case 0:
@@ -34,6 +34,7 @@ public class MiningAction : ActionNode<MiningRobotController>
         {
             return NodeStatus.Running;
         }
+        SoundManager.Instance.PlayLoopSFX("MiningSFX", false);
         context.ChangeTarget(false);
         return NodeStatus.Success;
     }

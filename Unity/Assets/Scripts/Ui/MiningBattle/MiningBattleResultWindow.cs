@@ -53,6 +53,7 @@ public class MiningBattleResultWindow : MonoBehaviour
             rewardIcons[i].Release();
         }
         rewardIcons.Clear();
+        SoundManager.Instance.PlayBGM("MiningBGM");
     }
 
     public void ShowClear(MiningBattleTable.Data data, List<(int itemid, BigNumber amount)> gainItem)

@@ -85,6 +85,24 @@ public class SoundManager : Singleton<SoundManager>
             }
         }
     }
+    public void PlayLoopSFX(string sfxKey, bool isLoop)
+    {
+        if (soundDictionary.ContainsKey(sfxKey))
+        {
+            AudioClip audioClip = soundDictionary[sfxKey];
+            if (isLoop)
+            {
+                sfxSource.clip = audioClip;
+                sfxSource.loop = isLoop;
+                sfxSource.Play();
+            }
+            else
+            {
+                sfxSource.loop = isLoop;
+                sfxSource.Stop();
+            }
+        }
+    }
     public IEnumerator WaitAndDecrement(float delay)
     {
         yield return new WaitForSeconds(delay);

@@ -134,6 +134,7 @@ public class MineStageStatusMachine : StageStatusMachine
     public override void Start()
     {
         InitStage();
+        SoundManager.Instance.PlayBGM("MiningBGM");
     }
 
     public override void Update()
@@ -273,6 +274,7 @@ public class MineStageStatusMachine : StageStatusMachine
 
         stageManager.UnitPartyManager.UnitSpawn(mineDefence.UnitSpawnPoints);
 
+        SoundManager.Instance.PlayBGM("DungeonBGM");
         stageManager.UnitPartyManager.GetUnit(UnitTypes.Tanker).GetComponent<UnitStats>().range = 5f;
     }
 
@@ -327,11 +329,13 @@ public class MineStageStatusMachine : StageStatusMachine
             OnStageEnd(false);
         }
         //TODO: 스트링 테이블 넣어야함
+        SoundManager.Instance.PlaySFX("ObjectHitSFX");
         stageManager.StageUiManager.IngameUIManager.miningBattleCenterHpBar.value = (float)centerHP / battleData.HitCount;
     }
 
     public void OnStageEnd(bool isTimeOver)
     {
+        SoundManager.Instance.StopBGM();
         status = Status.Normal;
 
         mineDefence.Release();

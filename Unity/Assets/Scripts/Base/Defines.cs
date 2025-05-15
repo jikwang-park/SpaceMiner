@@ -168,6 +168,11 @@ public class Defines
     public const int PlanetStageClearStringID = 160;
     public const int PlanetStageFailStringID = 197;
     public const int StageFailStringID = 161;
+
+
+    public const int ConstructStringId = 78;
+    public const int UpgradeStringId = 79;
+    public const int MaxLevelStringId = 60010;
 }
 
 public enum RankingType

@@ -24,6 +24,7 @@ public class AttackedTakeDamage : MonoBehaviour, IAttackable
         if (stats.maxHp != 0 && stats.Hp < 0 && gameObjectEnabled)
         {
             stats.Hp = new BigNumber("0");
+            SoundManager.Instance.PlaySFX("MonsterDeadSFX");
             IDestructable[] destructables = GetComponents<IDestructable>();
             if (destructables.Length > 0)
             {

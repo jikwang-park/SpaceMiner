@@ -254,6 +254,7 @@ public class Unit : MonoBehaviour, IObjectPoolGameObject
         if (UnitStatus == Status.SkillUsing)
         {
             Skill.ExecuteSkill();
+            SoundManager.Instance.PlaySFX(UnitTypes.ToString() + "SkillSFX");
         }
     }
 

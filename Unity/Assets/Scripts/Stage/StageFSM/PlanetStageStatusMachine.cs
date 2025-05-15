@@ -54,6 +54,7 @@ public class PlanetStageStatusMachine : StageStatusMachine
         stageManager.CameraManager.SetCameraOffset();
         NextWave();
         SetEvent(true);
+        SoundManager.Instance.PlayBGM("StageBGM");
     }
 
 

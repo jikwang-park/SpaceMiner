@@ -57,6 +57,7 @@ public static class ItemManager
             switch (currency)
             {
                 case Currency.Gold:
+                    SoundManager.Instance.PlaySFX("GainGoldSFX");
                     amount *= GoldIncreaseRatio;
                     break;
                 case Currency.Annotaion:

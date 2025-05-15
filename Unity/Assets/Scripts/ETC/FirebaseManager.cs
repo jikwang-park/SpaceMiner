@@ -163,7 +163,7 @@ public class FirebaseManager : Singleton<FirebaseManager>
     public void ResetGame()
     {
         ClearStaticEventListeners();
-        Addressables.LoadSceneAsync("TitleScene", LoadSceneMode.Single);
+        SceneManager.LoadScene("Title Scene");
     }
     public void ClearStaticEventListeners()
     {

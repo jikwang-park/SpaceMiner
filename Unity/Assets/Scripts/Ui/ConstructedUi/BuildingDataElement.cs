@@ -236,9 +236,9 @@ public class BuildingDataElement : MonoBehaviour
 
         currentLevel++;
         SetLevelData(currentLevel);
+        SaveLoadManager.Data.buildingData.buildingLevels[datas[currentLevel].Type] = currentLevel;
         stageManager.UnitPartyManager.AddBuildingStats(datas[currentLevel].Type, datas[currentLevel].Value);
 
-        SaveLoadManager.Data.buildingData.buildingLevels[datas[currentLevel].Type] = currentLevel;
         GuideQuestManager.QuestProgressChange(GuideQuestTable.MissionType.Building);
         SaveLoadManager.SaveGame();
     }

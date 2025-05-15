@@ -313,7 +313,7 @@ public class MineStageStatusMachine : StageStatusMachine
             {
                 spawnTimers[i] += spawnInterval;
                 var monsterController = stageManager.StageMonsterManager.Spawn(mineDefence.MonsterSpawnPoints[i].position, battleSpawnData.SpawnMonsterIDs[i]);
-                monsterController.SetTarget(mineDefence.MonsterGoals[i % 2]);
+                monsterController.SetTarget(mineDefence.MonsterGoals[i / 2]);
                 monsterController.hasTarget = true;
             }
         }

@@ -118,6 +118,7 @@ public static class SaveLoadManager
             defaultSaveData.contentsOpened.Add(id, false);
         }
         defaultSaveData.healerSkillSliderValue = 0.5f;
+        defaultSaveData.stageMode = StageMode.Ascend;
         Data = defaultSaveData;
         onSetDeaultData?.Invoke();
     }

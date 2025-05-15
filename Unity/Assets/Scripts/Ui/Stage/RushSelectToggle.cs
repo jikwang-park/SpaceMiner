@@ -16,7 +16,7 @@ public class RushSelectToggle : MonoBehaviour
 
     private void Start()
     {
-        if (Variables.stageMode == StageMode.Repeat)
+        if (SaveLoadManager.Data.stageMode == StageMode.Repeat)
         {
             GetComponent<Toggle>().isOn = false;
         }
@@ -32,13 +32,13 @@ public class RushSelectToggle : MonoBehaviour
         if (isOn)
         {
             text.SetString(Ascend);
-            Variables.stageMode = StageMode.Ascend;
+            SaveLoadManager.Data.stageMode = StageMode.Ascend;
             stageEndWindow.ShowPlanetStageMode(true);
         }
         else
         {
             text.SetString(Repeat);
-            Variables.stageMode = StageMode.Repeat;
+            SaveLoadManager.Data.stageMode = StageMode.Repeat;
             if (!stageEndWindow.isShowing)
             {
                 stageEndWindow.ShowPlanetStageMode(false);

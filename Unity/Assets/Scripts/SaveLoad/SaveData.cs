@@ -94,6 +94,7 @@ public class SaveDataV4 : SaveDataV3
     public Dictionary<TutorialTable.QuestTypes, bool> TutorialRewardGot;
     public Dictionary<int, bool> contentsOpened;
     public float healerSkillSliderValue;
+    public StageMode stageMode;
     public SaveDataV4() : base()
     {
         attendanceStates = new Dictionary<int, AttendanceData>();
@@ -124,6 +125,7 @@ public class SaveDataV4 : SaveDataV3
             contentsOpened.Add(id, false);
         }
         healerSkillSliderValue = 0.5f;
+        stageMode = StageMode.Ascend;
         Version = 4;
     }
     public SaveDataV4(SaveDataV3 oldData) : base(oldData)
@@ -154,6 +156,7 @@ public class SaveDataV4 : SaveDataV3
             contentsOpened.Add(id, false);
         }
         healerSkillSliderValue = 0.5f;
+        stageMode = StageMode.Ascend;
         Version = 4;
     }
     public override SaveData VersionUp()

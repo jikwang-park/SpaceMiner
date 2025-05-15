@@ -140,9 +140,9 @@ public class UnitPartyManager : MonoBehaviour
         UnitCombatPowerCalculator.CalculateTotalCombatPower();
     }
 
-    public void UpgradeSkillStats(int id, UnitTypes type)
+    public void UpgradeSkillStats(int id, UnitTypes type, Grade grade)
     {
-        if (!PartyUnits.ContainsKey(type))
+        if (!PartyUnits.ContainsKey(type) || PartyUnits[type].Grade != grade)
             return;
 
         var unit = PartyUnits[type];

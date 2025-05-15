@@ -6,12 +6,6 @@ using UnityEngine.UI;
 [RequireComponent(typeof(Toggle))]
 public class ToggleSpriteChange : MonoBehaviour
 {
-    public enum ColorMode
-    {
-        Tint,
-        Set,
-    }
-
     [SerializeField]
     private Sprite onSprite;
 

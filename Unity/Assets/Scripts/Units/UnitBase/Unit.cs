@@ -69,6 +69,7 @@ public class Unit : MonoBehaviour, IObjectPoolGameObject
 
     public bool HasTarget { get; private set; }
 
+    private bool skillExecuted;
 
     private UnitColorPaletteSetter colorSetter;
 
@@ -193,7 +194,14 @@ public class Unit : MonoBehaviour, IObjectPoolGameObject
     {
         if (Time.time > Skill.CoolTime + lastSkillTime)
         {
-            isSkillInQueue = true;
+            if (UnitTypes == UnitTypes.Dealer && HasTarget && IsTargetInRange)
+            {
+                isSkillInQueue = true;
+            }
+            else if (UnitTypes != UnitTypes.Dealer)
+            {
+                isSkillInQueue = true;
+            }
         }
     }
 
@@ -253,6 +261,7 @@ public class Unit : MonoBehaviour, IObjectPoolGameObject
     {
         if (UnitStatus == Status.SkillUsing)
         {
+            skillExecuted = true;
             Skill.ExecuteSkill();
             SoundManager.Instance.PlaySFX(UnitTypes.ToString() + "SkillSFX");
         }
@@ -311,6 +320,7 @@ public class Unit : MonoBehaviour, IObjectPoolGameObject
                 break;
             case Status.SkillUsing:
                 lastSkillTime = Time.time;
+                skillExecuted = false;
                 if (UnitTypes == UnitTypes.Healer)
                 {
                     AnimationControl?.Play(AnimationControl.AnimationClipID.Idle);
@@ -379,6 +389,11 @@ public class Unit : MonoBehaviour, IObjectPoolGameObject
         target = null;
         if (UnitStatus == Status.SkillUsing)
         {
+            if (!skillExecuted && UnitTypes != UnitTypes.Dealer)
+            {
+                Skill.ExecuteSkill();
+                SoundManager.Instance.PlaySFX(UnitTypes.ToString() + "SkillSFX");
+            }
             lastSkillTime = Time.time;
         }
         SetStatus(Status.Wait);

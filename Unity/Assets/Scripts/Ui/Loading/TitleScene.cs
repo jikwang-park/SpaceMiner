@@ -56,6 +56,7 @@ public class TitleScene : MonoBehaviour
 
         loadingSlider.gameObject.SetActive(false);
         loginTouchPanel.gameObject.SetActive(true);
+        SoundManager.Instance.PlayBGM("LogInBGM");
     }
     public void OnClickLoginButton()
     {

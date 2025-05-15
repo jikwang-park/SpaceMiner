@@ -14,6 +14,7 @@ public class GuideQuestRewardWindow : MonoBehaviour
     public void Show(GuideQuestTable.Data data)
     {
         //TODO: 스트링테이블 데이터 추가 후 필요
+        SoundManager.Instance.PlaySFX("QuestCompleteSFX");
         gameObject.SetActive(true);
         icon.SetItemSprite(data.RewardItemID);
         rewardText.SetStringArguments(data.RewardItemCount.ToString());

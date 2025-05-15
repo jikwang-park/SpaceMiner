@@ -41,6 +41,8 @@ public class Dungeon1EndWindow : MonoBehaviour
         rewardRow.SetActive(this.isCleared);
         if (this.isCleared)
         {
+            SoundManager.Instance.StopBGM();
+            SoundManager.Instance.PlaySFX("SuceessDungeonSFX");
             messageText.SetColor(Color.white);
             messageText.SetString(ClearID);
             bool lastStageCondition = Variables.currentDungeonStage == DataTableManager.DungeonTable.CountOfStage(Variables.currentDungeonType);
@@ -70,6 +72,8 @@ public class Dungeon1EndWindow : MonoBehaviour
         }
         else
         {
+            SoundManager.Instance.StopBGM();
+            SoundManager.Instance.PlaySFX("SuceessFailSFX");
             messageText.SetColor(Color.red);
             messageText.SetString(FailID);
             twoButtons.SetActive(true);

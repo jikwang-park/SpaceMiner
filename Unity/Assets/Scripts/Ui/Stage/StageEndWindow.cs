@@ -58,10 +58,12 @@ public class StageEndWindow : MonoBehaviour
 
         if (cleared)
         {
+            SoundManager.Instance.PlaySFX("StageClearSFX");
             text.SetString(Defines.PlanetStageClearStringID);
         }
         else
         {
+            SoundManager.Instance.PlaySFX("StageFailSFX");
             text.SetString(Defines.PlanetStageFailStringID);
         }
     }

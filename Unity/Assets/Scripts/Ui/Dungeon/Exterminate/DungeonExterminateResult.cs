@@ -26,7 +26,10 @@ public class DungeonExterminateResult : MonoBehaviour
         }
         rewardIcons.Clear();
     }
-
+    private void OnEnable()
+    {
+        SoundManager.Instance.PlaySFX("GainRewardSFX");
+    }
     public void Open(SortedList<int, BigNumber> rewards)
     {
         gameObject.SetActive(true);

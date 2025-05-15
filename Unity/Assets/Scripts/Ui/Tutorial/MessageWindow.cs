@@ -60,5 +60,6 @@ public class MessageWindow : MonoBehaviour
         Color tempColor = background.color;
         tempColor.a = 1f;
         background.color = tempColor;
+        SoundManager.Instance.PlaySFX("AlertSFX");
     }
 }

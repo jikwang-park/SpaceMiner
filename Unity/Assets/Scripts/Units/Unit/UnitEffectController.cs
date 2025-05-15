@@ -14,6 +14,7 @@ public class UnitEffectController : MonoBehaviour, IDestructable
 
     public void OnDestruction(GameObject Attacker)
     {
+        SoundManager.Instance.PlaySFX("UnitDeadSFX");
         DoBarrierDown();
         ParticleEffectManager.Instance.PlayOneShot("UnitDeathEffect", gameObject.transform.position);
         unitStat.OnAttack -= DoAttack;
@@ -56,6 +57,14 @@ public class UnitEffectController : MonoBehaviour, IDestructable
         if(attackEffectPoint != null)
         {
             ParticleEffectManager.Instance.PlayOneShot(type.ToString() +"AttackEffect", attackEffectPoint);
+            if(type == UnitTypes.Tanker)
+            {
+                SoundManager.Instance.PlaySFX(type.ToString() + "AttackSFX");
+            }
+            else
+            {
+                SoundManager.Instance.PlaySFX("GunShootSFX");
+            }
         }
     }
     public void DoRevive(Transform transform)

@@ -296,6 +296,7 @@ public class DungeonStageStatusMachine : StageStatusMachine
 
         stageManager.ReleaseBackground();
         InstantiateBackground();
+        ParticleEffectManager.Instance.ClearAllEffects();
         UnitSpawn();
 
         stageManager.CameraManager.SetCameraOffset();

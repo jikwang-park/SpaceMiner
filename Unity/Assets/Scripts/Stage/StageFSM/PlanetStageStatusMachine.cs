@@ -350,6 +350,7 @@ public class PlanetStageStatusMachine : StageStatusMachine
 
     public override void Reset()
     {
+        ParticleEffectManager.Instance.ClearAllEffects();
         stageManager.ReleaseDamageTexts();
         stageManager.StageUiManager.curtain.SetFade(true);
         int previousPlanet = CurrentPlanet;

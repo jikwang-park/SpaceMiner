@@ -1,4 +1,5 @@
- using System.Collections;
+using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Pool;
@@ -14,6 +15,7 @@ public class PoolableEffect : MonoBehaviour, IObjectPoolGameObject
 
     private ParticleSystem ps;
     private Coroutine releaseCoroutine;
+    public event Action<PoolableEffect> OnRelease;
     private void Awake()
     {
         defaultPos = transform.localPosition;
@@ -44,6 +46,8 @@ public class PoolableEffect : MonoBehaviour, IObjectPoolGameObject
     public void Release()
     {
         ResetTransform();
+        OnRelease?.Invoke(this);
+        OnRelease = null;
         if (ObjectPool != null)
         {
             ObjectPool.Release(gameObject);
@@ -53,7 +57,14 @@ public class PoolableEffect : MonoBehaviour, IObjectPoolGameObject
     {
         if(releaseCoroutine != null)
         {
-            StopCoroutine(releaseCoroutine);
+            try
+            {
+                StopCoroutine(releaseCoroutine);
+            }
+            catch (Exception)
+            {
+            }
+            releaseCoroutine = null;
         }
         Release();
     }

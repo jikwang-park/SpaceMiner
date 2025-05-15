@@ -1,10 +1,12 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 public class ParticleEffectManager : Singleton<ParticleEffectManager>
 {
     private ObjectPoolManager objectPoolManager;
+    private List<PoolableEffect> playingEffects = new List<PoolableEffect>();
     private void Awake()
     {
         objectPoolManager = GetComponent<ObjectPoolManager>();
@@ -18,6 +20,8 @@ public class ParticleEffectManager : Singleton<ParticleEffectManager>
         {
             effect = go.AddComponent<PoolableEffect>();
         }
+        effect.OnRelease += OnEffectReleased;
+        playingEffects.Add(effect);
         effect.ResetTransform();
 
         go.transform.SetParent(parent, false);
@@ -28,6 +32,7 @@ public class ParticleEffectManager : Singleton<ParticleEffectManager>
         }
         else
         {
+            effect.OnRelease += ((e) => playingEffects.Remove(e));
             effect.PlayAndRelease(ps);
         }
     }
@@ -39,7 +44,10 @@ public class ParticleEffectManager : Singleton<ParticleEffectManager>
         {
             effect = go.AddComponent<PoolableEffect>();
         }
+        effect.OnRelease += OnEffectReleased;
+        playingEffects.Add(effect);
         effect.ResetTransform();
+
         go.transform.position += position;
         var ps = go.GetComponent<ParticleSystem>();
         if (ps == null)
@@ -62,6 +70,7 @@ public class ParticleEffectManager : Singleton<ParticleEffectManager>
             effect = go.AddComponent<PoolableEffect>();
         }
         effect.ResetTransform();
+        playingEffects.Add(effect);
         go.transform.SetParent(parent, false);
 
         var ps = go.GetComponent<ParticleSystem>()
@@ -72,6 +81,8 @@ public class ParticleEffectManager : Singleton<ParticleEffectManager>
             ps.loop = true;
             ps.Play();
         }
+
+        effect.OnRelease += OnEffectReleased;
         return effect;
     }
 
@@ -97,5 +108,18 @@ public class ParticleEffectManager : Singleton<ParticleEffectManager>
     {
         yield return new WaitForSeconds(duration);
         StopBuffEffect(effect);
+    }
+    private void OnEffectReleased(PoolableEffect effect)
+    {
+        effect.OnRelease -= OnEffectReleased;
+        playingEffects.Remove(effect);
+    }
+    public void ClearAllEffects()
+    {
+        foreach(var effect in playingEffects.Where(e => e != null).ToArray())
+        {
+            effect.ImmediateRelease();
+        }
+        playingEffects.Clear();
     }
 }

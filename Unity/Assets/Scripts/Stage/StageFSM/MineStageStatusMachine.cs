@@ -92,6 +92,7 @@ public class MineStageStatusMachine : StageStatusMachine
         if (status == Status.Battle)
         {
             status = Status.Normal;
+            stageManager.StageUiManager.curtain.SetFade(true);
             mineDefence.Release();
             stageManager.StageUiManager.ResourceRow.SetActive(true);
             stageManager.StageUiManager.IngameUIManager.mineBattleButton.gameObject.SetActive(true);
@@ -121,6 +122,7 @@ public class MineStageStatusMachine : StageStatusMachine
         {
             return;
         }
+        stageManager.StageUiManager.curtain.SetFade(true);
         mine.Release();
         mine = null;
         for (int i = 0; i < robotControllers.Length; ++i)
@@ -234,6 +236,8 @@ public class MineStageStatusMachine : StageStatusMachine
     public void StartMineBattle()
     {
         status = Status.Battle;
+        stageManager.StageUiManager.curtain.SetFade(true);
+
         stageManager.StageUiManager.IngameUIManager.mineBattleButton.gameObject.SetActive(false);
 
         var datas = DataTableManager.MiningBattleTable.GetDatas(Variables.planetMiningID);
@@ -339,7 +343,7 @@ public class MineStageStatusMachine : StageStatusMachine
         status = Status.Normal;
 
         mineDefence.Release();
-        
+
         stageManager.StageUiManager.ResourceRow.SetActive(true);
         stageManager.StageUiManager.IngameUIManager.mineBattleButton.gameObject.SetActive(true);
         stageManager.StageMonsterManager.StopMonster();

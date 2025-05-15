@@ -97,8 +97,6 @@ public class StageManager : MonoBehaviour
 
         machines[status].SetActive(true);
 
-        StageUiManager.curtain.SetFade(false);
-
         IngameStatus = status;
 
     }

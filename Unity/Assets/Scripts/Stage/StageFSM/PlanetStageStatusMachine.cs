@@ -363,7 +363,6 @@ public class PlanetStageStatusMachine : StageStatusMachine
 
         UnitSpawn();
         stageManager.CameraManager.SetCameraOffset();
-        stageManager.StageUiManager.curtain.SetFade(false);
         NextWave();
     }
 }

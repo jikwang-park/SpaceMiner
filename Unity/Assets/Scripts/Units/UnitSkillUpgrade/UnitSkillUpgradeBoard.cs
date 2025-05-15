@@ -42,7 +42,7 @@ public class UnitSkillUpgradeBoard : MonoBehaviour
     private GameObject nextInfoGameobject;
 
     private int needItemId;
-    private int needItemCount;
+    private BigNumber needItemCount;
 
     private int currentId;
     private int nextId;
@@ -201,7 +201,7 @@ public class UnitSkillUpgradeBoard : MonoBehaviour
         data = DataTableManager.SkillUpgradeTable.GetData(currentId);
         nextId = data.SkillPaymentID;
         needItemId = data.NeedItemID;
-        needItemCount = int.Parse(data.NeedItemCount);
+        needItemCount = data.NeedItemCount;
     }
     private void Update()
     {

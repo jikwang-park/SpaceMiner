@@ -25,6 +25,12 @@ public class LocalizationText : MonoBehaviour
         set => text.enabled = value;
     }
 
+    public Color color
+    {
+        get => text.color;
+        set => text.color = value;
+    }
+
     private void Awake()
     {
         text = GetComponent<TextMeshProUGUI>();

@@ -10,7 +10,7 @@ using static MiningRobotInventoryManager;
 public class MiningPanelUI : MonoBehaviour
 {
     [SerializeField]
-    private List<Button> planetButtons;
+    private List<Toggle> planetButtons;
     [SerializeField]
     private Button moveButton;
     [SerializeField]

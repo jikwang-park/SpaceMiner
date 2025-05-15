@@ -15,26 +15,10 @@ public class ShopPanelUI : MonoBehaviour
     private Toggle robotShopToggle;
     [SerializeField]
     private Toggle goldShopToggle;
-    [SerializeField]
-    private Sprite selectedSprite;
-    [SerializeField]
-    private Sprite deselectedSprite;
 
-    private Image keyShopToggleImage;
-    private Image robotShopToggleImage;
-    private Image goldShopToggleImage;
     private int currentIndex = -1;
-    private void Awake()
-    {
-        keyShopToggleImage = keyShopToggle.GetComponent<Image>();
-        robotShopToggleImage = robotShopToggle.GetComponent<Image>();
-        goldShopToggleImage = goldShopToggle.GetComponent<Image>();
-    }
     private void OnEnable()
     {
-        keyShopToggle.isOn = false;
-        robotShopToggle.isOn = false;
-        goldShopToggle.isOn = false;
         keyShopToggle.isOn = true;
     }
     private void DisplayPanel(int index)
@@ -73,12 +57,5 @@ public class ShopPanelUI : MonoBehaviour
             DisplayPanel((int)ShopTable.ShopType.Gold);
         }
 
-        UpdateToggleSprites();
-    }
-    private void UpdateToggleSprites()
-    {
-        keyShopToggleImage.sprite = keyShopToggle.isOn ? selectedSprite : deselectedSprite;
-        robotShopToggleImage.sprite = robotShopToggle.isOn ? selectedSprite : deselectedSprite;
-        goldShopToggleImage.sprite = goldShopToggle.isOn ? selectedSprite : deselectedSprite;
     }
 }

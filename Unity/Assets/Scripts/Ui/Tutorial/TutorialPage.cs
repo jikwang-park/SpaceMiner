@@ -85,7 +85,7 @@ public class TutorialPage : MonoBehaviour
     {
         titleText.SetString(datas[index].NameStringID);
         image.SetSprite(datas[index].SpriteID);
-        indexText.text = (index + 1).ToString();
+        indexText.text = $"{index + 1} / {datas.Count}";
         detailText.SetString(datas[index].DetailStringID);
     }
 }

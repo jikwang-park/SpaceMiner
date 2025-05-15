@@ -11,8 +11,8 @@ public class SettingWindowUI : MonoBehaviour
     private Slider bgmVolumeSlider;
     private void Start()
     {
-        sfxVolumeSlider.value = SaveLoadManager.Data.sfxVolume;
-        bgmVolumeSlider.value = SaveLoadManager.Data.bgmVolume;
+        sfxVolumeSlider.value = SoundManager.Instance.sfxVolume;
+        bgmVolumeSlider.value = SoundManager.Instance.bgmVolume;
     }
     public void OnClickSaveButton()
     {

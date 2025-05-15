@@ -26,7 +26,7 @@ public class UnitPartyManager : MonoBehaviour
     public Dictionary<UnitTypes, Unit> PartyUnits { get; private set; } = new Dictionary<UnitTypes, Unit>();
 
     public event System.Action OnUnitCreated;
-    public event System.Action<UnitTypes,Grade> OnUnitUpdated;
+    public event System.Action<UnitTypes, Grade> OnUnitUpdated;
 
     public event System.Action OnUnitAllDead;
 
@@ -38,7 +38,7 @@ public class UnitPartyManager : MonoBehaviour
     public int UnitCount => PartyUnits.Count;
 
     private StageManager stageManager;
- 
+
 
     private void Awake()
     {
@@ -89,11 +89,36 @@ public class UnitPartyManager : MonoBehaviour
     {
         if (PartyUnits.ContainsKey(type))
         {
+            if (PartyUnits[type].Grade != data.Grade)
+            {
+                var weaponPosition = PartyUnits[type].RightHandPosition;
+
+                for (int i = 0; i < weaponPosition.childCount; ++i)
+                {
+                    Destroy(weaponPosition.GetChild(i).gameObject);
+                }
+
+                var weaponGo = Instantiate(weapons[type][(int)data.Grade - 1], weaponPosition);
+                var weaponPoint = weaponGo.transform.Find("BulletStarter");
+                PartyUnits[type].GetComponent<UnitEffectController>().attackEffectPoint = weaponPoint;
+
+                if (type == UnitTypes.Tanker)
+                {
+                    var shieldPosition = PartyUnits[type].LeftHandPosition;
+                    for (int i = 0; i < shieldPosition.childCount; ++i)
+                    {
+                        Destroy(shieldPosition.GetChild(i).gameObject);
+                    }
+                    var shieldGo = Instantiate(shield, shieldPosition);
+                }
+            }
+
+
             UnitCombatPowerCalculator.Init(type);
             PartyUnits[type].SetData(data);
             ParticleEffectManager.Instance.PlayOneShot("UnitChangeEffect", PartyUnits[type].transform);
             UnitCombatPowerCalculator.CalculateTotalCombatPower();
-            OnUnitUpdated?.Invoke(type,data.Grade);
+            OnUnitUpdated?.Invoke(type, data.Grade);
         }
     }
 

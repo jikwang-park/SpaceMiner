@@ -92,6 +92,7 @@ public class MineStageStatusMachine : StageStatusMachine
         if (status == Status.Battle)
         {
             status = Status.Normal;
+            mineDefence.Release();
             stageManager.StageUiManager.ResourceRow.SetActive(true);
             stageManager.StageUiManager.IngameUIManager.mineBattleButton.gameObject.SetActive(true);
             stageManager.StageMonsterManager.StopMonster();
@@ -274,6 +275,7 @@ public class MineStageStatusMachine : StageStatusMachine
         stageManager.UnitPartyManager.UnitSpawn(mineDefence.UnitSpawnPoints);
 
         SoundManager.Instance.PlayBGM("DungeonBGM");
+        stageManager.UnitPartyManager.GetUnit(UnitTypes.Tanker).GetComponent<UnitStats>().range = 5f;
     }
 
     public void UpdateTimer(float currentTime)
@@ -321,7 +323,7 @@ public class MineStageStatusMachine : StageStatusMachine
     private void OnAttacked(AttackedEvent sender)
     {
         --centerHP;
-        if (centerHP <= 0)
+        if (centerHP <= 0 && status == Status.Battle)
         {
             centerHP = 0;
             OnStageEnd(false);
@@ -336,6 +338,8 @@ public class MineStageStatusMachine : StageStatusMachine
         SoundManager.Instance.StopBGM();
         status = Status.Normal;
 
+        mineDefence.Release();
+        
         stageManager.StageUiManager.ResourceRow.SetActive(true);
         stageManager.StageUiManager.IngameUIManager.mineBattleButton.gameObject.SetActive(true);
         stageManager.StageMonsterManager.StopMonster();

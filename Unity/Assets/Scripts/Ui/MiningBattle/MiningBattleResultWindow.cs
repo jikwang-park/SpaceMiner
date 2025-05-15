@@ -88,6 +88,7 @@ public class MiningBattleResultWindow : MonoBehaviour
     {
         SoundManager.Instance.StopBGM();
         SoundManager.Instance.PlaySFX("DungeonFailSFX");
+        stageText.SetStringArguments(data.Stage.ToString());
         gameObject.SetActive(true);
         defeatView.SetActive(true);
         clearView.SetActive(false);

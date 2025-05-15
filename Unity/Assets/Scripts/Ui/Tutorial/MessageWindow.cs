@@ -46,6 +46,10 @@ public class MessageWindow : MonoBehaviour
         Color tempColor = background.color;
         tempColor.a = ratio;
         background.color = tempColor;
+
+        tempColor = text.color;
+        tempColor.a = ratio;
+        text.color = tempColor;
     }
 
     public void ShowStageRestrict(int planet, int stage)
@@ -61,5 +65,9 @@ public class MessageWindow : MonoBehaviour
         tempColor.a = 1f;
         background.color = tempColor;
         SoundManager.Instance.PlaySFX("AlertSFX");
+
+        tempColor = text.color;
+        tempColor.a = 1f;
+        text.color = tempColor;
     }
 }

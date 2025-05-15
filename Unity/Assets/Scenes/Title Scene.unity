@@ -577,6 +577,7 @@ GameObject:
   - component: {fileID: 506320337}
   - component: {fileID: 506320336}
   - component: {fileID: 506320335}
+  - component: {fileID: 506320338}
   m_Layer: 5
   m_Name: Placeholder
   m_TagString: Untagged
@@ -720,6 +721,21 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 506320333}
   m_CullTransparentMesh: 1
+--- !u!114 &506320338
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 506320333}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5cdb4262f099c7847ad5860ea281b377, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  stringId: 300002
+  stringArgs: []
+  editorLang: 0
 --- !u!1 &514591116
 GameObject:
   m_ObjectHideFlags: 0
@@ -1022,6 +1038,8 @@ MonoBehaviour:
   database: {fileID: 11400000, guid: 112716dcfcccdc1488390fc9ca7a242b, type: 2}
   sfxSource: {fileID: 641465602}
   bgmSource: {fileID: 641465601}
+  sfxVolume: 0
+  bgmVolume: 0
 --- !u!82 &641465601
 AudioSource:
   m_ObjectHideFlags: 0
@@ -2602,7 +2620,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: "\uC548\uB155\uD558\uC138\uC694 {0}\uB2D8"
+  m_text: "\uD658\uC601\uD569\uB2C8\uB2E4 {0}\uB2D8"
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: de4e1cff8241dd048bb995c542c75043, type: 2}
   m_sharedMaterial: {fileID: -2857929540059472502, guid: de4e1cff8241dd048bb995c542c75043, type: 2}
@@ -3191,7 +3209,7 @@ MonoBehaviour:
     m_PressedTrigger: Pressed
     m_SelectedTrigger: Selected
     m_DisabledTrigger: Disabled
-  m_Interactable: 1
+  m_Interactable: 0
   m_TargetGraphic: {fileID: 0}
   m_FillRect: {fileID: 772920840}
   m_HandleRect: {fileID: 0}

@@ -22,6 +22,17 @@ public class SoundManager : Singleton<SoundManager>
     public float bgmVolume;
     private int maxConcurrentSFX = 10;
     private int currentConcurrentSFX = 0;
+    private void Awake()
+    {
+        var all = FindObjectsOfType<SoundManager>();
+        if (all.Length > 1)
+        {
+            Destroy(gameObject);
+            return;
+        }
+
+        DontDestroyOnLoad(this);
+    }
     private void Start()
     {
         foreach(var data in database.audioDictionary)

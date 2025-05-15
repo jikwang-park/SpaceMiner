@@ -23,7 +23,7 @@ public class StageEndWindow : MonoBehaviour
     {
         get
         {
-            return endTime <= Time.time;
+            return gameObject.activeInHierarchy && endTime <= Time.time;
         }
     }
 

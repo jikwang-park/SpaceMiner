@@ -9,6 +9,7 @@ using Debug = UnityEngine.Debug;
 public class BigNumberTest : MonoBehaviour
 {
     private readonly int iterations = 1000000;
+    private int digitLength = 50;
     void Start()
     {
         Test();
@@ -18,13 +19,13 @@ public class BigNumberTest : MonoBehaviour
     {
         var rnd = new System.Random(1234);
 
-        int[] inputsA = new int[iterations];
-        int[] inputsB = new int[iterations];
+        var inputsA = new string[iterations];
+        var inputsB = new string[iterations];
 
         for (int i = 0; i < iterations; i++)
         {
-            inputsA[i] = rnd.Next(10000000, 1000000000);
-            inputsB[i] = rnd.Next(10000000, 1000000000);
+            inputsA[i] = RandomNumericString(rnd, digitLength);
+            inputsB[i] = RandomNumericString(rnd, digitLength);
         }
 
 
@@ -35,8 +36,8 @@ public class BigNumberTest : MonoBehaviour
         stopWatch.Restart();
         for (int i = 0; i < iterations; i++)
         {
-            var a = new BigInteger(inputsA[i]);
-            var b = new BigInteger(inputsB[i]);
+            var a = new BigInteger(ParseNumericString(inputsA[i]));
+            var b = new BigInteger(ParseNumericString(inputsB[i]));
             var c = a + b;
         }
         stopWatch.Stop();
@@ -45,8 +46,8 @@ public class BigNumberTest : MonoBehaviour
         stopWatch.Restart();
         for (int i = 0; i < iterations; i++)
         {
-            var a = new BigInteger(inputsA[i]);
-            var b = new BigInteger(inputsB[i]);
+            var a = new BigInteger(ParseNumericString(inputsA[i]));
+            var b = new BigInteger(ParseNumericString(inputsB[i]));
             var c = a - b;
         }
         stopWatch.Stop();
@@ -55,8 +56,8 @@ public class BigNumberTest : MonoBehaviour
         stopWatch.Restart();
         for (int i = 0; i < iterations; i++)
         {
-            var a = new BigInteger(inputsA[i]);
-            var b = new BigInteger(inputsB[i]);
+            var a = new BigInteger(ParseNumericString(inputsA[i]));
+            var b = new BigInteger(ParseNumericString(inputsB[i]));
             var c = a * b;
         }
         stopWatch.Stop();
@@ -65,8 +66,8 @@ public class BigNumberTest : MonoBehaviour
         stopWatch.Restart();
         for (int i = 0; i < iterations; i++)
         {
-            var a = new BigInteger(inputsA[i]);
-            var b = new BigInteger(inputsB[i]);
+            var a = new BigInteger(ParseNumericString(inputsA[i]));
+            var b = new BigInteger(ParseNumericString(inputsB[i]));
             var c = a / b;
         }
         stopWatch.Stop();
@@ -111,5 +112,20 @@ public class BigNumberTest : MonoBehaviour
         }
         stopWatch.Stop();
         Debug.Log($"[BigNumber] Æò±Õ ³ª´°¼À {iterations} È¸: {stopWatch.ElapsedMilliseconds} ms");
+    }
+
+    private string RandomNumericString(System.Random rnd, int length)
+    {
+        var chars = new char[length];
+        chars[0] = (char)('1' + rnd.Next(0, 9));
+        for (int i = 1; i < length; i++)
+        {
+            chars[i] = (char)('0' + rnd.Next(0, 10));
+        }
+        return new string(chars);
+    }
+    private byte[] ParseNumericString(string s)
+    {
+        return BigInteger.Parse(s).ToByteArray();
     }
 }

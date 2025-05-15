@@ -658,6 +658,10 @@ public struct BigNumber : ISerializationCallbackReceiver
         string stringSign = sign == 1 ? "" : "-";
         if(parts.Count > 1)
         {
+            if(parts.Count >= units.Length)
+            {
+                return $"{stringSign}{parts[parts.Count - 1]}.{parts[parts.Count - 2] / 100}{units[units.Length - 1]}";
+            }
             return $"{stringSign}{parts[parts.Count - 1]}.{parts[parts.Count - 2] / 100}{units[parts.Count - 1]}";
         }
         else 

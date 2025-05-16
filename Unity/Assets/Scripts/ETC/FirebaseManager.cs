@@ -243,7 +243,7 @@ public class FirebaseManager : Singleton<FirebaseManager>
         {
             throw new InvalidOperationException("로그인 필요");
         }
-        int stageId = DataTableManager.StageTable.GetStageData(SaveLoadManager.Data.stageSaveData.highPlanet, SaveLoadManager.Data.stageSaveData.highStage).ID;
+        int stageId = DataTableManager.StageTable.GetStageData(SaveLoadManager.Data.stageSaveData.clearedPlanet, SaveLoadManager.Data.stageSaveData.clearedStage).ID;
         string nickname = User.DisplayName;
         var entry = new
         {

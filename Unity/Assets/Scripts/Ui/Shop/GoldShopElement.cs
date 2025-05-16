@@ -19,6 +19,8 @@ public class GoldShopElement : MonoBehaviour
     private int shopId;
     private Currency currencyType;
     private BigNumber payAmount;
+    public Toggle toggle;
+    public GameObject parent;
     public event Action<int> onClickGoldShopElement;
 
     private bool isInitialized = false;
@@ -30,6 +32,8 @@ public class GoldShopElement : MonoBehaviour
         shopId = data.ID;
         currencyType = (Currency)data.NeedItemID;
         payAmount = data.PayCount;
+
+        toggle = GetComponent<Toggle>();
         isInitialized = true;
 
         UpdateUI();
@@ -56,6 +60,11 @@ public class GoldShopElement : MonoBehaviour
 
     public void OnClickGoldShopElement()
     {
+        if(toggle.isOn)
+        {
+            return;
+        }
+        toggle.isOn = true;
         onClickGoldShopElement?.Invoke(shopId);
     }
     private void DoItemChange(int itemId, BigNumber amount)

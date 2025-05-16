@@ -29,7 +29,14 @@ public abstract class CharacterStats : MonoBehaviour
         }
         set
         {
-            hp = value;
+            if (value > maxHp)
+            {
+                hp = maxHp;
+            }
+            else
+            {
+                hp = value;
+            }
             if (maxHp != 0)
             {
                 InvokeHpChangedEvent();

@@ -16,8 +16,12 @@ public class UnitSkillUpgradeBoard : MonoBehaviour
     private const string maxLevelText = "Max Level";
 
     [SerializeField]
-    private LocalizationText currentText;
+    private LocalizationText currentLevelText;
+    [SerializeField]
+    private LocalizationText nextLevelText;
 
+    [SerializeField]
+    private LocalizationText currentText;
     [SerializeField]
     private LocalizationText nextText;
     [SerializeField]
@@ -70,7 +74,7 @@ public class UnitSkillUpgradeBoard : MonoBehaviour
         SetBoardText(id, type, grade);
     }
 
-    public void SetImage(UnitTypes type,int id)
+    public void SetImage(UnitTypes type, int id)
     {
         int spriteId = 0;
         switch (type)
@@ -93,7 +97,7 @@ public class UnitSkillUpgradeBoard : MonoBehaviour
         }
     }
 
-  
+
 
 
     public void SetLimit(Grade grade, UnitTypes type, int id)
@@ -107,7 +111,7 @@ public class UnitSkillUpgradeBoard : MonoBehaviour
         currentId = id;
         currentType = type;
         currentGrade = grade;
-        SetImage(currentType,id);
+        SetImage(currentType, id);
 
 
         SetCurrentSkillText(currentType, currentId, out level);
@@ -124,6 +128,7 @@ public class UnitSkillUpgradeBoard : MonoBehaviour
         UpdateUpgradeUI();
     }
 
+
     private void SetCurrentSkillText(UnitTypes type, int id, out int level)
     {
         switch (type)
@@ -133,24 +138,37 @@ public class UnitSkillUpgradeBoard : MonoBehaviour
                 var stringId = tankerData.DetailStringID;
                 level = tankerData.Level;
                 currentText.SetString(stringId, tankerData.Duration.ToString(), (tankerData.ShieldRatio * 100).ToString(), tankerData.CoolTime.ToString());
+                SetLevelText(currentLevelText, level);
                 break;
             case UnitTypes.Dealer:
                 var dealerData = DataTableManager.DealerSkillTable.GetData(id);
                 var dealerStringId = dealerData.DetailStringID;
                 level = dealerData.Level;
                 currentText.SetString(dealerStringId, dealerData.MonsterMaxTarget.ToString(), (dealerData.DamageRatio * 100).ToString(), dealerData.CoolTime.ToString());
-
+                SetLevelText(currentLevelText, level);
                 break;
             case UnitTypes.Healer:
                 var healerData = DataTableManager.HealerSkillTable.GetData(id);
                 var healerStringId = healerData.DetailStringID;
                 level = healerData.Level;
                 currentText.SetString(healerStringId, (healerData.HealRatio * 100).ToString(), healerData.CoolTime.ToString());
-
+                SetLevelText(currentLevelText, level);
                 break;
             default:
                 level = 0;
                 break;
+        }
+    }
+
+    private void SetLevelText(LocalizationText text, int level)
+    {
+        if (level >= maxLevel)
+        {
+            text.SetStringArguments(maxLevel.ToString());
+        }
+        else
+        {
+            text.SetStringArguments(level.ToString());
         }
     }
 
@@ -162,19 +180,25 @@ public class UnitSkillUpgradeBoard : MonoBehaviour
                 nextId = data.SkillPaymentID;
                 var nextTankerData = DataTableManager.TankerSkillTable.GetData(nextId);
                 var nextstringId = nextTankerData.DetailStringID;
+                var tankerNextLevel = nextTankerData.Level;
                 nextText.SetString(nextstringId, nextTankerData.Duration.ToString(), (nextTankerData.ShieldRatio * 100).ToString(), nextTankerData.CoolTime.ToString());
+                SetLevelText(nextLevelText, tankerNextLevel);
                 break;
             case UnitTypes.Dealer:
                 nextId = data.SkillPaymentID;
                 var nextDealerData = DataTableManager.DealerSkillTable.GetData(nextId);
                 var nextdealerStringId = nextDealerData.DetailStringID;
+                var dealerNextLevel = nextDealerData.Level;
                 nextText.SetString(nextdealerStringId, nextDealerData.MonsterMaxTarget.ToString(), (nextDealerData.DamageRatio * 100).ToString(), nextDealerData.CoolTime.ToString());
+                SetLevelText(nextLevelText, dealerNextLevel);
                 break;
             case UnitTypes.Healer:
                 nextId = data.SkillPaymentID;
                 var nextHealerData = DataTableManager.HealerSkillTable.GetData(nextId);
                 var nextHealerStringId = nextHealerData.DetailStringID;
+                var healerNextLevel = nextHealerData.Level;
                 nextText.SetString(nextHealerStringId, (nextHealerData.HealRatio * 100).ToString(), nextHealerData.CoolTime.ToString());
+                SetLevelText(nextLevelText, healerNextLevel);
                 break;
         }
     }

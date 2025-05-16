@@ -123,8 +123,8 @@ public class UnitStatsUpgradeElement : MonoBehaviour//, IPointerDownHandler, IPo
             case UpgradeType.CriticalDamages:
                 float beforeCriValue = GetCurrentCritValue(level);
                 float afterCriValue = GetCurrentCritValue(nextLevel);
-                beforeStatsInfo.text = $"{(beforeCriValue * 100f):F2}%";
-                afterStatsInfo.text = $"{((afterCriValue) * 100f):F2}%";
+                beforeStatsInfo.text = $"{(beforeCriValue * 100f):0.##} %";
+                afterStatsInfo.text = $"{((afterCriValue) * 100f):0.##} %";
                 break;
         }
         if (level >= maxLevel)

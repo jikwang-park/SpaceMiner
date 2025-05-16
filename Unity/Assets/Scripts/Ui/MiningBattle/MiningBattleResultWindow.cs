@@ -52,6 +52,10 @@ public class MiningBattleResultWindow : MonoBehaviour
 
     private void OnDisable()
     {
+        if (stageManager is null)
+        {
+            stageManager = GameObject.FindGameObjectWithTag("GameController").GetComponent<StageManager>();
+        }
         stageManager.StageUiManager.curtain.SetFade(true);
 
         for (int i = 0; i < rewardIcons.Count; ++i)

@@ -119,9 +119,8 @@ public class GuideQuestWindow : MonoBehaviour
                 questDetailText.SetString(questData.DetailStringID, itemName, questData.TargetCount.ToString());
                 break;
             case GuideQuestTable.MissionType.Building:
-                var buildingData = DataTableManager.BuildingTable.GetData(questData.Target);
-                var buildingName = DataTableManager.StringTable.GetData(buildingData.NameStringID);
-                questDetailText.SetString(questData.DetailStringID, buildingName, buildingData.Level.ToString());
+                int level = int.Parse(questData.TargetCount);
+                questDetailText.SetString(questData.DetailStringID,  level.ToString());
                 break;
         }
         questRewardIcon.SetItemSprite(questData.RewardItemID);

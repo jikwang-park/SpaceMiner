@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class MiningBattleResultWindow : MonoBehaviour
 {
@@ -26,6 +27,9 @@ public class MiningBattleResultWindow : MonoBehaviour
 
     [SerializeField]
     private Transform rewardRow;
+
+    [SerializeField]
+    private Button nextStageButton;
 
     [SerializeField]
     private DungeonRequirementWindow requirementWindow;
@@ -82,7 +86,9 @@ public class MiningBattleResultWindow : MonoBehaviour
             rewardIcons.Add(rewardIcon);
             rewardIcon.SetItem(reward.itemid, reward.amount);
         }
+        var datas = DataTableManager.MiningBattleTable.GetDatas(Variables.planetMiningID);
 
+        nextStageButton.interactable = Variables.planetMiningStage + 1 <= datas[datas.Count - 1].Stage;
 
         endTime = Time.time + Defines.MiningBattleResultWait;
     }
@@ -105,7 +111,8 @@ public class MiningBattleResultWindow : MonoBehaviour
         if (SaveLoadManager.Data.mineBattleData.mineBattleCount < Defines.MiningBattleMaxCount)
         {
             gameObject.SetActive(false);
-            ++Variables.planetMiningStage;
+            var datas = DataTableManager.MiningBattleTable.GetDatas(Variables.planetMiningID);
+            Variables.planetMiningStage = Mathf.Min(Variables.planetMiningStage + 1, datas[datas.Count - 1].Stage);
             stageManager.MiningBattleStart();
         }
         else

@@ -108,7 +108,17 @@ public class SoundManager : Singleton<SoundManager>
         yield return new WaitForSeconds(delay);
         currentConcurrentSFX--;
     }
-
+    private void OnApplicationPause(bool pause)
+    {
+        if (pause)
+        {
+            bgmSource.Pause();
+        }
+        else
+        {
+            bgmSource.UnPause();
+        }
+    }
     public void PlayBGM(string bgmKey)
     {
         if (soundDictionary.ContainsKey(bgmKey))

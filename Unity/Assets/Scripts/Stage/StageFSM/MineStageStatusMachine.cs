@@ -371,6 +371,10 @@ public class MineStageStatusMachine : StageStatusMachine
             ++SaveLoadManager.Data.mineBattleData.mineBattleCount;
             SaveLoadManager.Data.mineBattleData.lastClearTime = TimeManager.Instance.GetEstimatedServerTime();
 
+            var datas = DataTableManager.MiningBattleTable.GetDatas(battleData.PlanetTableID);
+            SaveLoadManager.Data.stageSaveData.ClearedMineStage[battleData.PlanetTableID] = Mathf.Min(battleData.Stage + 1, datas[datas.Count - 1].Stage);
+            SaveLoadManager.Data.stageSaveData.HighMineStage[battleData.PlanetTableID] = battleData.Stage;
+
             SaveLoadManager.SaveGame();
 
             stageManager.StageUiManager.IngameUIManager.miningBattleResultWindow.ShowClear(battleData, gotItems);

@@ -15,6 +15,7 @@ public class AnimatorAnimationControl : AnimationControl
     private readonly static int hashDie = Animator.StringToHash("Die");
     private readonly static int hashAttackIndex = Animator.StringToHash("AttackIndex");
     private readonly static int hashAttackSpeed = Animator.StringToHash("AttackSpeed");
+    private readonly static int hashSkillSpeed = Animator.StringToHash("SkillSpeed");
 
 
     private class EventPair
@@ -166,6 +167,7 @@ public class AnimatorAnimationControl : AnimationControl
                 animator.SetFloat(hashAttackSpeed, speed);
                 break;
             case AnimationClipID.Skill:
+                animator.SetFloat(hashSkillSpeed, speed);
                 break;
             case AnimationClipID.Die:
                 break;

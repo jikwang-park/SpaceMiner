@@ -109,7 +109,7 @@ public class BuildingDataElement : MonoBehaviour
         SetBuildingInfo(currentData, currentLevel);
         SetButtonState();
     }
-   
+
 
     private void SetLockedImage(int level)
     {
@@ -145,12 +145,12 @@ public class BuildingDataElement : MonoBehaviour
         SetCurrentNeedImage(buildingData.Type, level);
         SetBuildingImage(buildingData.Type, level);
         SetCountText(buildingData.Type, level);
-        SetLevelText(currentLevelText,level);
+        SetLevelText(currentLevelText, level);
     }
 
-    private void SetBuildingName(BuildingTable.BuildingType type , int level)
+    private void SetBuildingName(BuildingTable.BuildingType type, int level)
     {
-       var data =  DataTableManager.BuildingTable.GetDatas(type);
+        var data = DataTableManager.BuildingTable.GetDatas(type);
         if (level >= 0 && level < data.Count)
         {
             var nameId = data[level].NameStringID;
@@ -180,12 +180,12 @@ public class BuildingDataElement : MonoBehaviour
             return;
 
         var currentData = data[level];
-        currentValueText.SetString(currentData.DetailStringID, currentData.Value.ToString("P2"));
+        currentValueText.SetString(currentData.DetailStringID, $"{currentData.Value * 100f:0.##} %");
 
         if (level + 1 < data.Count)
         {
             var nextData = data[level + 1];
-            nextValueText.SetString(nextData.DetailStringID, nextData.Value.ToString("P2"));
+            nextValueText.SetString(nextData.DetailStringID, $"{nextData.Value * 100f:0.##} %");
         }
         else
         {
@@ -196,7 +196,7 @@ public class BuildingDataElement : MonoBehaviour
     private void SetCurrentNeedImage(BuildingTable.BuildingType type, int level)
     {
         var data = DataTableManager.BuildingTable.GetDatas(type);
-        if(level >= 0 && level< data.Count)
+        if (level >= 0 && level < data.Count)
         {
             var spriteId = data[level].NeedItemID;
             currentNeedItemImage.SetItemSprite(spriteId);
@@ -213,8 +213,8 @@ public class BuildingDataElement : MonoBehaviour
         }
     }
 
-    
-    private void SetCountText(BuildingTable.BuildingType type , int level)
+
+    private void SetCountText(BuildingTable.BuildingType type, int level)
     {
         var data = DataTableManager.BuildingTable.GetDatas(type);
         needItemCount = data[level].NeedItemCount;
@@ -247,10 +247,10 @@ public class BuildingDataElement : MonoBehaviour
 
     private void OnClickUpgradeButton()
     {
-        if (IsMaxLevel()) 
+        if (IsMaxLevel())
             return;
 
-        if (!ItemManager.ConsumeItem(datas[currentLevel].NeedItemID, needItemCount)) 
+        if (!ItemManager.ConsumeItem(datas[currentLevel].NeedItemID, needItemCount))
             return;
 
         isLocked = false;

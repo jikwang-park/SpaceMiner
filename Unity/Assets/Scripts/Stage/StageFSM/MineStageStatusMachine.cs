@@ -92,6 +92,7 @@ public class MineStageStatusMachine : StageStatusMachine
         if (status == Status.Battle)
         {
             status = Status.Normal;
+            SoundManager.Instance.PlayBGM("MiningBGM");
             stageManager.StageUiManager.curtain.SetFade(true);
             mineDefence.Release();
             stageManager.StageUiManager.ResourceRow.SetActive(true);

@@ -26,7 +26,10 @@ public class Dungeon2EndWindow : MonoBehaviour
     {
         stageManager = GameObject.FindGameObjectWithTag("GameController").GetComponent<StageManager>();
     }
-
+    private void OnEnable()
+    {
+        SoundManager.Instance.StopBGM();
+    }
     private void OnDisable()
     {
         for (int i = 0; i < rewardIcons.Count; ++i)

@@ -29,19 +29,6 @@ public class MiningBattleExterminateWindow : MonoBehaviour
     }
 
 
-    private void OnEnable()
-    {
-        var subStages = DataTableManager.MiningBattleTable.GetDatas(Variables.planetMiningID);
-        var clearedStageIndex = SaveLoadManager.Data.stageSaveData.ClearedMineStage[Variables.planetMiningID] - 1;
-        stageData = subStages[clearedStageIndex];
-
-        AddIcon(stageData.Reward1ItemID, stageData.Reward1ItemCount);
-
-        for (int i = 0; i < stageData.Reward2ItemIDs.Length; ++i)
-        {
-            AddIcon(stageData.Reward2ItemIDs[i], 0, stageData.Reward2ItemCounts[i]);
-        }
-    }
 
     private void OnDisable()
     {
@@ -50,6 +37,19 @@ public class MiningBattleExterminateWindow : MonoBehaviour
             rewardIcons[i].Release();
         }
         rewardIcons.Clear();
+    }
+
+    public void Open(MiningBattleTable.Data data)
+    {
+        gameObject.SetActive(true);
+        stageData = data;
+
+        AddIcon(stageData.Reward1ItemID, stageData.Reward1ItemCount);
+
+        for (int i = 0; i < stageData.Reward2ItemIDs.Length; ++i)
+        {
+            AddIcon(stageData.Reward2ItemIDs[i], 0, stageData.Reward2ItemCounts[i]);
+        }
     }
 
     private void AddIcon(int itemID, BigNumber amount)

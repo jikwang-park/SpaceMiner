@@ -33,6 +33,7 @@ public class MiningBattleEnterWindow : MonoBehaviour
     private int planetID;
     private int index;
     private int maxIndex;
+    private int maxClearedIndex;
 
     private StageManager stageManager;
 
@@ -57,11 +58,12 @@ public class MiningBattleEnterWindow : MonoBehaviour
         planetID = Variables.planetMiningID;
         datas = DataTableManager.MiningBattleTable.GetDatas(planetID);
         maxIndex = SaveLoadManager.Data.stageSaveData.HighMineStage[planetID] - 1;
+        maxClearedIndex = SaveLoadManager.Data.stageSaveData.ClearedMineStage[planetID] - 1;
         index = maxIndex;
         planetNameText.SetString(DataTableManager.PlanetTable.GetData(datas[0].PlanetTableID).NameStringID);
         RefreshText();
         RefreshCount();
-        exterminateButton.interactable = SaveLoadManager.Data.stageSaveData.ClearedMineStage[planetID] > 0;
+        exterminateButton.interactable = SaveLoadManager.Data.stageSaveData.HighMineStage[planetID] == SaveLoadManager.Data.stageSaveData.ClearedMineStage[planetID];
     }
 
     public void ChangeStage(bool isUp)
@@ -76,6 +78,7 @@ public class MiningBattleEnterWindow : MonoBehaviour
             --index;
             RefreshText();
         }
+        exterminateButton.interactable = index <= maxClearedIndex;
     }
 
     private void RefreshText()
@@ -154,9 +157,13 @@ public class MiningBattleEnterWindow : MonoBehaviour
         }
     }
 
-
     private void OnExterminate()
     {
         remainCountText.SetStringArguments(SaveLoadManager.Data.mineBattleData.mineBattleCount.ToString());
+    }
+
+    public void OpenExterminate()
+    {
+        exterminateWindow.Open(datas[index]);
     }
 }

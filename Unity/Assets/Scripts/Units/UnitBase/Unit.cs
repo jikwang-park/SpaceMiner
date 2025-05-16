@@ -194,14 +194,7 @@ public class Unit : MonoBehaviour, IObjectPoolGameObject
     {
         if (Time.time > Skill.CoolTime + lastSkillTime)
         {
-            if (UnitTypes == UnitTypes.Dealer && HasTarget && IsTargetInRange)
-            {
-                isSkillInQueue = true;
-            }
-            else if (UnitTypes != UnitTypes.Dealer)
-            {
-                isSkillInQueue = true;
-            }
+            isSkillInQueue = true;
         }
     }
 

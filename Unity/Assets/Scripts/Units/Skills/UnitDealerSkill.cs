@@ -11,7 +11,7 @@ public class UnitDealerSkill : UnitSkillBase
     public override void ExecuteSkill()
     {
         List<Transform> targetTransforms = new List<Transform>();
-        targetTransforms = unit.StageManager.StageMonsterManager.GetMonsters(monsterMaxTarget, unit.transform, unit.unitStats.range);
+        targetTransforms = unit.StageManager.StageMonsterManager.GetMonsters(monsterMaxTarget);
         for (int i = 0; i < targetTransforms.Count; ++i)
         {
             ParticleEffectManager.Instance.PlayOneShot("DealerSkillAttackEffect", targetTransforms[i].position);

@@ -59,7 +59,9 @@ public class BuildingDataElement : MonoBehaviour
 
     [SerializeField]
     private AddressableImage buildingImage;
-    
+
+    [SerializeField]
+    private LocalizationText currentLevelText;
 
     [SerializeField]
     private BuildingTable.BuildingType currentType;
@@ -130,6 +132,10 @@ public class BuildingDataElement : MonoBehaviour
     {
         nextLevel = level + 1;
     }
+    private void SetLevelText(LocalizationText text, int level)
+    {
+        text.SetStringArguments(level.ToString());
+    }
 
     private void SetBuildingInfo(BuildingTable.Data buildingData, int level)
     {
@@ -139,7 +145,7 @@ public class BuildingDataElement : MonoBehaviour
         SetCurrentNeedImage(buildingData.Type, level);
         SetBuildingImage(buildingData.Type, level);
         SetCountText(buildingData.Type, level);
-        SetLevelText(level);
+        SetLevelText(currentLevelText,level);
     }
 
     private void SetBuildingName(BuildingTable.BuildingType type , int level)
@@ -207,11 +213,7 @@ public class BuildingDataElement : MonoBehaviour
         }
     }
 
-    private void SetLevelText(int level)
-    {
-        levelText.text = $"LV.{level}";
-    }
-
+    
     private void SetCountText(BuildingTable.BuildingType type , int level)
     {
         var data = DataTableManager.BuildingTable.GetDatas(type);

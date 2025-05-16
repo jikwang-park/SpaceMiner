@@ -135,7 +135,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: -168.77002, y: -1010.88586}
+  m_AnchoredPosition: {x: -179, y: -1033}
   m_SizeDelta: {x: -37.79, y: -2471.6282}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &4696052299462542081
@@ -196,9 +196,11 @@ MonoBehaviour:
   itemId: 0
   maxLevel: 0
   uisequence: 0
-  needItemCount: 0
+  needItemCount:
+    currentValue: 
   isLocked: 1
   buildingImage: {fileID: 7007148437202923565}
+  currentLevelText: {fileID: 7750186052960791136}
   currentType: 0
   longpressButton: {fileID: 3267728891644796581}
 --- !u!222 &7098853661526105493
@@ -791,6 +793,7 @@ GameObject:
   - component: {fileID: 2713629531894023308}
   - component: {fileID: 8321725447467998994}
   - component: {fileID: 6817608326098207773}
+  - component: {fileID: 7750186052960791136}
   m_Layer: 5
   m_Name: Text (TMP)
   m_TagString: Untagged
@@ -845,7 +848,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: Lv. 1
+  m_text: Level. {0}
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
@@ -854,8 +857,8 @@ MonoBehaviour:
   m_fontMaterials: []
   m_fontColor32:
     serializedVersion: 2
-    rgba: 4278190080
-  m_fontColor: {r: 0, g: 0, b: 0, a: 1}
+    rgba: 4294967295
+  m_fontColor: {r: 1, g: 1, b: 1, a: 1}
   m_enableVertexGradient: 0
   m_colorMode: 3
   m_fontColorGradient:
@@ -914,6 +917,21 @@ MonoBehaviour:
   m_hasFontAssetChanged: 0
   m_baseMaterial: {fileID: 0}
   m_maskOffset: {x: 0, y: 0, z: 0, w: 0}
+--- !u!114 &7750186052960791136
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3114967600412626276}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5cdb4262f099c7847ad5860ea281b377, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  stringId: 400001
+  stringArgs: []
+  editorLang: 0
 --- !u!1 &3622011683141342266
 GameObject:
   m_ObjectHideFlags: 0

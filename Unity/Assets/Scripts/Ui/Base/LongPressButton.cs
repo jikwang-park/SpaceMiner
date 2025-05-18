@@ -7,6 +7,7 @@ using UnityEngine.EventSystems;
 public class LongPressButton : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
 {
     public UnityEvent OnLongPress;
+    public UnityEvent OnLongPressEnd;
 
     [SerializeField]
     private float minTime = 0.2f;
@@ -24,6 +25,7 @@ public class LongPressButton : MonoBehaviour, IPointerDownHandler, IPointerUpHan
 
     public void OnPointerUp(PointerEventData eventData)
     {
+        OnLongPressEnd?.Invoke();
         isPressing = false;
         targetTime = float.MaxValue;
     }

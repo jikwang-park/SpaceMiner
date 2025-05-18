@@ -30,7 +30,7 @@ public class MiningPanelUI : MonoBehaviour
     }
     private void Start()
     {
-        for(int i = 0; i < planetIds.Count; i++)
+        for (int i = 0; i < planetIds.Count; i++)
         {
             var spriteId = DataTableManager.PlanetTable.GetData(planetIds[i]).SpriteID;
             planetButtons[i].GetComponent<AddressableImage>().SetSprite(spriteId);
@@ -50,7 +50,8 @@ public class MiningPanelUI : MonoBehaviour
     private void OnEnable()
     {
         CheckPlanetsOpen();
-        OnClickPlanetButton(0);
+        OnClickPlanetButton(Variables.planetMiningID - 1);
+        planetButtons[Variables.planetMiningID - 1].isOn = true;
     }
     public void OnClickPlanetButton(int index)
     {

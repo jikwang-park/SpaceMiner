@@ -109,6 +109,7 @@ public class InventoryElement : MonoBehaviour
         {
             parentInventory.OnElementSelected(this);
         }
+        alarmImage.SetActive(false);
     }
     public void SetEquip()
     {

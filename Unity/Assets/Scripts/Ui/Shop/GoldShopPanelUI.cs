@@ -16,11 +16,14 @@ public class GoldShopPanelUI : MonoBehaviour
     private LocalizationText sellAmountText;
     [SerializeField]
     private LocalizationText totalPriceText;
+    private ToggleGroup toggleGroup;
 
     private Currency currentCurrency;
     private int currentSellPrice;
     private int currentGoldShopElementId;
     private int defaultElementId;
+
+    private List<GoldShopElement> elements = new List<GoldShopElement>();
     public BigNumber SellAmount
     {
         get
@@ -52,12 +55,14 @@ public class GoldShopPanelUI : MonoBehaviour
     }
     public void Initialize()
     {
+        toggleGroup = GetComponent<ToggleGroup>();
         foreach (Transform child in contentParent)
         {
             Destroy(child.gameObject);
         }
-
+        int instantiatedCount = 0;
         var datas = DataTableManager.ShopTable.GetList(ShopTable.ShopType.Gold);
+        int totalCount = datas.Count;
         defaultElementId = datas[0].ID;
         foreach (var data in datas)
         {
@@ -70,12 +75,16 @@ public class GoldShopPanelUI : MonoBehaviour
                     if (goldShopElement != null)
                     {
                         goldShopElement.Initialize(data);
+                        goldShopElement.toggle.group = toggleGroup;
                         goldShopElement.onClickGoldShopElement += SetGoldShopElement;
+                        elements.Add(goldShopElement);
                     }
                 }
-                if(currentGoldShopElementId == 0)
+                instantiatedCount++;
+
+                if (instantiatedCount == totalCount && elements.Count > 0)
                 {
-                    SetGoldShopElement(data.ID);
+                    elements[0].OnClickGoldShopElement();
                 }
             };
         }
@@ -104,9 +113,9 @@ public class GoldShopPanelUI : MonoBehaviour
         {
             Debug.Log($"OnClickSellButton : {currentCurrency}이 모자랍니다");
         }
-
+        var totalPrice = TotalPrice;
         ItemManager.ConsumeCurrency(currentCurrency, SellAmount);
-        ItemManager.AddItem((int)Currency.Gold, TotalPrice);
+        ItemManager.AddItem((int)Currency.Gold, totalPrice);
         sellAmountSlider.value = 0f;
     }
     private void DoItemChanged(int itemId, BigNumber amount)

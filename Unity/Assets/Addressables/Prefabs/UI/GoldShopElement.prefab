@@ -166,9 +166,10 @@ GameObject:
   - component: {fileID: 660398129311336975}
   - component: {fileID: 6377872483392537883}
   - component: {fileID: 3102902169507537225}
-  - component: {fileID: 2057222688186881717}
+  - component: {fileID: 7974607239318670127}
   - component: {fileID: 8597675812802080851}
   - component: {fileID: 1528357831737563188}
+  - component: {fileID: 8080613167937561265}
   m_Layer: 5
   m_Name: GoldShopElement
   m_TagString: Untagged
@@ -235,7 +236,7 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
---- !u!114 &2057222688186881717
+--- !u!114 &7974607239318670127
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -244,7 +245,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 3737157990542641103}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 4e29b1a8efbd4b44bb3f3716e73f07ff, type: 3}
+  m_Script: {fileID: 11500000, guid: 9085046f02f69544eb97fd06b6048fe2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   m_Navigation:
@@ -276,7 +277,10 @@ MonoBehaviour:
     m_DisabledTrigger: Disabled
   m_Interactable: 1
   m_TargetGraphic: {fileID: 3102902169507537225}
-  m_OnClick:
+  toggleTransition: 1
+  graphic: {fileID: 0}
+  m_Group: {fileID: 0}
+  onValueChanged:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 1528357831737563188}
@@ -291,6 +295,19 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
+      - m_Target: {fileID: 8080613167937561265}
+        m_TargetAssemblyTypeName: ToggleSpriteChange, Assembly-CSharp
+        m_MethodName: ChangeSprite
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+  m_IsOn: 1
 --- !u!114 &8597675812802080851
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -333,6 +350,21 @@ MonoBehaviour:
   mineralNameText: {fileID: 2518996810419648342}
   NeedAmountText: {fileID: 5182395337342356502}
   SellRatioText: {fileID: 2823881411541203827}
+  parent: {fileID: 0}
+--- !u!114 &8080613167937561265
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3737157990542641103}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8bddbe016d6ca704d9c0001cb53f8897, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  onSprite: {fileID: 21300000, guid: 6ab9c40a582f0034dad29ea3ee98d63e, type: 3}
+  offSprite: {fileID: 543484696265431879, guid: b48c665f6ecfdcf488e8963a77c64898, type: 3}
 --- !u!1 &4804624052781637217
 GameObject:
   m_ObjectHideFlags: 0
@@ -578,7 +610,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_IgnoreLayout: 0
-  m_MinWidth: 70
+  m_MinWidth: 100
   m_MinHeight: 70
   m_PreferredWidth: 100
   m_PreferredHeight: 100

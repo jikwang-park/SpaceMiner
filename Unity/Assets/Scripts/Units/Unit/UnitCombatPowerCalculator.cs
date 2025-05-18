@@ -109,7 +109,7 @@ public static class UnitCombatPowerCalculator
         BigNumber expectedAttack = GetExpectedDamage(soldierAttack, soldierCriticalMultiplier, soldierCriticalPossibility, skillId, false);
         BigNumber attackPowerPerSecond = GetAttackPowerPerSecond(expectedAttack, soldierAttackSpeed, soldierAddNormalDamage, soldierAddBossDamage);
 
-        combatPower = (attackPowerPerSecond * (soldierBaseAttack / weightDivider)) + (soldierArmor * (soldierBaseArmor / weightDivider)) + ((soldierHp + (soldierArmor * skillData.ShieldRatio * tankerSkillWeight / skillData.CoolTime)) * (soldierBaseHp / weightDivider));
+        combatPower = (attackPowerPerSecond.DivideToFloat(soldierBaseAttack) * (weightDivider) + (soldierArmor.DivideToFloat(soldierBaseArmor) * weightDivider) + ((soldierHp + (soldierArmor * skillData.ShieldRatio * tankerSkillWeight / skillData.CoolTime)).DivideToFloat(soldierBaseHp) * weightDivider));
 
         return combatPower;
     }
@@ -144,7 +144,7 @@ public static class UnitCombatPowerCalculator
 
         BigNumber skillExpectedAttack = GetExpectedDamage(soldierAttack, soldierCriticalMultiplier, soldierCriticalPossibility, skillId, true);
 
-        combatPower = (attackPowerPerSecond + (skillExpectedAttack / skillData.CoolTime) * (soldierBaseAttack / weightDivider)) + (soldierArmor * (soldierBaseArmor / weightDivider)) + (soldierHp * (soldierBaseHp / 100));
+        combatPower = (attackPowerPerSecond + (skillExpectedAttack / skillData.CoolTime).DivideToFloat(soldierBaseAttack) * weightDivider) + (soldierArmor.DivideToFloat(soldierBaseArmor) * weightDivider) + (soldierHp.DivideToFloat(soldierBaseHp) * 100);
 
         return combatPower;
     }
@@ -176,7 +176,7 @@ public static class UnitCombatPowerCalculator
         BigNumber expectedAttack = GetExpectedDamage(soldierAttack, soldierCriticalMultiplier, soldierCriticalPossibility, skillId, false);
         BigNumber attackPowerPerSecond = GetAttackPowerPerSecond(expectedAttack, soldierAttackSpeed, soldierAddNormalDamage, soldierAddBossDamage);
 
-        combatPower = (attackPowerPerSecond * (soldierBaseAttack / weightDivider)) + (soldierArmor * (soldierBaseArmor / weightDivider)) + ((soldierHp + (soldierHp * skillData.HealRatio * healerSkillWeight / skillData.CoolTime)) * (soldierBaseHp / weightDivider));
+        combatPower = (attackPowerPerSecond.DivideToFloat(soldierBaseAttack) * weightDivider) + (soldierArmor.DivideToFloat(soldierBaseArmor) * weightDivider) + ((soldierHp + (soldierHp * skillData.HealRatio * healerSkillWeight / skillData.CoolTime)).DivideToFloat(soldierBaseHp) * weightDivider);
 
         return combatPower;
     }

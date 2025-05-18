@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using TMPro;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -15,6 +16,12 @@ public class GoldShopElement : MonoBehaviour
     private TextMeshProUGUI NeedAmountText;
     [SerializeField]
     private TextMeshProUGUI SellRatioText;
+    [SerializeField]
+    private Image backgroundImage;
+    [SerializeField]
+    private Sprite onSprite;
+    [SerializeField]
+    private Sprite offSprite;
 
     private int shopId;
     private Currency currencyType;
@@ -34,8 +41,8 @@ public class GoldShopElement : MonoBehaviour
         payAmount = data.PayCount;
 
         toggle = GetComponent<Toggle>();
+        toggle.onValueChanged.AddListener(OnToggleValueChanged);
         isInitialized = true;
-
         UpdateUI();
     }
     private void OnEnable()
@@ -58,14 +65,17 @@ public class GoldShopElement : MonoBehaviour
         SellRatioText.text = payAmount.ToString();
     }
 
-    public void OnClickGoldShopElement()
+    private void OnToggleValueChanged(bool isOn)
     {
-        if(toggle.isOn)
+        if (isOn)
         {
-            return;
+            onClickGoldShopElement?.Invoke(shopId);
+            backgroundImage.sprite = onSprite;
         }
-        toggle.isOn = true;
-        onClickGoldShopElement?.Invoke(shopId);
+        else
+        {
+            backgroundImage.sprite = offSprite;
+        }
     }
     private void DoItemChange(int itemId, BigNumber amount)
     {

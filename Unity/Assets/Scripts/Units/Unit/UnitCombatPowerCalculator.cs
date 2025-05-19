@@ -6,7 +6,10 @@ using static UnitUpgradeTable;
 
 public static class UnitCombatPowerCalculator
 {
-    private const int weightDivider = 100;
+    private static readonly float ATTACKWEIGHT = 1f;
+    private static readonly float DEFENSEWEIGHT = 0.8f;
+    private static readonly float HPWEIGHT = 0.008f;
+
     private const int tankerSkillWeight = 10;
     private const int healerSkillWeight = 7;
     public static event Action onCombatPowerChanged;
@@ -109,7 +112,7 @@ public static class UnitCombatPowerCalculator
         BigNumber expectedAttack = GetExpectedDamage(soldierAttack, soldierCriticalMultiplier, soldierCriticalPossibility, skillId, false);
         BigNumber attackPowerPerSecond = GetAttackPowerPerSecond(expectedAttack, soldierAttackSpeed, soldierAddNormalDamage, soldierAddBossDamage);
 
-        combatPower = (attackPowerPerSecond.DivideToFloat(soldierBaseAttack) * (weightDivider) + (soldierArmor.DivideToFloat(soldierBaseArmor) * weightDivider) + ((soldierHp + (soldierArmor * skillData.ShieldRatio * tankerSkillWeight / skillData.CoolTime)).DivideToFloat(soldierBaseHp) * weightDivider));
+        combatPower = (attackPowerPerSecond * ATTACKWEIGHT) + (soldierArmor * DEFENSEWEIGHT) + ((soldierHp + soldierArmor * skillData.ShieldRatio * tankerSkillWeight / skillData.CoolTime) * HPWEIGHT);
 
         return combatPower;
     }
@@ -144,7 +147,7 @@ public static class UnitCombatPowerCalculator
 
         BigNumber skillExpectedAttack = GetExpectedDamage(soldierAttack, soldierCriticalMultiplier, soldierCriticalPossibility, skillId, true);
 
-        combatPower = (attackPowerPerSecond + (skillExpectedAttack / skillData.CoolTime).DivideToFloat(soldierBaseAttack) * weightDivider) + (soldierArmor.DivideToFloat(soldierBaseArmor) * weightDivider) + (soldierHp.DivideToFloat(soldierBaseHp) * 100);
+        combatPower = ((attackPowerPerSecond + (skillExpectedAttack / skillData.CoolTime)) * ATTACKWEIGHT) + (soldierArmor * DEFENSEWEIGHT) + (soldierHp * HPWEIGHT);
 
         return combatPower;
     }
@@ -176,7 +179,7 @@ public static class UnitCombatPowerCalculator
         BigNumber expectedAttack = GetExpectedDamage(soldierAttack, soldierCriticalMultiplier, soldierCriticalPossibility, skillId, false);
         BigNumber attackPowerPerSecond = GetAttackPowerPerSecond(expectedAttack, soldierAttackSpeed, soldierAddNormalDamage, soldierAddBossDamage);
 
-        combatPower = (attackPowerPerSecond.DivideToFloat(soldierBaseAttack) * weightDivider) + (soldierArmor.DivideToFloat(soldierBaseArmor) * weightDivider) + ((soldierHp + (soldierHp * skillData.HealRatio * healerSkillWeight / skillData.CoolTime)).DivideToFloat(soldierBaseHp) * weightDivider);
+        combatPower = (attackPowerPerSecond * ATTACKWEIGHT) + (soldierArmor * DEFENSEWEIGHT) + ((soldierHp + (soldierHp * skillData.HealRatio * healerSkillWeight / skillData.CoolTime)) * HPWEIGHT);
 
         return combatPower;
     }

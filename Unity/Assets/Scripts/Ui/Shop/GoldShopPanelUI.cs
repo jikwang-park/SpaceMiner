@@ -16,8 +16,10 @@ public class GoldShopPanelUI : MonoBehaviour
     private LocalizationText sellAmountText;
     [SerializeField]
     private LocalizationText totalPriceText;
-    private ToggleGroup toggleGroup;
+    [SerializeField]
+    private AddressableImage icon;
 
+    private ToggleGroup toggleGroup;
     private Currency currentCurrency;
     private int currentSellPrice;
     private int currentGoldShopElementId;
@@ -55,11 +57,13 @@ public class GoldShopPanelUI : MonoBehaviour
     }
     public void Initialize()
     {
-        toggleGroup = GetComponent<ToggleGroup>();
+        toggleGroup = contentParent.GetComponent<ToggleGroup>();
+
         foreach (Transform child in contentParent)
         {
             Destroy(child.gameObject);
         }
+
         int instantiatedCount = 0;
         var datas = DataTableManager.ShopTable.GetList(ShopTable.ShopType.Gold);
         int totalCount = datas.Count;
@@ -84,7 +88,7 @@ public class GoldShopPanelUI : MonoBehaviour
 
                 if (instantiatedCount == totalCount && elements.Count > 0)
                 {
-                    elements[0].OnClickGoldShopElement();
+                    elements[0].toggle.isOn = true;
                 }
             };
         }
@@ -94,6 +98,7 @@ public class GoldShopPanelUI : MonoBehaviour
         currentGoldShopElementId = shopId;
         sellAmountSlider.value = 0f;
         currentCurrency = (Currency)DataTableManager.ShopTable.GetData(currentGoldShopElementId).NeedItemID;
+        icon.SetItemSprite((int)currentCurrency);
         currentSellPrice = DataTableManager.ShopTable.GetData(currentGoldShopElementId).PayCount;
         UpdateUI();
     }

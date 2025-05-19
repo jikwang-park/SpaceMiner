@@ -113,13 +113,6 @@ public class FirebaseManager : Singleton<FirebaseManager>
         UpdateLeaderBoard();
         SetQuitTime();
     }
-    private async void Update()
-    {
-        if (Input.GetKeyDown(KeyCode.Escape))
-        {
-            await ResetUserDataAsync();
-        }
-    }
     public void SetQuitTime()
     {
         if(SaveLoadManager.Data is not null)

@@ -22,7 +22,7 @@ public class InventoryElement : MonoBehaviour
     [SerializeField]
     private TextMeshProUGUI countText;
     [SerializeField]
-    private TextMeshProUGUI levelText;
+    private LocalizationText levelText;
     [SerializeField]
     private GameObject alarmImage;
     [SerializeField]
@@ -87,7 +87,7 @@ public class InventoryElement : MonoBehaviour
         this.Level = level;
         if (levelText != null)
         {
-            levelText.text = "Lv. " + level.ToString();
+            levelText.SetStringArguments(level.ToString());
         }
     }
     private void OnDisable()

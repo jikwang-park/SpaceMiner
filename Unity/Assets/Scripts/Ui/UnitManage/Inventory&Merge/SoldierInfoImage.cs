@@ -9,7 +9,7 @@ public class SoldierInfoImage : MonoBehaviour
     [SerializeField]
     private LocalizationText gradeText;
     [SerializeField]
-    private TextMeshProUGUI levelText;
+    private LocalizationText levelText;
     [SerializeField]
     private TextMeshProUGUI countText;
     [SerializeField]
@@ -24,7 +24,7 @@ public class SoldierInfoImage : MonoBehaviour
     {
         int stringId = DataTableManager.DefaultDataTable.GetID(grade.ToString() + "StringID");
         gradeText.SetString(stringId);
-        levelText.text = $"Lv. {level}";
+        levelText.SetStringArguments(level.ToString());
         countText.text = count;
         icon.SetSprite(spriteId);
         if (image == null)

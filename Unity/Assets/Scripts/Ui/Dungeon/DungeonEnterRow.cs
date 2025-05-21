@@ -6,9 +6,13 @@ using UnityEngine;
 public class DungeonEnterRow : MonoBehaviour
 {
     [SerializeField]
-    private TextMeshProUGUI nameText;
+    private LocalizationText nameText;
     [SerializeField]
-    private TextMeshProUGUI descriptionText;
+    private LocalizationText detailText;
+    [SerializeField]
+    private AddressableImage iconImage;
+    [SerializeField]
+    private AddressableImage keyImage;
 
     private int dungeonType;
 
@@ -17,8 +21,11 @@ public class DungeonEnterRow : MonoBehaviour
     public void SetType(int type)
     {
         dungeonType = type;
-        nameText.text = type.ToString();
-        descriptionText.text = $"{type} Description";
+        var dungeonData = DataTableManager.DungeonTable.GetData(type, 1);
+        nameText.SetString(dungeonData.NameStringID);
+        detailText.SetString(dungeonData.DetailStringID);
+        iconImage.SetSprite(dungeonData.SpriteID);
+        keyImage.SetItemSprite(dungeonData.NeedKeyItemID);
     }
 
     public void OnButtonClick()

@@ -1,9 +1,10 @@
+#define UseDebug
+
+using AYellowpaper.SerializedCollections;
 using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
-using UnityEngine.AddressableAssets;
-using UnityEngine.SceneManagement;
 
 public class StageManager : MonoBehaviour
 {
@@ -15,12 +16,22 @@ public class StageManager : MonoBehaviour
     public CameraManager CameraManager { get; private set; }
 
     [SerializeField]
-    private IngameStatus ingameStatus;
+    public IngameStatus IngameStatus { get; private set; }
+
+    [SerializeField]
+    [SerializedDictionary("Status", "Data")]
+    private SerializedDictionary<IngameStatus, StageStatusMachineData> statusMachineDatas;
 
     public LinkedList<IObjectPoolGameObject> backgrounds { get; private set; } = new LinkedList<IObjectPoolGameObject>();
 
+    public LinkedList<DamageText> damageTexts { get; private set; } = new LinkedList<DamageText>();
+
     private Dictionary<IngameStatus, StageStatusMachine> machines = new Dictionary<IngameStatus, StageStatusMachine>();
     //private StageStatusMachine stageStatusMachine;
+
+    public event System.Action<IngameStatus> OnIngameStatusChanged;
+    public event System.Action OnStageEnd;
+
 
     private void Awake()
     {
@@ -28,26 +39,13 @@ public class StageManager : MonoBehaviour
         UnitPartyManager = GetComponent<UnitPartyManager>();
         ObjectPoolManager = GetComponent<ObjectPoolManager>();
         CameraManager = GetComponent<CameraManager>();
-
-        Init();
-
-        machines.Add(IngameStatus.Planet, new PlanetStageStatusMachine(this));
-        machines.Add(IngameStatus.Dungeon, new DungeonStageStatusMachine(this));
-
-        //switch (ingameStatus)
-        //{
-        //    case IngameStatus.Planet:
-        //        stageStatusMachine = new PlanetStageStatusMachine(this);
-        //        break;
-        //    case IngameStatus.Dungeon:
-        //        stageStatusMachine = new DungeonStageStatusMachine(this);
-        //        break;
-        //}
+        StageUiManager.OnExitButtonClicked += OnExitClicked;
+        InitStatusMachines();
     }
 
     private void Start()
     {
-        machines[ingameStatus].Start();
+        machines[IngameStatus].Start();
         //stageStatusMachine.Start();
     }
 
@@ -55,66 +53,66 @@ public class StageManager : MonoBehaviour
     {
         //stageStatusMachine.Update();
 
-        machines[ingameStatus].Update();
+        machines[IngameStatus].Update();
+    }
+
+    private void InitStatusMachines()
+    {
+        machines.Clear();
+
+        StageStatusMachine stageStatusMachine = new PlanetStageStatusMachine(this);
+        stageStatusMachine.SetStageData(statusMachineDatas[IngameStatus.Planet]);
+        machines.Add(IngameStatus.Planet, stageStatusMachine);
+
+        stageStatusMachine = new DungeonStageStatusMachine(this);
+        stageStatusMachine.SetStageData(statusMachineDatas[IngameStatus.Dungeon]);
+        machines.Add(IngameStatus.Dungeon, stageStatusMachine);
+
+        stageStatusMachine = new MineStageStatusMachine(this);
+        stageStatusMachine.SetStageData(statusMachineDatas[IngameStatus.Mine]);
+        machines.Add(IngameStatus.Mine, stageStatusMachine);
+
+#if UseDebug
+
+        stageStatusMachine = new LevelDesignStageStatusMachine(this);
+        machines.Add(IngameStatus.LevelDesign, stageStatusMachine);
+#endif
     }
 
     public void SetStatus(IngameStatus status)
     {
-        if (status == ingameStatus)
+        if (status == IngameStatus)
         {
             return;
         }
 
+        ReleaseDamageTexts();
         StageUiManager.curtain.SetFade(true);
         StageUiManager.UIGroupStatusManager.SetUIStatus(status);
 
-        machines[ingameStatus].SetActive(false);
+        machines[IngameStatus].SetActive(false);
 
+        OnIngameStatusChanged?.Invoke(status);
         StageUiManager.IngameUIManager.SetStatus(status);
 
         machines[status].SetActive(true);
 
-        StageUiManager.curtain.SetFade(false);
+        IngameStatus = status;
 
-        ingameStatus = status;
-
-        //switch (status)
-        //{
-        //    case IngameStatus.Planet:
-        //        SceneManager.LoadScene(0);
-        //        break;
-        //    case IngameStatus.Dungeon:
-        //        Addressables.LoadSceneAsync("Scenes/DungeonScene").WaitForCompletion();
-        //        break;
-        //}
-    }
-
-    public void Init()
-    {
-        var saveData = SaveLoadManager.Data.stageSaveData;
-
-        List<int> dungeons = DataTableManager.DungeonTable.DungeonTypes;
-
-        bool changed = false;
-
-        foreach (var type in dungeons)
-        {
-            if (!saveData.highestDungeon.ContainsKey(type))
-            {
-                changed = true;
-                saveData.highestDungeon.Add(type, 1);
-            }
-        }
-
-        if (changed)
-        {
-            SaveLoadManager.SaveGame();
-        }
     }
 
     public void ResetStage()
     {
-        machines[ingameStatus].Reset();
+        StageUiManager.HPBarManager.ClearHPBar();
+        machines[IngameStatus].Reset();
+    }
+
+    public void ReleaseDamageTexts()
+    {
+        while (damageTexts.Count > 0)
+        {
+            damageTexts.Last.Value.Release();
+        }
     }
 
     public void ReleaseBackground()
@@ -128,6 +126,25 @@ public class StageManager : MonoBehaviour
     //TODO: �ν����Ϳ��� ������ ��ư�� ����
     public void OnExitClicked()
     {
-        machines[ingameStatus].Exit();
+        machines[IngameStatus].Exit();
+    }
+
+    public void StageEnd()
+    {
+        OnStageEnd?.Invoke();
+    }
+
+    public StageStatusMachine GetStage(IngameStatus status)
+    {
+        if (machines.ContainsKey(status))
+        {
+            return machines[status];
+        }
+        return null;
+    }
+
+    public void MiningBattleStart()
+    {
+        ((MineStageStatusMachine)machines[IngameStatus.Mine]).StartMineBattle();
     }
 }

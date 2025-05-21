@@ -3,27 +3,64 @@ using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class IngameUIManager : MonoBehaviour
 {
-    private const string stageTextFormat = "{0}-{1}";
-    private const string waveTextFormat = "{0} Wave";
-    private const string dungeonTextFormat = "Dungeon {0}-{1}";
-
-    [SerializeField]
-    private TextMeshProUGUI stageText;
-    [SerializeField]
-    private TextMeshProUGUI waveText;
-    [SerializeField]
-    private TextMeshProUGUI timerText;
-    [SerializeField]
-    private TextMeshProUGUI goldText;
-    [SerializeField]
-    private StageEndWindow stageEndWindow;
-    [SerializeField]
-    private DungeonEndWindow dungeonEndWindow;
     [field: SerializeField]
-    public StageSelectWindow stageSelectWindow { get; private set; }
+    public LocalizationText stageText { get; private set; }
+
+
+    [field: SerializeField]
+    public GameObject waveGameObject { get; private set; }
+
+    [field: SerializeField]
+    public LocalizationText waveText { get; private set; }
+
+    [field: SerializeField]
+    public LocalizationText timerText { get; private set; }
+
+
+    [field: SerializeField]
+    public GameObject miningBattleTimerGameObject { get; private set; }
+
+    [field: SerializeField]
+    public LocalizationText miningBattleTimerText { get; private set; }
+
+    [field: SerializeField]
+    public Slider miningBattleCenterHpBar { get; private set; }
+
+    [field: SerializeField]
+    public GameObject bossDamageGameObject { get; private set; }
+
+    [field: SerializeField]
+    public TextMeshProUGUI bossDamageText { get; private set; }
+
+    [field: SerializeField]
+    public GameObject unitHpBars { get; private set; }
+
+    [field: SerializeField]
+    public GameObject unitSkills { get; private set; }
+
+    [field: SerializeField]
+    public Dungeon1EndWindow DungeonEndWindow { get; private set; }
+    [field: SerializeField]
+    public DungeonExitConfirmWindow DungeonExitConfirmWindow { get; private set; }
+    [field: SerializeField]
+    public Dungeon2EndWindow DamageDungeonEndWindow { get; private set; }
+    [field: SerializeField]
+    public StageSelectWindow StageSelectWindow { get; private set; }
+    [field: SerializeField]
+    public GuideQuestRewardWindow GuideQuestRewardWindow { get; private set; }
+
+    [field: SerializeField]
+    public Toggle RushSelectToggle { get; private set; }
+
+    [field: SerializeField]
+    public Button mineBattleButton { get; private set; }
+
+    [field: SerializeField]
+    public MiningBattleResultWindow miningBattleResultWindow { get; private set; }
 
     [SerializeField]
     private SerializedDictionary<IngameStatus, List<GameObject>> statusObjectLists;
@@ -32,48 +69,24 @@ public class IngameUIManager : MonoBehaviour
 
     public void SetTimer(float remainTime)
     {
-        timerText.text = remainTime.ToString("F2");
+        timerText.SetString(Defines.DirectStringID, remainTime.ToString("F2"));
     }
 
     public void SetStageText(int planet, int stage)
     {
-        stageText.text = string.Format(stageTextFormat, planet, stage);
+        stageText.SetString(Defines.PlanetStageFormatStringID, planet.ToString(), stage.ToString());
     }
 
     public void SetWaveText(int wave)
     {
-        waveText.text = string.Format(waveTextFormat, wave);
+        waveText.SetString(Defines.WaveTextStringID, wave.ToString());
     }
 
-    public void SetDungeonStageText(int dungeonId, int stage)
+    public void SetDungeonStageText(int stage)
     {
-        stageText.text = string.Format(dungeonTextFormat, dungeonId, stage);
+        stageText.SetString(Defines.Dungeon1StringID, stage.ToString());
     }
 
-    public void OpenStageEndWindow(string message)
-    {
-        stageEndWindow.Open(message);
-    }
-
-    public void CloseStageEndWindow()
-    {
-        stageEndWindow.Close();
-    }
-
-    public void OpenDungeonEndWindow(string message, bool isCleared)
-    {
-        dungeonEndWindow.Open(message, isCleared);
-    }
-
-    public void CloseDungeonEndWindow()
-    {
-        dungeonEndWindow.Close();
-    }
-
-    public void SetGoldText()
-    {
-        goldText.text = $"{ItemManager.GetItemAmount((int)Currency.Gold)}G";
-    }
 
     public void SetStatus(IngameStatus status)
     {

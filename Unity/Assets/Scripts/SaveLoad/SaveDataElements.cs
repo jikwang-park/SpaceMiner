@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System;
 using JetBrains.Annotations;
+using Newtonsoft.Json;
 
 [Serializable]
 public class SoldierInventoryElementData
@@ -11,6 +12,17 @@ public class SoldierInventoryElementData
     public Grade grade;
     public int count;
     public int level;
+    public static SoldierInventoryElementData CreateDefault()
+    {
+        var data = new SoldierInventoryElementData();
+        data.soldierId = 0;
+        data.isLocked = true;
+        data.grade = Grade.None;
+        data.count = 0;
+        data.level = 0;
+
+        return data;
+    }
 }
 [Serializable]
 public class SoldierInventoryData
@@ -18,6 +30,34 @@ public class SoldierInventoryData
     public List<SoldierInventoryElementData> elements = new List<SoldierInventoryElementData>();
     public int equipElementID; //250331 HKY 데이터형 변경
     public UnitTypes inventoryType;
+
+    public static SoldierInventoryData CreateDefault(UnitTypes type, IEnumerable<SoldierTable.Data> soldiers)
+    {
+        var data = new SoldierInventoryData
+        {
+            inventoryType = type
+        };
+
+        foreach (var soldierData in soldiers)
+        {
+            var element = SoldierInventoryElementData.CreateDefault();
+            element.soldierId = soldierData.ID;
+            element.isLocked = true;
+            element.grade = soldierData.Grade;
+            element.level = soldierData.Level;
+            element.count = 0;
+            data.elements.Add(element);
+        }
+
+        if (data.elements.Count > 0)
+        {
+            data.elements[0].isLocked = false;
+            data.elements[0].count = 1;
+            data.equipElementID = data.elements[0].soldierId;
+        }
+
+        return data;
+    }
 }
 [Serializable]
 public class StageSaveData
@@ -28,19 +68,75 @@ public class StageSaveData
     public int highStage;
     public int clearedPlanet;
     public int clearedStage;
+    [JsonConverter(typeof(IntKeyDictionaryConverter<int>))]
     public Dictionary<int, int> highestDungeon = new Dictionary<int, int>();
+    [JsonConverter(typeof(IntKeyDictionaryConverter<int>))]
     public Dictionary<int, int> clearedDungeon = new Dictionary<int, int>();
+    public BigNumber dungeonTwoDamage;
+    [JsonConverter(typeof(IntKeyDictionaryConverter<int>))]
+    public Dictionary<int, int> ClearedMineStage = new Dictionary<int, int>();
+    [JsonConverter(typeof(IntKeyDictionaryConverter<int>))]
+    public Dictionary<int, int> HighMineStage = new Dictionary<int, int>();
+    public static StageSaveData CreateDefault()
+    {
+        var data = new StageSaveData();
+
+        data.currentPlanet = 1;
+        data.currentStage = 1;
+        data.highPlanet = 1;
+        data.highStage = 1;
+        data.clearedPlanet = 1;
+        data.clearedStage = 0;
+        data.highestDungeon = new Dictionary<int, int>();
+        data.clearedDungeon = new Dictionary<int, int>();
+        data.dungeonTwoDamage = new BigNumber(0);
+        data.ClearedMineStage = new Dictionary<int, int>();
+        data.HighMineStage = new Dictionary<int, int>();
+
+        List<int> dungeons = DataTableManager.DungeonTable.DungeonTypes;
+
+        foreach (var type in dungeons)
+        {
+            data.highestDungeon.Add(type, 1);
+            data.clearedDungeon.Add(type, 0);
+        }
+
+        List<int> planets = DataTableManager.PlanetTable.GetIds();
+        foreach (var planetId in planets)
+        {
+            data.ClearedMineStage.Add(planetId, 0);
+            data.HighMineStage.Add(planetId, 1);
+        }
+
+        return data;
+    }
 }
 [Serializable]
 public class MiningRobotInventorySlotData
 {
     public bool isEmpty = true;
     public int miningRobotId;
+    public Grade grade = Grade.None;
+    public SlotType slotType = SlotType.Inventory;
+
+    public static MiningRobotInventorySlotData CreateDefault()
+    {
+        var data = new MiningRobotInventorySlotData();
+
+        data.isEmpty = true;
+        data.miningRobotId = 0;
+        data.grade = Grade.None;
+        data.slotType = SlotType.Inventory;
+
+        return data;
+    }
 }
 [Serializable]
 public class MiningRobotInventoryData
 {
     public List<MiningRobotInventorySlotData> slots = new List<MiningRobotInventorySlotData>();
+    [JsonConverter(typeof(IntKeyDictionaryConverter<MiningRobotInventorySlotData[]>))]
+    public Dictionary<int, MiningRobotInventorySlotData[]> equipmentSlotsToPlanet = new Dictionary<int, MiningRobotInventorySlotData[]>();
     public MiningRobotInventoryData() { }
     public static MiningRobotInventoryData CreateDefault(int totalSlots = 60)
     {
@@ -48,6 +144,16 @@ public class MiningRobotInventoryData
         for (int i = 0; i < totalSlots; i++)
         {
             data.slots.Add(new MiningRobotInventorySlotData());
+        }
+        var planetDatas = DataTableManager.PlanetTable.GetIds();
+        foreach (var planetId in planetDatas)
+        {
+            MiningRobotInventorySlotData[] equipmentSlots = new MiningRobotInventorySlotData[2]
+            {
+            new MiningRobotInventorySlotData { isEmpty = true, miningRobotId = 0, grade = Grade.None, slotType = SlotType.Equip },
+            new MiningRobotInventorySlotData { isEmpty = true, miningRobotId = 0, grade = Grade.None, slotType = SlotType.Equip }
+            };
+            data.equipmentSlotsToPlanet.Add(planetId, equipmentSlots);
         }
         return data;
     }
@@ -104,4 +210,82 @@ public class QuestProgressData
         return data;
     }
 }
+[Serializable]
+public class BuildingData
+{
+    public Dictionary<BuildingTable.BuildingType, int> buildingLevels = new Dictionary<BuildingTable.BuildingType, int>();
+    public BuildingData() { }
+    public static BuildingData CreateDefault()
+    {
+        var data = new BuildingData();
+        foreach(var type in Enum.GetValues(typeof(BuildingTable.BuildingType)))
+        {
+            data.buildingLevels.Add((BuildingTable.BuildingType)type, 0);
+        }
+        return data;
+    }
+}
+[Serializable]
+public class DungeonKeyShopElementData
+{
+    public int shopId;
+    public int dailyPurchaseCount;
+    public DateTime lastPurchaseTime;
+}
+[Serializable]
+public class DungeonKeyShopData
+{
+    public Dictionary<int, DungeonKeyShopElementData> shopElements = new Dictionary<int, DungeonKeyShopElementData>();
+    public DungeonKeyShopData() { }
+    public static DungeonKeyShopData CreateDefault()
+    {
+        var data = new DungeonKeyShopData();
 
+        var shopDatas = DataTableManager.ShopTable.GetList(ShopTable.ShopType.DungeonKey);
+
+        foreach(var shopData in shopDatas)
+        {
+            var shopElementData = new DungeonKeyShopElementData();
+            shopElementData.shopId = shopData.ID;
+            data.shopElements.Add(shopData.ID, shopElementData);
+        }
+
+        return data;
+    }
+}
+[Serializable]
+public class AttendanceData
+{
+    public int attendanceId;
+    public DateTime lastClaimTime;
+    public int currentIndex;
+
+    public AttendanceData() { }
+
+    public static AttendanceData CreateDefault(int attendanceId)
+    {
+        return new AttendanceData
+        {
+            attendanceId = attendanceId,
+            lastClaimTime = DateTime.MinValue,
+            currentIndex = 1,
+        };
+    }
+
+}
+[Serializable]
+public class MineBattleData
+{
+    public int mineBattleCount;
+    public DateTime lastClearTime;
+
+    public MineBattleData() { }
+    public static MineBattleData CreateDefault()
+    {
+        return new MineBattleData
+        { 
+            mineBattleCount = 0,
+            lastClearTime = DateTime.MinValue
+        };
+    }
+}

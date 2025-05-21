@@ -18,23 +18,29 @@ public class Inventory : MonoBehaviour
     private List<Sprite> gradeSprites;
     [SerializeField]
     private InfoMergePanelUI infoMergePanelUI;
+    [SerializeField]
+    private SoldierInteractableUI soldierInteractableUI; 
 
     private UnitTypes type;
     private InventoryElement selectedElement;
     private InventoryElement equipElement;
     private UnitPartyManager unitPartyManager;
-    private SoldierInteractableUI soldierInteractableUI;
     public void Initialize(UnitTypes type)
     {
-        UpdateGridCellSize();
         unitPartyManager = FindObjectOfType<UnitPartyManager>();
-        soldierInteractableUI = GetComponentInChildren<SoldierInteractableUI>();
         soldierInteractableUI.equipAction += Equip;
         InitializeInventory(type);
     }
     private void OnDisable()
     {
-        OnElementSelected(equipElement);
+        selectedElement = equipElement;
+    }
+    private void OnEnable()
+    {   
+        if(selectedElement != null)
+        {
+            OnElementSelected(selectedElement);
+        }
     }
     private void InitializeInventory(UnitTypes type)
     {
@@ -46,25 +52,13 @@ public class Inventory : MonoBehaviour
         this.type = type;
         var datas = InventoryManager.GetInventoryData(this.type);
         inventoryElements.Clear();
-        Dictionary<Grade, int> gradeCounters = new Dictionary<Grade, int>();
         int totalCount = datas.elements.Count;
         int instantiatedCount = 0;
 
         foreach (var data in datas.elements)
         {
-            int subIndex = 1;
-            if (gradeCounters.ContainsKey(data.grade))
-            {
-                subIndex = gradeCounters[data.grade] + 1;
-                gradeCounters[data.grade] = subIndex;
-            }
-            else
-            {
-                gradeCounters[data.grade] = 1;
-            }
 
             var soldierData = data;
-            int currentSubIndex = subIndex;
 
             Addressables.InstantiateAsync(prefabFormat, contentParent).Completed += (AsyncOperationHandle<GameObject> handle) =>
             {
@@ -83,7 +77,7 @@ public class Inventory : MonoBehaviour
                         inventoryElement.SetID(soldierData.soldierId);
                         inventoryElement.SetGrade(soldierData.grade);
                         inventoryElement.UpdateCount(soldierData.count);
-                        inventoryElement.SetLevel(currentSubIndex);
+                        inventoryElement.SetLevel(soldierData.level);
                         buttonElement.image.sprite = gradeSprites[(int)soldierData.grade - 1];
                         inventoryElements.Add(inventoryElement);
                     }
@@ -97,9 +91,8 @@ public class Inventory : MonoBehaviour
 
                 if (instantiatedCount == totalCount && inventoryElements.Count > 0)
                 {
-                    var equipElement = inventoryElements.Find((e) => e.soldierId == datas.equipElementID);
-                    OnElementSelected(equipElement);
-                    Equip();
+                    equipElement = inventoryElements.Find((e) => e.soldierId == datas.equipElementID);
+                    equipElement.SetEquip();
                     OnElementSelected(inventoryElements[0]);
                 }
             };
@@ -109,9 +102,13 @@ public class Inventory : MonoBehaviour
     {
         selectedElement = element;
         var currentIndex = inventoryElements.IndexOf(selectedElement);
-        if(currentIndex < inventoryElements.Count)
+        if(currentIndex < inventoryElements.Count - 1 && currentIndex >= 0)
         {
             infoMergePanelUI.Initialize(inventoryElements[currentIndex], inventoryElements[currentIndex + 1]);
+        }
+        if(currentIndex == inventoryElements.Count - 1)
+        {
+            infoMergePanelUI.Initialize(inventoryElements[currentIndex], inventoryElements[currentIndex]);
         }
         selectedElement.Select();
     }
@@ -138,7 +135,9 @@ public class Inventory : MonoBehaviour
         UnEquip();
         equipElement = selectedElement;
         equipElement.SetEquip();
+        InventoryManager.Equip(type, equipElement.soldierId);
         unitPartyManager.SetUnitData(DataTableManager.SoldierTable.GetData(equipElement.soldierId), type);
+        SaveLoadManager.SaveGame();
     }
     private void UnEquip()
     {
@@ -151,21 +150,16 @@ public class Inventory : MonoBehaviour
     }
     public void BatchMerge()
     {
-        bool isMerged = true;
-
-        while (isMerged)
+        foreach (var element in inventoryElements
+                 .OrderBy(e => e.Grade)
+                 .ThenBy(e => e.Level)
+                 .ToList())
         {
-            isMerged = false;
-
-            foreach (var element in inventoryElements.ToList())
+            while (InventoryManager.Merge(element.soldierId))
             {
-                while (!element.IsLocked && element.Count >= InventoryManager.requireMergeCount)
-                {
-                    InventoryManager.Merge(element.soldierId);
-                    isMerged = true;
-                }
             }
         }
+
         OnElementSelected(selectedElement);
         SaveLoadManager.SaveGame();
     }

@@ -7,22 +7,20 @@ public class SkillUpgradeTable : DataTable
     public class Data : ITableData
     {
         public int ID { get; set; }
-        public int StringID { get; set; }
-        public int Item1ID { get; set; }
-        public int CurrencyValue { get; set; }
+        public int NameStringID { get; set; }
+        public int NeedItemID { get; set; }
+        public string NeedItemCount { get; set; }
         public int NeedSkillID { get; set; }
         public int SkillPaymentID { get; set; }
-        public int NextSkillUpgrade { get; set; }
 
         public void Set(string[] argument)
         {
             ID = int.Parse(argument[0]);
-            Item1ID = int.Parse(argument[1]);
-            StringID = int.Parse(argument[2]);
-            CurrencyValue = int.Parse(argument[3]);
+            NeedItemID = int.Parse(argument[1]);
+            NameStringID = int.Parse(argument[2]);
+            NeedItemCount = argument[3];
             NeedSkillID = int.Parse(argument[4]);
             SkillPaymentID = int.Parse(argument[5]);
-            NextSkillUpgrade = int.Parse(argument[6]);
         }
     }
 
@@ -47,7 +45,10 @@ public class SkillUpgradeTable : DataTable
             if (!TableData.ContainsKey(item.ID))
             {
                 TableData.Add(item.ID, item);
-                needSkillIdDict.Add(item.NeedSkillID, item);
+                if (item.NeedSkillID != 0)
+                {
+                    needSkillIdDict.Add(item.NeedSkillID, item);
+                }
             }
             else
             {

@@ -8,8 +8,28 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 1470298850422524879, guid: cf9d6a612a6f0ce4b84455ebab42ad21, type: 3}
+      propertyPath: m_AnchorMax.x
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1470298850422524879, guid: cf9d6a612a6f0ce4b84455ebab42ad21, type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1470298850422524879, guid: cf9d6a612a6f0ce4b84455ebab42ad21, type: 3}
+      propertyPath: m_SizeDelta.x
+      value: -30
+      objectReference: {fileID: 0}
     - target: {fileID: 1775406256496415825, guid: cf9d6a612a6f0ce4b84455ebab42ad21, type: 3}
       propertyPath: m_SizeDelta.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1775406256496415825, guid: cf9d6a612a6f0ce4b84455ebab42ad21, type: 3}
+      propertyPath: m_SizeDelta.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1775406256496415825, guid: cf9d6a612a6f0ce4b84455ebab42ad21, type: 3}
+      propertyPath: m_AnchoredPosition.y
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 3978610551071133045, guid: cf9d6a612a6f0ce4b84455ebab42ad21, type: 3}
@@ -94,15 +114,27 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4139794646727167519, guid: cf9d6a612a6f0ce4b84455ebab42ad21, type: 3}
       propertyPath: m_SizeDelta.y
-      value: 96
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 7284518294298913785, guid: cf9d6a612a6f0ce4b84455ebab42ad21, type: 3}
       propertyPath: m_SizeDelta.y
       value: 64
       objectReference: {fileID: 0}
+    - target: {fileID: 8740649581874189067, guid: cf9d6a612a6f0ce4b84455ebab42ad21, type: 3}
+      propertyPath: m_VerticalScrollbar
+      value: 
+      objectReference: {fileID: 0}
+    - target: {fileID: 8740649581874189067, guid: cf9d6a612a6f0ce4b84455ebab42ad21, type: 3}
+      propertyPath: m_VerticalScrollbarSpacing
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8740649581874189067, guid: cf9d6a612a6f0ce4b84455ebab42ad21, type: 3}
+      propertyPath: m_VerticalScrollbarVisibility
+      value: 2
+      objectReference: {fileID: 0}
     - target: {fileID: 8997786714003047794, guid: cf9d6a612a6f0ce4b84455ebab42ad21, type: 3}
       propertyPath: m_Name
-      value: Stage Variant
+      value: StageScrollView
       objectReference: {fileID: 0}
     - target: {fileID: 9107608464749682482, guid: cf9d6a612a6f0ce4b84455ebab42ad21, type: 3}
       propertyPath: m_text
@@ -116,7 +148,8 @@ PrefabInstance:
       propertyPath: m_fontSizeBase
       value: 40
       objectReference: {fileID: 0}
-    m_RemovedComponents: []
+    m_RemovedComponents:
+    - {fileID: 8003420242123457724, guid: cf9d6a612a6f0ce4b84455ebab42ad21, type: 3}
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
     m_AddedComponents:
@@ -141,8 +174,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 54122e57d1d203947abe159069ba40fe, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  buttonReference: StageButton
+  buttonReference: Assets/Addressables/Prefabs/UI/StageButton.prefab
   contents: {fileID: 5448720008285010050}
+  scrollbar: {fileID: 0}
 --- !u!224 &5448720008285010050 stripped
 RectTransform:
   m_CorrespondingSourceObject: {fileID: 1775406256496415825, guid: cf9d6a612a6f0ce4b84455ebab42ad21, type: 3}

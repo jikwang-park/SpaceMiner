@@ -1,452 +1,394 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
-using Unity.VisualScripting.Antlr3.Runtime.Misc;
-using UnityEditor;
+using TMPro;
 using UnityEngine;
+using UnityEngine.AI;
+using UnityEngine.Pool;
 
-
-
-
-public class Unit : MonoBehaviour
+public class Unit : MonoBehaviour, IObjectPoolGameObject
 {
-    public enum UnitStatus
+    public enum Status
     {
-        Attacking,
-        UsingSkill,
         Wait,
+        Attacking,
+        SkillUsing,
+        Dead,
+        Run,
     }
 
-    public UnitStatus currentStatus;
+    [field: SerializeField]
+    public UnitTypes UnitTypes { get; private set; }
 
-
-    //Base Stats\
-    public UnitTypes UnitTypes
-    {
-        get
-        {
-            return currentUnitType;
-        }
-
-    }
-    private UnitTypes currentUnitType;
+    [field: SerializeField]
+    public Grade Grade { get; private set; }
 
     [SerializeField]
-    public BigNumber barrier;
-    public bool HasBarrier
-    {
-        get
-        {
-            if (barrier > 0)
-                return true;
-
-            return false;
-        }
-    }
-
-    public StageManager stageManger;
-
-    public UnitStats unitStats;
-    public bool IsInAttackRange
-    {
-        get
-        {
-            if (targetDistance <= unitStats.range)
-                return true;
-
-            return false;
-        }
-    }
-    public float targetDistance;
-
-    public BehaviorTree<Unit> behaviorTree;
-
-    public float attackUsingTime = 0.4f;
-
-    public int unitAliveCount = 0;
+    private float attackTime = 0.3f;
 
     [SerializeField]
-    public UnitSkill unitSkill;
+    private float skillTime = 0.2f;
 
-    public Transform targetPos;
+    [field: SerializeField]
+    public Transform LeftHandPosition { get; private set; }
 
-    private bool isTargetInArea = false;
+    [field: SerializeField]
+    public Transform RightHandPosition { get; private set; }
 
-    private int lane = 0;
+    public Status UnitStatus { get; private set; }
 
-    private int currentUnitNum = 0;
+    public IObjectPool<GameObject> ObjectPool { get; set; }
 
-    public float maxDis = 6.0f;
-    public float minDis = 4.0f;
-
-
-    public float lastSkillUsedTime;
+    public float TargetDistance { get; private set; }
 
 
-    public bool isAutoSkillMode;
+    [field: SerializeField]
+    public UnitSkillBase Skill { get; private set; }
+
+    public StageManager StageManager { get; private set; }
+
+    public AnimationControl AnimationControl { get; private set; }
+
+    public UnitStats unitStats { get; private set; }
+
+    public Transform target;
+
+    public float lastAttackTime;
+
+    public float lastSkillTime;
+
+    public bool IsTargetInRange
+    {
+        get
+        {
+            return TargetDistance <= unitStats.range;
+        }
+    }
+
+    private bool isSkillInQueue;
+
+    public bool HasTarget { get; private set; }
+
+    private bool skillExecuted;
+
+    private UnitColorPaletteSetter colorSetter;
+
     private void Awake()
     {
+        AnimationControl = GetComponent<AnimationControl>();
         unitStats = GetComponent<UnitStats>();
-        stageManger = GameObject.FindGameObjectWithTag("GameController").GetComponent<StageManager>();
-        isAutoSkillMode = true;
+        colorSetter = GetComponent<UnitColorPaletteSetter>();
     }
 
     private void Start()
     {
-        Debug.Log($"현재 타입 : {currentUnitType}, 현재 공격사거리 : {unitStats.range}");
-    }
-
-    public bool IsDead
-    {
-        get
+        AnimationControl.AddEvent(AnimationControl.AnimationClipID.Attack, attackTime, OnAttack);
+        AnimationControl.AddEvent(AnimationControl.AnimationClipID.Attack, 1f, OnAttackEnd);
+        if (UnitTypes == UnitTypes.Healer)
         {
-            if (unitStats.Hp <= 0)
-            {
-                currentUnitNum++;
-                return true;
-            }
-            return false;
+            AnimationControl.AddEvent(AnimationControl.AnimationClipID.Idle, skillTime, ExecuteSkill);
+            AnimationControl.AddEvent(AnimationControl.AnimationClipID.Idle, 1f, OnSkillEnd);
         }
-    }
-
-    public bool IsTargetDead
-    {
-        get
+        else
         {
-            if ((targetPos == null || !targetPos.gameObject.activeSelf))
-            {
-                return true;
-            }
-            return false;
+            AnimationControl.AddEvent(AnimationControl.AnimationClipID.Skill, skillTime, ExecuteSkill);
+            AnimationControl.AddEvent(AnimationControl.AnimationClipID.Skill, 1f, OnSkillEnd);
         }
+        AnimationControl.AddEvent(AnimationControl.AnimationClipID.Die, 1f, OnEnd);
     }
 
-    public float RemainSkillCoolTime
+
+    private void OnEnable()
     {
-        get
+        if (StageManager is null)
         {
-            switch (UnitTypes)
-            {
-                case UnitTypes.Tanker:
-                    return (Time.time - lastSkillUsedTime) / unitSkill.coolTime;
-
-                case UnitTypes.Dealer:
-                    return (Time.time - lastSkillUsedTime) / unitSkill.coolTime;
-
-                case UnitTypes.Healer:
-                    return (Time.time - lastSkillUsedTime) / unitSkill.coolTime;
-                default:
-                    return 0;
-            }
+            StageManager = GameObject.FindGameObjectWithTag("GameController").GetComponent<StageManager>();
         }
-    }
-
-    public bool IsUnitAliveFront
-    {
-        get
-        {
-            if (stageManger.UnitPartyManager.IsUnitExistFront(currentUnitType))
-            {
-                return true;
-            }
-            return false;
-        }
-    }
-    float thisAndFrontUnitDistance;
-    public bool IsUnitFar
-    {
-        get
-        {
-            var frontUnit = stageManger.UnitPartyManager.GetFrontUnit(currentUnitType);
-            thisAndFrontUnitDistance = frontUnit.transform.position.z - transform.position.z;
-            if (thisAndFrontUnitDistance > 5f)
-                return true;
-
-            return false;
-        }
-    }
-
-
-    public bool IsTankerCanUseSkill
-    {
-        get
-        {
-            if (Time.time < unitSkill.coolTime + lastSkillUsedTime)
-                return false;
-
-            return true;
-        }
-    }
-
-    public bool IsDealerCanUseSkill
-    {
-        get
-        {
-            if (targetDistance > unitStats.range ||
-                    Time.time < unitSkill.coolTime + lastSkillUsedTime)
-                return false;
-
-            return true;
-        }
-    }
-
-    public bool IsHealerCanUseSkill
-    {
-        get
-        {
-            if (unitSkill.targetList == null ||
-                Time.time < unitSkill.coolTime + lastSkillUsedTime)
-                return false;
-
-            return true;
-        }
-    }
-    public bool IsUnitCanAttack
-    {
-        get
-        {
-            if (targetPos == null)
-                return false;
-
-            if (targetDistance <= unitStats.range && IsAttackCoolTimeOn)
-            {
-                return true;
-            }
-            return false;
-        }
-    }
-    public bool IsNormalAttacking;
-
-    public bool IsUnitHit;
-    public bool IsSkillCoolTimeOn
-    {
-        get
-        {
-            if (Time.time > lastSkillUsedTime + unitSkill.coolTime)
-                return true;
-
-            return false;
-        }
-    }
-    public bool IsAttackCoolTimeOn
-    {
-        get
-        {
-            if (Time.time > lastAttackTime + unitStats.coolDown)
-                return true;
-
-            return false;
-        }
-    }
-    //
-    public bool IsFrontLine
-    {
-        get
-        {
-            return !stageManger.UnitPartyManager.IsUnitExistFront(currentUnitType);
-        }
-    }
-    public bool IsSafeDistance
-    {
-        get
-        {
-            bool isFront = !stageManger.UnitPartyManager.IsUnitExistFront(currentUnitType);
-            bool isBack = !stageManger.UnitPartyManager.IsUnitExistBack(currentUnitType);
-
-            if (isFront && isBack)
-                return true;
-
-            bool isBackSafe = true;
-            bool isFrontSafe = true;
-
-            if (!isBack)
-            {
-                var backUnit = stageManger.UnitPartyManager.GetBackUnit(currentUnitType);
-                float distance = (transform.position.z - backUnit.transform.position.z);
-
-                isBackSafe = distance <= (maxDis * ((int)backUnit.currentUnitType - (int)currentUnitType));
-
-            }
-
-            if (!isFront)
-            {
-                var frontUnit = stageManger.UnitPartyManager.GetFrontUnit(currentUnitType);
-                float distance = (frontUnit.transform.position.z - transform.position.z);
-
-                isFrontSafe = (distance >= minDis * (((int)currentUnitType) - (int)frontUnit.currentUnitType));
-
-            }
-
-
-            return (isBackSafe && isFrontSafe);
-
-        }
-    }
-
-
-
-    public float lastAttackTime;
-
-
-    private bool isMonsterSpawn;
-
-
-    public void SetData(SoldierTable.Data data, UnitTypes type)
-    {
-        unitStats.SetData(data, type);
-
-        currentUnitType = type;
-        switch (currentUnitType)
-        {
-            case UnitTypes.Tanker:
-                unitSkill = gameObject.AddComponent<TankerSkill>();
-                break;
-            case UnitTypes.Dealer:
-                unitSkill = gameObject.AddComponent<DealerSkill>();
-                break;
-            case UnitTypes.Healer:
-                unitSkill = gameObject.AddComponent<HealerSkill>();
-                break;
-        }
-        behaviorTree = UnitBTManager.SetBehaviorTree(this, currentUnitType);
-    }
-    public bool IsMonsterExist()
-    {
-        var lane = stageManger.StageMonsterManager.LaneCount;
-
-        for (int i = 0; i < lane; ++i)
-        {
-            var target = stageManger.StageMonsterManager.GetMonsterCount(i);
-
-            if (target > 0)
-            {
-                return true;
-
-            }
-        }
-        return false;
-    }
-    private Transform GetTargetPosition()
-    {
-        var lane = stageManger.StageMonsterManager.LaneCount;
-
-        for (int i = 0; i < lane; ++i)
-        {
-            var target = stageManger.StageMonsterManager.GetMonsterCount(i);
-            var targetPosition = stageManger.StageMonsterManager.GetFirstMonster(i);
-
-            if (target > 0)
-            {
-                // 250403 HKY - 한 유닛에서 전체 유닛 순회하지 않도록 수정
-
-                targetDistance = targetPosition.position.z - transform.position.z;
-
-                if (targetDistance <= unitStats.range)
-                {
-                    targetPos = targetPosition;
-                    targetPos.GetComponent<DestructedDestroyEvent>().OnDestroyed += (_) => targetPos = null;
-                    return targetPos;
-                }
-            }
-        }
-        return null;
-    }
-    public void Move()
-    {
-        transform.position += Vector3.forward * Time.deltaTime * unitStats.moveSpeed;
-    }
-
-
-    public void AttackCorutine()
-    {
-        currentStatus = UnitStatus.Attacking;
-        StartCoroutine(NormalAttackCor());
-        lastAttackTime = Time.time;
-    }
-    public void UseSkill()
-    {
-
-        currentStatus = UnitStatus.UsingSkill;
-
-        switch (currentUnitType)
-        {
-            case UnitTypes.Tanker:
-                StartCoroutine(TankerSkillTimer());
-                lastSkillUsedTime = Time.time;
-                break;
-            case UnitTypes.Dealer:
-                StartCoroutine(DealerSkillTimer());
-                lastSkillUsedTime = Time.time;
-                break;
-            case UnitTypes.Healer:
-                StartCoroutine(HealerSkillTimer());
-                lastSkillUsedTime = Time.time;
-                break;
-        }
-    }
-
-    public IEnumerator NormalAttackCor()
-    {
-        if (targetPos.gameObject != null)
-        {
-            unitStats.Execute(targetPos.gameObject);
-        }
-        yield return new WaitForSeconds(attackUsingTime);
-        currentStatus = UnitStatus.Wait;
-    }
-
-    private IEnumerator HealerSkillTimer()
-    {
-        unitSkill.GetTarget();
-        unitSkill.ExecuteSkill();
-        yield return new WaitForSeconds(2.5f);
-        lastAttackTime = Time.time;
-        currentStatus = UnitStatus.Wait;
-    }
-
-
-    private IEnumerator DealerSkillTimer()
-    {
-
-        unitSkill.ExecuteSkill();
-        yield return new WaitForSeconds(2f);
-        currentStatus = UnitStatus.Wait;
-    }
-    private IEnumerator TankerSkillTimer()
-    {
-        unitSkill.GetTarget();
-        unitSkill.ExecuteSkill();
-        yield return new WaitForSeconds(2.0f);
-        currentStatus = UnitStatus.Wait;
-    }
-
-    private float skillEndTime;
-
-    public void SetBarrier(float time, BigNumber amount)
-    {
-        skillEndTime = Time.time + time;
-        barrier = amount;
-
+        GetComponent<DestructedDestroyEvent>().OnDestroyed += (_) => SetStatus(Status.Dead);
     }
 
     private void Update()
     {
-        if (HasBarrier)
+        if (UnitStatus == Status.Dead)
         {
-            if (Time.time > skillEndTime)
+            return;
+        }
+
+        if (StageManager.IngameStatus == IngameStatus.Mine)
+        {
+            if (HasTarget)
             {
-                barrier = 0;
+                var targetDisplacement = target.position - transform.position;
+                targetDisplacement.y = 0f;
+                TargetDistance = Vector3.Magnitude(targetDisplacement);
+                if (TargetDistance > unitStats.range)
+                {
+                    HasTarget = false;
+                    target.GetComponent<DestructedDestroyEvent>().OnDestroyed -= OnTargetDie;
+                    TargetDistance = float.MaxValue;
+                }
+            }
+
+            if (!HasTarget && StageManager.StageMonsterManager.MonsterCount > 0)
+            {
+                var monster = StageManager.StageMonsterManager.GetMonster(transform.position, unitStats.range);
+                if (monster is not null)
+                {
+                    HasTarget = true;
+                    target = monster.transform;
+                    var targetDisplacement = target.position - transform.position;
+                    targetDisplacement.y = 0f;
+                    TargetDistance = Vector3.Magnitude(targetDisplacement);
+                    target.GetComponent<DestructedDestroyEvent>().OnDestroyed += OnTargetDie;
+                }
+            }
+
+            if (HasTarget)
+            {
+                var direction = target.position - transform.position;
+                direction.y = 0f;
+                direction.Normalize();
+                direction = Vector3.Lerp(transform.forward, direction, Time.deltaTime * unitStats.moveSpeed).normalized;
+                transform.forward = direction;
+            }
+        }
+        else
+        {
+            if (HasTarget)
+            {
+                TargetDistance = target.position.z - transform.position.z;
+            }
+            else if (StageManager.StageMonsterManager.MonsterCount > 0)
+            {
+                HasTarget = true;
+                var monster = StageManager.StageMonsterManager.GetMonsters(1)[0];
+                target = monster;
+                TargetDistance = target.position.z - transform.position.z;
+                target.GetComponent<DestructedDestroyEvent>().OnDestroyed += OnTargetDie;
+            }
+        }
+        if (Variables.isAutoSkillMode)
+        {
+            switch (UnitTypes)
+            {
+                case UnitTypes.Dealer:
+                    if (HasTarget && IsTargetInRange)
+                    {
+                        EnqueueSkill();
+                    }
+                    break;
+                case UnitTypes.Healer:
+                    bool needHeal = StageManager.UnitPartyManager.NeedHealUnit();
+                    if (needHeal)
+                    {
+                        EnqueueSkill();
+                    }
+                    break;
             }
         }
 
-        GetTargetPosition();
-        behaviorTree.Update();
+        UpdateStatus();
+    }
 
-        IsUnitHit = false;
-        if (Input.GetKeyDown(KeyCode.M))
+    public void EnqueueSkill()
+    {
+        if (Time.time > Skill.CoolTime + lastSkillTime)
         {
-            IsUnitHit = true;
+            isSkillInQueue = true;
+        }
+    }
+
+    public void SetData(SoldierTable.Data data)
+    {
+        unitStats.SetData(data, data.UnitType);
+
+        AnimationControl.SetSpeed(AnimationControl.AnimationClipID.Attack, 1f / UnitCombatPowerCalculator.statsDictionary[data.UnitType].coolDown);
+        if (data.UnitType == UnitTypes.Healer)
+        {
+            AnimationControl.SetSpeed(AnimationControl.AnimationClipID.Idle, 1f / UnitCombatPowerCalculator.statsDictionary[data.UnitType].coolDown);
+        }
+        else
+        {
+            AnimationControl.SetSpeed(AnimationControl.AnimationClipID.Skill, 1f / UnitCombatPowerCalculator.statsDictionary[data.UnitType].coolDown);
         }
 
+        UnitTypes = data.UnitType;
+        Grade = data.Grade;
+        colorSetter.SetColor(Grade, UnitTypes);
+        switch (UnitTypes)
+        {
+            case UnitTypes.Tanker:
+                Skill = new UnitTankerSkill();
+                Skill.InitSkill(this);
+                break;
+            case UnitTypes.Dealer:
+                Skill = new UnitDealerSkill();
+                Skill.InitSkill(this);
+                break;
+            case UnitTypes.Healer:
+                Skill = new UnitHealerSkill();
+                Skill.InitSkill(this);
+                break;
+        }
+        StageManager.StageUiManager.UnitUiManager.SetUnitHpBar(UnitTypes, unitStats);
+
+    }
+
+    private void OnTargetDie(DestructedDestroyEvent sender)
+    {
+        sender.OnDestroyed -= OnTargetDie;
+        HasTarget = false;
+        target = null;
+    }
+
+    private void OnSkillEnd()
+    {
+        if (UnitStatus == Status.SkillUsing)
+        {
+            lastSkillTime = Time.time;
+        }
+        SetStatus(Status.Wait);
+    }
+
+    private void ExecuteSkill()
+    {
+        if (UnitStatus == Status.SkillUsing)
+        {
+            skillExecuted = true;
+            Skill.ExecuteSkill();
+            SoundManager.Instance.PlaySFX(UnitTypes.ToString() + "SkillSFX");
+        }
+    }
+
+
+
+    private void OnAttackEnd()
+    {
+        if ((!HasTarget || !IsTargetInRange)
+            && StageManager.IngameStatus != IngameStatus.Mine)
+        {
+            SetStatus(Status.Run);
+        }
+        else
+        {
+            SetStatus(Status.Wait);
+        }
+    }
+
+    private void OnAttack()
+    {
+        if (HasTarget)
+        {
+            unitStats.Execute(target.gameObject);
+        }
+    }
+
+    private void OnEnd()
+    {
+        Destroy(gameObject);
+    }
+
+    private void SetStatus(Status status)
+    {
+        var previous = UnitStatus;
+        UnitStatus = status;
+        switch (status)
+        {
+            case Status.Wait:
+                if ((!HasTarget || !IsTargetInRange)
+                    && StageManager.IngameStatus != IngameStatus.Mine)
+                {
+                    SetStatus(Status.Run);
+                    return;
+                }
+                AnimationControl?.Play(AnimationControl.AnimationClipID.BattleIdle);
+                break;
+            case Status.Attacking:
+                lastAttackTime = Time.time;
+                if (UnitTypes == UnitTypes.Tanker)
+                {
+                    ((AnimatorAnimationControl)AnimationControl).NextWeaponIndex();
+                }
+                AnimationControl?.Play(AnimationControl.AnimationClipID.Attack);
+                break;
+            case Status.SkillUsing:
+                lastSkillTime = Time.time;
+                skillExecuted = false;
+                if (UnitTypes == UnitTypes.Healer)
+                {
+                    AnimationControl?.Play(AnimationControl.AnimationClipID.Idle);
+                }
+                else
+                {
+                    AnimationControl?.Play(AnimationControl.AnimationClipID.Skill);
+                }
+                break;
+            case Status.Dead:
+                AnimationControl?.Play(AnimationControl.AnimationClipID.Die);
+                break;
+            case Status.Run:
+                AnimationControl?.Play(AnimationControl.AnimationClipID.Run);
+                break;
+        }
+    }
+
+    private void UpdateStatus()
+    {
+        switch (UnitStatus)
+        {
+            case Status.Wait:
+                if ((!HasTarget || !IsTargetInRange)
+                    && StageManager.IngameStatus != IngameStatus.Mine)
+                {
+                    SetStatus(Status.Run);
+                    return;
+                }
+                if (isSkillInQueue)
+                {
+                    isSkillInQueue = false;
+                    SetStatus(Status.SkillUsing);
+                    return;
+                }
+                if (HasTarget && Time.time > lastAttackTime + unitStats.coolDown)
+                {
+                    SetStatus(Status.Attacking);
+                }
+                break;
+            case Status.Run:
+                if (HasTarget && IsTargetInRange)
+                {
+                    SetStatus(Status.Wait);
+                    return;
+                }
+                if (isSkillInQueue)
+                {
+                    isSkillInQueue = false;
+                    SetStatus(Status.SkillUsing);
+                    return;
+                }
+                transform.position += Vector3.forward * Time.deltaTime * unitStats.moveSpeed;
+                break;
+        }
+    }
+
+    public void Release()
+    {
+        ObjectPool.Release(gameObject);
+    }
+
+    public void ResetStatus()
+    {
+        HasTarget = false;
+        target = null;
+        if (UnitStatus == Status.SkillUsing)
+        {
+            if (!skillExecuted && UnitTypes != UnitTypes.Dealer)
+            {
+                Skill.ExecuteSkill();
+                SoundManager.Instance.PlaySFX(UnitTypes.ToString() + "SkillSFX");
+            }
+            lastSkillTime = Time.time;
+        }
+        SetStatus(Status.Wait);
     }
 }

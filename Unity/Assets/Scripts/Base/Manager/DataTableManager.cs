@@ -74,6 +74,10 @@ public static class DataTableManager
         skillUpgradeTable.Load(DataTableIds.skillUpgradeTable);
         tables.Add(DataTableIds.skillUpgradeTable, skillUpgradeTable);
 
+        var buffTable = new BuffTable();
+        buffTable.Load(DataTableIds.buffTable);
+        tables.Add(DataTableIds.buffTable, buffTable);
+
 
         var monsterTable = new MonsterTable();
         monsterTable.Load(DataTableIds.monsterTable);
@@ -106,21 +110,79 @@ public static class DataTableManager
         itemTable.Load(DataTableIds.itemTable);
         tables.Add(DataTableIds.itemTable, itemTable);
 
+        var effectItemTable = new EffectItemTable();
+        effectItemTable.Load(DataTableIds.effectItemTable);
+        tables.Add(DataTableIds.effectItemTable, effectItemTable);
+
         var shopTable = new ShopTable();
         shopTable.Load(DataTableIds.shopTable);
         tables.Add(DataTableIds.shopTable, shopTable);
 
 
-        
+
         var defaultDataTable = new DefaultDataTable();
         defaultDataTable.Load(DataTableIds.defaultDataTable);
         tables.Add(DataTableIds.defaultDataTable, defaultDataTable);
+
+        var addressTable = new AddressTable();
+        addressTable.Load(DataTableIds.addressTable);
+        tables.Add(DataTableIds.addressTable, addressTable);
 
 
 
         var guideQuestTable = new GuideQuestTable();
         guideQuestTable.Load(DataTableIds.guideQuestTable);
         tables.Add(DataTableIds.guideQuestTable, guideQuestTable);
+
+
+        var robotTable = new RobotTable();
+        robotTable.Load(DataTableIds.robotTable);
+        tables.Add(DataTableIds.robotTable, robotTable);
+
+        var robotMergeTable = new RobotMergeTable();
+        robotMergeTable.Load(DataTableIds.robotMergeTable);
+        tables.Add(DataTableIds.robotMergeTable, robotMergeTable);
+
+
+        var buildingTable = new BuildingTable();
+        buildingTable.Load(DataTableIds.buildingTable);
+        tables.Add(DataTableIds.buildingTable, buildingTable);
+
+
+        var planetTable = new PlanetTable();
+        planetTable.Load(DataTableIds.planetTable);
+        tables.Add(DataTableIds.planetTable, planetTable);
+
+        var miningBattleTable = new MiningBattleTable();
+        miningBattleTable.Load(DataTableIds.miningBattleTable);
+        tables.Add(DataTableIds.miningBattleTable, miningBattleTable);
+
+        var miningBattleSpawnTable = new MiningBattleSpawnTable();
+        miningBattleSpawnTable.Load(DataTableIds.miningBattleSpawnTable);
+        tables.Add(DataTableIds.miningBattleSpawnTable, miningBattleSpawnTable);
+
+
+        var damageDungeonRewardTable = new DamageDungeonRewardTable();
+        damageDungeonRewardTable.Load(DataTableIds.damageDungeonRewardTable);
+        tables.Add(DataTableIds.damageDungeonRewardTable, damageDungeonRewardTable);
+
+
+        var attendanceTable = new AttendanceTable();
+        attendanceTable.Load(DataTableIds.attendanceTable);
+        tables.Add(DataTableIds.attendanceTable, attendanceTable);
+
+        var attendanceRewardTable = new AttendanceRewardTable();
+        attendanceRewardTable.Load(DataTableIds.attendanceRewardTable);
+        tables.Add(DataTableIds.attendanceRewardTable, attendanceRewardTable);
+
+
+        var tutorialTable = new TutorialTable();
+        tutorialTable.Load(DataTableIds.tutorialTable);
+        tables.Add(DataTableIds.tutorialTable, tutorialTable);
+
+        var contentsOpenTable = new ContentsOpenTable();
+        contentsOpenTable.Load(DataTableIds.contentsOpenTable);
+        tables.Add(DataTableIds.contentsOpenTable, contentsOpenTable);
     }
 
 
@@ -132,8 +194,8 @@ public static class DataTableManager
             Debug.Assert(isContainsKey, "Table Not Exists");
             return null;
         }
-         return tables[tableId] as T;
-     }
+        return tables[tableId] as T;
+    }
 
     public static StringTable StringTable
         => GetTable<StringTable>(DataTableIds.stringTables[(int)Variables.currentLanguage]);
@@ -197,4 +259,46 @@ public static class DataTableManager
 
     public static GuideQuestTable GuideQuestTable
         => GetTable<GuideQuestTable>(DataTableIds.guideQuestTable);
+
+    public static RobotTable RobotTable
+        => GetTable<RobotTable>(DataTableIds.robotTable);
+
+    public static RobotMergeTable RobotMergeTable
+        => GetTable<RobotMergeTable>(DataTableIds.robotMergeTable);
+
+    public static BuildingTable BuildingTable
+        => GetTable<BuildingTable>(DataTableIds.buildingTable);
+
+    public static PlanetTable PlanetTable
+        => GetTable<PlanetTable>(DataTableIds.planetTable);
+
+    public static AddressTable AddressTable
+        => GetTable<AddressTable>(DataTableIds.addressTable);
+
+    public static BuffTable BuffTable
+        => GetTable<BuffTable>(DataTableIds.buffTable);
+
+    public static DamageDungeonRewardTable DamageDungeonRewardTable
+        => GetTable<DamageDungeonRewardTable>(DataTableIds.damageDungeonRewardTable);
+
+    public static AttendanceTable AttendanceTable
+        => GetTable<AttendanceTable>(DataTableIds.attendanceTable);
+
+    public static AttendanceRewardTable AttendanceRewardTable
+        => GetTable<AttendanceRewardTable>(DataTableIds.attendanceRewardTable);
+
+    public static MiningBattleTable MiningBattleTable
+        => GetTable<MiningBattleTable>(DataTableIds.miningBattleTable);
+
+    public static MiningBattleSpawnTable MiningBattleSpawnTable
+        => GetTable<MiningBattleSpawnTable>(DataTableIds.miningBattleSpawnTable);
+
+    public static TutorialTable TutorialTable
+        => GetTable<TutorialTable>(DataTableIds.tutorialTable);
+
+    public static EffectItemTable EffectItemTable
+        => GetTable<EffectItemTable>(DataTableIds.effectItemTable);
+
+    public static ContentsOpenTable ContentsOpenTable
+        => GetTable<ContentsOpenTable>(DataTableIds.contentsOpenTable);
 }

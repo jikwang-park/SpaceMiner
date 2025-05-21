@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -5,48 +6,76 @@ using UnityEngine.SceneManagement;
 
 public class DungeonStageStatusMachine : StageStatusMachine
 {
+    protected enum Status
+    {
+        Play,
+        Clear,
+        Timeout,
+        Defeat,
+    }
+
     protected DungeonTable.Data dungeonData;
 
     protected int currentType;
     protected int currentStage;
     protected int currentWave;
 
-    protected float spawnDistance = 10f;
-
     protected WaveTable.Data waveData;
 
-    protected bool cleared = false;
+    protected DungeonStageStatusMachineData stageMachineData;
+
+    private Status status;
+
+    protected float stepTimer;
+
+    protected float remainingTime;
+
+    protected event System.Action onStageEnd;
+
+    private MonsterStats bossStats;
 
     public DungeonStageStatusMachine(StageManager stageManager) : base(stageManager)
     {
+        onStageEnd += stageManager.StageEnd;
+    }
 
+    public override void SetStageData(StageStatusMachineData stageMachineData)
+    {
+        this.stageMachineData = (DungeonStageStatusMachineData)stageMachineData;
     }
 
     public override void Start()
     {
-        InitStage();
+        SetStageText();
+        SetDungeonData();
         InstantiateBackground();
+        UnitSpawn();
+        if (dungeonData.KeyPoint == 0)
+        {
+            ItemManager.ConsumeItem(dungeonData.NeedKeyItemID, dungeonData.NeedKeyItemCount);
+        }
 
-        stageManager.UnitPartyManager.UnitSpawn();
-        stageManager.CameraManager.ResetCameraPosition();
-        stageManager.StartCoroutine(CoSpawnNextWave());
+        stageManager.CameraManager.SetCameraOffset();
+        NextWave(true);
         stageManager.StageMonsterManager.OnMonsterCleared += OnMonsterCleared;
+        SoundManager.Instance.PlayBGM("DungeonBGM");
     }
 
     public override void Update()
     {
-        float remainTime = stageEndTime - Time.time;
+        float currentTime = Time.time;
 
-        if (remainTime <= 0f)
+        switch (status)
         {
-            remainTime = 0f;
-            if (!cleared)
-            {
-                OnTimeOver();
-            }
+            case Status.Play:
+                UpdateTimer(currentTime);
+                
+                if (dungeonData.Type == 2)
+                {
+                    stageManager.StageUiManager.IngameUIManager.bossDamageText.text = (-bossStats.Hp).ToString();
+                }
+                break;
         }
-
-        stageManager.StageUiManager.IngameUIManager.SetTimer(remainTime);
     }
 
     public override void SetActive(bool isActive)
@@ -58,47 +87,75 @@ public class DungeonStageStatusMachine : StageStatusMachine
         }
         else
         {
+            Time.timeScale = 1f;
             stageManager.ReleaseBackground();
-            stageManager.StopAllCoroutines();
 
             stageManager.StageMonsterManager.OnMonsterCleared -= OnMonsterCleared;
             stageManager.StageMonsterManager.StopMonster();
             stageManager.UnitPartyManager.UnitDespawn();
             stageManager.StageMonsterManager.ClearMonster();
-            stageManager.ObjectPoolManager.Clear(dungeonData.PrefabID);
+
+            stageManager.StageUiManager.IngameUIManager.bossDamageGameObject.SetActive(false);
+
+            var prefabID = DataTableManager.AddressTable.GetData(dungeonData.PrefabID);
         }
     }
 
-    protected IEnumerator CoSpawnNextWave(float delay = 0.5f)
+    protected void UpdateTimer(float currentTime)
+    {
+        remainingTime = stageEndTime - currentTime;
+
+        if (remainingTime <= 0f)
+        {
+            remainingTime = 0f;
+            OnStageEnd(Status.Timeout);
+        }
+        if (stageManager.UnitPartyManager.UnitCount == 0)
+        {
+            OnStageEnd(Status.Defeat);
+        }
+
+        stageManager.StageUiManager.IngameUIManager.SetTimer(remainingTime);
+    }
+
+    protected void NextWave(bool isFirstWave)
     {
         stageManager.StageUiManager.IngameUIManager.SetWaveText(currentWave);
-        yield return new WaitForSeconds(delay);
 
-        var corpsData = DataTableManager.CorpsTable.GetData(waveData.WaveCorpsIDs[currentWave - 1]);
+        status = Status.Play;
+
+        var corpsData = DataTableManager.CorpsTable.GetData(waveData.CorpsIDs[currentWave - 1]);
 
         if (corpsData is null)
         {
             Exit();
-            yield break;
         }
 
         Transform unit = stageManager.UnitPartyManager.GetFirstLineUnitTransform();
         if (unit != null)
         {
-            stageManager.StageMonsterManager.Spawn(unit.position + Vector3.forward * spawnDistance, corpsData);
+            stageManager.StageMonsterManager.Spawn(unit.position + Vector3.forward * waveData.RespawnDistance, corpsData);
         }
         else
         {
             stageManager.StageMonsterManager.Spawn(Vector3.zero, corpsData);
         }
 
-        stageManager.StageUiManager.IngameUIManager.SetWaveText(currentWave);
+        if (isFirstWave && dungeonData.Type == 2)
+        {
+            stageManager.StageUiManager.IngameUIManager.waveGameObject.SetActive(false);
+            stageManager.StageUiManager.IngameUIManager.bossDamageGameObject.SetActive(true);
+            var monsterTransform = stageManager.StageMonsterManager.GetMonsters(1);
+            bossStats = monsterTransform[0].GetComponent<MonsterStats>();
+        }
+
         ++currentWave;
     }
 
     protected void InstantiateBackground()
     {
-        var background = stageManager.ObjectPoolManager.Get(dungeonData.PrefabID);
+        var prefabID = DataTableManager.AddressTable.GetData(dungeonData.PrefabID);
+        var background = stageManager.ObjectPoolManager.Get(prefabID);
         background.transform.parent = null;
         background.transform.position = Vector3.back * 30f;
         background.transform.rotation = Quaternion.identity;
@@ -106,66 +163,174 @@ public class DungeonStageStatusMachine : StageStatusMachine
 
     public override void Exit()
     {
-        stageManager.SetStatus(IngameStatus.Planet);
-    }
+        if (dungeonData.Type == 2 && remainingTime > 0f)
+        {
+            remainingTime = 0f;
+            OnStageEnd(Status.Timeout);
+            return;
+        }
 
-    protected void OnTimeOver()
-    {
-        stageManager.StageUiManager.IngameUIManager.OpenStageEndWindow("Fail");
+        stageManager.SetStatus(IngameStatus.Planet);
     }
 
     protected void OnMonsterCleared()
     {
-        if (currentWave > waveData.WaveCorpsIDs.Length)
+        if (currentWave > waveData.CorpsIDs.Length)
         {
-            cleared = true;
-            OnStageClear();
+            OnStageEnd(Status.Clear);
             return;
         }
 
-        stageManager.StartCoroutine(CoSpawnNextWave());
+        NextWave(false);
     }
 
-    protected void OnStageClear()
+    protected void OnStageEnd(Status status)
     {
-        if (SaveLoadManager.Data.stageSaveData.highestDungeon[currentType] == currentStage
-            && DataTableManager.DungeonTable.CountOfStage(currentType) > currentStage)
-        {
-            ++SaveLoadManager.Data.stageSaveData.highestDungeon[currentType];
-        }
-        ItemManager.AddItem(dungeonData.ItemID, dungeonData.ClearReward);
-        ItemManager.ConsumeItem(dungeonData.DungeonKeyID, dungeonData.KeyCount);
-        SaveLoadManager.SaveGame();
+        this.status = status;
+        Time.timeScale = 0f;
+        stageManager.StageUiManager.curtain.gameObject.SetActive(false);
+        onStageEnd?.Invoke();
 
-        stageManager.StageUiManager.IngameUIManager.OpenDungeonEndWindow("Clear", true);
+        switch (this.status)
+        {
+            case Status.Clear:
+                bool firstCleared = SaveLoadManager.Data.stageSaveData.clearedDungeon[currentType] < currentStage;
+
+                if (firstCleared)
+                {
+                    SaveLoadManager.Data.stageSaveData.clearedDungeon[currentType] = currentStage;
+
+                    if (DataTableManager.DungeonTable.CountOfStage(currentType) > currentStage)
+                    {
+                        SaveLoadManager.Data.stageSaveData.highestDungeon[currentType] = currentStage + 1;
+                    }
+                    else
+                    {
+                        SaveLoadManager.Data.stageSaveData.highestDungeon[currentType] = currentStage;
+                    }
+
+                    GuideQuestManager.QuestProgressChange(GuideQuestTable.MissionType.DungeonClear);
+                    ItemManager.AddItem(dungeonData.RewardItemID, dungeonData.FirstClearRewardItemCount);
+                }
+                else
+                {
+                    ItemManager.AddItem(dungeonData.RewardItemID, dungeonData.ClearRewardItemCount);
+                }
+                if (dungeonData.KeyPoint == 1)
+                {
+                    ItemManager.ConsumeItem(dungeonData.NeedKeyItemID, dungeonData.NeedKeyItemCount);
+                }
+                stageManager.StageUiManager.IngameUIManager.DungeonExitConfirmWindow.gameObject.SetActive(false);
+                stageManager.StageUiManager.IngameUIManager.DungeonEndWindow.Open(true, firstCleared);
+
+                break;
+            case Status.Timeout:
+                if (dungeonData.Type == 1)
+                {
+                    stageManager.StageUiManager.IngameUIManager.DungeonExitConfirmWindow.gameObject.SetActive(false);
+                    stageManager.StageUiManager.IngameUIManager.DungeonEndWindow.Open(false, false);
+                }
+                else if (dungeonData.Type == 2)
+                {
+                    Dungeon2End();
+                }
+                break;
+            case Status.Defeat:
+                stageManager.StageUiManager.IngameUIManager.DungeonExitConfirmWindow.gameObject.SetActive(false);
+                stageManager.StageUiManager.IngameUIManager.DungeonEndWindow.Open(false, false);
+                break;
+        }
+
+        SaveLoadManager.SaveGame();
     }
 
-    protected void InitStage()
+    protected void SetStageText()
     {
         currentType = Variables.currentDungeonType;
         currentStage = Variables.currentDungeonStage;
         currentWave = 1;
+    }
 
+    protected void SetDungeonData()
+    {
         dungeonData = DataTableManager.DungeonTable.GetData(currentType, currentStage);
-        waveData = DataTableManager.WaveTable.GetData(dungeonData.WaveCorpsID);
-
+        waveData = DataTableManager.WaveTable.GetData(dungeonData.WaveID);
         stageEndTime = Time.time + dungeonData.LimitTime;
+        if (dungeonData.Type == 2)
+        {
+            stageManager.StageUiManager.IngameUIManager.stageText.SetString(dungeonData.NameStringID);
+        }
+        else
+        {
+            stageManager.StageUiManager.IngameUIManager.SetDungeonStageText(dungeonData.Stage);
+        }
 
-        stageManager.StageUiManager.IngameUIManager.SetDungeonStageText(dungeonData.Type, dungeonData.Stage);
-        stageManager.StageUiManager.IngameUIManager.SetWaveText(currentWave);
+        if (waveData.CorpsIDs.Length > 1)
+        {
+            stageManager.StageUiManager.IngameUIManager.waveGameObject.SetActive(true);
+            stageManager.StageUiManager.IngameUIManager.SetWaveText(currentWave);
+        }
+        else
+        {
+            stageManager.StageUiManager.IngameUIManager.waveGameObject.SetActive(false);
+        }
+    }
+
+    protected void UnitSpawn()
+    {
+        stageManager.UnitPartyManager.UnitSpawn();
+        stageManager.UnitPartyManager.ResetUnitHealth();
+        stageManager.UnitPartyManager.ResetUnitBarrier();
+        stageManager.UnitPartyManager.ResetSkillCoolTime();
+        stageManager.UnitPartyManager.ResetStatus();
     }
 
     public override void Reset()
     {
-        stageManager.StopAllCoroutines();
+        stageManager.ReleaseDamageTexts();
+        SetStageText();
+        SetDungeonData();
+
+        Time.timeScale = 1f;
         stageManager.StageMonsterManager.ClearMonster();
 
-        InitStage();
         stageManager.ReleaseBackground();
         InstantiateBackground();
+        ParticleEffectManager.Instance.ClearAllEffects();
+        UnitSpawn();
 
-        stageManager.UnitPartyManager.UnitSpawn();
-        stageManager.CameraManager.ResetCameraPosition();
-        stageManager.StartCoroutine(CoSpawnNextWave());
+        stageManager.CameraManager.SetCameraOffset();
+        NextWave(true);
+        SoundManager.Instance.PlayBGM("DungeonBGM");
+    }
+
+    private void Dungeon2End()
+    {
+        var boss = stageManager.StageMonsterManager.GetMonsters(1)[0].GetComponent<MonsterStats>();
+        var damage = -boss.Hp;
+        if (SaveLoadManager.Data.stageSaveData.dungeonTwoDamage < damage)
+        {
+            SaveLoadManager.Data.stageSaveData.dungeonTwoDamage = damage;
+            FirebaseManager.Instance.UpdateDungeonDamageToLeaderBoard();
+        }
+        var rewardsData = DataTableManager.DamageDungeonRewardTable.GetRewards(damage);
+        if (rewardsData.Count > 0)
+        {
+            foreach (var reward in rewardsData)
+            {
+                ItemManager.AddItem(reward.Key, reward.Value);
+            }
+            if (SaveLoadManager.Data.stageSaveData.clearedDungeon[currentType] < currentStage)
+            {
+                SaveLoadManager.Data.stageSaveData.clearedDungeon[currentType] = currentStage;
+            }
+            stageManager.StageUiManager.IngameUIManager.DungeonExitConfirmWindow.gameObject.SetActive(false);
+            stageManager.StageUiManager.IngameUIManager.DamageDungeonEndWindow.Open(damage, rewardsData);
+        }
+        else
+        {
+            stageManager.StageUiManager.IngameUIManager.DungeonExitConfirmWindow.gameObject.SetActive(false);
+            stageManager.StageUiManager.IngameUIManager.DamageDungeonEndWindow.Open(damage);
+        }
     }
 }

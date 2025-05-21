@@ -13,12 +13,13 @@ public class DataTableIds
         //"StringTableEn",
         //"StringTableJp",
     };
-    
+
     public const string corpsTable = "CorpsTable";
     public const string stageTable = "StageTable";
     public const string waveTable = "WaveTable";
 
     public const string dungeonTable = "DungeonTable";
+    public const string damageDungeonRewardTable = "DamageDungeonRewardTable";
 
     public const string soldierTable = "SoldierTable";
     public const string tankerSkillTable = "TankerSkillTable";
@@ -26,6 +27,7 @@ public class DataTableIds
     public const string dealerSkillTable = "DealerSkillTable";
     public const string unitUpgradeTable = "UnitUpgradeTable";
     public const string skillUpgradeTable = "SkillUpgradeTable";
+    public const string buffTable = "BuffTable";
 
     public const string monsterTable = "MonsterTable";
     public const string monsterSkillTable = "MonsterSkillTable";
@@ -36,11 +38,29 @@ public class DataTableIds
     public const string gachaSoldierTable = "GachaSoldierTable";
 
     public const string itemTable = "ItemTable";
+    public const string effectItemTable = "EffectItemTable";
     public const string shopTable = "ShopTable";
 
     public const string defaultDataTable = "DefaultDataTable";
+    public const string addressTable = "AddressTable";
 
     public const string guideQuestTable = "GuideQuestTable";
+
+    public const string attendanceTable = "AttendanceTable";
+    public const string attendanceRewardTable = "AttendanceRewardTable";
+
+    public const string robotTable = "RobotTable";
+    public const string robotMergeTable = "RobotMergeTable";
+
+    public const string buildingTable = "BuildingTable";
+
+    public const string planetTable = "PlanetTable";
+    public const string miningBattleTable = "MiningBattleTable";
+    public const string miningBattleSpawnTable = "MiningBattleSpawnTable";
+
+    public const string tutorialTable = "TutorialTable";
+
+    public const string contentsOpenTable = "ContentsOpenTable";
 }
 
 public enum StageMode
@@ -63,10 +83,12 @@ public enum Currency
     Tungsten,
     Titanium,
     Spinel,
+    Metal
 }
 
 public enum Grade
 {
+    None,
     Normal = 1,
     Rare,
     Epic,
@@ -77,4 +99,94 @@ public enum IngameStatus
 {
     Planet,
     Dungeon,
+    Mine,
+    LevelDesign,
+}
+
+public enum TargetPriority
+{
+    /// <summary>
+    /// ÅÊÄ¿-µô·¯-Èú·¯
+    /// </summary>
+    FrontOrder = 1,
+    /// <summary>
+    /// Èú·¯-µô·¯-ÅÊÄ¿
+    /// </summary>
+    BackOrder = 2,
+}
+
+public enum SlotType
+{
+    Equip,
+    Inventory,
+}
+
+public enum UnitTypes
+{
+    Tanker = 1,
+    Dealer,
+    Healer,
+}
+
+public enum StatType
+{
+    Attack,
+    Defence,
+    MaxHP,
+    CriticalPossibility,
+    CriticalMultiplier,
+    AttackSpeed,
+    MoveSpeed,
+    AttackRange
+}
+
+public class Defines
+{
+    public const float MiningBattleResultWait = 5f;
+    public const int MiningBattleMaxCount = 5;
+
+    // ItemID
+    public const int DungeonKeyItemID = 5001;
+    public const int DungeonKey2ItemID = 5002;
+
+    // StringID
+    public const int PlanetStageFormatStringID = 169;
+    public const int WaveTextStringID = 147;
+    public const int StageDefaultStringID = 131;
+    public const int Dungeon1StringID = 203;
+    public const int DirectStringID = 60011;
+    public const int RestrictionStringID = 200;
+    public const int EmptyGuideQuest = 50020;
+
+    public const int RequirementsFailKey = 172;
+    public const int RequirementsFailPlanet = 173;
+    public const int RequirementsFailPower = 174;
+    public const int RequirementsFailMiningBattleCount = 200087;
+
+    public const int StageAscendModeStringID = 195;
+    public const int StageRepeatModeStringID = 196;
+
+    public const int PlanetStageClearStringID = 160;
+    public const int PlanetStageFailStringID = 197;
+    public const int StageFailStringID = 161;
+
+
+    public const int ConstructStringId = 78;
+    public const int UpgradeStringId = 79;
+    public const int MaxLevelStringId = 60010;
+}
+
+public enum RankingType
+{
+    CombatPower,
+    DungeonDamage,
+    Stage,
+}
+
+
+public enum MonsterType
+{
+    Normal,
+    Ranged,
+    Boss,
 }

@@ -8,10 +8,6 @@ using UnityEngine.UI;
 public class SoldierInteractableUI : MonoBehaviour
 {
     [SerializeField]
-    private Button attributeButton;
-    [SerializeField]
-    private Button MergeButton;
-    [SerializeField]
     private SoldierInfoImage currentSoldierInfo;
     [SerializeField]
     private SoldierInfoImage nextSoldierInfo;
@@ -22,6 +18,8 @@ public class SoldierInteractableUI : MonoBehaviour
     [SerializeField]
     private TextMeshProUGUI countText;
     [SerializeField]
+    private LocalizationText describeText;
+    [SerializeField]
     private Button minusButton;
     [SerializeField]
     private Button plusButton;
@@ -29,14 +27,25 @@ public class SoldierInteractableUI : MonoBehaviour
     private Button mergeButton;
     [SerializeField]
     private Button equipButton;
+    [SerializeField]
+    private Sprite canEquipSprite;
+    [SerializeField]
+    private Sprite cannotEquipSprite;
+
+    private Image equipButtonImage;
 
     private int requiredMergeCount = 0;
     private int currentElementCount = 0;
     private int nextElementCount = 0;
     private int count = 0;
     private int currentElementId;
-
+    private int nextElementId;
+    private UnitTypes currentType;
     public Action equipAction;
+    private void Awake()
+    {
+        equipButtonImage = equipButton.GetComponent<Image>();
+    }
     private void Start()
     {
         minusButton.onClick.AddListener(() => OnClickMinusButton());
@@ -48,9 +57,15 @@ public class SoldierInteractableUI : MonoBehaviour
     {
         var currentElementSprite = currentElement.GetComponent<Image>().sprite;
         var nextElementSprite = nextElement.GetComponent<Image>().sprite;
+        
+        currentElementId = currentElement.soldierId;
+        nextElementId = nextElement.soldierId;
 
-        currentSoldierInfo.Initialize(currentElement.Level.ToString(), currentElement.Count.ToString(), currentElementSprite);
-        nextSoldierInfo.Initialize(nextElement.Level.ToString(), nextElement.Count.ToString(), nextElementSprite);
+        var currentData = DataTableManager.SoldierTable.GetData(currentElementId);
+        var nextData = DataTableManager.SoldierTable.GetData(nextElementId);
+
+        currentSoldierInfo.Initialize(currentElement.Grade, currentElement.Level, "", currentElementSprite, currentData.SpriteID);
+        nextSoldierInfo.Initialize(nextElement.Grade, nextElement.Level, "", nextElementSprite, nextData.SpriteID);
 
         currentElementCount = currentElement.Count;
         nextElementCount = nextElement.Count;
@@ -61,8 +76,15 @@ public class SoldierInteractableUI : MonoBehaviour
 
         countText.text = count.ToString();
         requiredMergeCount = 5;
-        currentElementId = currentElement.soldierId;
+
+        currentType = currentData.UnitType;
+
+        int equipId = SaveLoadManager.Data.soldierInventorySaveData[currentType].equipElementID;
+
+        equipButtonImage.sprite = (!currentElement.IsLocked && currentElementId != equipId) ? canEquipSprite : cannotEquipSprite;
+
         UpdateButton();
+        UpdateCountText();
     }
 
     public void OnClickPlusButton()
@@ -113,6 +135,10 @@ public class SoldierInteractableUI : MonoBehaviour
             minusButton.interactable = true;
         }
 
+        if(currentElementId == nextElementId)
+        {
+            mergeButton.interactable = false;
+        }
     }
     private void UpdateCountText()
     {
@@ -127,22 +153,29 @@ public class SoldierInteractableUI : MonoBehaviour
             currentCountText.text = $"{currentElementCount}({-count * requiredMergeCount})";
             nextCountText.text = $"{nextElementCount}(+{count})";
         }
+        describeText.SetStringArguments((count * requiredMergeCount).ToString(), count.ToString());
     }
     public void OnClickMergeButton()
     {
-        InventoryManager.Merge(currentElementId, count);
-        currentElementCount -= count * requiredMergeCount;
-        nextElementCount += count;
-        count = 0;
+        if(currentElementId != nextElementId)
+        {
+            InventoryManager.Merge(currentElementId, count);
+            currentElementCount -= count * requiredMergeCount;
+            nextElementCount += count;
+            count = 0;
 
-        UpdateCountText();
-        UpdateButton();
-        currentSoldierInfo.SetCountText(currentCountText.text);
-        nextSoldierInfo.SetCountText(nextCountText.text);
+            UpdateCountText();
+            UpdateButton();
+        }
     }
 
     public void OnClickEquipButton()
     {
-        equipAction?.Invoke();
+        var canEquip = !InventoryManager.GetSoldierData(currentType, currentElementId).isLocked;
+        if(canEquip)
+        {
+            equipAction?.Invoke();
+            equipButtonImage.sprite = cannotEquipSprite;
+        }
     }
 }

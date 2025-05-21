@@ -5,9 +5,8 @@ using UnityEngine;
 using UnityEngine.UI;
 
 public class UnitSkillButtonManager : MonoBehaviour
+
 {
-
-
     private List<Unit> unitList = new List<Unit>();
     [SerializeField]
     private UnitSkillButtonUi tankerSkillButtonUi;
@@ -16,40 +15,54 @@ public class UnitSkillButtonManager : MonoBehaviour
     [SerializeField]
     private UnitSkillButtonUi healerSkillButton;
 
-    private const string Auto = "자동";
-    private const string Manual = "수동";
- 
+    [SerializeField]
+    public Button healerHpOptionButton;
+    [SerializeField]
+    public Slider healthSlider;
+    [SerializeField]
+    private GameObject sliderGameObject;
+
+    public bool IsClicked = false;
+
     [SerializeField]
     private Toggle autoToggle;
     [SerializeField]
-    private TextMeshProUGUI text;
-
+    private TextMeshProUGUI healthSliderPercentageText;
+    [SerializeField]
+    public float currentValue { get; private set; }
 
     private StageManager stageManager;
 
+
     private void Awake()
     {
-
+        sliderGameObject.gameObject.SetActive(false);
+        healerHpOptionButton.onClick.AddListener(() => OnClickHealthSliderButton());
+        healthSlider.onValueChanged.AddListener(OnHealthSilderholdChanaged);
+        healthSlider.value = SaveLoadManager.Data.healerSkillSliderValue;
+        OnHealthSilderholdChanaged(healthSlider.value);
+        stageManager = GameObject.FindGameObjectWithTag("GameController").GetComponent<StageManager>();
+        stageManager.UnitPartyManager.OnUnitCreated += Init;
+        stageManager.UnitPartyManager.OnUnitUpdated += SetSkillImage;
     }
 
-
-
-    private void Start()
+  
+    private void OnHealthSilderholdChanaged(float value)
     {
-        stageManager = GameObject.FindGameObjectWithTag("GameController").GetComponent<StageManager>();
-        //skillButtons = new Dictionary<UnitTypes, UnitSkillButtonUi>();
-        //for (int i = (int)UnitTypes.Tanker; i <= (int)UnitTypes.Healer; ++i)
-        //{
-        //    var skillButton = Instantiate(unitSkillButtonUi);
-        //    var unit = stageManager.UnitPartyManager.GetUnit((UnitTypes)i).GetComponent<Unit>();
-        //    skillButton.SetUnit(unit);
-        //    skillButtons[(UnitTypes)i] = skillButton;
-        //}
-        
+        currentValue = value * 100;
+        Variables.healerSkillHPRatio = value;
+        if (healthSliderPercentageText != null)
+        {
+            healthSliderPercentageText.text = $"{currentValue:F0}%";
+        }
+        SaveLoadManager.Data.healerSkillSliderValue = value;
+    }
+    private void Init()
+    {
         var tankerUnit = stageManager.UnitPartyManager.GetUnit(UnitTypes.Tanker).gameObject.GetComponent<Unit>();
         tankerSkillButtonUi.SetUnit(tankerUnit);
         var dealerUnit = stageManager.UnitPartyManager.GetUnit(UnitTypes.Dealer).gameObject.GetComponent<Unit>();
-        dealerSkillButton.SetUnit(dealerUnit);
+        dealerSkillButton.SetUnit(dealerUnit);  
         var healerUnit = stageManager.UnitPartyManager.GetUnit(UnitTypes.Healer).gameObject.GetComponent<Unit>();
         healerSkillButton.SetUnit(healerUnit);
 
@@ -57,37 +70,39 @@ public class UnitSkillButtonManager : MonoBehaviour
         unitList.Add(dealerUnit);
         unitList.Add(healerUnit);
 
-        foreach(var unit in unitList)
+        autoToggle.isOn = Variables.isAutoSkillMode;
+        
+    }
+
+    private void SetSkillImage(UnitTypes type, Grade grade)
+    {
+        switch (type)
         {
-            if(unit.isAutoSkillMode)
-            {
-                autoToggle.isOn = true;
-            }
+            case UnitTypes.Tanker:
+                tankerSkillButtonUi.SetSkillImage(type, grade);
+                break;
+            case UnitTypes.Dealer:
+                dealerSkillButton.SetSkillImage(type, grade);
+                break;
+            case UnitTypes.Healer:
+                healerSkillButton.SetSkillImage(type, grade);
+                break;
         }
+    }
+
+
+    private void OnClickHealthSliderButton()
+    {
+        IsClicked = !IsClicked;
+        sliderGameObject.gameObject.SetActive(IsClicked);
     }
     private void Update()
     {
         OnAutoToggleChanaged(autoToggle.isOn);
     }
+
     public void OnAutoToggleChanaged(bool isOn)
     {
-        if(isOn)
-        {
-            text.text = Auto;
-            foreach(var unit in unitList)
-            {
-                unit.isAutoSkillMode = true;
-            }
-        }
-        else
-        {
-            text.text = Manual;
-            foreach(var unit in unitList)
-            {
-                unit.isAutoSkillMode = false;
-            }
-        }
+        Variables.isAutoSkillMode = isOn;
     }
-
-
 }

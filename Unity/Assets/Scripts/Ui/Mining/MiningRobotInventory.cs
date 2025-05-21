@@ -14,7 +14,6 @@ public class MiningRobotInventory : MonoBehaviour
     private string prefabFormat = "Prefabs/UI/MiningRobotSlot";
     private void Awake()
     {
-        UpdateGridCellSize();
         Initialize();
     }
     private void Initialize()
@@ -45,24 +44,6 @@ public class MiningRobotInventory : MonoBehaviour
             };
         }
     }
-    public void UpdateGridCellSize()
-    {
-        GridLayoutGroup gridLayout = contentParent.GetComponent<GridLayoutGroup>();
-        if (gridLayout == null)
-        {
-            return;
-        }
-        RectTransform rectTransform = contentParent.GetComponent<RectTransform>();
-        float totalWidth = rectTransform.rect.width;
-        int columns = gridLayout.constraintCount;
-        int leftPadding = gridLayout.padding.left;
-        int rightPadding = gridLayout.padding.right;
-        float spacingX = gridLayout.spacing.x;
-
-        float availableWidth = totalWidth - leftPadding - rightPadding - spacingX * (columns - 1);
-        float cellSize = availableWidth / columns;
-        gridLayout.cellSize = new Vector2(cellSize, cellSize);
-    }
     private void OnEnable()
     {
         MiningRobotInventoryManager.onChangedInventory += DoInventoryChanged;
@@ -76,7 +57,7 @@ public class MiningRobotInventory : MonoBehaviour
     {
         miningRobotInventorySlots[index].Initialize(data);
     }
-    private void UpdateUI()
+    public void UpdateUI()
     {
         var datas = MiningRobotInventoryManager.Inventory.slots;
         for (int i = 0; i < datas.Count; i++)

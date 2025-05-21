@@ -1,17 +1,18 @@
 using System;
 using System.Collections;
 using UnityEngine;
+using UnityEngine.AI;
 using UnityEngine.Pool;
 
 public class MonsterController : MonoBehaviour, IObjectPoolGameObject
 {
-    private readonly int hashAttack = Animator.StringToHash("Attack");
-
     public enum Status
     {
         Wait,
         Attacking,
         SkillUsing,
+        Dead,
+        Run,
     }
 
     public Status status;
@@ -20,8 +21,11 @@ public class MonsterController : MonoBehaviour, IObjectPoolGameObject
     public MonsterStats Stats { get; private set; }
 
     [SerializeField]
-    private Animation animations;
+    private float attackTime = 0.4f;
+
     private BehaviorTree<MonsterController> behaviorTree;
+
+    public AnimationControl AnimationController { get; private set; }
 
     public StageManager StageManager { get; private set; }
 
@@ -31,7 +35,7 @@ public class MonsterController : MonoBehaviour, IObjectPoolGameObject
     public float TargetDistance { get; private set; }
     public Transform Target { get; private set; }
 
-    public bool TargetAcquired = false;
+    public bool hasTarget = false;
     public MonsterTable.Data MonsterData { get; private set; }
     public MonsterRewardTable.Data RewardData { get; private set; }
 
@@ -41,15 +45,27 @@ public class MonsterController : MonoBehaviour, IObjectPoolGameObject
 
     public int currentLine = -1;
 
+    public NavMeshAgent NavMeshAgent { get; private set; }
+
     public float LastAttackTime { get; private set; }
 
     private bool isDrawRegion;
+
+    public MonsterType monsterType;
+
+    public bool IsTargetInRange
+    {
+        get
+        {
+            return Stats.range > TargetDistance;
+        }
+    }
 
     public bool CanAttack
     {
         get
         {
-            return Stats.range > TargetDistance && LastAttackTime + Stats.coolDown < Time.time;
+            return LastAttackTime + Stats.coolDown < Time.time;
         }
     }
 
@@ -57,45 +73,90 @@ public class MonsterController : MonoBehaviour, IObjectPoolGameObject
     {
         get
         {
-            return isFrontMonster(currentLine) || -(findFrontMonster(currentLine).position.z - transform.position.z) > minDistanceInMonster;
+            if (StageManager.IngameStatus == IngameStatus.Mine)
+            {
+                return true;
+            }
+            return (isFrontMonster(currentLine) || -(findFrontMonster(currentLine).position.z - transform.position.z) > minDistanceInMonster);
         }
     }
 
     public IObjectPool<GameObject> ObjectPool { get; set; }
 
+
     private void Awake()
     {
         Stats = GetComponent<MonsterStats>();
+        AnimationController = GetComponent<AnimationControl>();
         status = Status.Wait;
+        NavMeshAgent = GetComponent<NavMeshAgent>();
+    }
+
+    private void Start()
+    {
+        AnimationController.AddEvent(AnimationControl.AnimationClipID.Attack, attackTime, OnAttack);
+        AnimationController.AddEvent(AnimationControl.AnimationClipID.Attack, 1f, OnAttackEnd);
     }
 
     private void OnEnable()
     {
         isDrawRegion = true;
+        hasTarget = false;
+        Target = null;
+        currentLine = -1;
         TargetDistance = float.PositiveInfinity;
+        GetComponent<DestructedDestroyEvent>().OnDestroyed += OnThisDie;
         StageManager = GameObject.FindGameObjectWithTag("GameController").GetComponent<StageManager>();
+        status = Status.Wait;
     }
 
     private void OnDisable()
     {
         isDrawRegion = false;
-        TargetAcquired = false;
-        currentLine = -1;
-        StageManager = null;
+        NavMeshAgent.enabled = false;
     }
 
     private void Update()
     {
-        if (!TargetAcquired && StageManager.UnitPartyManager.UnitCount > 0)
+        if (status == Status.Dead)
         {
-            Target = StageManager.UnitPartyManager.GetFirstLineUnitTransform();
-            Target.GetComponent<DestructedDestroyEvent>().OnDestroyed += OnTargetDie;
-            TargetAcquired = true;
+            return;
         }
 
-        if (TargetAcquired)
+        if (StageManager.IngameStatus != IngameStatus.Mine)
         {
-            TargetDistance = -(Target.position.z - transform.position.z);
+            if (StageManager.UnitPartyManager.UnitCount > 0)
+            {
+                var newTarget = StageManager.UnitPartyManager.GetFirstLineUnitTransform();
+                if (newTarget != Target)
+                {
+                    if (hasTarget && Target is not null)
+                    {
+                        Target.GetComponent<DestructedDestroyEvent>().OnDestroyed -= OnTargetDie;
+                    }
+                    newTarget.GetComponent<DestructedDestroyEvent>().OnDestroyed += OnTargetDie;
+                    Target = newTarget;
+                }
+                hasTarget = true;
+                TargetDistance = -(Target.position.z - transform.position.z);
+            }
+            else
+            {
+                hasTarget = false;
+                if (Target is not null)
+                {
+                    Target.GetComponent<DestructedDestroyEvent>().OnDestroyed -= OnTargetDie;
+                }
+                Target = null;
+                TargetDistance = float.PositiveInfinity;
+            }
+        }
+        else
+        {
+            var displacement = Target.position - transform.position;
+            displacement.y = 0f;
+
+            TargetDistance = Vector3.Magnitude(displacement);
         }
 
 #if UNITY_EDITOR
@@ -119,26 +180,31 @@ public class MonsterController : MonoBehaviour, IObjectPoolGameObject
 
         var rootSelector = new SelectorNode<MonsterController>(this);
 
-        if (MonsterData.MonsterSkill != 0)
+        if (MonsterData.MonsterSkillID != 0)
         {
             var skillSequence = new SquenceNode<MonsterController>(this);
-            skillSequence.AddChild(new IsMonsterSkillCooltimeCondition(this));
-            skillSequence.AddChild(new IsMonsterSkillTargetExistCondition(this));
+            skillSequence.AddChild(new IsSkillCooltimeMonsterCondition(this));
+            skillSequence.AddChild(new IsSkillTargetExistMonsterCondition(this));
             skillSequence.AddChild(new SkillMonsterAction(this));
             rootSelector.AddChild(skillSequence);
         }
 
         var attackSequence = new SquenceNode<MonsterController>(this);
+        attackSequence.AddChild(new IsTargetInRangeMonsterCondition(this));
         attackSequence.AddChild(new CanAttackMonsterCondition(this));
         attackSequence.AddChild(new AttackMonsterAction(this));
 
         var rushSequence = new SquenceNode<MonsterController>(this);
         rushSequence.AddChild(new IsUnitExistCondition(this));
+        var outcondition = new InverterNode<MonsterController>(this);
+        outcondition.SetChild(new IsTargetInRangeMonsterCondition(this));
+        rushSequence.AddChild(outcondition);
         rushSequence.AddChild(new CanMonsterMoveCondition(this));
         rushSequence.AddChild(new RushAction(this));
 
         rootSelector.AddChild(attackSequence);
         rootSelector.AddChild(rushSequence);
+        rootSelector.AddChild(new MonsterIdleAction(this));
 
         behaviorTree.SetRoot(rootSelector);
     }
@@ -147,36 +213,67 @@ public class MonsterController : MonoBehaviour, IObjectPoolGameObject
     {
         MonsterData = DataTableManager.MonsterTable.GetData(monsterId);
         Stats.SetData(MonsterData);
-        RewardData = DataTableManager.MonsterRewardTable.GetData(MonsterData.RewardID);
+        NavMeshAgent.speed = Stats.moveSpeed;
+        RewardData = DataTableManager.MonsterRewardTable.GetData(MonsterData.RewardTableID);
         InitBehaviourTree();
-        if (MonsterData.MonsterSkill != 0)
+        if (MonsterData.MonsterSkillID != 0)
         {
-            GetComponent<MonsterSkill>().SetSkill(MonsterData.MonsterSkill);
+            GetComponent<MonsterSkill>().SetSkill(MonsterData.MonsterSkillID, Stats);
         }
+    }
+
+    public void SetWeight(float[] weight)
+    {
+        Stats.maxHp *= weight[1];
+        Stats.Hp = Stats.maxHp;
+        Stats.damage *= weight[0];
     }
 
     public void AttackTarget()
     {
         status = Status.Attacking;
         LastAttackTime = Time.time;
-        StartCoroutine(AttackTimer());
+        AnimationController.Play(AnimationControl.AnimationClipID.Attack);
     }
 
-    private IEnumerator AttackTimer()
+    private void OnAttack()
     {
-        //TODO: 애니메이션 정의되거나 공격 정의 후 수정 필요
-        yield return new WaitForSeconds(0.25f);
-        if (Target != null)
+        if (status != Status.Attacking)
+        {
+            return;
+        }
+
+        if (Target is not null)
+        {
             Stats.Execute(Target.gameObject);
-        yield return new WaitForSeconds(0.25f);
+        }
+    }
+
+    private void OnAttackEnd()
+    {
+        if (status != Status.Attacking)
+        {
+            return;
+        }
+
+        AnimationController.Play(AnimationControl.AnimationClipID.BattleIdle);
         status = Status.Wait;
+    }
+
+    private void OnThisDie(DestructedDestroyEvent sender)
+    {
+        status = Status.Dead;
     }
 
     private void OnTargetDie(DestructedDestroyEvent sender)
     {
-        Target.GetComponent<DestructedDestroyEvent>().OnDestroyed -= OnTargetDie;
+        if (Target is not null)
+        {
+            Target.GetComponent<DestructedDestroyEvent>().OnDestroyed -= OnTargetDie;
+        }
         Target = null;
-        TargetAcquired = false;
+        TargetDistance = float.PositiveInfinity;
+        hasTarget = false;
     }
 
     void OnDrawGizmos()
@@ -188,8 +285,15 @@ public class MonsterController : MonoBehaviour, IObjectPoolGameObject
         }
     }
 
+    public void SetTarget(Transform target)
+    {
+        Target = target;
+    }
+
     public void Release()
     {
+        AnimationController.Stop();
+        StageManager.StageMonsterManager.RemoveFromMonsterSet(this);
         ObjectPool.Release(gameObject);
     }
 }

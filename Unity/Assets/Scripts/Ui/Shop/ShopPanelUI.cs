@@ -9,42 +9,54 @@ public class ShopPanelUI : MonoBehaviour
 {
     [SerializeField]
     private List<GameObject> shopPanels = new List<GameObject>();
-    private int currentIndex;
-    private void Awake()
+    [SerializeField]
+    private Toggle keyShopToggle;
+    [SerializeField]
+    private Toggle robotShopToggle;
+    [SerializeField]
+    private Toggle goldShopToggle;
+
+    private int currentIndex = -1;
+    private void Start()
     {
-        DisplayPanel((int)ShopTable.ShopType.DungeonKey);
+        keyShopToggle.isOn = true;
     }
+
     private void DisplayPanel(int index)
     {
         int newIndex = index - 1;
-        if (index <= 0 || index > shopPanels.Count)
+        if (newIndex < 0 || newIndex >= shopPanels.Count)
         {
             return;
         }
 
-        if (shopPanels[newIndex].activeSelf)
+        if (currentIndex == newIndex && shopPanels[currentIndex].activeSelf)
         {
             return;
         }
 
-        if (currentIndex < shopPanels.Count)
+        if (currentIndex >= 0 && currentIndex < shopPanels.Count)
         {
             shopPanels[currentIndex].SetActive(false);
         }
-        shopPanels[currentIndex].SetActive(false);
+
         currentIndex = newIndex;
         shopPanels[currentIndex].SetActive(true);
     }
-    public void OnClickOpenDungeonKeyShop()
+    public void OnProcessToggles()
     {
-        DisplayPanel((int)ShopTable.ShopType.DungeonKey);
-    }
-    public void OnClickOpenGoldShop()
-    {
-        DisplayPanel((int)ShopTable.ShopType.Gold);
-    }
-    public void OnClickOpenMiningRobotShop()
-    {
-        DisplayPanel((int)ShopTable.ShopType.MiningRobot);
+        if(keyShopToggle.isOn)
+        {
+            DisplayPanel((int)ShopTable.ShopType.DungeonKey);
+        }
+        else if(robotShopToggle.isOn)
+        {
+            DisplayPanel((int)ShopTable.ShopType.MiningRobot);
+        }
+        else if(goldShopToggle.isOn)
+        {
+            DisplayPanel((int)ShopTable.ShopType.Gold);
+        }
+
     }
 }

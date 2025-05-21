@@ -10,39 +10,61 @@ public class HealerSkill : UnitSkill
     protected override void Awake()
     {
         base.Awake();
-        Init();
         unit = GetComponent<Unit>();
+       
     }
-    public override void Init()
+
+    private void Start()
     {
-        var healerSkillData = DataTableManager.HealerSkillTable.GetData(1301); //250331 HKY 데이터형 변경
+         
+    }
+
+    public override void HealerInit(UnitTypes type, Grade grade)
+    {
+        currentType = type;
+        currentSkillGrade = grade;
+
+        var data = SaveLoadManager.Data.unitSkillUpgradeData.skillUpgradeId;
+
+        currentSkillId = data[currentType][currentSkillGrade];
+        var healerSkillData = DataTableManager.HealerSkillTable.GetData(currentSkillId); //250331 HKY 데이터형 변경
         if (healerSkillData != null)
         {
             coolTime = healerSkillData.CoolTime;
             healRatio = healerSkillData.HealRatio;
             buffId = healerSkillData.BuffID;
         }
+        GetTarget();
     }
+   
 
     public override void GetTarget()
     {
-        var tankerSkillData = DataTableManager.HealerSkillTable.GetData(1301); //250331 HKY 데이터형 변경
-        string soliderTarget = tankerSkillData.SoldierTarget;
+        var healerSkillData = DataTableManager.HealerSkillTable.GetData(currentSkillId); //250331 HKY 데이터형 변경
+        string soliderTarget = healerSkillData.SoldierTarget;
         string[] targetStrings = soliderTarget.Split("_");
         foreach (string target in targetStrings)
         {
             var targetUnit = stageManager.UnitPartyManager.GetCurrentTargetType(target);
+
             targetList.Add(targetUnit);
         }
     }
 
     public override void ExecuteSkill()
     {
-        foreach(var target in targetList)
+        base.ExecuteSkill();
+        foreach (var target in targetList)
         {
-            var amount = unit.unitStats.maxHp * healRatio;
-            unit.unitStats.Hp += amount;
+            var amount = target.unitStats.maxHp * healRatio;
+            target.unitStats.Hp += amount;
+            Debug.Log(amount);
         }
+    }
+
+    public override void Update()
+    {
+        base.Update();
     }
 
     public override void UpgradeUnitSkillStats(int id)

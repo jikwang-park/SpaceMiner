@@ -11,7 +11,7 @@ public class StageButton : MonoBehaviour, IObjectPoolGameObject
     public IObjectPool<GameObject> ObjectPool { get; set; }
 
     [SerializeField]
-    private TextMeshProUGUI text;
+    private LocalizationText text;
 
     private int planet;
     private int stage;
@@ -20,12 +20,9 @@ public class StageButton : MonoBehaviour, IObjectPoolGameObject
     public Button Button { get; private set; }
     private StageManager stageManager;
 
-    private StageSaveData stageLoadData;
-
     private void Awake()
     {
         Button = GetComponent<Button>();
-        stageLoadData = SaveLoadManager.Data.stageSaveData;
     }
 
     private void Start()
@@ -43,16 +40,16 @@ public class StageButton : MonoBehaviour, IObjectPoolGameObject
     {
         this.planet = planet;
         this.stage = stage;
-        text.text = $"{planet}-{stage}";
+        text.SetStringArguments(planet.ToString(),stage.ToString());
     }
 
     public void MoveStage()
     {
-        stageLoadData.currentPlanet = planet;
-        stageLoadData.currentStage = stage;
+        SaveLoadManager.Data.stageSaveData.currentPlanet = planet;
+        SaveLoadManager.Data.stageSaveData.currentStage = stage;
 
         stageManager.SetStatus(IngameStatus.Planet);
-        stageManager.StageUiManager.IngameUIManager.stageSelectWindow.HideStageWindow();
+        stageManager.StageUiManager.IngameUIManager.StageSelectWindow.gameObject.SetActive(false);
         stageManager.ResetStage();
 
         //SaveLoadManager.SaveGame();

@@ -7,20 +7,27 @@ using UnityEngine.UI;
 public class SoldierInfoImage : MonoBehaviour
 {
     [SerializeField]
-    private TextMeshProUGUI gradeText;
+    private LocalizationText gradeText;
+    [SerializeField]
+    private LocalizationText levelText;
     [SerializeField]
     private TextMeshProUGUI countText;
+    [SerializeField]
+    private AddressableImage icon;
     private Image image;
     void Awake()
     {
         image = GetComponent<Image>();
     }
 
-    public void Initialize(string grade, string count, Sprite sprite)
+    public void Initialize(Grade grade, int level, string count, Sprite sprite, int spriteId)
     {
-        gradeText.text = $"Grade {grade}";
+        int stringId = DataTableManager.DefaultDataTable.GetID(grade.ToString() + "StringID");
+        gradeText.SetString(stringId);
+        levelText.SetStringArguments(level.ToString());
         countText.text = count;
-        if(image == null)
+        icon.SetSprite(spriteId);
+        if (image == null)
         {
             image = GetComponent<Image>();
         }

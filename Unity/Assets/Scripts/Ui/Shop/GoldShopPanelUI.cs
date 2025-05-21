@@ -13,12 +13,19 @@ public class GoldShopPanelUI : MonoBehaviour
     [SerializeField]
     private Slider sellAmountSlider;
     [SerializeField]
-    private TextMeshProUGUI describeText;
+    private LocalizationText sellAmountText;
+    [SerializeField]
+    private LocalizationText totalPriceText;
+    [SerializeField]
+    private AddressableImage icon;
 
+    private ToggleGroup toggleGroup;
     private Currency currentCurrency;
     private int currentSellPrice;
     private int currentGoldShopElementId;
     private int defaultElementId;
+
+    private List<GoldShopElement> elements = new List<GoldShopElement>();
     public BigNumber SellAmount
     {
         get
@@ -37,7 +44,7 @@ public class GoldShopPanelUI : MonoBehaviour
     private void OnEnable()
     {
         SetGoldShopElement(defaultElementId);
-        UpdateTexts();
+        UpdateUI();
         ItemManager.OnItemAmountChanged += DoItemChanged;
     }
     private void OnDisable()
@@ -50,12 +57,16 @@ public class GoldShopPanelUI : MonoBehaviour
     }
     public void Initialize()
     {
+        toggleGroup = contentParent.GetComponent<ToggleGroup>();
+
         foreach (Transform child in contentParent)
         {
             Destroy(child.gameObject);
         }
 
+        int instantiatedCount = 0;
         var datas = DataTableManager.ShopTable.GetList(ShopTable.ShopType.Gold);
+        int totalCount = datas.Count;
         defaultElementId = datas[0].ID;
         foreach (var data in datas)
         {
@@ -68,12 +79,16 @@ public class GoldShopPanelUI : MonoBehaviour
                     if (goldShopElement != null)
                     {
                         goldShopElement.Initialize(data);
+                        goldShopElement.toggle.group = toggleGroup;
                         goldShopElement.onClickGoldShopElement += SetGoldShopElement;
+                        elements.Add(goldShopElement);
                     }
                 }
-                if(currentGoldShopElementId == 0)
+                instantiatedCount++;
+
+                if (instantiatedCount == totalCount && elements.Count > 0)
                 {
-                    SetGoldShopElement(data.ID);
+                    elements[0].toggle.isOn = true;
                 }
             };
         }
@@ -83,33 +98,36 @@ public class GoldShopPanelUI : MonoBehaviour
         currentGoldShopElementId = shopId;
         sellAmountSlider.value = 0f;
         currentCurrency = (Currency)DataTableManager.ShopTable.GetData(currentGoldShopElementId).NeedItemID;
+        icon.SetItemSprite((int)currentCurrency);
         currentSellPrice = DataTableManager.ShopTable.GetData(currentGoldShopElementId).PayCount;
+        UpdateUI();
     }
     public void OnValueChangedSellAmount()
     {
-        UpdateTexts();
+        UpdateUI();
     }
-    public void UpdateTexts()
+    public void UpdateUI()
     {
-        describeText.text = $"Sell Amount - {SellAmount}\nTotal Price - {TotalPrice}";
+        sellAmountText.SetStringArguments(SellAmount.ToString());
+        totalPriceText.SetStringArguments(TotalPrice.ToString());
+        sellAmountSlider.interactable = ItemManager.GetItemAmount((int)currentCurrency) > 0;
     }
     public void OnClickSellButton()
     {
-        ItemManager.AddItem((int)currentCurrency, 1000);
         if (!ItemManager.CanConsume((int)currentCurrency, SellAmount))
         {
             Debug.Log($"OnClickSellButton : {currentCurrency}이 모자랍니다");
         }
-
+        var totalPrice = TotalPrice;
         ItemManager.ConsumeCurrency(currentCurrency, SellAmount);
-        ItemManager.AddItem((int)Currency.Gold, TotalPrice);
+        ItemManager.AddItem((int)Currency.Gold, totalPrice);
         sellAmountSlider.value = 0f;
     }
     private void DoItemChanged(int itemId, BigNumber amount)
     {
         if((int)currentCurrency == itemId)
         {
-            UpdateTexts();
+            UpdateUI();
         }
     }
 }

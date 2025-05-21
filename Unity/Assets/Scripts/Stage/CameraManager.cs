@@ -5,7 +5,10 @@ using UnityEngine;
 public class CameraManager : MonoBehaviour
 {
     [SerializeField]
-    private Vector3 offset = new Vector3(28f, 20f, -23f);
+    private Vector3 defaultOffset = new Vector3(28f, 20f, -23f);
+
+    [SerializeField]
+    private Vector3 defaultRotation = new Vector3(35f, -45f, 0f);
 
     [SerializeField]
     private Transform unit;
@@ -18,33 +21,60 @@ public class CameraManager : MonoBehaviour
 
     private UnitPartyManager unitPartyManager;
 
+    public Vector3 Offset { get; private set; }
+    public Vector3 Rotation { get; private set; }
+
     private void Start()
     {
         unitPartyManager = GameObject.FindGameObjectWithTag("GameController").GetComponent<UnitPartyManager>();
+        Offset = defaultOffset;
+        Rotation = defaultRotation;
     }
 
     private void Update()
     {
+        if (unitPartyManager.UnitCount == 0)
+        {
+            return;
+        }
         unit = unitPartyManager.GetFirstLineUnitTransform();
-        if (unit is null)
+        if (Vector3.SqrMagnitude(unit.position + Offset - worldCamera.position) < 0.001f)
         {
             return;
         }
-        if (Vector3.SqrMagnitude(unit.position + offset - worldCamera.position) < 0.001f)
-        {
-            return;
-        }
-        worldCamera.position = Vector3.Lerp(worldCamera.position, unit.position + offset, Time.deltaTime * followingSpeed);
+        var targetPos = Offset;
+        targetPos.z += unit.position.z;
+        worldCamera.position = Vector3.Lerp(worldCamera.position, targetPos, Time.deltaTime * followingSpeed);
     }
 
-    public void ResetCameraPosition()
+    public void SetCameraOffset()
     {
-        unit = unitPartyManager.GetFirstLineUnitTransform();
-        if (unit is null)
+        SetCameraOffset(defaultOffset);
+    }
+
+    public void SetCameraOffset(Vector3 offset)
+    {
+        Offset = offset;
+        if (unitPartyManager is not null && unitPartyManager.UnitCount > 0)
         {
-            worldCamera.position = offset;
-            return;
+            unit = unitPartyManager.GetFirstLineUnitTransform();
+            worldCamera.position = unit.position + Offset;
         }
-        worldCamera.position = unit.position + offset;
+        else
+        {
+            unit = null;
+            worldCamera.position = Offset;
+        }
+    }
+
+    public void SetCameraRotation()
+    {
+        SetCameraRotation(defaultRotation);
+    }
+
+    public void SetCameraRotation(Vector3 euler)
+    {
+        Rotation = euler;
+        worldCamera.rotation = Quaternion.Euler(euler);
     }
 }

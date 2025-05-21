@@ -15,71 +15,104 @@ public class GachaResultPanelUI : MonoBehaviour
     private List<Sprite> gradeSprites;
     [SerializeField]
     private GachaPurchaseUI gachaPurchaseUI;
+    [SerializeField]
+    private GachaInteractableUI gachaInteractableUI;
+    [SerializeField]
+    private Image backgroundImage;
+    [SerializeField]
+    private GameObject skipRequestPanel;
 
     private const string prefabFormat = "Prefabs/UI/SoldierInfoImage";
     private WaitForSeconds waitSecondsToNextResult = new WaitForSeconds(0.05f);
     private Coroutine coDisplayResult;
+    private bool skipRequested;
+
+    private List<GameObject> gachaResults = new List<GameObject>();
     private void Awake()
     {
         closeButton.onClick.AddListener(() => gameObject.SetActive(false));
-        UpdateGridCellSize();
     }
     public void SetResult(List<SoldierTable.Data> datas, int gachaId)
     {
-        if(coDisplayResult != null)
+        skipRequestPanel.gameObject.SetActive(true);
+        skipRequested = false;
+        if (coDisplayResult != null)
         {
             StopCoroutine(coDisplayResult);
         }
+
+        foreach (var obj in gachaResults)
+        {
+            obj.SetActive(false);
+        }
+        backgroundImage.sprite = gachaInteractableUI.GetBackgroundSprite(gachaId);
         coDisplayResult = StartCoroutine(DisplayResult(datas));
         gachaPurchaseUI.Initialize(DataTableManager.GachaTable.GetData(gachaId));
     }
     private IEnumerator DisplayResult(List<SoldierTable.Data> datas)
     {
-        foreach (Transform child in contentParent)
+        int i = 0;
+        for (i = 0; i < datas.Count; i++)
         {
-            Destroy(child.gameObject);
+            if (skipRequested)
+            {
+                break;
+            }
+            SoundManager.Instance.PlaySFX("GachaSFX");
+            InstantiateGachaResult(datas[i], i);
+            yield return waitSecondsToNextResult;
         }
 
-        foreach (var data in datas)
+        for (; i < datas.Count; i++)
         {
-            var soldierData = data;
+            InstantiateGachaResult(datas[i], i);
+        }
+        skipRequested = false;
+        skipRequestPanel.gameObject.SetActive(false);
+        coDisplayResult = null;
+    }
+    private void InstantiateGachaResult(SoldierTable.Data data, int index)
+    {
+        GameObject obj;
 
+        if (index < gachaResults.Count)
+        {
+            obj = gachaResults[index];
+            obj.SetActive(true);
+            InitializeSoldierInfoImage(obj, data);
+        }
+        else
+        {
             Addressables.InstantiateAsync(prefabFormat, contentParent).Completed += (AsyncOperationHandle<GameObject> handle) =>
             {
                 if (handle.Status == AsyncOperationStatus.Succeeded)
                 {
-                    GameObject elementObj = handle.Result;
-                    SoldierInfoImage soldierInfoImage = elementObj.GetComponent<SoldierInfoImage>();
-                    if (soldierInfoImage != null)
-                    {
-                        soldierInfoImage.Initialize("1", "", gradeSprites[(int)data.Rating - 1]);
-                    }
+                    var newObj = handle.Result;
+                    newObj.transform.SetParent(contentParent, false);
+                    gachaResults.Add(newObj);
+                    InitializeSoldierInfoImage(newObj, data);
                 }
                 else
                 {
                     Debug.LogError("Failed to instantiate prefab with key: " + prefabFormat);
                 }
             };
-            yield return waitSecondsToNextResult;
         }
     }
-
-    public void UpdateGridCellSize()
+    private void InitializeSoldierInfoImage(GameObject obj, SoldierTable.Data data)
     {
-        GridLayoutGroup gridLayout = contentParent.GetComponent<GridLayoutGroup>();
-        if (gridLayout == null)
+        var soldierInfoImage = obj.GetComponent<SoldierInfoImage>();
+        if (soldierInfoImage != null)
         {
-            return;
+            soldierInfoImage.Initialize(data.Grade, data.Level, "", gradeSprites[(int)data.Grade - 1], data.SpriteID);
         }
-        RectTransform rectTransform = contentParent.GetComponent<RectTransform>();
-        float totalWidth = rectTransform.rect.width;
-        int columns = gridLayout.constraintCount;
-        int leftPadding = gridLayout.padding.left;
-        int rightPadding = gridLayout.padding.right;
-        float spacingX = gridLayout.spacing.x;
-
-        float availableWidth = totalWidth - leftPadding - rightPadding - spacingX * (columns - 1);
-        float cellSize = availableWidth / columns;
-        gridLayout.cellSize = new Vector2(cellSize, cellSize);
+    }
+    public void OnClickSkip()
+    {
+        if(!skipRequested)
+        {
+            skipRequested = true;
+            skipRequestPanel.gameObject.SetActive(false);
+        }
     }
 }

@@ -6,15 +6,17 @@ using UnityEngine.UI;
 
 public class RushSelectToggle : MonoBehaviour
 {
-    private const string Ascend = "돌파";
-    private const string Repeat = "반복";
+    private const int Ascend = 45;
+    private const int Repeat = 46;
 
     [SerializeField]
-    private TextMeshProUGUI text;
+    private LocalizationText text;
+
+    private StageEndWindow stageEndWindow;
 
     private void Start()
     {
-        if (Variables.stageMode == StageMode.Repeat)
+        if (SaveLoadManager.Data.stageMode == StageMode.Repeat)
         {
             GetComponent<Toggle>().isOn = false;
         }
@@ -22,15 +24,25 @@ public class RushSelectToggle : MonoBehaviour
 
     public void OnRushToggleChanged(bool isOn)
     {
+        if (stageEndWindow is null)
+        {
+            stageEndWindow = GameObject.FindGameObjectWithTag("GameController").GetComponent<StageManager>().StageUiManager.StageEndWindow;
+        }
+
         if (isOn)
         {
-            text.text = Ascend;
-            Variables.stageMode = StageMode.Ascend;
+            text.SetString(Ascend);
+            SaveLoadManager.Data.stageMode = StageMode.Ascend;
+            stageEndWindow.ShowPlanetStageMode(true);
         }
         else
         {
-            text.text = Repeat;
-            Variables.stageMode = StageMode.Repeat;
+            text.SetString(Repeat);
+            SaveLoadManager.Data.stageMode = StageMode.Repeat;
+            if (!stageEndWindow.isShowing)
+            {
+                stageEndWindow.ShowPlanetStageMode(false);
+            }
         }
     }
 }

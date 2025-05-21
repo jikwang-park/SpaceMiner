@@ -14,6 +14,10 @@ public static class InventoryManager
     }
     public static readonly int requireMergeCount = 5;
     public static event Action onChangedInventory;
+    public static void Clear()
+    {
+        onChangedInventory = null;
+    }
     public static void Initialize()
     {
         var datasByType = DataTableManager.SoldierTable.GetTypeDictionary();
@@ -29,7 +33,7 @@ public static class InventoryManager
                 {
                     soldierId = soldierData.ID,
                     isLocked = true,
-                    grade = soldierData.Rating,
+                    grade = soldierData.Grade,
                     count = 0,
                     level = 0
                 };
@@ -49,6 +53,14 @@ public static class InventoryManager
     {
         return Inventories.ContainsKey(type) ? Inventories[type] : null;
     }
+    public static SoldierInventoryElementData GetSoldierData(UnitTypes type, int soldierId)
+    {
+        var inventoryData = GetInventoryData(type);
+        
+        var soldierData = inventoryData.elements.Find((e) => e.soldierId == soldierId);
+
+        return soldierData;
+    }
     public static void Add(List<SoldierTable.Data> datas)
     {
         foreach(var data in datas) 
@@ -58,12 +70,12 @@ public static class InventoryManager
     }
     public static void Add(SoldierTable.Data data)
     {
-        if (!Inventories.ContainsKey(data.Kind))
+        if (!Inventories.ContainsKey(data.UnitType))
         {
             return;
         }
 
-        SoldierInventoryData inventoryData = Inventories[data.Kind];
+        SoldierInventoryData inventoryData = Inventories[data.UnitType];
 
         SoldierInventoryElementData element = inventoryData.elements.Find(e => e.soldierId == data.ID);
 
@@ -81,25 +93,25 @@ public static class InventoryManager
         }
         onChangedInventory?.Invoke();
     }
-    public static void Merge(int soldierId, int count = 1)
+    public static bool Merge(int soldierId, int count = 1)
     {
         SoldierTable.Data data = DataTableManager.SoldierTable.GetData(soldierId);
-        SoldierInventoryData inventoryData = GetInventoryData(data.Kind);
+        SoldierInventoryData inventoryData = GetInventoryData(data.UnitType);
         if(inventoryData == null) 
         {
-            return;
+            return false;
         }
 
         int index = inventoryData.elements.FindIndex((e) => e.soldierId == data.ID);
-        if(index < 0 || index >= inventoryData.elements.Count)
+        if(index < 0 || index >= inventoryData.elements.Count - 1)
         {
-            return;
+            return false;
         }
 
         SoldierInventoryElementData currentElement = inventoryData.elements[index];
         if (currentElement.count < requireMergeCount * count)
         {
-            return;
+            return false;
         }
 
         currentElement.count -= requireMergeCount * count;
@@ -115,9 +127,25 @@ public static class InventoryManager
             nextElement.count += count;
         }
         onChangedInventory?.Invoke();
+        return true;
+    }
+    public static void Equip(UnitTypes type, int soldierId)
+    {
+        Inventories[type].equipElementID = soldierId;
     }
     public static bool IsExist(UnitTypes type, Grade grade)
     {
          return Inventories[type].elements.Where((e) => e.grade == grade && !e.isLocked).Count() > 0;
+    }
+    public static void UnlockAllDatas()
+    {
+        foreach(UnitTypes type in Enum.GetValues(typeof(UnitTypes)))
+        {
+            foreach(var data in Inventories[type].elements)
+            {
+                data.isLocked = false;
+            }
+        }
+        onChangedInventory?.Invoke();
     }
 }

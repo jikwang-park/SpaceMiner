@@ -8,12 +8,13 @@ using System.Linq;
 using System.Text;
 using UnityEngine.AddressableAssets;
 using System;
+using CsvHelper.Configuration;
 
 public abstract class DataTable
 {
     public static readonly string FormatPath = "DataTables/{0}";
 
-    public Dictionary<string, DataTableData> TableData { get; protected set; } = new Dictionary<string, DataTableData>();
+     public Dictionary<int, ITableData> TableData { get; protected set; } = new Dictionary<int, ITableData>();
 
     protected static List<T> LoadCsv<T>(string csv)
     {
@@ -31,8 +32,8 @@ public abstract class DataTable
         using (var writer = new StreamWriter(memstream))
         using (var csv = new CsvWriter(writer, CultureInfo.InvariantCulture))
         {
-            csv.WriteRecords<T>(data);
-            
+            csv.WriteRecords(data);
+
             writer.Flush();
             result = Encoding.UTF8.GetString(memstream.ToArray());
         }
@@ -42,12 +43,13 @@ public abstract class DataTable
     public void Load(string fileName)
     {
         var path = string.Format(FormatPath, fileName);
-        var loadHandle = Addressables.LoadAssetAsync<TextAsset>(path);
-        loadHandle.WaitForCompletion();
 
-        LoadFromText(loadHandle.Result.text);
+        var textAsset = Addressables.LoadAssetAsync<TextAsset>(path).WaitForCompletion();
 
-        Addressables.Release(loadHandle);
+        if (textAsset is not null)
+        {
+            LoadFromText(textAsset.text);
+        }
     }
 
     public abstract void LoadFromText(string text);
@@ -57,7 +59,7 @@ public abstract class DataTable
 
     public abstract Type DataType { get; }
 
-    protected TData CreateData<TData>(string[] data) where TData : DataTableData, new()
+    protected TData CreateData<TData>(string[] data) where TData : ITableData, new()
     {
         TData datum = new TData();
         datum.Set(data);

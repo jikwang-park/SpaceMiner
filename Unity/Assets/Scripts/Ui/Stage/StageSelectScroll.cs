@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.AddressableAssets;
 
 public class StageSelectScroll : MonoBehaviour
 {
@@ -14,16 +15,45 @@ public class StageSelectScroll : MonoBehaviour
 
     private ObjectPoolManager objectpoolManager;
 
+    private StageSaveData stageLoadData;
+
+#if UNITY_EDITOR
+    private bool debugMode = false;
+#endif
+
     private void Start()
     {
-        objectpoolManager = GameObject.FindGameObjectWithTag("GameController").GetComponent<ObjectPoolManager>();
+        stageLoadData = SaveLoadManager.Data.stageSaveData;
 
-        SetButtons(Variables.planetNumber);
+        SetButtons(stageLoadData.currentPlanet);
     }
+
+#if UNITY_EDITOR
+    private void Update()
+    {
+        if (Input.GetKeyDown(KeyCode.F2))
+        {
+            debugMode = !debugMode;
+            foreach (var button in buttons)
+            {
+                button.Button.interactable = true;
+            }
+        }
+    }
+#endif
 
     public void SetButtons(int planet)
     {
-        foreach(var button in buttons)
+        if (objectpoolManager is null)
+        {
+            objectpoolManager = GameObject.FindGameObjectWithTag("GameController").GetComponent<StageManager>().StageUiManager.ObjectPoolManager;
+        }
+        if (stageLoadData is null)
+        {
+            stageLoadData = SaveLoadManager.Data.stageSaveData;
+        }
+
+        foreach (var button in buttons)
         {
             button.Release();
         }
@@ -32,12 +62,40 @@ public class StageSelectScroll : MonoBehaviour
         var planetDatas = DataTableManager.StageTable.GetPlanetData(planet);
         for (int i = 0; i < planetDatas.Count; ++i)
         {
-            var buttonGo = objectpoolManager.gameObjectPool[buttonReference].Get();
+            var buttonGo = objectpoolManager.Get(buttonReference);
             buttonGo.transform.SetParent(contents);
             buttonGo.transform.localScale = Vector3.one;
             var button = buttonGo.GetComponent<StageButton>();
             button.Set(planet, planetDatas[i].Stage);
             buttons.Add(button);
+            if (planet < stageLoadData.highPlanet || (planet == stageLoadData.highPlanet && i < stageLoadData.highStage))
+            {
+                button.Button.interactable = true;
+            }
+#if UNITY_EDITOR
+            else if (debugMode)
+            {
+                button.Button.interactable = true;
+            }
+#endif
+        }
+    }
+
+    public void UnlockStage()
+    {
+        UnlockStage(buttons.Count);
+    }
+
+    public void UnlockStage(int stage)
+    {
+        if (stage > buttons.Count)
+        {
+            return;
+        }
+
+        for (int i = 0; i < stage; ++i)
+        {
+            buttons[i].Button.interactable = true;
         }
     }
 }

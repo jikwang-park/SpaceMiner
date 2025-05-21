@@ -10,10 +10,11 @@ GameObject:
   m_Component:
   - component: {fileID: 4077528635843874768}
   - component: {fileID: 393806401410561923}
-  - component: {fileID: -6462294921443801200}
-  - component: {fileID: 8182107399749363879}
+  - component: {fileID: 2471941478493625617}
+  - component: {fileID: -7119887085758398939}
   - component: {fileID: 2710892970940900743}
   - component: {fileID: -6850543002469000062}
+  - component: {fileID: 8182107399749363879}
   - component: {fileID: 4169671672234757784}
   - component: {fileID: 1061389032676711595}
   m_Layer: 6
@@ -52,12 +53,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   status: 0
-  <weapon>k__BackingField: {fileID: 11400000, guid: ecc5d284510489041a081ec5c4d66ca9, type: 2}
+  <Stats>k__BackingField: {fileID: 0}
   animations: {fileID: 1922294493185946245}
-  <Speed>k__BackingField: 4
   <minDistanceInMonster>k__BackingField: 2
   frontLine: -1
---- !u!114 &-6462294921443801200
+--- !u!114 &2471941478493625617
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -66,15 +66,21 @@ MonoBehaviour:
   m_GameObject: {fileID: 9151133835082727212}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: daaeb550509fd4449b1c8380128eaffe, type: 3}
+  m_Script: {fileID: 11500000, guid: 55177d63adc8889498b79040daf4b4a3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   maxHp:
-    currentValue: 0
+    currentValue: 50
   damage:
-    currentValue: 0
-  armor: 0
---- !u!114 &8182107399749363879
+    currentValue: 1
+  armor:
+    currentValue: 1
+  coolDown: 1
+  range: 1
+  criticalChance: 0
+  criticalMultiplier: 0
+  moveSpeed: 3
+--- !u!114 &-7119887085758398939
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -83,9 +89,12 @@ MonoBehaviour:
   m_GameObject: {fileID: 9151133835082727212}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8aa1921a0dca5b34c8e13a04da6dfd7a, type: 3}
+  m_Script: {fileID: 11500000, guid: 1fed17400599b764f8362d3bc865d7c5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  textPrefabAddress: Prefabs/UI/DamageText
+  showingDuration: 1.5
+  risingSpeed: 2
 --- !u!114 &2710892970940900743
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -108,6 +117,18 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 35319348902dac24d93bf58993d6a493, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &8182107399749363879
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 9151133835082727212}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8aa1921a0dca5b34c8e13a04da6dfd7a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!114 &4169671672234757784

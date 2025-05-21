@@ -2,22 +2,49 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class CharacterStats : MonoBehaviour
+public abstract class CharacterStats : MonoBehaviour
 {
     public BigNumber maxHp;
     public BigNumber damage;
-    public int armor = 1;
+    public BigNumber armor = 1;
+
+    public float coolDown;
+    public float range;
+    public float criticalChance;
+    public float criticalMultiplier;
+
+    public float moveSpeed;
 
     public BigNumber Hp { get; set; }
 
-    private void Awake()
-    {
-        maxHp = new BigNumber("50");
-        damage = new BigNumber("1");
-    }
-
-    private void OnEnable()
+    protected virtual void OnEnable()
     {
         Hp = maxHp;
     }
+
+    public abstract Attack CreateAttack(CharacterStats defenderStats);
+    //{
+    //    //TODO: 대미지 계산식 정해지면 수정해야함 - 250322 HKY
+
+    //    Attack attack = new Attack();
+
+    //    BigNumber damage = attackerStats.damage;
+
+    //    damage += this.damage;
+    //    attack.isCritical = criticalChance >= Random.value;
+    //    if (attack.isCritical)
+    //    {
+    //        damage *= criticalMultiplier;
+    //    }
+    //    attack.damage = damage;
+
+    //    if (defenderStats != null)
+    //    {
+    //        attack.damage -= defenderStats.armor;
+    //    }
+
+    //    return attack;
+    //}
+
+    public abstract void Execute(GameObject defender);
 }

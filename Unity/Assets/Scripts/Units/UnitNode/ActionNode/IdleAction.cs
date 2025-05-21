@@ -15,6 +15,10 @@ public class IdleAction : ActionNode<Unit>
     }
     protected override NodeStatus OnUpdate()
     {
+        if(context.targetPos == null)
+        {
+            return NodeStatus.Failure;
+        }
         if (context.IsSkillCoolTimeOn || context.IsAttackCoolTimeOn)
         {
             return NodeStatus.Success;

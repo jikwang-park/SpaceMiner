@@ -3,210 +3,131 @@ using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 using UnityEngine.AddressableAssets;
+using UnityEngine.SceneManagement;
 
 public class StageManager : MonoBehaviour
 {
-    private const string stageIDFormat = "{0:D2}Planet-{1}";
-    private const string stageTextFormat = "{0}-{1}\n{2} Wave";
-
-    [field: SerializeField]
-    public int CurrentPlanet { get; private set; }
-    [field: SerializeField]
-    public int CurrentStage { get; private set; }
-    [field: SerializeField]
-    public int CurrentWave { get; private set; }
-
-    public MonsterLaneManager MonsterLaneManager { get; private set; }
+    public StageMonsterManager StageMonsterManager { get; private set; }
     public UnitPartyManager UnitPartyManager { get; private set; }
+    public ObjectPoolManager ObjectPoolManager { get; private set; }
+    [field: SerializeField]
+    public StageUiManager StageUiManager { get; private set; }
+    public CameraManager CameraManager { get; private set; }
 
     [SerializeField]
-    private TextMeshProUGUI stageText;
-    [SerializeField]
-    private TextMeshProUGUI timerText;
-    [SerializeField]
-    private GameObject stageEndMessageWindow;
-    [SerializeField]
-    private TextMeshProUGUI stageEndMessageText;
+    private IngameStatus ingameStatus;
 
+    public LinkedList<IObjectPoolGameObject> backgrounds { get; private set; } = new LinkedList<IObjectPoolGameObject>();
 
-    [SerializeField]
-    private AssetReferenceGameObject stage;
-    [SerializeField]
-    private float spawnDistance = 10f;
-
-    private WaveSpawner waveSpawner;
-
-    private HashSet<MonsterController> monsters;
-
-    private StageTable.Data stageData;
-    private WaveTable.Data waveData;
-
-    private float stageStartTime;
-
-    private WaitForSeconds wait1 = new WaitForSeconds(1f);
-
+    private Dictionary<IngameStatus, StageStatusMachine> machines = new Dictionary<IngameStatus, StageStatusMachine>();
+    //private StageStatusMachine stageStatusMachine;
 
     private void Awake()
     {
-        waveSpawner = GetComponent<WaveSpawner>();
-        MonsterLaneManager = GetComponent<MonsterLaneManager>();
+        StageMonsterManager = GetComponent<StageMonsterManager>();
         UnitPartyManager = GetComponent<UnitPartyManager>();
-        monsters = new HashSet<MonsterController>();
+        ObjectPoolManager = GetComponent<ObjectPoolManager>();
+        CameraManager = GetComponent<CameraManager>();
 
-        SetStageInfo();
+        Init();
 
-        SpawnNextWave();
+        machines.Add(IngameStatus.Planet, new PlanetStageStatusMachine(this));
+        machines.Add(IngameStatus.Dungeon, new DungeonStageStatusMachine(this));
+
+        //switch (ingameStatus)
+        //{
+        //    case IngameStatus.Planet:
+        //        stageStatusMachine = new PlanetStageStatusMachine(this);
+        //        break;
+        //    case IngameStatus.Dungeon:
+        //        stageStatusMachine = new DungeonStageStatusMachine(this);
+        //        break;
+        //}
     }
 
     private void Start()
     {
-        Addressables.InstantiateAsync(stage, Vector3.back * 10f, Quaternion.identity);
+        machines[ingameStatus].Start();
+        //stageStatusMachine.Start();
     }
 
     private void Update()
     {
-        if (Input.GetKeyDown(KeyCode.Alpha1))
-        {
-            var stageData = DataTableManager.StageTable.GetData(string.Format(stageIDFormat, CurrentPlanet, CurrentStage));
-            Debug.Log(stageData.CorpsID);
-        }
+        //stageStatusMachine.Update();
 
-        if (Input.GetKeyDown(KeyCode.Alpha2))
-        {
-            var handle = Addressables.InstantiateAsync(stage);
-            handle.WaitForCompletion();
-        }
-
-        if (Input.GetKeyDown(KeyCode.Alpha3))
-        {
-            SpawnNextWave();
-        }
-
-        if (Input.GetKeyDown(KeyCode.Alpha5))
-        {
-            for (int i = 0; i < 3; ++i)
-            {
-                Debug.Log(this.MonsterLaneManager.GetFirstMonster(i));
-            }
-        }
-
-        float remainTime = 30f + stageStartTime - Time.time;
-
-        if (remainTime <= 0f)
-        {
-            remainTime = 0f;
-            ResetStage(false);
-        }
-        timerText.text = remainTime.ToString("F2");
+        machines[ingameStatus].Update();
     }
 
-    public void AddMonster(MonsterController monsterController)
+    public void SetStatus(IngameStatus status)
     {
-        monsters.Add(monsterController);
-
-        var destroyEvent = monsterController.GetComponent<DestructedDestroyEvent>();
-        destroyEvent.OnDestroyed += OnMonsterDestroy;
-    }
-
-    public void SpawnNextWave(float delay = 2f)
-    {
-        stageText.text = string.Format(stageTextFormat, CurrentPlanet, CurrentStage, CurrentWave);
-        StartCoroutine(coSpawnNextWave(delay));
-    }
-
-    private IEnumerator coSpawnNextWave(float delay)
-    {
-        yield return new WaitForSeconds(delay);
-
-        var corpsData = DataTableManager.CorpsTable.GetData(waveData.WaveCorpsIDs[CurrentWave - 1]);
-
-        Transform unit = UnitPartyManager.GetFirstLineUnitTransform();
-        if (unit != null)
-            waveSpawner.Spawn(unit.position + Vector3.forward * spawnDistance, corpsData);
-        else
-            waveSpawner.Spawn(transform.position, corpsData);
-
-        stageText.text = string.Format(stageTextFormat, CurrentPlanet, CurrentStage, CurrentWave);
-        ++CurrentWave;
-    }
-
-    private void OnMonsterDestroy(DestructedDestroyEvent sender)
-    {
-        var monsterController = sender.GetComponent<MonsterController>();
-        monsters.Remove(monsterController);
-        if (monsters.Count == 0)
+        if (status == ingameStatus)
         {
-            if (CurrentWave >= waveData.WaveCorpsIDs.Length)
-            {
-                ResetStage(true);
-                return;
-            }
-
-            SpawnNextWave();
-        }
-    }
-
-    private void SetStageInfo()
-    {
-        CurrentPlanet = Variables.planetNumber;
-        CurrentStage = Variables.stageNumber;
-        CurrentWave = 1;
-        stageStartTime = Time.time;
-
-        stageData = DataTableManager.StageTable.GetData(string.Format(stageIDFormat, CurrentPlanet, CurrentStage));
-        waveData = DataTableManager.WaveTable.GetData(stageData.CorpsID);
-        stageText.text = string.Format(stageTextFormat, CurrentPlanet, CurrentStage, CurrentWave);
-    }
-
-    private IEnumerator coStageLoad()
-    {
-        if (Variables.stageNumber > 1)
-        {
-            --Variables.stageNumber;
-        }
-
-        Variables.stageMode = StageMode.Repeat;
-        stageEndMessageText.text = "Fail";
-        stageEndMessageWindow.SetActive(true);
-
-        yield return wait1;
-        Addressables.LoadSceneAsync("StageDevelopScene");
-    }
-
-    private void ResetStage(bool cleared)
-    {
-        if (!cleared)
-        {
-            StartCoroutine(coStageLoad());
             return;
         }
 
-        StartCoroutine(coClearStage());
+        StageUiManager.curtain.SetFade(true);
+        StageUiManager.UIGroupStatusManager.SetUIStatus(status);
+
+        machines[ingameStatus].SetActive(false);
+
+        StageUiManager.IngameUIManager.SetStatus(status);
+
+        machines[status].SetActive(true);
+
+        StageUiManager.curtain.SetFade(false);
+
+        ingameStatus = status;
+
+        //switch (status)
+        //{
+        //    case IngameStatus.Planet:
+        //        SceneManager.LoadScene(0);
+        //        break;
+        //    case IngameStatus.Dungeon:
+        //        Addressables.LoadSceneAsync("Scenes/DungeonScene").WaitForCompletion();
+        //        break;
+        //}
     }
 
-    private IEnumerator coClearStage()
+    public void Init()
     {
-        stageEndMessageText.text = "Clear";
-        stageEndMessageWindow.SetActive(true);
+        var saveData = SaveLoadManager.Data.stageSaveData;
 
-        yield return wait1;
+        List<int> dungeons = DataTableManager.DungeonTable.DungeonTypes;
 
-        if (Variables.stageMode == StageMode.Ascend)
+        bool changed = false;
+
+        foreach (var type in dungeons)
         {
-            if (DataTableManager.StageTable.IsExistStage(CurrentPlanet, CurrentStage + 1))
+            if (!saveData.highestDungeon.ContainsKey(type))
             {
-                ++Variables.stageNumber;
-            }
-            else if (DataTableManager.StageTable.IsExistPlanet(CurrentPlanet + 1))
-            {
-                ++Variables.planetNumber;
-                Variables.stageNumber = 1;
+                changed = true;
+                saveData.highestDungeon.Add(type, 1);
             }
         }
 
-        SetStageInfo();
-        SpawnNextWave();
+        if (changed)
+        {
+            SaveLoadManager.SaveGame();
+        }
+    }
 
-        stageEndMessageWindow.SetActive(false);
+    public void ResetStage()
+    {
+        machines[ingameStatus].Reset();
+    }
+
+    public void ReleaseBackground()
+    {
+        while (backgrounds.Count > 0)
+        {
+            backgrounds.First.Value.Release();
+        }
+    }
+
+    //TODO: �ν����Ϳ��� ������ ��ư�� ����
+    public void OnExitClicked()
+    {
+        machines[ingameStatus].Exit();
     }
 }

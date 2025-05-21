@@ -1,9 +1,6 @@
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using System.Reflection;
-using System.Threading;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -20,6 +17,10 @@ public class DataTableViewer : MonoBehaviour
     private TMP_InputField inputField;
     [SerializeField]
     private Toggle inputToggle;
+    [field: SerializeField]
+    public Button SaveButton { get; private set; }
+    [field: SerializeField]
+    public TextMeshProUGUI SaveButtonText { get; private set; }
 
     private Dictionary<string, DataTableView> views = new Dictionary<string, DataTableView>();
 
@@ -48,8 +49,9 @@ public class DataTableViewer : MonoBehaviour
 
         AddDropDownOption(table.Key);
         var tableView = Instantiate(dataTableViewPrefab, this.tableView);
+        tableView.SetTableName(table.Key);
         views.Add(table.Key, tableView);
-        tableView.SetColumns(properties.Select(p => p.Name).ToArray());
+        tableView.SetColumns(properties);
 
         foreach (var data in dict)
         {
@@ -116,6 +118,34 @@ public class DataTableViewer : MonoBehaviour
         OnDropDownChanged(0);
     }
 
+    public void ResetTable()
+    {
+        var table = DataTableManager.GetTable<DataTable>(CurrentView.TableName);
+        var dict = table.TableData;
+        var dataType = table.DataType;
+        var properties = dataType.GetProperties();
+
+        CurrentView.Clear();
+        CurrentView.SetColumns(properties);
+
+        foreach (var data in dict)
+        {
+            string[] values = new string[properties.Length];
+
+            for (int i = 0; i < properties.Length; ++i)
+            {
+                values[i] = properties[i].GetValue(data.Value).ToString();
+            }
+
+            CurrentView.AddRow(values);
+        }
+    }
+
+    public void ApplyCurrentViewTable()
+    {
+        CurrentView.ApplyTable();
+    }
+
     public void OnInsert(bool isOn)
     {
         if (isOn)
@@ -124,17 +154,28 @@ public class DataTableViewer : MonoBehaviour
         }
         else
         {
-            string text = inputField.text;
-
-            if (!string.IsNullOrEmpty(text))
+            try
             {
-                string csvText = text.Replace('\t', ',');
+                string text = inputField.text;
 
-                var currentTable = DataTableManager.GetTable<DataTable>(tableDropdown.options[currentIndex].text);
-                currentTable.LoadFromText(csvText);
-                ResetTables();
+                int previous = currentIndex;
+
+                if (!string.IsNullOrEmpty(text))
+                {
+                    string csvText = text.Replace('\t', ',');
+
+                    var currentTable = DataTableManager.GetTable<DataTable>(tableDropdown.options[currentIndex].text);
+                    currentTable.LoadFromText(csvText);
+                    ResetTables();
+                }
+
+                tableDropdown.value = previous;
             }
-
+            catch (Exception e)
+            {
+                Debug.LogError($"Table Set Failed \n{e}");
+            }
+            inputField.text = string.Empty;
             inputToggle.image.color = Color.white;
         }
         inputField.gameObject.SetActive(isOn);

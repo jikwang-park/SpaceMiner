@@ -1,8 +1,8 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
-using UnityEngine.AddressableAssets;
 using UnityEngine.Pool;
 using UnityEngine.UI;
 
@@ -16,17 +16,26 @@ public class StageButton : MonoBehaviour, IObjectPoolGameObject
     private int planet;
     private int stage;
 
-    private Button button;
+    [field: SerializeField]
+    public Button Button { get; private set; }
     private StageManager stageManager;
+
+    private StageSaveData stageLoadData;
 
     private void Awake()
     {
-        button = GetComponent<Button>();
+        Button = GetComponent<Button>();
+        stageLoadData = SaveLoadManager.Data.stageSaveData;
+    }
+
+    private void Start()
+    {
+        stageManager = GameObject.FindGameObjectWithTag("GameController").GetComponent<StageManager>();
     }
 
     public void Release()
     {
-        button.onClick.RemoveAllListeners();
+        Button.interactable = false;
         ObjectPool.Release(gameObject);
     }
 
@@ -35,13 +44,19 @@ public class StageButton : MonoBehaviour, IObjectPoolGameObject
         this.planet = planet;
         this.stage = stage;
         text.text = $"{planet}-{stage}";
-        button.onClick.AddListener(MoveStage);
     }
 
-    private void MoveStage()
+    public void MoveStage()
     {
-        Variables.planetNumber = planet;
-        Variables.stageNumber = stage;
-        Addressables.LoadSceneAsync("StageDevelopScene");
+        stageLoadData.currentPlanet = planet;
+        stageLoadData.currentStage = stage;
+
+        stageManager.SetStatus(IngameStatus.Planet);
+        stageManager.StageUiManager.IngameUIManager.stageSelectWindow.HideStageWindow();
+        stageManager.ResetStage();
+
+        //SaveLoadManager.SaveGame();
+        //SceneManager.LoadScene(0);
+        //Addressables.LoadSceneAsync("StageDevelopScene");
     }
 }

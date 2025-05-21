@@ -5,7 +5,12 @@ using UnityEngine;
 public class Variables
 {
     public static Languages currentLanguage = Languages.Korean;
-    public static int planetNumber = 1;
-    public static int stageNumber = 1;
+
+    public static int currentDungeonType = 1;
+    public static int currentDungeonStage = 1;
+
+    public static BigNumber powerLevel = "1500";
+
     public static StageMode stageMode = StageMode.Ascend;
+    public static DungeonMode dungeonMode = DungeonMode.End;
 }

@@ -13,25 +13,71 @@ public class PlanetSelectScroll : MonoBehaviour
     private Transform contents;
 
     public event Action<int> OnPlanetSelected;
+    private List<PlanetButton> buttons = new List<PlanetButton>();
+    private ObjectPoolManager objectPoolManager;
+
+    private StageSaveData stageLoadData;
+
+#if UNITY_EDITOR
+    private bool debugMode = false;
+#endif
 
     private void Start()
     {
+        stageLoadData = SaveLoadManager.Data.stageSaveData;
         SetPlanetButtons();
     }
 
     private void SetPlanetButtons()
     {
-        var objectpoolManager = GameObject.FindGameObjectWithTag("GameController").GetComponent<ObjectPoolManager>();
+        objectPoolManager = GameObject.FindGameObjectWithTag("GameController").GetComponent<StageManager>().StageUiManager.ObjectPoolManager;
         var planets = DataTableManager.StageTable.GetPlanetKeys();
 
         for (int i = 0; i < planets.Count; ++i)
         {
-            var button = objectpoolManager.gameObjectPool[buttonReference].Get();
+            var button = objectPoolManager.Get(buttonReference);
             button.transform.SetParent(contents);
             button.transform.localScale = Vector3.one;
-            button.GetComponent<PlanetButton>().Set(planets[i]);
+
+            var planetButton = button.GetComponent<PlanetButton>();
+            planetButton.Set(planets[i]);
+            buttons.Add(planetButton);
+
             int index = planets[i];
-            button.GetComponent<Button>().onClick.AddListener(() => OnPlanetSelected?.Invoke(index));
+            planetButton.Button.onClick.AddListener(() => OnPlanetSelected?.Invoke(index));
+            if (i < stageLoadData.highPlanet)
+            {
+                planetButton.Button.interactable = true;
+            }
+#if UNITY_EDITOR
+            else if (debugMode)
+            {
+                planetButton.Button.interactable = true;
+            }
+#endif
+        }
+    }
+
+
+#if UNITY_EDITOR
+    private void Update()
+    {
+        if (Input.GetKeyDown(KeyCode.F2))
+        {
+            debugMode = !debugMode;
+            foreach (var button in buttons)
+            {
+                button.Button.interactable = true;
+            }
+        }
+    }
+#endif
+
+    public void UnlockPlanet(int planet)
+    {
+        for (int i = 0; i < planet; ++i)
+        {
+            buttons[i].Button.interactable = true;
         }
     }
 }

@@ -1,8 +1,9 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AddressableAssets;
-using UnityEngine.ResourceManagement.AsyncOperations;
+using Random = UnityEngine.Random;
 
 public class WaveSpawner : MonoBehaviour
 {
@@ -23,18 +24,18 @@ public class WaveSpawner : MonoBehaviour
         new Vector3(3f, 0f, 14f),
     };
 
-    private StageManager stageManager;
     private ObjectPoolManager objectPoolManager;
+
+    public event Action<int, MonsterController> OnMonsterSpawn;
 
     private void Awake()
     {
-        stageManager = GetComponent<StageManager>();
         objectPoolManager = GetComponent<ObjectPoolManager>();
     }
 
     public void Spawn(Vector3 frontPosition, CorpsTable.Data data)
     {
-        if (data.FrontSlots == 0 && data.BackSlots == 0 && data.BossMonsterID != "0")
+        if (data.FrontSlots == 0 && data.BackSlots == 0 && data.BossMonsterID != 0)
         {
             int lane = 1;
             SpawnMonster(lane, lane, frontPosition, data.BossMonsterID);
@@ -56,7 +57,7 @@ public class WaveSpawner : MonoBehaviour
                 }
             }
 
-            string monsterId = data.NormalMonsterIDs[index];
+            int monsterId = data.NormalMonsterIDs[index];
             int lane = i % 3;
             SpawnMonster(lane, i, frontPosition, monsterId);
             ++createdCount[index];
@@ -78,13 +79,17 @@ public class WaveSpawner : MonoBehaviour
         {
             return;
         }
-        stageManager.AddMonster(monsterController);
-        stageManager.MonsterLaneManager.AddMonster(lane, monsterController);
+        OnMonsterSpawn.Invoke(lane, monsterController);
     }
 
-    private void SpawnMonster(int lane, int index, Vector3 frontPosition, string monsterId)
+    private void SpawnMonster(int lane, int index, Vector3 frontPosition, int monsterId)
     {
-        var monster = objectPoolManager.gameObjectPool[monsterId].Get();
+        var monsterData = DataTableManager.MonsterTable.GetData(monsterId);
+
+        var monster = objectPoolManager.Get(monsterData.PrefabId);
+        var monsterController = monster.GetComponent<MonsterController>();
+        monsterController.enabled = true;
+        monsterController.SetMonsterId(monsterId);
         monster.transform.parent = null;
         monster.transform.position = frontPosition + SpawnPoints[index];
         monster.transform.rotation = Quaternion.LookRotation(Vector3.back, Vector3.up);

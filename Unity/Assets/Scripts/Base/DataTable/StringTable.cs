@@ -8,33 +8,36 @@ using UnityEngine.AddressableAssets;
 
 public class StringTable : DataTable
 {
-    public class Data : DataTableData
+    public class Data : ITableData
     {
-        public string ID { get; set; }
+        public int ID { get; set; }
         public string Line { get; set; }
 
-        public override void Set(string[] argument)
+        public void Set(string[] argument)
         {
-            ID = argument[0];
+            ID = int.Parse(argument[0]);
             Line = argument[1];
         }
     }
 
-    private Dictionary<string, Data> dict = new Dictionary<string, Data>();
     public override Type DataType => typeof(Data);
 
 
     public override void LoadFromText(string text)
     {
-        var list = LoadCsv<Data>(text);
-        dict.Clear();
         TableData.Clear();
+
+        if (string.IsNullOrEmpty(text))
+        {
+            return;
+        }
+
+        var list = LoadCsv<Data>(text);
 
         foreach (var item in list)
         {
-            if (!dict.ContainsKey(item.ID))
+            if (!TableData.ContainsKey(item.ID))
             {
-                dict.Add(item.ID, item);
                 TableData.Add(item.ID, item);
             }
             else
@@ -44,31 +47,35 @@ public class StringTable : DataTable
         }
     }
 
-    public string GetData(string key)
+    public string GetData(int key)
     {
-        if (!dict.ContainsKey(key))
+        if (!TableData.ContainsKey(key))
         {
             return "NULL";
         }
-        return dict[key].Line;
+        return ((Data)TableData[key]).Line;
     }
 
     public override void Set(List<string[]> data)
     {
-        var dictionary = new Dictionary<string, Data>();
-        var tableData = new Dictionary<string, DataTableData>();
+        var tableData = new Dictionary<int, ITableData>();
         foreach (var item in data)
         {
             var datum = CreateData<Data>(item);
-            dictionary.Add(datum.ID, datum);
             tableData.Add(datum.ID, datum);
         }
-        dict = dictionary;
         TableData = tableData;
     }
 
     public override string GetCsvData()
     {
-        return CreateCsv(dict.Values.ToList());
+        List<Data> list = new List<Data>();
+
+        foreach (var item in TableData)
+        {
+            list.Add((Data)item.Value);
+        }
+
+        return CreateCsv(list);
     }
 }

@@ -1,7 +1,6 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.AddressableAssets;
 using UnityEngine.Pool;
@@ -9,49 +8,71 @@ using UnityEngine.ResourceManagement.AsyncOperations;
 
 public class ObjectPoolManager : MonoBehaviour
 {
+    private const string objectPoolIDFormat = "ObjectPoolGameObject/{0}";
+
     [SerializeField]
-    private AssetReferenceGameObject[] addressableAssets;
+    private string[] addressableAssetsNames;
 
     [SerializeField]
     private GameObject[] prefabs;
 
-    public Dictionary<string, IObjectPool<GameObject>> gameObjectPool { get; private set; } = new Dictionary<string, IObjectPool<GameObject>>();
+    private Dictionary<string, IObjectPool<GameObject>> gameObjectPools = new Dictionary<string, IObjectPool<GameObject>>();
 
     private void Awake()
     {
-        for (int i = 0; i < addressableAssets.Length; ++i)
+        for (int i = 0; i < addressableAssetsNames.Length; ++i)
         {
-            if (!gameObjectPool.ContainsKey(addressableAssets[i].editorAsset.name))
+            if (!gameObjectPools.ContainsKey(addressableAssetsNames[i]))
             {
-                ObjectPool<GameObject> pool = null;
-                AssetReferenceGameObject reference = addressableAssets[i];
-                pool = new ObjectPool<GameObject>
-                    (() => CreatePooledItem(reference, pool), OnTakeFromPool, OnReturnedToPool, OnDestroyOnObject, true);
-                gameObjectPool.Add(addressableAssets[i].editorAsset.name, pool);
+                CreateAddressableObjectPool(addressableAssetsNames[i]);
             }
         }
         for (int i = 0; i < prefabs.Length; ++i)
         {
-            if (!gameObjectPool.ContainsKey(prefabs[i].name))
+            if (!gameObjectPools.ContainsKey(prefabs[i].name))
             {
                 ObjectPool<GameObject> pool = null;
                 GameObject prefab = prefabs[i];
                 pool = new ObjectPool<GameObject>
                     (() => CreatePooledItem(prefab, pool), OnTakeFromPool, OnReturnedToPool, OnDestroyOnObject, true);
-                gameObjectPool.Add(prefab.name, pool);
+                gameObjectPools.Add(prefab.name, pool);
             }
         }
     }
 
-    private void OnDestroy()
+    public GameObject Get(string prefabId)
     {
-        for (int i = 0; i < addressableAssets.Length; ++i)
+        if (!gameObjectPools.ContainsKey(prefabId))
         {
-            if (addressableAssets[i].Asset is not null)
-            {
-                addressableAssets[i].ReleaseAsset();
-            }
+            CreateAddressableObjectPool(prefabId);
         }
+        return gameObjectPools[prefabId].Get();
+    }
+
+    public void Clear()
+    {
+        foreach (var gameObjectPool in gameObjectPools)
+        {
+            gameObjectPool.Value.Clear();
+        }
+        gameObjectPools.Clear();
+    }
+
+    public void Clear(string prefabId)
+    {
+        if (gameObjectPools.ContainsKey(prefabId))
+        {
+            gameObjectPools[prefabId].Clear();
+        }
+    }
+
+    private void CreateAddressableObjectPool(string prefabId)
+    {
+        ObjectPool<GameObject> pool = null;
+        string referenceName = string.Format(objectPoolIDFormat, prefabId);
+        pool = new ObjectPool<GameObject>
+            (() => CreatePooledItem(referenceName, pool), OnTakeFromPool, OnReturnedToPool, OnDestroyOnObject, true);
+        gameObjectPools.Add(prefabId, pool);
     }
 
     private GameObject CreatePooledItem(AssetReferenceGameObject reference, IObjectPool<GameObject> pool)
@@ -66,7 +87,29 @@ public class ObjectPoolManager : MonoBehaviour
                 throw new ArgumentException("에셋 로딩 실패");
             }
         }
+
         return CreatePooledItem(reference.Asset as GameObject, pool);
+    }
+
+    private GameObject CreatePooledItem(string key, IObjectPool<GameObject> pool)
+    {
+        if (string.IsNullOrEmpty(key))
+        {
+            throw new ArgumentException("에셋 키 없음");
+        }
+
+        var handle = Addressables.InstantiateAsync(key, transform);
+        handle.WaitForCompletion();
+
+        if (!handle.IsDone || handle.Status != AsyncOperationStatus.Succeeded)
+        {
+            throw new ArgumentException("에셋 로딩 실패");
+        }
+
+        GameObject created = handle.Result;
+        created.GetComponent<IObjectPoolGameObject>().ObjectPool = pool;
+        created.transform.SetParent(transform);
+        return created;
     }
 
     private GameObject CreatePooledItem(GameObject prefab, IObjectPool<GameObject> pool)

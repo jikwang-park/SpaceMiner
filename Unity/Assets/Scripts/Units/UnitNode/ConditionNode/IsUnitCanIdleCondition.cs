@@ -10,6 +10,7 @@ public class IsUnitCanIdleCondition : ConditionNode<Unit>
 
     protected override NodeStatus OnUpdate()
     {
+       
         if (!context.IsAttackCoolTimeOn && context.targetPos != null)
         {
             return NodeStatus.Success;

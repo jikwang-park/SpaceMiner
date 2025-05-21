@@ -13,18 +13,19 @@ public enum UnitTypes
 
 public static class UnitBTManager
 {
-  
+
     public static BehaviorTree<Unit> GetBehaviorTree(Unit context, UnitTypes types)
     {
         switch (types)
         {
             case UnitTypes.Tanker:
                 return InitTankBehaviorTree(context);
-
             case UnitTypes.Dealer:
                 return InitDelarBehaviorTree(context);
-            default: 
-                return InitTankBehaviorTree(context);
+            case UnitTypes.Healer:
+                return InitHealerBehaviorTree(context);
+            default:
+                return null;
         }
     }
 
@@ -37,154 +38,201 @@ public static class UnitBTManager
 
             case UnitTypes.Dealer:
                 return InitDelarBehaviorTree(context);
+            case UnitTypes.Healer:
+                return InitHealerBehaviorTree(context);
             default:
                 return InitTankBehaviorTree(context);
         }
     }
+    //var tankBehaviortree = new BehaviorTree<Unit>(context);
+    //var rootSelectorNode = new SelectorNode<Unit>(context);
 
+    //var attackSequence = new SquenceNode<Unit>(context);
+    //attackSequence.AddChild(new IsUnitAliveCondition(context));
+    //    attackSequence.AddChild(new IsUnitCanNormalAttackCondition(context));
+    //    attackSequence.AddChild(new NormalAttackAction(context));
+
+    //    var moveSequence = new SquenceNode<Unit>(context);
+    //moveSequence.AddChild(new IsUnitCanSearchTarget(context));
+    //    moveSequence.AddChild(new MoveAction(context));
+
+    //    tankBehaviortree.SetRoot(rootSelectorNode);
+
+    //    rootSelectorNode.AddChild(attackSequence); 
+    //    rootSelectorNode.AddChild(moveSequence);
+
+    //    return tankBehaviortree;
     public static BehaviorTree<Unit> InitTankBehaviorTree(Unit context)
     {
-
         var tankBehaviortree = new BehaviorTree<Unit>(context);
 
         var rootSelectorNode = new SelectorNode<Unit>(context);
+         
+        
 
         var attackSequence = new SquenceNode<Unit>(context);
         attackSequence.AddChild(new IsUnitAliveCondition(context));
-        attackSequence.AddChild(new IsUnitCanAttackCondition(context));
-        attackSequence.AddChild(new NormalAttackAction(context));
+        attackSequence.AddChild(new IsUnitOnAttackRangeCondition(context));
 
-        var moveSequence = new SquenceNode<Unit>(context);
-        moveSequence.AddChild(new IsUnitCanSearchTarget(context));
-        moveSequence.AddChild(new MoveAction(context));
+        var attackSelectorNode = new SelectorNode<Unit>(context);
 
-        tankBehaviortree.SetRoot(rootSelectorNode);
+        var skillAttackSequence = new SquenceNode<Unit>(context);
+        skillAttackSequence.AddChild(new IsAutoSkillModeCondition(context));
+        skillAttackSequence.AddChild(new IsTankerCanUseSkillCondition(context));
+        skillAttackSequence.AddChild(new SkillAttackAction(context));
 
-        rootSelectorNode.AddChild(attackSequence); 
-        rootSelectorNode.AddChild(moveSequence);
+        var normalAttackSequence = new SquenceNode<Unit>(context);
+        normalAttackSequence.AddChild(new IsUnitCanNormalAttackCondition(context));
+        normalAttackSequence.AddChild(new NormalAttackAction(context));
+        //
+        var moveSelector = new SelectorNode<Unit>(context);
 
-        return tankBehaviortree;
+        var frontUnitMoveSequence = new SquenceNode<Unit>(context);
 
+        frontUnitMoveSequence.AddChild(new IsUnitFrontLineCondition(context));
+        frontUnitMoveSequence.AddChild(new IsUnitInSafeDistanceCondition(context));
+        frontUnitMoveSequence.AddChild(new MoveAction(context));
 
+        var notFrontUnitMoveSequence = new SquenceNode<Unit>(context);
 
+        notFrontUnitMoveSequence.AddChild(new IsUnitInSafeDistanceCondition(context));
+        notFrontUnitMoveSequence.AddChild(new MoveAction(context));
 
-
-
-
-
-
-
-        //var tankBehaviortree = new BehaviorTree<Unit>(context);
-
-        //var rootSelcetorNode = new SelectorNode<Unit>(context);
-        //tankBehaviortree.SetRoot(rootSelcetorNode);
-
-        //var attackSequence = new SquenceNode<Unit>(context);
-        //rootSelcetorNode.AddChild(attackSequence);
-
-        //attackSequence.AddChild(new IsUnitAliveCondition(context));
-        //attackSequence.AddChild(new IsUnitOnRangeCondition(context));
-        //attackSequence.AddChild(new IsUnitCanAttackCondition(context));
-        //attackSequence.AddChild(new NormalAttackAction(context));
-
-        //var moveSequence = new SquenceNode<Unit>(context);
-        //rootSelcetorNode.AddChild(moveSequence);
-
-        //moveSequence.AddChild(new IsUnitNotOnRangeCondition(context));
-        //moveSequence.AddChild(new MoveAction(context));
-
-        //rootSelcetorNode.AddChild(new IdleAction(context));
-
-        //return tankBehaviortree;
-
-
-
-
-
-
-        //var tankerbehaviorTree = new BehaviorTree<Unit>(context);
-
-        //var rootSelectorNode = new SelectorNode<Unit>(context);
-        //tankerbehaviorTree.SetRoot(rootSelectorNode);
-
-        //var attackSqence = new SquenceNode<Unit>(context);
-        //rootSelectorNode.AddChild(attackSqence);
-        //attackSqence.AddChild(new IsUnitAliveCondition(context));
-        //attackSqence.AddChild(new IsUnitOnRangeCondition(context));
-        //attackSqence.AddChild(new IsUnitUsingSkillCondition(context));
-
-        //var attackTypeSelector = new SelectorNode<Unit>(context);
-        //attackSqence.AddChild(attackTypeSelector);
-
-        //var skillAttackSquence = new SquenceNode<Unit>(context);
-        //attackTypeSelector.AddChild(skillAttackSquence);
-        //skillAttackSquence.AddChild(new IsUnitHitCondition(context));
-        //skillAttackSquence.AddChild(new IsSkillCoolTimeOnCondition(context));
-        //skillAttackSquence.AddChild(new SkillAttackAction(context));
-        //attackTypeSelector.AddChild(new NormalAttackAction(context));
-
-
-        //rootSelectorNode.AddChild(new MoveAction(context));
-
-
-        //var idleSquence = new SquenceNode<Unit>(context);
-        //rootSelectorNode.AddChild(idleSquence);
-        //idleSquence.AddChild(new IsUnitOnRangeCondition(context));
-        //idleSquence.AddChild(new IdleAction(context));
-
-        //return tankerbehaviorTree;
-
-    }
-
-    public static BehaviorTree<Unit> InitDelarBehaviorTree(Unit context)
-    {
-
-        var tankBehaviortree = new BehaviorTree<Unit>(context);
-
-        var rootSelectorNode = new SelectorNode<Unit>(context);
-
-        var attackSequence = new SquenceNode<Unit>(context);
-        attackSequence.AddChild(new IsUnitAliveCondition(context));
-        attackSequence.AddChild(new IsUnitCanAttackCondition(context));
-        attackSequence.AddChild(new NormalAttackAction(context));
-
-        var moveSequence = new SquenceNode<Unit>(context);
-        moveSequence.AddChild(new IsUnitCanSearchTarget(context));
-        moveSequence.AddChild(new MoveAction(context));
-
-        var IdleSequence = new SquenceNode<Unit>(context);
-        IdleSequence.AddChild(new IsUnitCanIdleCondition(context));
-        IdleSequence.AddChild(new IdleAction(context));
+        var idleSequence = new SquenceNode<Unit>(context);
+        idleSequence.AddChild(new IsUnitCanIdleCondition(context));
+        idleSequence.AddChild(new IdleAction(context));
 
         tankBehaviortree.SetRoot(rootSelectorNode);
 
         rootSelectorNode.AddChild(attackSequence);
-        rootSelectorNode.AddChild(moveSequence);
-        rootSelectorNode.AddChild(IdleSequence);
+
+        attackSequence.AddChild(attackSelectorNode);
+        attackSelectorNode.AddChild(skillAttackSequence);
+        attackSelectorNode.AddChild(normalAttackSequence);
+
+        rootSelectorNode.AddChild(moveSelector);
+        moveSelector.AddChild(frontUnitMoveSequence);
+        moveSelector.AddChild(notFrontUnitMoveSequence);
+
+
+        rootSelectorNode.AddChild(idleSequence);
 
         return tankBehaviortree;
-        //var dealerBehaviorTree = new BehaviorTree<Unit>(context);
+    }
 
-        //var rootSelcetorNode = new SelectorNode<Unit>(context);
+    public static BehaviorTree<Unit> InitDelarBehaviorTree(Unit context)
+    {
+        var tankBehaviortree = new BehaviorTree<Unit>(context);
 
-        //var attackSequence = new SquenceNode<Unit>(context);
+        var rootSelectorNode = new SelectorNode<Unit>(context);
 
-        //attackSequence.AddChild(new IsUnitAliveCondition(context));
-        //attackSequence.AddChild(new IsUnitOnRangeCondition(context));
-        //attackSequence.AddChild(new IsUnitCanAttackCondition(context));
-        //attackSequence.AddChild(new NormalAttackAction(context));
 
-        //var moveSequence = new SquenceNode<Unit>(context);
 
-        //moveSequence.AddChild(new IsUnitNotOnRangeCondition(context));
-        //moveSequence.AddChild(new MoveAction(context));
+        var attackSequence = new SquenceNode<Unit>(context);
+        attackSequence.AddChild(new IsUnitAliveCondition(context));
+        attackSequence.AddChild(new IsUnitOnAttackRangeCondition(context));
 
-        //rootSelcetorNode.AddChild(attackSequence);
-        //rootSelcetorNode.AddChild(moveSequence);
-        //rootSelcetorNode.AddChild(new IdleAction(context));
-        //dealerBehaviorTree.SetRoot(rootSelcetorNode);
+        var attackSelectorNode = new SelectorNode<Unit>(context);
 
-        //return dealerBehaviorTree;
+        var skillAttackSequence = new SquenceNode<Unit>(context);
+        skillAttackSequence.AddChild(new IsAutoSkillModeCondition(context));
+        skillAttackSequence.AddChild(new IsDealerCanUseSkill(context));
+        skillAttackSequence.AddChild(new SkillAttackAction(context));
+
+        var normalAttackSequence = new SquenceNode<Unit>(context);
+        normalAttackSequence.AddChild(new IsUnitCanNormalAttackCondition(context));
+        normalAttackSequence.AddChild(new NormalAttackAction(context));
+        //
+        var moveSelector = new SelectorNode<Unit>(context);
+
+        var frontUnitMoveSequence = new SquenceNode<Unit>(context);
+
+        frontUnitMoveSequence.AddChild(new IsUnitFrontLineCondition(context));
+        frontUnitMoveSequence.AddChild(new IsUnitInSafeDistanceCondition(context));
+        frontUnitMoveSequence.AddChild(new MoveAction(context));
+
+        var notFrontUnitMoveSequence = new SquenceNode<Unit>(context);
+
+        notFrontUnitMoveSequence.AddChild(new IsUnitInSafeDistanceCondition(context));
+        notFrontUnitMoveSequence.AddChild(new MoveAction(context));
+
+        var idleSequence = new SquenceNode<Unit>(context);
+        idleSequence.AddChild(new IsUnitCanIdleCondition(context));
+        idleSequence.AddChild(new IdleAction(context));
+
+        tankBehaviortree.SetRoot(rootSelectorNode);
+
+        rootSelectorNode.AddChild(attackSequence);
+
+        attackSequence.AddChild(attackSelectorNode);
+        attackSelectorNode.AddChild(skillAttackSequence);
+        attackSelectorNode.AddChild(normalAttackSequence);
+
+        rootSelectorNode.AddChild(moveSelector);
+        moveSelector.AddChild(frontUnitMoveSequence);
+        moveSelector.AddChild(notFrontUnitMoveSequence);
+
+
+        rootSelectorNode.AddChild(idleSequence);
+
+        return tankBehaviortree;
+
+    }
+    public static BehaviorTree<Unit> InitHealerBehaviorTree(Unit context)
+    {
+        var tankBehaviortree = new BehaviorTree<Unit>(context);
+
+        var rootSelectorNode = new SelectorNode<Unit>(context);
+
+
+
+        var attackSequence = new SquenceNode<Unit>(context);
+        attackSequence.AddChild(new IsUnitAliveCondition(context));
+        attackSequence.AddChild(new IsUnitOnAttackRangeCondition(context));
+
+        var attackSelectorNode = new SelectorNode<Unit>(context);
+
+        var skillAttackSequence = new SquenceNode<Unit>(context);
+        skillAttackSequence.AddChild(new IsAutoSkillModeCondition(context));
+        skillAttackSequence.AddChild(new IsHealerCanUseSkillCondition(context));
+        skillAttackSequence.AddChild(new SkillAttackAction(context));
+
+        var normalAttackSequence = new SquenceNode<Unit>(context);
+        normalAttackSequence.AddChild(new IsUnitCanNormalAttackCondition(context));
+        normalAttackSequence.AddChild(new NormalAttackAction(context));
+        //
+        var moveSelector = new SelectorNode<Unit>(context);
+
+        var frontUnitMoveSequence = new SquenceNode<Unit>(context);
+
+        frontUnitMoveSequence.AddChild(new IsUnitFrontLineCondition(context));
+        frontUnitMoveSequence.AddChild(new MoveAction(context));
+
+        var notFrontUnitMoveSequence = new SquenceNode<Unit>(context);
+
+        notFrontUnitMoveSequence.AddChild(new IsUnitInSafeDistanceCondition(context));
+        notFrontUnitMoveSequence.AddChild(new MoveAction(context));
+
+        var idleSequence = new SquenceNode<Unit>(context);
+        idleSequence.AddChild(new IsUnitCanIdleCondition(context));
+        idleSequence.AddChild(new IdleAction(context));
+
+        tankBehaviortree.SetRoot(rootSelectorNode);
+
+        rootSelectorNode.AddChild(attackSequence);
+
+        attackSequence.AddChild(attackSelectorNode);
+        attackSelectorNode.AddChild(skillAttackSequence);
+        attackSelectorNode.AddChild(normalAttackSequence);
+
+        rootSelectorNode.AddChild(moveSelector);
+        moveSelector.AddChild(frontUnitMoveSequence);
+        moveSelector.AddChild(notFrontUnitMoveSequence);
+
+
+        rootSelectorNode.AddChild(idleSequence);
+
+        return tankBehaviortree;
     }
 
 }

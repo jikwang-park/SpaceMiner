@@ -1,11 +1,25 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
+using Unity.VisualScripting.Antlr3.Runtime.Misc;
+using UnityEditor;
 using UnityEngine;
+
 
 
 
 public class Unit : MonoBehaviour
 {
+    public enum UnitStatus
+    {
+        Attacking,
+        UsingSkill,
+        Wait,
+    }
+
+    public UnitStatus currentStatus;
+
+
     //Base Stats\
     public UnitTypes UnitTypes
     {
@@ -17,42 +31,42 @@ public class Unit : MonoBehaviour
     }
     private UnitTypes currentUnitType;
 
-    private BigNumber unitMaxHp;
-    private BigNumber unitDamage;
-    private int unitArmor;
-    public BigNumber currentHp;
-    public float speed = 20f;
-    public float healamount;
+    [SerializeField]
+    public BigNumber barrier;
+    public bool HasBarrier
+    {
+        get
+        {
+            if (barrier > 0)
+                return true;
+
+            return false;
+        }
+    }
 
     public StageManager stageManger;
 
-    public CharacterStats unitStats;
+    public UnitStats unitStats;
+    public bool IsInAttackRange
+    {
+        get
+        {
+            if (targetDistance <= unitStats.range)
+                return true;
 
-
-
-
-
+            return false;
+        }
+    }
     public float targetDistance;
-
-    //ï¿½ï¿½Ä¿ ï¿½ï¿½Å³ ï¿½ï¿½Å¸ï¿½ï¿½
-    public float skillCoolTime = 10f;
 
     public BehaviorTree<Unit> behaviorTree;
 
-    public float skillUsingTime = 2.0f;
     public float attackUsingTime = 0.4f;
 
+    public int unitAliveCount = 0;
 
-    public int aliveCount = 0;
-
-    [SerializeField]
-    private SoldierTable.Data soldierData;
     [SerializeField]
     public UnitSkill unitSkill;
-
-
-
-    public UnitWeapon unitWeapon;
 
     public Transform targetPos;
 
@@ -60,23 +74,46 @@ public class Unit : MonoBehaviour
 
     private int lane = 0;
 
+    private int currentUnitNum = 0;
+
+    public float maxDis = 6.0f;
+    public float minDis = 4.0f;
+
+
+    public float lastSkillUsedTime;
+
+
+    public bool isAutoSkillMode;
     private void Awake()
     {
-
+        unitStats = GetComponent<UnitStats>();
         stageManger = GameObject.FindGameObjectWithTag("GameController").GetComponent<StageManager>();
-        unitStats = GetComponent<CharacterStats>();
+        isAutoSkillMode = true;
     }
-
 
     private void Start()
     {
+        Debug.Log($"ÇöÀç Å¸ÀÔ : {currentUnitType}, ÇöÀç °ø°Ý»ç°Å¸® : {unitStats.range}");
     }
-    // ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ boolï¿½ï¿½
-    public bool IsDead // ï¿½Ã·ï¿½ï¿½Ì¾î°¡ ï¿½×¾ï¿½ï¿½ï¿½ï¿½ï¿½
+
+    public bool IsDead
     {
         get
         {
-            if (currentHp <= 0)
+            if (unitStats.Hp <= 0)
+            {
+                currentUnitNum++;
+                return true;
+            }
+            return false;
+        }
+    }
+
+    public bool IsTargetDead
+    {
+        get
+        {
+            if ((targetPos == null || !targetPos.gameObject.activeSelf))
             {
                 return true;
             }
@@ -84,47 +121,108 @@ public class Unit : MonoBehaviour
         }
     }
 
-    public float lastSkillUsingTime;
-
-    public bool CanUseSkill
+    public float RemainSkillCoolTime
     {
         get
         {
-            if (Time.time < unitSkill.coolTime + lastSkillUsingTime)
+            switch (UnitTypes)
             {
-                return false;
-            }    
-            return true;
+                case UnitTypes.Tanker:
+                    return (Time.time - lastSkillUsedTime) / unitSkill.coolTime;
+
+                case UnitTypes.Dealer:
+                    return (Time.time - lastSkillUsedTime) / unitSkill.coolTime;
+
+                case UnitTypes.Healer:
+                    return (Time.time - lastSkillUsedTime) / unitSkill.coolTime;
+                default:
+                    return 0;
+            }
+        }
+    }
+
+    public bool IsUnitAliveFront
+    {
+        get
+        {
+            if (stageManger.UnitPartyManager.IsUnitExistFront(currentUnitType))
+            {
+                return true;
+            }
+            return false;
+        }
+    }
+    float thisAndFrontUnitDistance;
+    public bool IsUnitFar
+    {
+        get
+        {
+            var frontUnit = stageManger.UnitPartyManager.GetFrontUnit(currentUnitType);
+            thisAndFrontUnitDistance = frontUnit.transform.position.z - transform.position.z;
+            if (thisAndFrontUnitDistance > 5f)
+                return true;
+
+            return false;
         }
     }
 
 
-    public bool IsUnitCanAttack // ï¿½ï¿½ï¿½ï¿½ï¿½Å¸ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Ö´ï¿½ï¿½ï¿½
+    public bool IsTankerCanUseSkill
+    {
+        get
+        {
+            if (Time.time < unitSkill.coolTime + lastSkillUsedTime)
+                return false;
+
+            return true;
+        }
+    }
+
+    public bool IsDealerCanUseSkill
+    {
+        get
+        {
+            if (targetDistance > unitStats.range ||
+                    Time.time < unitSkill.coolTime + lastSkillUsedTime)
+                return false;
+
+            return true;
+        }
+    }
+
+    public bool IsHealerCanUseSkill
+    {
+        get
+        {
+            if (unitSkill.targetList == null ||
+                Time.time < unitSkill.coolTime + lastSkillUsedTime)
+                return false;
+
+            return true;
+        }
+    }
+    public bool IsUnitCanAttack
     {
         get
         {
             if (targetPos == null)
                 return false;
 
-            if (targetDistance <= unitWeapon.range && IsAttackCoolTimeOn)
+            if (targetDistance <= unitStats.range && IsAttackCoolTimeOn)
             {
                 return true;
             }
             return false;
         }
     }
-    //ï¿½ï¿½Å³ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ì´ï¿½?
-    public bool IsSkillUsing;
-    //ï¿½Ï¹ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ì´ï¿½?
     public bool IsNormalAttacking;
-    //1ï¿½ï¿½ ï¿½Â¾Ò´ï¿½?
+
     public bool IsUnitHit;
-    //ï¿½ï¿½Å³ï¿½ï¿½Å¸ï¿½ï¿½ ï¿½ï¿½ï¿½Ò´ï¿½?
     public bool IsSkillCoolTimeOn
     {
         get
         {
-            if (Time.time > lastAttackTime + skillCoolTime)
+            if (Time.time > lastSkillUsedTime + unitSkill.coolTime)
                 return true;
 
             return false;
@@ -134,33 +232,213 @@ public class Unit : MonoBehaviour
     {
         get
         {
-            if (Time.time > lastAttackTime + unitWeapon.coolDown)
+            if (Time.time > lastAttackTime + unitStats.coolDown)
                 return true;
 
             return false;
         }
     }
+    //
+    public bool IsFrontLine
+    {
+        get
+        {
+            return !stageManger.UnitPartyManager.IsUnitExistFront(currentUnitType);
+        }
+    }
+    public bool IsSafeDistance
+    {
+        get
+        {
+            bool isFront = !stageManger.UnitPartyManager.IsUnitExistFront(currentUnitType);
+            bool isBack = !stageManger.UnitPartyManager.IsUnitExistBack(currentUnitType);
+
+            if (isFront && isBack)
+                return true;
+
+            bool isBackSafe = true;
+            bool isFrontSafe = true;
+
+            if (!isBack)
+            {
+                var backUnit = stageManger.UnitPartyManager.GetBackUnit(currentUnitType);
+                float distance = (transform.position.z - backUnit.transform.position.z);
+
+                isBackSafe = distance <= (maxDis * ((int)backUnit.currentUnitType - (int)currentUnitType));
+
+            }
+
+            if (!isFront)
+            {
+                var frontUnit = stageManger.UnitPartyManager.GetFrontUnit(currentUnitType);
+                float distance = (frontUnit.transform.position.z - transform.position.z);
+
+                isFrontSafe = (distance >= minDis * (((int)currentUnitType) - (int)frontUnit.currentUnitType));
+
+            }
+
+
+            return (isBackSafe && isFrontSafe);
+
+        }
+    }
+
+
+
     public float lastAttackTime;
-    public float lastSkillAttackTime;
+
 
     private bool isMonsterSpawn;
 
 
     public void SetData(SoldierTable.Data data, UnitTypes type)
     {
-        speed = data.MoveSpeed;
-        unitMaxHp = (int)data.Basic_HP;
-        currentHp = unitMaxHp;
-        unitArmor = (int)data.Basic_DP;
-        healamount = (int)data.Special_H;
-        unitWeapon.damage = (int)data.Basic_DP;
+        unitStats.SetData(data, type);
+
         currentUnitType = type;
+        switch (currentUnitType)
+        {
+            case UnitTypes.Tanker:
+                unitSkill = gameObject.AddComponent<TankerSkill>();
+                break;
+            case UnitTypes.Dealer:
+                unitSkill = gameObject.AddComponent<DealerSkill>();
+                break;
+            case UnitTypes.Healer:
+                unitSkill = gameObject.AddComponent<HealerSkill>();
+                break;
+        }
         behaviorTree = UnitBTManager.SetBehaviorTree(this, currentUnitType);
+    }
+    public bool IsMonsterExist()
+    {
+        var lane = stageManger.StageMonsterManager.LaneCount;
+
+        for (int i = 0; i < lane; ++i)
+        {
+            var target = stageManger.StageMonsterManager.GetMonsterCount(i);
+
+            if (target > 0)
+            {
+                return true;
+
+            }
+        }
+        return false;
+    }
+    private Transform GetTargetPosition()
+    {
+        var lane = stageManger.StageMonsterManager.LaneCount;
+
+        for (int i = 0; i < lane; ++i)
+        {
+            var target = stageManger.StageMonsterManager.GetMonsterCount(i);
+            var targetPosition = stageManger.StageMonsterManager.GetFirstMonster(i);
+
+            if (target > 0)
+            {
+                // 250403 HKY - ÇÑ À¯´Ö¿¡¼­ ÀüÃ¼ À¯´Ö ¼øÈ¸ÇÏÁö ¾Êµµ·Ï ¼öÁ¤
+
+                targetDistance = targetPosition.position.z - transform.position.z;
+
+                if (targetDistance <= unitStats.range)
+                {
+                    targetPos = targetPosition;
+                    targetPos.GetComponent<DestructedDestroyEvent>().OnDestroyed += (_) => targetPos = null;
+                    return targetPos;
+                }
+            }
+        }
+        return null;
+    }
+    public void Move()
+    {
+        transform.position += Vector3.forward * Time.deltaTime * unitStats.moveSpeed;
     }
 
 
+    public void AttackCorutine()
+    {
+        currentStatus = UnitStatus.Attacking;
+        StartCoroutine(NormalAttackCor());
+        lastAttackTime = Time.time;
+    }
+    public void UseSkill()
+    {
+
+        currentStatus = UnitStatus.UsingSkill;
+
+        switch (currentUnitType)
+        {
+            case UnitTypes.Tanker:
+                StartCoroutine(TankerSkillTimer());
+                lastSkillUsedTime = Time.time;
+                break;
+            case UnitTypes.Dealer:
+                StartCoroutine(DealerSkillTimer());
+                lastSkillUsedTime = Time.time;
+                break;
+            case UnitTypes.Healer:
+                StartCoroutine(HealerSkillTimer());
+                lastSkillUsedTime = Time.time;
+                break;
+        }
+    }
+
+    public IEnumerator NormalAttackCor()
+    {
+        if (targetPos.gameObject != null)
+        {
+            unitStats.Execute(targetPos.gameObject);
+        }
+        yield return new WaitForSeconds(attackUsingTime);
+        currentStatus = UnitStatus.Wait;
+    }
+
+    private IEnumerator HealerSkillTimer()
+    {
+        unitSkill.GetTarget();
+        unitSkill.ExecuteSkill();
+        yield return new WaitForSeconds(2.5f);
+        lastAttackTime = Time.time;
+        currentStatus = UnitStatus.Wait;
+    }
+
+
+    private IEnumerator DealerSkillTimer()
+    {
+
+        unitSkill.ExecuteSkill();
+        yield return new WaitForSeconds(2f);
+        currentStatus = UnitStatus.Wait;
+    }
+    private IEnumerator TankerSkillTimer()
+    {
+        unitSkill.GetTarget();
+        unitSkill.ExecuteSkill();
+        yield return new WaitForSeconds(2.0f);
+        currentStatus = UnitStatus.Wait;
+    }
+
+    private float skillEndTime;
+
+    public void SetBarrier(float time, BigNumber amount)
+    {
+        skillEndTime = Time.time + time;
+        barrier = amount;
+
+    }
+
     private void Update()
     {
+        if (HasBarrier)
+        {
+            if (Time.time > skillEndTime)
+            {
+                barrier = 0;
+            }
+        }
+
         GetTargetPosition();
         behaviorTree.Update();
 
@@ -171,76 +449,4 @@ public class Unit : MonoBehaviour
         }
 
     }
-
-    public bool IsMonsterExist()
-    {
-        var lane = stageManger.MonsterLaneManager.LaneCount;
-
-        for (int i = 0; i < lane; ++i)
-        {
-            var target = stageManger.MonsterLaneManager.GetMonsterCount(i);
-
-            if (target > 0)
-            {
-                return true;
-
-            }
-        }
-        return false;
-    }
-
-
-    private Transform GetTargetPosition()
-    {
-        var lane = stageManger.MonsterLaneManager.LaneCount;
-
-        for (int i = 0; i < lane; ++i)
-        {
-            var target = stageManger.MonsterLaneManager.GetMonsterCount(i);
-            var targetPosition = stageManger.MonsterLaneManager.GetFirstMonster(i);
-
-            if (target > 0)
-            {
-
-                targetDistance = Vector3.Distance(stageManger.UnitPartyManager.generateInstance[0].transform.position, targetPosition.position);
-                if (targetDistance <= unitWeapon.range)
-                {
-                    targetPos = targetPosition;
-                    return targetPos;
-                }
-            }
-        }
-        return null;
-    }
-
-    public void Move()
-    {
-        transform.position += Vector3.forward * Time.deltaTime * speed;
-    }
-
-    public void AttackCorutine()
-    {
-        StartCoroutine(NormalAttackCor());
-        lastAttackTime = Time.time;
-    }
-
-    public IEnumerator NormalAttackCor()
-    {
-        if (targetPos.gameObject != null)
-        {
-            unitWeapon.Execute(gameObject, targetPos.gameObject);
-        }
-        yield return new WaitForSeconds(attackUsingTime);
-        IsNormalAttacking = false;
-    }
-    public void UseSkill()
-    {
-        if (Time.time < unitSkill.coolTime + lastSkillUsingTime)
-        {
-            return;
-        }
-        unitSkill.ExcuteSkill();
-        lastSkillUsingTime = Time.time;
-    }
-
 }

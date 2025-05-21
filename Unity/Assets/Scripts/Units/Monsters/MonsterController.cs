@@ -11,31 +11,35 @@ public class MonsterController : MonoBehaviour, IObjectPoolGameObject
     {
         Wait,
         Attacking,
+        SkillUsing,
     }
 
     public Status status;
 
     [field: SerializeField]
-    public AttackDefinition weapon { get; private set; }
+    public MonsterStats Stats { get; private set; }
 
     [SerializeField]
     private Animation animations;
     private BehaviorTree<MonsterController> behaviorTree;
 
-    public StageManager stageManager { get; private set; }
-
-    [field: SerializeField]
-    public float Speed { get; private set; } = 4f;
+    public StageManager StageManager { get; private set; }
 
     [field: SerializeField]
     public float minDistanceInMonster { get; private set; } = 2f;
-    public float TargetDistance { get; private set; }
 
+    public float TargetDistance { get; private set; }
     public Transform Target { get; private set; }
 
-    public Func<int, Transform> findFrontMonster;
+    public bool TargetAcquired = false;
+    public MonsterTable.Data MonsterData { get; private set; }
+    public MonsterRewardTable.Data RewardData { get; private set; }
 
-    public int frontLine = -1;
+
+    public Func<int, Transform> findFrontMonster;
+    public Func<int, bool> isFrontMonster;
+
+    public int currentLine = -1;
 
     public float LastAttackTime { get; private set; }
 
@@ -45,7 +49,7 @@ public class MonsterController : MonoBehaviour, IObjectPoolGameObject
     {
         get
         {
-            return weapon.range > TargetDistance && LastAttackTime + weapon.coolDown < Time.time;
+            return Stats.range > TargetDistance && LastAttackTime + Stats.coolDown < Time.time;
         }
     }
 
@@ -53,7 +57,7 @@ public class MonsterController : MonoBehaviour, IObjectPoolGameObject
     {
         get
         {
-            return frontLine < 0 || Vector3.Dot(findFrontMonster(frontLine).position - transform.position, Vector3.back) > minDistanceInMonster;
+            return isFrontMonster(currentLine) || -(findFrontMonster(currentLine).position.z - transform.position.z) > minDistanceInMonster;
         }
     }
 
@@ -61,33 +65,40 @@ public class MonsterController : MonoBehaviour, IObjectPoolGameObject
 
     private void Awake()
     {
-        InitBehaviourTree();
+        Stats = GetComponent<MonsterStats>();
         status = Status.Wait;
     }
 
     private void OnEnable()
     {
         isDrawRegion = true;
-
-        stageManager = GameObject.FindGameObjectWithTag("GameController").GetComponent<StageManager>();
+        TargetDistance = float.PositiveInfinity;
+        StageManager = GameObject.FindGameObjectWithTag("GameController").GetComponent<StageManager>();
     }
 
     private void OnDisable()
     {
         isDrawRegion = false;
-
-        stageManager = null;
+        TargetAcquired = false;
+        currentLine = -1;
+        StageManager = null;
     }
 
     private void Update()
     {
-        Target = stageManager.UnitPartyManager.GetFirstLineUnitTransform();
-
-        if (Target is not null)
+        if (!TargetAcquired && StageManager.UnitPartyManager.UnitCount > 0)
         {
-            TargetDistance = Vector3.Dot(Target.position - transform.position, Vector3.back);
+            Target = StageManager.UnitPartyManager.GetFirstLineUnitTransform();
+            Target.GetComponent<DestructedDestroyEvent>().OnDestroyed += OnTargetDie;
+            TargetAcquired = true;
         }
 
+        if (TargetAcquired)
+        {
+            TargetDistance = -(Target.position.z - transform.position.z);
+        }
+
+#if UNITY_EDITOR
         if (Input.GetKeyDown(KeyCode.Alpha8))
         {
             var destructables = GetComponents<IDestructable>();
@@ -97,6 +108,7 @@ public class MonsterController : MonoBehaviour, IObjectPoolGameObject
                 destructable.OnDestruction(null);
             }
         }
+#endif
 
         behaviorTree.Update();
     }
@@ -106,6 +118,15 @@ public class MonsterController : MonoBehaviour, IObjectPoolGameObject
         behaviorTree = new BehaviorTree<MonsterController>(this);
 
         var rootSelector = new SelectorNode<MonsterController>(this);
+
+        if (MonsterData.MonsterSkill != 0)
+        {
+            var skillSequence = new SquenceNode<MonsterController>(this);
+            skillSequence.AddChild(new IsMonsterSkillCooltimeCondition(this));
+            skillSequence.AddChild(new IsMonsterSkillTargetExistCondition(this));
+            skillSequence.AddChild(new SkillMonsterAction(this));
+            rootSelector.AddChild(skillSequence);
+        }
 
         var attackSequence = new SquenceNode<MonsterController>(this);
         attackSequence.AddChild(new CanAttackMonsterCondition(this));
@@ -122,6 +143,18 @@ public class MonsterController : MonoBehaviour, IObjectPoolGameObject
         behaviorTree.SetRoot(rootSelector);
     }
 
+    public void SetMonsterId(int monsterId)
+    {
+        MonsterData = DataTableManager.MonsterTable.GetData(monsterId);
+        Stats.SetData(MonsterData);
+        RewardData = DataTableManager.MonsterRewardTable.GetData(MonsterData.RewardID);
+        InitBehaviourTree();
+        if (MonsterData.MonsterSkill != 0)
+        {
+            GetComponent<MonsterSkill>().SetSkill(MonsterData.MonsterSkill);
+        }
+    }
+
     public void AttackTarget()
     {
         status = Status.Attacking;
@@ -131,11 +164,19 @@ public class MonsterController : MonoBehaviour, IObjectPoolGameObject
 
     private IEnumerator AttackTimer()
     {
+        //TODO: 애니메이션 정의되거나 공격 정의 후 수정 필요
         yield return new WaitForSeconds(0.25f);
         if (Target != null)
-            weapon.Execute(gameObject, Target.gameObject);
+            Stats.Execute(Target.gameObject);
         yield return new WaitForSeconds(0.25f);
         status = Status.Wait;
+    }
+
+    private void OnTargetDie(DestructedDestroyEvent sender)
+    {
+        Target.GetComponent<DestructedDestroyEvent>().OnDestroyed -= OnTargetDie;
+        Target = null;
+        TargetAcquired = false;
     }
 
     void OnDrawGizmos()
@@ -149,7 +190,6 @@ public class MonsterController : MonoBehaviour, IObjectPoolGameObject
 
     public void Release()
     {
-        
         ObjectPool.Release(gameObject);
     }
 }

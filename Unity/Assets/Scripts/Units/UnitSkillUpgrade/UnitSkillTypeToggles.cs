@@ -5,12 +5,12 @@ using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
-public class UnitSkillTypeButtons : MonoBehaviour
+public class UnitSkillTypeToggles : MonoBehaviour
 {
     [SerializeField]
     private UnitSkillGradeToggles toggle;
     [SerializeField]
-    private UnitSkillUpgradePanel manager;
+    private UnitSkillUpgradeManager manager;
     [SerializeField]
     private Color defaultColor = Color.white;
 

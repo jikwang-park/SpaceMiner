@@ -11,7 +11,7 @@ using UnityEngine.UI;
 public class UnitSkillUpgradeBoard : MonoBehaviour
 {
     [SerializeField]
-    private UnitSkillUpgradePanel manager;
+    private UnitSkillUpgradeManager manager;
 
     private const string maxLevelText = "Max Level";
 
@@ -112,8 +112,6 @@ public class UnitSkillUpgradeBoard : MonoBehaviour
         currentType = type;
         currentGrade = grade;
         SetImage(currentType, id);
-
-
         SetCurrentSkillText(currentType, currentId, out level);
 
         if (level >= maxLevel)
@@ -121,8 +119,6 @@ public class UnitSkillUpgradeBoard : MonoBehaviour
             SetMaxLevel();
             return;
         }
-
-
         LoadUpgradeData();
         SetNextSkillText(currentType, nextId);
         UpdateUpgradeUI();

@@ -50,7 +50,7 @@ public class UnitSkillGradeToggles : MonoBehaviour
 
 
     [SerializeField]
-    private UnitSkillUpgradePanel panel;
+    private UnitSkillUpgradeManager panel;
 
 
   

@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine;
 
-public class UnitSkillUpgradePanel : MonoBehaviour
+public class UnitSkillUpgradeManager : MonoBehaviour
 {
     private UnitTypes currentType = UnitTypes.Tanker;
 
@@ -73,13 +73,9 @@ public class UnitSkillUpgradePanel : MonoBehaviour
     {
         if (currentGrade == grade)
             return;
-
         currentGrade = grade;
         gradeToggle.toggleDic[grade].SetIsOnWithoutNotify(true);
-
         gradeToggle.UpdateSelectedFrame(grade);
-
         board.SetBoardText(GetCurrentId(), currentType, currentGrade);
-
     }
 }

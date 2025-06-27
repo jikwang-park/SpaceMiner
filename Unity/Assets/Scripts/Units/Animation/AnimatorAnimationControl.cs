@@ -20,10 +20,6 @@ public class AnimatorAnimationControl : AnimationControl
 
     private Animator animator;
 
-    private Dictionary<AnimationClipID, List<EventPair>> events = new Dictionary<AnimationClipID, List<EventPair>>();
-
-    private EventComparer eventComparer = new EventComparer();
-
     [SerializeField]
     private int attackIndexLength = 0;
 
@@ -42,33 +38,6 @@ public class AnimatorAnimationControl : AnimationControl
             return;
         }
         ProcessEvent();
-    }
-
-    public override void AddEvent(AnimationClipID clipID, float normalizedTime, Action action)
-    {
-        if (!events.ContainsKey(clipID))
-        {
-            events.Add(clipID, new List<EventPair>());
-        }
-        events[clipID].Add(new EventPair(normalizedTime, action));
-        events[clipID].Sort(eventComparer);
-    }
-
-    public override void RemoveEvent(AnimationClipID clipID, Action action)
-    {
-        if (!events.ContainsKey(clipID))
-        {
-            return;
-        }
-
-        for (int i = 0; i < events[clipID].Count; ++i)
-        {
-            if (events[clipID][i].ev == action)
-            {
-                events[clipID].RemoveAt(i);
-                break;
-            }
-        }
     }
 
     public override void Play(AnimationClipID clipID)

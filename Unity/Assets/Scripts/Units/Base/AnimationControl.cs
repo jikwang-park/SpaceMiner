@@ -42,6 +42,10 @@ public abstract class AnimationControl : MonoBehaviour
 
     public AnimationClipID CurrentClip { get; protected set; }
 
+    protected Dictionary<AnimationClipID, List<EventPair>> events = new Dictionary<AnimationClipID, List<EventPair>>();
+
+    protected EventComparer eventComparer = new EventComparer();
+
     public abstract bool ContainsClip(AnimationClipID clipID);
 
     public abstract void Play(AnimationClipID clipID);
@@ -53,8 +57,32 @@ public abstract class AnimationControl : MonoBehaviour
     public abstract void SetSpeed(AnimationClipID clipID, float speed);
     public abstract void SetSpeed(float speed);
 
-    public abstract void AddEvent(AnimationClipID clipID, float normalizedTime, System.Action action);
-    public abstract void RemoveEvent(AnimationClipID clipID, System.Action action);
+    public virtual void AddEvent(AnimationClipID clipID, float normalizedTime, System.Action action)
+    {
+        if (!events.ContainsKey(clipID))
+        {
+            events.Add(clipID, new List<EventPair>());
+        }
+        events[clipID].Add(new EventPair(normalizedTime, action));
+        events[clipID].Sort(eventComparer);
+    }
+
+    public virtual void RemoveEvent(AnimationClipID clipID, System.Action action)
+    {
+        if (!events.ContainsKey(clipID))
+        {
+            return;
+        }
+
+        for (int i = 0; i < events[clipID].Count; ++i)
+        {
+            if (events[clipID][i].ev == action)
+            {
+                events[clipID].RemoveAt(i);
+                break;
+            }
+        }
+    }
 
     public abstract void SetLoop(AnimationClipID clipID, bool isLoop);
 }

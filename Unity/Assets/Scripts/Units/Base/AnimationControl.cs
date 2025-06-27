@@ -84,5 +84,33 @@ public abstract class AnimationControl : MonoBehaviour
         }
     }
 
+    protected virtual void ProcessEvent()
+    {
+        var currentClip = CurrentClip;
+        if (!events.ContainsKey(currentClip))
+        {
+            return;
+        }
+        float progress = GetProgress(currentClip);
+
+        for (int i = 0; i < events[currentClip].Count; ++i)
+        {
+            var pair = events[currentClip][i];
+
+            if (progress < pair.normalizedTime)
+            {
+                break;
+            }
+            if (pair.isInvoked)
+            {
+                continue;
+            }
+            pair.isInvoked = true;
+            pair.ev.Invoke();
+        }
+    }
+
+    protected abstract float GetProgress(AnimationClipID clipID);
+
     public abstract void SetLoop(AnimationClipID clipID, bool isLoop);
 }

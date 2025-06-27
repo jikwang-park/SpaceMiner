@@ -149,7 +149,7 @@ public class AnimationController : AnimationControl
         animations.Stop();
     }
 
-    private float GetProgress(AnimationClipID clipID)
+    protected override float GetProgress(AnimationClipID clipID)
     {
         if (!animationDict.ContainsKey(clipID))
         {
@@ -169,31 +169,5 @@ public class AnimationController : AnimationControl
         }
 
         return animationState.normalizedTime;
-    }
-
-    private void ProcessEvent()
-    {
-        var currentClip = CurrentClip;
-        if (!events.ContainsKey(currentClip))
-        {
-            return;
-        }
-        float progress = GetProgress(currentClip);
-
-        for (int i = 0; i < events[currentClip].Count; ++i)
-        {
-            var pair = events[currentClip][i];
-
-            if (progress < pair.normalizedTime)
-            {
-                break;
-            }
-            if (pair.isInvoked)
-            {
-                continue;
-            }
-            pair.isInvoked = true;
-            pair.ev.Invoke();
-        }
     }
 }

@@ -17,7 +17,6 @@ public class AnimatorAnimationControl : AnimationControl
     private readonly static int hashAttackSpeed = Animator.StringToHash("AttackSpeed");
     private readonly static int hashSkillSpeed = Animator.StringToHash("SkillSpeed");
 
-
     private Animator animator;
 
     [SerializeField]
@@ -133,7 +132,7 @@ public class AnimatorAnimationControl : AnimationControl
         animator.enabled = false;
     }
 
-    private float GetProgress(AnimationClipID clipID)
+    protected override float GetProgress(AnimationClipID clipID)
     {
         var currentClips = animator.GetCurrentAnimatorClipInfo(0);
         var currentState = animator.GetCurrentAnimatorStateInfo(0);
@@ -159,32 +158,6 @@ public class AnimatorAnimationControl : AnimationControl
         }
 
         return 0f;
-    }
-
-    private void ProcessEvent()
-    {
-        var currentClip = CurrentClip;
-        if (!events.ContainsKey(currentClip))
-        {
-            return;
-        }
-        float progress = GetProgress(currentClip);
-
-        for (int i = 0; i < events[currentClip].Count; ++i)
-        {
-            var pair = events[currentClip][i];
-
-            if (progress < pair.normalizedTime)
-            {
-                break;
-            }
-            if (pair.isInvoked)
-            {
-                continue;
-            }
-            pair.isInvoked = true;
-            pair.ev.Invoke();
-        }
     }
 
     public override bool ContainsClip(AnimationClipID clipID)

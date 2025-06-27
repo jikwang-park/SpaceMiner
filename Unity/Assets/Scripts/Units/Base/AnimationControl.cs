@@ -17,6 +17,29 @@ public abstract class AnimationControl : MonoBehaviour
         Walk,
     }
 
+    protected class EventPair
+    {
+        public float normalizedTime;
+        public System.Action ev;
+        public bool isInvoked;
+
+        public EventPair(float normalizedTime, System.Action ev)
+        {
+            this.normalizedTime = normalizedTime;
+            this.ev = ev;
+            isInvoked = false;
+        }
+    }
+
+    protected class EventComparer : IComparer<EventPair>
+    {
+        int IComparer<EventPair>.Compare(EventPair x, EventPair y)
+        {
+            return x.normalizedTime.CompareTo(y.normalizedTime);
+        }
+    }
+
+
     public AnimationClipID CurrentClip { get; protected set; }
 
     public abstract bool ContainsClip(AnimationClipID clipID);

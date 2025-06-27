@@ -7,28 +7,6 @@ using UnityEngine;
 [RequireComponent(typeof(Animation))]
 public class AnimationController : AnimationControl
 {
-    private class EventPair
-    {
-        public float normalizedTime;
-        public Action ev;
-        public bool isInvoked;
-
-        public EventPair(float normalizedTime, Action ev)
-        {
-            this.normalizedTime = normalizedTime;
-            this.ev = ev;
-            isInvoked = false;
-        }
-    }
-
-    public class EventComparer : IComparer<EventPair>
-    {
-        int IComparer<EventPair>.Compare(EventPair x, EventPair y)
-        {
-            return x.normalizedTime.CompareTo(y.normalizedTime);
-        }
-    }
-
     private const string battleidle01 = "Battle_Idle_01";
     private const string battleidle = "Battle_Idle";
     private const string idle = "Idle";

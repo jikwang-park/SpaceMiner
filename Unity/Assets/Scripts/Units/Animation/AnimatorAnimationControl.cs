@@ -18,28 +18,6 @@ public class AnimatorAnimationControl : AnimationControl
     private readonly static int hashSkillSpeed = Animator.StringToHash("SkillSpeed");
 
 
-    private class EventPair
-    {
-        public float normalizedTime;
-        public Action ev;
-        public bool isInvoked;
-
-        public EventPair(float normalizedTime, Action ev)
-        {
-            this.normalizedTime = normalizedTime;
-            this.ev = ev;
-            isInvoked = false;
-        }
-    }
-
-    public class EventComparer : IComparer<EventPair>
-    {
-        int IComparer<EventPair>.Compare(EventPair x, EventPair y)
-        {
-            return x.normalizedTime.CompareTo(y.normalizedTime);
-        }
-    }
-
     private Animator animator;
 
     private Dictionary<AnimationClipID, List<EventPair>> events = new Dictionary<AnimationClipID, List<EventPair>>();

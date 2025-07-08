@@ -28,6 +28,8 @@ public class DataTableView : MonoBehaviour
     public List<TextMeshProUGUI> columns = new List<TextMeshProUGUI>();
     public List<DataRow> rows = new List<DataRow>();
 
+    private DataTable table;
+
     public void OnColumnMoved(Vector2 rot)
     {
         cellScroll.horizontalNormalizedPosition = rot.x;
@@ -38,7 +40,55 @@ public class DataTableView : MonoBehaviour
         columnScroll.horizontalNormalizedPosition = rot.x;
     }
 
-    public void SetColumns(PropertyInfo[] columnInfos)
+    public void Set(string name, DataTable table)
+    {
+        TableName = name;
+        this.table = table;
+    }
+
+    private void Start()
+    {
+        var dict = table.TableData;
+        var dataType = table.DataType;
+
+        var properties = dataType.GetProperties();
+
+        SetColumns(properties);
+
+        foreach (var data in dict)
+        {
+            string[] values = new string[properties.Length];
+
+            for (int i = 0; i < properties.Length; ++i)
+            {
+                values[i] = properties[i].GetValue(data.Value).ToString();
+            }
+
+            AddRow(values);
+        }
+    }
+
+    public void ResetTable()
+    {
+        var dict = table.TableData;
+        var dataType = table.DataType;
+        var properties = dataType.GetProperties();
+        Clear();
+
+        foreach (var data in dict)
+        {
+            string[] values = new string[properties.Length];
+
+            for (int i = 0; i < properties.Length; ++i)
+            {
+                values[i] = properties[i].GetValue(data.Value).ToString();
+            }
+
+            AddRow(values);
+        }
+    }
+
+    private void SetColumns(PropertyInfo[] columnInfos)
     {
         columnCount = columnInfos.Length;
         for (int i = 0; i < columnCount; ++i)
@@ -49,7 +99,7 @@ public class DataTableView : MonoBehaviour
         }
     }
 
-    public void SetColumns(string[] columns)
+    private void SetColumns(string[] columns)
     {
         columnCount = columns.Length;
         for (int i = 0; i < columnCount; ++i)
@@ -59,19 +109,16 @@ public class DataTableView : MonoBehaviour
         }
     }
 
-    public void AddRow(string[] rowdata)
+    private void AddRow(string[] rowdata)
     {
         var row = Instantiate(dataRowPrefab, cellsContent);
         row.SetCells(rowdata);
         rows.Add(row);
     }
 
-    public void AddRows(string[][] rowsData)
+    public void AddEmptyRow()
     {
-        for (int i = 0; i < rowsData.GetLength(0); ++i)
-        {
-            AddRow(rowsData[i]);
-        }
+        AddRow(new string[columnCount]);
     }
 
     public List<string[]> GetData()
@@ -85,18 +132,6 @@ public class DataTableView : MonoBehaviour
             for (int j = 0; j < columnCount; ++j)
             {
                 datum[j] = rows[i].cells[j].CellText;
-                //if (properties[j].PropertyType == typeof(int))
-                //{
-                //    properties[j].SetValue(datum, int.Parse(rows[i].cells[j].CellText));
-                //}
-                //else if (properties[j].PropertyType == typeof(float))
-                //{
-                //    properties[j].SetValue(datum, float.Parse(rows[i].cells[j].CellText));
-                //}
-                //else if (properties[j].PropertyType == typeof(string))
-                //{
-                //    properties[j].SetValue(datum, rows[i].cells[j].CellText);
-                //}
             }
             data.Add(datum);
         }
@@ -117,18 +152,12 @@ public class DataTableView : MonoBehaviour
         rows.Clear();
     }
 
-    public void SetTableName(string name)
-    {
-        TableName = name;
-    }
-
     public void ApplyTable()
     {
         if (string.IsNullOrEmpty(TableName))
         {
             return;
         }
-        var table = DataTableManager.GetTable<DataTable>(TableName);
         table.Set(GetData());
     }
 }

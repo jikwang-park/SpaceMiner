@@ -15,6 +15,8 @@ public class LocalizationText : MonoBehaviour
 #if UNITY_EDITOR
     [SerializeField]
     private Languages editorLang;
+
+    public static System.Action OnChangedStringTable;
 #endif
 
     private TextMeshProUGUI text;
@@ -34,6 +36,10 @@ public class LocalizationText : MonoBehaviour
     private void Awake()
     {
         text = GetComponent<TextMeshProUGUI>();
+
+#if UNITY_EDITOR
+        OnChangedStringTable += OnChangedLanguage;
+#endif
     }
 
     private void OnEnable()
@@ -50,7 +56,7 @@ public class LocalizationText : MonoBehaviour
 
     public void OnChangedLanguage(Languages lang)
     {
-        if(text is null)
+        if (text is null)
         {
             return;
         }

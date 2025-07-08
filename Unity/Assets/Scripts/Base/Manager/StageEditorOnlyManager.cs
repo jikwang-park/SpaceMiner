@@ -9,7 +9,7 @@ public class StageEditorOnlyManager : MonoBehaviour
 
     private void Update()
     {
-        if (Input.GetKey(KeyCode.LeftShift) && Input.GetKeyDown(KeyCode.F10))
+        if (Input.GetKey(KeyCode.LeftShift) && Input.GetKeyDown(KeyCode.F9))
         {
             if (viewer.activeSelf)
             {

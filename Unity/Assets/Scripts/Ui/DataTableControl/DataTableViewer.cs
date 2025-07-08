@@ -27,11 +27,13 @@ public class DataTableViewer : MonoBehaviour
     public DataTableView CurrentView { get; private set; }
     private int currentIndex;
 
+    private string currentTableName;
+
     public string CurrentTableName
     {
         get
         {
-            return tableDropdown.options[currentIndex].text;
+            return currentTableName;
         }
     }
 
@@ -42,28 +44,10 @@ public class DataTableViewer : MonoBehaviour
 
     private void SetTable(KeyValuePair<string, DataTable> table)
     {
-        var dict = table.Value.TableData;
-        var dataType = table.Value.DataType;
-
-        var properties = dataType.GetProperties();
-
         AddDropDownOption(table.Key);
         var tableView = Instantiate(dataTableViewPrefab, this.tableView);
-        tableView.SetTableName(table.Key);
+        tableView.Set(table.Key, table.Value);
         views.Add(table.Key, tableView);
-        tableView.SetColumns(properties);
-
-        foreach (var data in dict)
-        {
-            string[] values = new string[properties.Length];
-
-            for (int i = 0; i < properties.Length; ++i)
-            {
-                values[i] = properties[i].GetValue(data.Value).ToString();
-            }
-
-            tableView.AddRow(values);
-        }
         tableView.gameObject.SetActive(false);
     }
 
@@ -81,7 +65,8 @@ public class DataTableViewer : MonoBehaviour
             CurrentView.gameObject.SetActive(false);
         }
         currentIndex = index;
-        CurrentView = views[tableDropdown.options[index].text];
+        currentTableName = tableDropdown.options[index].text;
+        CurrentView = views[currentTableName];
         CurrentView.gameObject.SetActive(true);
     }
 
@@ -99,8 +84,8 @@ public class DataTableViewer : MonoBehaviour
 
     public void AddEmptyRow()
     {
-        var table = views.ElementAt(currentIndex);
-        table.Value.AddRow(new string[table.Value.columnCount]);
+        var table = views[currentTableName];
+        table.AddEmptyRow();
     }
 
     private void ResetTables()
@@ -121,29 +106,20 @@ public class DataTableViewer : MonoBehaviour
     public void ResetTable()
     {
         var table = DataTableManager.GetTable<DataTable>(CurrentView.TableName);
-        var dict = table.TableData;
-        var dataType = table.DataType;
-        var properties = dataType.GetProperties();
-
-        CurrentView.Clear();
-        CurrentView.SetColumns(properties);
-
-        foreach (var data in dict)
-        {
-            string[] values = new string[properties.Length];
-
-            for (int i = 0; i < properties.Length; ++i)
-            {
-                values[i] = properties[i].GetValue(data.Value).ToString();
-            }
-
-            CurrentView.AddRow(values);
-        }
+        CurrentView.ResetTable();
     }
 
     public void ApplyCurrentViewTable()
     {
         CurrentView.ApplyTable();
+
+#if UNITY_EDITOR
+        if (CurrentView.TableName.Contains("StringTable"))
+        {
+            LocalizationText.OnChangedStringTable();
+        }
+#endif
+
     }
 
     public void OnInsert(bool isOn)

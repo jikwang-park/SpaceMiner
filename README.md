@@ -17,15 +17,5 @@
 
 
 방치형 게임 우주 병사 키우기 프로젝트입니다.
+
 **레드 키우기**, **스페이스 마린 디펜스**의 리소스를 활용했습니다.
-
----
-
-## 📷 스크린샷
-
-<img src="./ScreenShots/ScreenShot1.png"/>
-<img src="./ScreenShots/ScreenShot2.png"/>
-<img src="./ScreenShots/ScreenShot3.png"/>
-<img src="./ScreenShots/ScreenShot4.png"/>
-<img src="./ScreenShots/ScreenShot5.png"/>
-<img src="./ScreenShots/ScreenShot6.png"/>

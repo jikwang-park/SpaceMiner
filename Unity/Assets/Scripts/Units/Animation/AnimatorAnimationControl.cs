@@ -67,11 +67,9 @@ public class AnimatorAnimationControl : AnimationControl
         }
 
         ResetEvent(clipID);
-
-        CurrentClip = clipID;
-
         ResetTrigger();
 
+        CurrentClip = clipID;
         animator.SetTrigger(dictHash[CurrentClip]);
     }
 

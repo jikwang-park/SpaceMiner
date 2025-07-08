@@ -90,6 +90,7 @@ public class AnimationController : AnimationControl
         {
             return;
         }
+
         if (!animationDict.ContainsKey(clipID))
         {
             return;

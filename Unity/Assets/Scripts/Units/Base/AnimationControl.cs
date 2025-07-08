@@ -50,7 +50,7 @@ public abstract class AnimationControl : MonoBehaviour
 
     public abstract void Play(AnimationClipID clipID);
 
-    public abstract void Play(AnimationClipID clipID, bool isLoop);
+    public abstract void Play(AnimationClipID clipID, bool shouldForce);
 
     public abstract void Stop();
 

@@ -17,6 +17,16 @@ public class AnimatorAnimationControl : AnimationControl
     private readonly static int hashAttackSpeed = Animator.StringToHash("AttackSpeed");
     private readonly static int hashSkillSpeed = Animator.StringToHash("SkillSpeed");
 
+    private readonly static Dictionary<AnimationClipID, int> dictHash = new Dictionary<AnimationClipID, int>()
+    {
+        { AnimationClipID.BattleIdle, hashBattleIdle },
+        { AnimationClipID.Run, hashRun },
+        { AnimationClipID.Walk, hashWalk },
+        { AnimationClipID.Attack, hashAttack },
+        { AnimationClipID.Skill, hashSkill } ,
+        { AnimationClipID.Die, hashDie },
+    };
+
     private Animator animator;
 
     [SerializeField]
@@ -56,40 +66,13 @@ public class AnimatorAnimationControl : AnimationControl
             animator.enabled = true;
         }
 
-        if (events.ContainsKey(clipID))
-        {
-            for (int i = 0; i < events[clipID].Count; ++i)
-            {
-                events[clipID][i].isInvoked = false;
-            }
-        }
+        ResetEvent(clipID);
 
         CurrentClip = clipID;
 
-        animator.ResetTrigger(hashRun);
-        animator.ResetTrigger(hashBattleIdle);
+        ResetTrigger();
 
-        switch (CurrentClip)
-        {
-            case AnimationClipID.BattleIdle:
-                animator.SetTrigger(hashBattleIdle);
-                break;
-            case AnimationClipID.Run:
-                animator.SetTrigger(hashRun);
-                break;
-            case AnimationClipID.Attack:
-                animator.SetTrigger(hashAttack);
-                break;
-            case AnimationClipID.Skill:
-                animator.SetTrigger(hashSkill);
-                break;
-            case AnimationClipID.Die:
-                animator.SetTrigger(hashDie);
-                break;
-            case AnimationClipID.Walk:
-                animator.SetTrigger(hashWalk);
-                break;
-        }
+        animator.SetTrigger(dictHash[CurrentClip]);
     }
 
     public override void SetSpeed(float speed)
@@ -101,20 +84,16 @@ public class AnimatorAnimationControl : AnimationControl
     {
         switch (clipID)
         {
-            case AnimationClipID.None:
-                break;
-            case AnimationClipID.Idle:
-                break;
-            case AnimationClipID.BattleIdle:
-                break;
-            case AnimationClipID.Run:
-                break;
             case AnimationClipID.Attack:
                 animator.SetFloat(hashAttackSpeed, speed);
                 break;
             case AnimationClipID.Skill:
                 animator.SetFloat(hashSkillSpeed, speed);
                 break;
+            case AnimationClipID.None:
+            case AnimationClipID.Idle:
+            case AnimationClipID.BattleIdle:
+            case AnimationClipID.Run:
             case AnimationClipID.Die:
                 break;
         }
@@ -180,5 +159,11 @@ public class AnimatorAnimationControl : AnimationControl
             animator.SetInteger(hashAttackIndex, attackIndex);
             attackIndex = (attackIndex + 1) % attackIndexLength;
         }
+    }
+
+    private void ResetTrigger()
+    {
+        animator.ResetTrigger(hashRun);
+        animator.ResetTrigger(hashBattleIdle);
     }
 }

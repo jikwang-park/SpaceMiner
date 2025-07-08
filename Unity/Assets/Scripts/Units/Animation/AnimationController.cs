@@ -95,13 +95,7 @@ public class AnimationController : AnimationControl
             return;
         }
 
-        if (events.ContainsKey(clipID))
-        {
-            for (int i = 0; i < events[clipID].Count; ++i)
-            {
-                events[clipID][i].isInvoked = false;
-            }
-        }
+        ResetEvent(clipID);
 
         CurrentClip = clipID;
         animations.CrossFade(animationDict[clipID], fadeLength);

@@ -113,4 +113,15 @@ public abstract class AnimationControl : MonoBehaviour
     protected abstract float GetProgress(AnimationClipID clipID);
 
     public abstract void SetLoop(AnimationClipID clipID, bool isLoop);
+
+    protected void ResetEvent(AnimationClipID clipID)
+    {
+        if (events.ContainsKey(clipID))
+        {
+            for (int i = 0; i < events[clipID].Count; ++i)
+            {
+                events[clipID][i].isInvoked = false;
+            }
+        }
+    }
 }
